@@ -37,14 +37,15 @@
 
   // src/lib/utils/lazy.ts
   function proxyLazy(factory, asFunction = true) {
+    var cache;
     var dummy = asFunction ? function dummy2() {
     } : {};
-    dummy[factorySymbol] = function() {
-      var _dummy, _cacheSymbol;
-      return (_dummy = dummy)[_cacheSymbol = cacheSymbol] ?? (_dummy[_cacheSymbol] = factory());
+    var proxyFactory = function() {
+      return cache ?? (cache = factory());
     };
     var proxy = new Proxy(dummy, lazyHandler);
-    proxyToFactoryMap.set(proxy, dummy[factorySymbol]);
+    proxyToFactoryMap.set(proxy, proxyFactory);
+    dummyToFactoryMap.set(dummy, proxyFactory);
     return proxy;
   }
   function lazyDestructure(factory, asFunction = false) {
@@ -73,12 +74,10 @@
   function getFactoryOfProxy(obj) {
     return proxyToFactoryMap.get(obj);
   }
-  var factorySymbol, cacheSymbol, unconfigurable, isUnconfigurable, proxyToFactoryMap, lazyHandler;
+  var unconfigurable, isUnconfigurable, proxyToFactoryMap, dummyToFactoryMap, lazyHandler;
   var init_lazy = __esm({
     "src/lib/utils/lazy.ts"() {
       "use strict";
-      factorySymbol = Symbol.for("bunny.lazy.factory");
-      cacheSymbol = Symbol.for("bunny.lazy.cache");
       unconfigurable = [
         "arguments",
         "caller",
@@ -88,29 +87,41 @@
         return typeof key === "string" && unconfigurable.includes(key);
       };
       proxyToFactoryMap = /* @__PURE__ */ new WeakMap();
+      dummyToFactoryMap = /* @__PURE__ */ new WeakMap();
       lazyHandler = {
+        ...Object.fromEntries(Object.getOwnPropertyNames(Reflect).map(function(fnName) {
+          return [
+            fnName,
+            function(target, ...args) {
+              var resolved = dummyToFactoryMap.get(target)();
+              if (!resolved)
+                throw new Error(`Trying to ${fnName} of ${typeof resolved}`);
+              return Reflect[fnName](resolved, ...args);
+            }
+          ];
+        })),
         ownKeys: function(target) {
-          var cacheKeys = Reflect.ownKeys(target[factorySymbol]());
+          var resolved = dummyToFactoryMap.get(target)();
+          if (!resolved)
+            throw new Error(`Trying to ownKeys of ${typeof resolved}`);
+          var cacheKeys = Reflect.ownKeys(dummyToFactoryMap.get(target)());
           unconfigurable.forEach(function(key) {
-            return isUnconfigurable(key) && cacheKeys.push(key);
+            return !cacheKeys.includes(key) && cacheKeys.push(key);
           });
           return cacheKeys;
         },
         getOwnPropertyDescriptor: function(target, p) {
+          var resolved = dummyToFactoryMap.get(target)();
+          if (!resolved)
+            throw new Error(`Trying to getOwnPropertyDescriptor of ${typeof resolved}`);
           if (isUnconfigurable(p))
             return Reflect.getOwnPropertyDescriptor(target, p);
-          var descriptor = Reflect.getOwnPropertyDescriptor(target[factorySymbol](), p);
+          var descriptor = Reflect.getOwnPropertyDescriptor(dummyToFactoryMap.get(target)(), p);
           if (descriptor)
             Object.defineProperty(target, p, descriptor);
           return descriptor;
         }
       };
-      Object.getOwnPropertyNames(Reflect).forEach(function(fnName) {
-        var _lazyHandler, _fnName;
-        (_lazyHandler = lazyHandler)[_fnName = fnName] ?? (_lazyHandler[_fnName] = function(target, ...args) {
-          return Reflect[fnName](target[factorySymbol](), ...args);
-        });
-      });
     }
   });
 
@@ -399,8 +410,8 @@
     })[0];
     return id ? Number(id) : void 0;
   }
-  function subscribeModuleForFind(proxy, callback) {
-    var info = getFindProxyInfo(proxy);
+  function subscribeModuleOfFind(proxy, callback) {
+    var info = getFindContext(proxy);
     if (!info)
       throw new Error("Subscribing a module for non-proxy-find");
     if (!info.indexed)
@@ -409,40 +420,43 @@
       callback(findExports(info.filter));
     });
   }
-  function getFindProxyInfo(proxy) {
-    return proxyInfoMap.get(proxy);
+  function getFindContext(proxy) {
+    return proxyContextMap.get(proxy);
   }
   function createFindProxy(filter) {
     var cache = void 0;
     var moduleId = getIndexedSingleFind(filter);
-    var info = {
+    var context = {
       filter,
       indexed: !!moduleId,
       moduleId,
       getExports(cb) {
         if (!moduleId || metroModules[moduleId]?.isInitialized) {
-          return cb(findExports(filter)), function() {
+          return cb(this.unproxy()), function() {
           };
         }
         return this.subscribe(cb);
       },
       subscribe(cb) {
-        return subscribeModuleForFind(proxy, cb);
+        return subscribeModuleOfFind(proxy, cb);
       },
       get cache() {
         return cache;
       },
       unproxy() {
-        return cache ?? (cache = findExports(filter));
+        cache ?? (cache = findExports(filter));
+        if (!cache)
+          throw new Error(`${filter.uniq} is ${typeof cache}! (id ${context.moduleId ?? "unknown"})`);
+        return cache;
       }
     };
     var proxy = proxyLazy(function() {
-      return cache ?? (cache = findExports(filter));
+      return context.unproxy();
     });
-    proxyInfoMap.set(proxy, info);
+    proxyContextMap.set(proxy, context);
     return proxy;
   }
-  var proxyInfoMap;
+  var proxyContextMap;
   var init_proxy = __esm({
     "src/metro/proxy.ts"() {
       "use strict";
@@ -450,7 +464,7 @@
       init_caches();
       init_finders();
       init_modules2();
-      proxyInfoMap = /* @__PURE__ */ new WeakMap();
+      proxyContextMap = /* @__PURE__ */ new WeakMap();
     }
   });
 
@@ -465,7 +479,7 @@
   function shim(fn) {
     function shimmed(...args) {
       var _this = this;
-      var proxyInfo = getFindProxyInfo(args[1]);
+      var proxyInfo = getFindContext(args[1]);
       if (proxyInfo && !proxyInfo.cache && proxyInfo.indexed) {
         var cancel = false;
         var unpatch2 = function() {
@@ -485,7 +499,7 @@
     }
     shimmed.proxy = function proxyPatch(...args) {
       var [target, resolve] = args[1];
-      var proxyInfo = getFindProxyInfo(target);
+      var proxyInfo = getFindContext(target);
       if (!proxyInfo) {
         args[1] = resolve(target);
         return shimmed(...args);
@@ -1034,7 +1048,6 @@
       return Object.assign(func, {
         filter: fn,
         raw,
-        args,
         uniq: [
           raw && "raw::",
           uniqMaker(args)
@@ -2865,7 +2878,7 @@
       init_logger();
       init_toasts();
       import_react_native4 = __toESM(require_react_native());
-      versionHash = "728998f-dev";
+      versionHash = "2affe0f-dev";
     }
   });
 
@@ -3292,7 +3305,9 @@
     createThemedStyleSheet: () => createThemedStyleSheet
   });
   function createStyles(sheet) {
-    return CompatfulRedesign.createStyles(sheet);
+    return proxyLazy(function() {
+      return CompatfulRedesign.createStyles(sheet);
+    });
   }
   function createThemedStyleSheet(sheet) {
     for (var key in sheet) {
@@ -3833,6 +3848,7 @@
       init_common();
       init_components();
       init_components();
+      init_proxy();
       init_alerts();
       init_color();
       init_components2();
@@ -3971,10 +3987,18 @@
             components: {
               Forms,
               General: ReactNative,
-              Alert,
-              Button,
-              HelpMessage,
-              SafeAreaView,
+              get Alert() {
+                return getFindContext(Alert).unproxy();
+              },
+              get Button() {
+                return getFindContext(Button).unproxy();
+              },
+              get HelpMessage() {
+                return getFindContext(HelpMessage).unproxy();
+              },
+              get SafeAreaView() {
+                return getFindContext(SafeAreaView).unproxy();
+              },
               Summary,
               ErrorBoundary,
               Codeblock,
@@ -7609,7 +7633,7 @@
           },
           rawTabsConfig: {
             useTrailing: function() {
-              return `(${"728998f-dev"})`;
+              return `(${"2affe0f-dev"})`;
             }
           }
         },
@@ -8133,7 +8157,7 @@
       alert([
         "Failed to load Bunny!\n",
         `Build Number: ${ClientInfoManager2.Build}`,
-        `Bunny: ${"728998f-dev"}`,
+        `Bunny: ${"2affe0f-dev"}`,
         stack || e?.toString?.()
       ].join("\n"));
     }
