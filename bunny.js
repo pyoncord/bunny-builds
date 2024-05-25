@@ -2047,6 +2047,13 @@
             return Object.keys(c2).length < Object.keys(c1).length ? c2 : c1;
           });
           return _cache[prop] = bestCandidate[prop];
+        },
+        ownKeys() {
+          var _this = this;
+          redesignProps.forEach(function(prop) {
+            _this.get({}, prop, {});
+          });
+          return Reflect.ownKeys(_cache);
         }
       });
     }
@@ -2159,7 +2166,7 @@
     if (blacklistedIds.has(id))
       return void 0;
     if (Number(id) === -1)
-      return init_redesign(), __toCommonJS(redesign_exports);
+      return (init_redesign(), __toCommonJS(redesign_exports)).default;
     if (metroModules[id]?.isInitialized && !metroModules[id]?.hasError) {
       return metroRequire(id);
     }
@@ -2178,7 +2185,7 @@
   function* getModules(uniq, all = false) {
     yield [
       -1,
-      (init_redesign(), __toCommonJS(redesign_exports))
+      (init_redesign(), __toCommonJS(redesign_exports)).default
     ];
     var cache = getMetroCache().findIndex[uniq];
     if (all && !cache?._)
@@ -2215,7 +2222,7 @@
         var id = Number(key);
         var metroModule = metroModules[id];
         var cache = getMetroCache().exportsIndex[id];
-        if (cache?.[0] & ExportsFlags.BLACKLISTED) {
+        if (cache & ExportsFlags.BLACKLISTED) {
           blacklistModule(id);
           return "continue";
         }
@@ -2316,31 +2323,16 @@
     if (!moduleExports)
       return 0;
     var bit = 1;
-    bit |= moduleExports.__esModule ? 2 : 0;
-    bit |= typeof moduleExports === "function" ? 8 : 0;
-    if (typeof moduleExports === "string" || typeof moduleExports === "number") {
-      bit |= 16;
-    }
     return bit;
   }
   function indexExportsFlags(moduleId, moduleExports) {
-    var flags = moduleExports.default && moduleExports.__esModule ? [
-      extractExportsFlags(moduleExports),
-      extractExportsFlags(moduleExports.default)
-    ] : [
-      extractExportsFlags(moduleExports),
-      0
-    ];
-    if (flags[0] !== 1 && flags[1] !== 1) {
+    var flags = extractExportsFlags(moduleExports);
+    if (flags !== 1) {
       _metroCache.exportsIndex[moduleId] = flags;
     }
   }
   function indexBlacklistFlag(id) {
-    var _metroCache_exportsIndex, _id;
-    (_metroCache_exportsIndex = _metroCache.exportsIndex)[_id = id] ?? (_metroCache_exportsIndex[_id] = [
-      4,
-      0
-    ]);
+    _metroCache.exportsIndex[id] |= 2;
   }
   function getCacherForUniq(uniq, allFind) {
     var indexObject = _metroCache.findIndex[uniq];
@@ -2386,14 +2378,11 @@
       "use strict";
       init_modules();
       init_throttle();
-      CACHE_VERSION = 19;
+      CACHE_VERSION = 24;
       BUNNY_METRO_CACHE_KEY = `__bunny_metro_cache_key_v${CACHE_VERSION}__`;
       (function(ExportsFlags2) {
         ExportsFlags2[ExportsFlags2["EXISTS"] = 1] = "EXISTS";
-        ExportsFlags2[ExportsFlags2["ES_MODULE"] = 2] = "ES_MODULE";
-        ExportsFlags2[ExportsFlags2["BLACKLISTED"] = 4] = "BLACKLISTED";
-        ExportsFlags2[ExportsFlags2["FUNCTION"] = 8] = "FUNCTION";
-        ExportsFlags2[ExportsFlags2["PRIMITIVE"] = 16] = "PRIMITIVE";
+        ExportsFlags2[ExportsFlags2["BLACKLISTED"] = 2] = "BLACKLISTED";
       })(ExportsFlags || (ExportsFlags = {}));
       _metroCache = null;
       getMetroCache = window.__getMetroCache = function() {
@@ -2878,7 +2867,7 @@
       init_logger();
       init_toasts();
       import_react_native4 = __toESM(require_react_native());
-      versionHash = "2affe0f-dev";
+      versionHash = "403a238-dev";
     }
   });
 
@@ -7633,7 +7622,7 @@
           },
           rawTabsConfig: {
             useTrailing: function() {
-              return `(${"2affe0f-dev"})`;
+              return `(${"403a238-dev"})`;
             }
           }
         },
@@ -8157,7 +8146,7 @@
       alert([
         "Failed to load Bunny!\n",
         `Build Number: ${ClientInfoManager2.Build}`,
-        `Bunny: ${"2affe0f-dev"}`,
+        `Bunny: ${"403a238-dev"}`,
         stack || e?.toString?.()
       ].join("\n"));
     }
