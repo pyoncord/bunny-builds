@@ -351,7 +351,7 @@
         ];
       }
     }
-    finish();
+    finish(true);
     return [];
   }
   function findModuleId(filter) {
@@ -376,7 +376,7 @@
         cacheId(id, testedExports);
       }
     }
-    finish();
+    finish(foundExports.length === 0);
     return foundExports;
   }
   function findAllModuleId(filter) {
@@ -406,7 +406,7 @@
     if (!modulesMap)
       return;
     var id = Object.keys(modulesMap).filter(function(k) {
-      return k !== "_";
+      return k[0] !== "_";
     })[0];
     return id ? Number(id) : void 0;
   }
@@ -2166,7 +2166,7 @@
     if (blacklistedIds.has(id))
       return void 0;
     if (Number(id) === -1)
-      return (init_redesign(), __toCommonJS(redesign_exports)).default;
+      return init_redesign(), __toCommonJS(redesign_exports);
     if (metroModules[id]?.isInitialized && !metroModules[id]?.hasError) {
       return metroRequire(id);
     }
@@ -2185,12 +2185,16 @@
   function* getModules(uniq, all = false) {
     yield [
       -1,
-      (init_redesign(), __toCommonJS(redesign_exports)).default
+      (init_redesign(), __toCommonJS(redesign_exports))
     ];
     var cache = getMetroCache().findIndex[uniq];
-    if (all && !cache?._)
+    if (all && !cache?.[`_${ModulesMapInternal.FULL_LOOKUP}`])
       cache = void 0;
-    for (var id in cache ?? metroModules) {
+    if (cache?.[`_${ModulesMapInternal.NOT_FOUND}`])
+      return;
+    for (var id in cache) {
+      if (id[0] === "_")
+        continue;
       var exports = requireModule(Number(id));
       if (isBadExports(exports))
         continue;
@@ -2199,16 +2203,34 @@
         exports
       ];
     }
+    for (var id1 in metroModules) {
+      var exports1 = requireModule(Number(id1));
+      if (isBadExports(exports1))
+        continue;
+      yield [
+        id1,
+        exports1
+      ];
+    }
   }
   function* getCachedPolyfillModules(name) {
     var cache = getMetroCache().polyfillIndex[name];
-    for (var id in cache ?? metroModules) {
+    for (var id in cache) {
       var exports = requireModule(Number(id));
       if (isBadExports(exports))
         continue;
       yield [
         id,
         exports
+      ];
+    }
+    for (var id1 in metroModules) {
+      var exports1 = requireModule(Number(id1));
+      if (isBadExports(exports1))
+        continue;
+      yield [
+        id1,
+        exports1
       ];
     }
   }
@@ -2280,6 +2302,7 @@
   var caches_exports = {};
   __export(caches_exports, {
     ExportsFlags: () => ExportsFlags,
+    ModulesMapInternal: () => ModulesMapInternal,
     getCacherForUniq: () => getCacherForUniq,
     getMetroCache: () => getMetroCache,
     getPolyfillModuleCacher: () => getPolyfillModuleCacher,
@@ -2292,6 +2315,7 @@
     var cache = {
       _v: CACHE_VERSION,
       _buildNumber: ClientInfoManager.Build,
+      _modulesCount: Object.keys(window.modules).length,
       exportsIndex: {},
       findIndex: {},
       polyfillIndex: {},
@@ -2315,6 +2339,10 @@
         _metroCache = null;
         throw "cache invalidated; version mismatch";
       }
+      if (_metroCache._modulesCount !== Object.keys(window.modules).length) {
+        _metroCache = null;
+        throw "cache invalidated; modules count mismatch";
+      }
     } catch (e) {
       buildInitCache();
     }
@@ -2335,32 +2363,32 @@
     _metroCache.exportsIndex[id] |= 2;
   }
   function getCacherForUniq(uniq, allFind) {
-    var indexObject = _metroCache.findIndex[uniq];
+    var _metroCache_findIndex, _uniq;
+    var indexObject = (_metroCache_findIndex = _metroCache.findIndex)[_uniq = uniq] ?? (_metroCache_findIndex[_uniq] = {});
     return {
       cacheId(moduleId, exports) {
-        var _metroCache_findIndex, _uniq, _indexObject, _moduleId;
-        indexObject ?? (indexObject = (_metroCache_findIndex = _metroCache.findIndex)[_uniq = uniq] ?? (_metroCache_findIndex[_uniq] = {}));
+        var _indexObject, _moduleId;
         (_indexObject = indexObject)[_moduleId = moduleId] ?? (_indexObject[_moduleId] = extractExportsFlags(exports));
         saveCache();
       },
-      finish() {
-        var _metroCache_findIndex, _uniq;
-        indexObject ?? (indexObject = (_metroCache_findIndex = _metroCache.findIndex)[_uniq = uniq] ?? (_metroCache_findIndex[_uniq] = {}));
+      // Finish may not be called by single find
+      finish(notFound) {
         if (allFind)
-          indexObject._ = 1;
+          indexObject[`_${0}`] = 1;
+        if (notFound)
+          indexObject[`_${1}`] = 1;
         saveCache();
       }
     };
   }
   function getPolyfillModuleCacher(name) {
-    var indexObject = _metroCache.polyfillIndex[name];
+    var _metroCache_polyfillIndex, _name;
+    var indexObject = (_metroCache_polyfillIndex = _metroCache.polyfillIndex)[_name = name] ?? (_metroCache_polyfillIndex[_name] = {});
     return {
       getModules() {
         return (init_modules2(), __toCommonJS(modules_exports2)).getCachedPolyfillModules(name);
       },
       cacheId(moduleId) {
-        var _metroCache_polyfillIndex, _name;
-        indexObject ?? (indexObject = (_metroCache_polyfillIndex = _metroCache.polyfillIndex)[_name = name] ?? (_metroCache_polyfillIndex[_name] = {}));
         indexObject[moduleId] = 1;
         saveCache();
       }
@@ -2372,18 +2400,22 @@
       saveCache();
     }
   }
-  var CACHE_VERSION, BUNNY_METRO_CACHE_KEY, ExportsFlags, _metroCache, getMetroCache, saveCache;
+  var CACHE_VERSION, BUNNY_METRO_CACHE_KEY, ExportsFlags, ModulesMapInternal, _metroCache, getMetroCache, saveCache;
   var init_caches = __esm({
     "src/metro/caches.ts"() {
       "use strict";
       init_modules();
       init_throttle();
-      CACHE_VERSION = 24;
+      CACHE_VERSION = 29;
       BUNNY_METRO_CACHE_KEY = `__bunny_metro_cache_key_v${CACHE_VERSION}__`;
       (function(ExportsFlags2) {
         ExportsFlags2[ExportsFlags2["EXISTS"] = 1] = "EXISTS";
         ExportsFlags2[ExportsFlags2["BLACKLISTED"] = 2] = "BLACKLISTED";
       })(ExportsFlags || (ExportsFlags = {}));
+      (function(ModulesMapInternal2) {
+        ModulesMapInternal2[ModulesMapInternal2["FULL_LOOKUP"] = 0] = "FULL_LOOKUP";
+        ModulesMapInternal2[ModulesMapInternal2["NOT_FOUND"] = 1] = "NOT_FOUND";
+      })(ModulesMapInternal || (ModulesMapInternal = {}));
       _metroCache = null;
       getMetroCache = window.__getMetroCache = function() {
         return _metroCache;
@@ -2867,7 +2899,7 @@
       init_logger();
       init_toasts();
       import_react_native4 = __toESM(require_react_native());
-      versionHash = "403a238-dev";
+      versionHash = "eb55540-dev";
     }
   });
 
@@ -7622,7 +7654,7 @@
           },
           rawTabsConfig: {
             useTrailing: function() {
-              return `(${"403a238-dev"})`;
+              return `(${"eb55540-dev"})`;
             }
           }
         },
@@ -8138,7 +8170,7 @@
     try {
       Object.freeze = Object.seal = Object;
       await (init_caches(), __toCommonJS(caches_exports)).initMetroCache();
-      await (init_src(), __toCommonJS(src_exports)).default();
+      (init_src(), __toCommonJS(src_exports)).default();
     } catch (e) {
       var { ClientInfoManager: ClientInfoManager2 } = (init_modules(), __toCommonJS(modules_exports));
       var stack = e instanceof Error ? e.stack : void 0;
@@ -8146,7 +8178,7 @@
       alert([
         "Failed to load Bunny!\n",
         `Build Number: ${ClientInfoManager2.Build}`,
-        `Bunny: ${"403a238-dev"}`,
+        `Bunny: ${"eb55540-dev"}`,
         stack || e?.toString?.()
       ].join("\n"));
     }
