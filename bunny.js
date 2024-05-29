@@ -2899,7 +2899,7 @@
       init_logger();
       init_toasts();
       import_react_native4 = __toESM(require_react_native());
-      versionHash = "8b377b2-dev";
+      versionHash = "011f15e-dev";
     }
   });
 
@@ -4713,11 +4713,13 @@
         ];
         var sections = findInReactTree(res.props.children, function(n) {
           return n?.children?.[1]?.type === LegacyFormSection;
-        }).children;
-        var index = sections.findIndex(function(c) {
-          return titles.includes(c?.props.label);
-        });
-        sections.splice(-~index || 4, 0, /* @__PURE__ */ __bunny_createElement(SettingsSection, null));
+        })?.children;
+        if (sections) {
+          var index = sections.findIndex(function(c) {
+            return titles.includes(c?.props.label);
+          });
+          sections.splice(-~index || 4, 0, /* @__PURE__ */ __bunny_createElement(SettingsSection, null));
+        }
       }));
     }, true);
     unpatches.push(unpatch2);
@@ -7649,7 +7651,7 @@
           },
           rawTabsConfig: {
             useTrailing: function() {
-              return `(${"8b377b2-dev"})`;
+              return `(${"011f15e-dev"})`;
             }
           }
         },
@@ -8173,7 +8175,7 @@
       alert([
         "Failed to load Bunny!\n",
         `Build Number: ${ClientInfoManager2.Build}`,
-        `Bunny: ${"8b377b2-dev"}`,
+        `Bunny: ${"011f15e-dev"}`,
         stack || e?.toString?.()
       ].join("\n"));
     }
