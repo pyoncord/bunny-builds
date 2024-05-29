@@ -2899,7 +2899,7 @@
       init_logger();
       init_toasts();
       import_react_native4 = __toESM(require_react_native());
-      versionHash = "eb55540-dev";
+      versionHash = "8b377b2-dev";
     }
   });
 
@@ -3836,7 +3836,7 @@
     }
   });
 
-  // src/core/polyfills/vendettaObject.ts
+  // src/core/polyfills/vendettaObject.tsx
   async function createVdPluginObject(plugin) {
     return {
       ...window.vendetta,
@@ -3851,7 +3851,7 @@
   }
   var import_react, import_react_native11, initVendettaObject, cyrb64, cyrb64Hash;
   var init_vendettaObject = __esm({
-    "src/core/polyfills/vendettaObject.ts"() {
+    "src/core/polyfills/vendettaObject.tsx"() {
       "use strict";
       init_assets();
       init_commands();
@@ -3869,7 +3869,6 @@
       init_common();
       init_components();
       init_components();
-      init_proxy();
       init_alerts();
       init_color();
       init_components2();
@@ -3907,7 +3906,7 @@
                       (0, import_react.useEffect)(function() {
                         return console.warn("Discord has removed 'ActionSheetContentContainer', please move into something else. This has been temporarily replaced with View");
                       }, []);
-                      return (0, import_react.createElement)(import_react_native11.View, null, children);
+                      return /* @__PURE__ */ (0, import_react.createElement)(import_react_native11.View, null, children);
                     }
                   };
                 }
@@ -4008,17 +4007,13 @@
             components: {
               Forms,
               General: ReactNative,
-              get Alert() {
-                return getFindContext(Alert).unproxy();
+              Alert,
+              Button,
+              HelpMessage: function(...props) {
+                return /* @__PURE__ */ __bunny_createElement(HelpMessage, props);
               },
-              get Button() {
-                return getFindContext(Button).unproxy();
-              },
-              get HelpMessage() {
-                return getFindContext(HelpMessage).unproxy();
-              },
-              get SafeAreaView() {
-                return getFindContext(SafeAreaView).unproxy();
+              SafeAreaView: function(...props) {
+                return /* @__PURE__ */ __bunny_createElement(SafeAreaView, props);
               },
               Summary,
               ErrorBoundary,
@@ -7654,7 +7649,7 @@
           },
           rawTabsConfig: {
             useTrailing: function() {
-              return `(${"eb55540-dev"})`;
+              return `(${"8b377b2-dev"})`;
             }
           }
         },
@@ -8178,7 +8173,7 @@
       alert([
         "Failed to load Bunny!\n",
         `Build Number: ${ClientInfoManager2.Build}`,
-        `Bunny: ${"eb55540-dev"}`,
+        `Bunny: ${"8b377b2-dev"}`,
         stack || e?.toString?.()
       ].join("\n"));
     }
