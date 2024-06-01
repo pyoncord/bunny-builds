@@ -564,25 +564,28 @@
       init_caches();
       init_modules2();
       assetsMap = new Proxy({}, {
-        get(target, p) {
-          var _assetDefinition, _assetDefinition1, _assetDefinition2;
+        get(cache, p) {
           if (typeof p !== "string")
             return void 0;
-          if (target[p])
-            return target[p];
-          var moduleId = getMetroCache().assetsIndex[p];
-          if (moduleId == null)
+          if (cache[p])
+            return cache[p];
+          var moduleIds = getMetroCache().assetsIndex[p];
+          if (moduleIds == null || Object.keys(moduleIds).length === 0)
             return void 0;
-          var assetIndex = requireModule(moduleId);
-          var assetDefinition = assetsModule.getAssetByID(assetIndex);
-          (_assetDefinition1 = assetDefinition).index ?? (_assetDefinition1.index = (_assetDefinition = assetDefinition).id ?? (_assetDefinition.id = assetIndex));
-          (_assetDefinition2 = assetDefinition).moduleId ?? (_assetDefinition2.moduleId = moduleId);
-          return target[p] = assetDefinition;
+          for (var id in moduleIds) {
+            var _assetDefinition, _assetDefinition1, _assetDefinition2, _cache, _p;
+            var assetIndex = requireModule(Number(id));
+            var assetDefinition = assetsModule.getAssetByID(assetIndex);
+            (_assetDefinition1 = assetDefinition).index ?? (_assetDefinition1.index = (_assetDefinition = assetDefinition).id ?? (_assetDefinition.id = assetIndex));
+            (_assetDefinition2 = assetDefinition).moduleId ?? (_assetDefinition2.moduleId = id);
+            (_cache = cache)[_p = p] ?? (_cache[_p] = assetDefinition);
+          }
+          return cache[p];
         },
-        ownKeys(target) {
+        ownKeys(cache) {
           var keys = Reflect.ownKeys(getMetroCache().assetsIndex);
           for (var key of keys)
-            target[key] = this.get(target, key, {});
+            cache[key] = this.get(cache, key, {});
           return keys;
         }
       });
@@ -1920,12 +1923,31 @@
   __export(redesign_exports, {
     default: () => redesign_default
   });
-  var redesignProps, cacher, _cache, redesign_default;
+  var _loop, redesignProps, cacher, _module, redesign_default, prop;
   var init_redesign = __esm({
     "src/metro/polyfills/redesign.ts"() {
       "use strict";
       init_caches();
       init_filters();
+      _loop = function(prop) {
+        var filter = byProps(prop);
+        var candidates = [];
+        for (var [id, moduleExports] of cacher.getModules()) {
+          if (filter(moduleExports, id, false)) {
+            cacher.cacheId(id);
+            candidates.push(moduleExports);
+          } else if (moduleExports.__esModule && moduleExports.default && filter(moduleExports.default, id, false)) {
+            cacher.cacheId(id);
+            candidates.push(moduleExports.default);
+          }
+        }
+        if (candidates.length === 0)
+          return "continue";
+        var bestCandidate = candidates.reduce(function(c1, c2) {
+          return Object.keys(c2).length < Object.keys(c1).length ? c2 : c1;
+        });
+        _module[prop] = bestCandidate[prop];
+      };
       redesignProps = /* @__PURE__ */ new Set([
         "AlertActionButton",
         "AlertModal",
@@ -2022,40 +2044,11 @@
         "useTooltip"
       ]);
       cacher = getPolyfillModuleCacher("redesign_module");
-      _cache = {};
-      redesign_default = new Proxy({}, {
-        get(_, p) {
-          if (typeof p !== "string" || !redesignProps.has(p))
-            return;
-          if (_cache[p])
-            return _cache[p];
-          var prop = p;
-          var filter = byProps(prop);
-          var candidates = [];
-          for (var [id, moduleExports] of cacher.getModules()) {
-            if (filter(moduleExports, id, false)) {
-              cacher.cacheId(id);
-              candidates.push(moduleExports);
-            } else if (moduleExports.__esModule && moduleExports.default && filter(moduleExports.default, id, false)) {
-              cacher.cacheId(id);
-              candidates.push(moduleExports.default);
-            }
-          }
-          if (candidates.length === 0)
-            return void 0;
-          var bestCandidate = candidates.reduce(function(c1, c2) {
-            return Object.keys(c2).length < Object.keys(c1).length ? c2 : c1;
-          });
-          return _cache[prop] = bestCandidate[prop];
-        },
-        ownKeys() {
-          var _this = this;
-          redesignProps.forEach(function(prop) {
-            _this.get({}, prop, {});
-          });
-          return Reflect.ownKeys(_cache);
-        }
-      });
+      _module = {};
+      redesign_default = _module;
+      for (prop of redesignProps)
+        _loop(prop);
+      cacher.finish();
     }
   });
 
@@ -2224,23 +2217,25 @@
         exports
       ];
     }
-    for (var id1 in metroModules) {
-      var exports1 = requireModule(Number(id1));
-      if (isBadExports(exports1))
-        continue;
-      yield [
-        id1,
-        exports1
-      ];
+    if (!cache[`_${ModulesMapInternal.FULL_LOOKUP}`]) {
+      for (var id1 in metroModules) {
+        var exports1 = requireModule(Number(id1));
+        if (isBadExports(exports1))
+          continue;
+        yield [
+          id1,
+          exports1
+        ];
+      }
     }
   }
-  var _loop, metroModules, metroRequire, moduleSubscriptions, blacklistedIds, noopHandler, functionToString, patchedInspectSource, patchedImportTracker, _importingModuleId, key;
+  var _loop2, metroModules, metroRequire, moduleSubscriptions, blacklistedIds, noopHandler, functionToString, patchedInspectSource, patchedImportTracker, _importingModuleId, key;
   var init_modules2 = __esm({
     "src/metro/modules.ts"() {
       "use strict";
       init_caches();
       init_esm();
-      _loop = function(key) {
+      _loop2 = function(key) {
         var id = Number(key);
         var metroModule = metroModules[id];
         var cache = getMetroCache().exportsIndex[id];
@@ -2294,7 +2289,7 @@
       patchedImportTracker = false;
       _importingModuleId = -1;
       for (key in metroModules)
-        _loop(key);
+        _loop2(key);
     }
   });
 
@@ -2391,12 +2386,17 @@
       cacheId(moduleId) {
         indexObject[moduleId] = 1;
         saveCache();
+      },
+      finish() {
+        indexObject[`_${0}`] = 1;
+        saveCache();
       }
     };
   }
   function registerAssetCacheId(name, moduleId) {
     if (!isNaN(moduleId)) {
-      _metroCache.assetsIndex[name] = moduleId;
+      var _metroCache_assetsIndex, _name;
+      ((_metroCache_assetsIndex = _metroCache.assetsIndex)[_name = name] ?? (_metroCache_assetsIndex[_name] = {}))[moduleId] = 1;
       saveCache();
     }
   }
@@ -2406,7 +2406,7 @@
       "use strict";
       init_modules();
       init_throttle();
-      CACHE_VERSION = 29;
+      CACHE_VERSION = 32;
       BUNNY_METRO_CACHE_KEY = `__bunny_metro_cache_key_v${CACHE_VERSION}__`;
       (function(ExportsFlags2) {
         ExportsFlags2[ExportsFlags2["EXISTS"] = 1] = "EXISTS";
@@ -2899,7 +2899,7 @@
       init_logger();
       init_toasts();
       import_react_native4 = __toESM(require_react_native());
-      versionHash = "011f15e-dev";
+      versionHash = "ba05c48-dev";
     }
   });
 
@@ -5925,36 +5925,23 @@
       init_styles();
       init_common();
       usePluginCardStyles = createStyles({
-        header: {
-          paddingVertical: 2
+        pluginIcon: {
+          tintColor: tokens.colors.LOGO_PRIMARY,
+          height: 18,
+          width: 18
         },
-        headerLeading: {
-          flexDirection: "column",
+        actionIconContainer: {
+          width: 32,
+          height: 32,
+          borderRadius: 20,
+          backgroundColor: tokens.colors.BACKGROUND_ACCENT,
           justifyContent: "center",
-          scale: 1.2
-        },
-        headerTrailing: {
-          display: "flex",
-          flexDirection: "row",
-          gap: 15,
           alignItems: "center"
         },
-        headerLabel: {
-          ...TextStyleSheet["heading-md/semibold"],
-          color: tokens.colors.TEXT_NORMAL
-        },
-        headerSubtitle: {},
-        descriptionLabel: {
-          ...TextStyleSheet["text-md/semibold"],
-          color: tokens.colors.TEXT_NORMAL
-        },
-        actions: {
-          flexDirection: "row-reverse",
-          alignItems: "center",
-          gap: 5
-        },
-        iconStyle: {
-          tintColor: tokens.colors.LOGO_PRIMARY
+        actionIcon: {
+          tintColor: tokens.colors.INTERACTIVE_NORMAL,
+          width: 18,
+          height: 18
         }
       });
     }
@@ -6139,21 +6126,21 @@
   function Title() {
     var styles3 = usePluginCardStyles();
     var plugin = usePlugin();
+    var iconName = plugin.manifest.vendetta?.icon;
+    var icon = iconName && requireAssetIndex(iconName);
     return /* @__PURE__ */ __bunny_createElement(Text, {
-      variant: "heading-lg/semibold"
-    }, plugin.manifest.vendetta?.icon && /* @__PURE__ */ __bunny_createElement(React.Fragment, null, /* @__PURE__ */ __bunny_createElement(import_react_native16.Image, {
-      style: styles3.iconStyle,
-      source: {
-        // This is pretty dirty but RN won't listen if I declare height and width somewhere else
-        ...import_react_native16.Image.resolveAssetSource(requireAssetIndex(plugin.manifest.vendetta?.icon)),
-        height: 18,
-        width: 18
-      }
+      numberOfLines: 1,
+      adjustsFontSizeToFit: true,
+      variant: "heading-md/semibold"
+    }, icon && /* @__PURE__ */ __bunny_createElement(React.Fragment, null, /* @__PURE__ */ __bunny_createElement(import_react_native16.Image, {
+      style: styles3.pluginIcon,
+      source: icon
     }), " "), plugin.manifest.name);
   }
   function Status() {
     var plugin = usePlugin();
-    var TEXT_NORMAL = useToken(tokens.colors.TEXT_NORMAL);
+    var styles3 = usePluginCardStyles();
+    var INTERACTIVE_NORMAL = useToken(tokens.colors.INTERACTIVE_NORMAL);
     if (!plugin.error)
       return null;
     return /* @__PURE__ */ __bunny_createElement(import_react_native16.View, {
@@ -6162,19 +6149,36 @@
         alignItems: "center",
         gap: 8
       }
+    }, /* @__PURE__ */ __bunny_createElement(import_react_native16.View, {
+      style: styles3.actionIcon
     }, /* @__PURE__ */ __bunny_createElement(import_react_native16.Image, {
-      tintColor: TEXT_NORMAL,
-      source: {
-        ...import_react_native16.Image.resolveAssetSource(requireAssetIndex("WarningIcon")),
-        height: 18,
-        width: 18
-      }
-    }), /* @__PURE__ */ __bunny_createElement(Text, {
+      tintColor: INTERACTIVE_NORMAL,
+      source: requireAssetIndex("WarningIcon")
+    })), /* @__PURE__ */ __bunny_createElement(Text, {
       variant: "text-sm/semibold"
     }, "There was an error while attempting to start this plugin."));
   }
+  function ActionIcon(props) {
+    var styles3 = usePluginCardStyles();
+    return /* @__PURE__ */ __bunny_createElement(import_react_native16.View, {
+      style: props.disabled && {
+        opacity: 0.4,
+        pointerEvents: "none"
+      }
+    }, /* @__PURE__ */ __bunny_createElement(PressableScale, {
+      onPress: function() {
+        return !props.disabled && props.onPress();
+      }
+    }, /* @__PURE__ */ __bunny_createElement(import_react_native16.View, {
+      style: styles3.actionIconContainer
+    }, /* @__PURE__ */ __bunny_createElement(import_react_native16.Image, {
+      source: requireAssetIndex(props.icon),
+      style: styles3.actionIcon
+    }))));
+  }
   function PluginCard({ item: plugin }) {
     var navigation2 = NavigationNative.useNavigation();
+    var styles3 = usePluginCardStyles();
     useProxy(plugin);
     return /* @__PURE__ */ __bunny_createElement(PluginContext.Provider, {
       value: plugin
@@ -6194,17 +6198,29 @@
     }, /* @__PURE__ */ __bunny_createElement(Stack, {
       spacing: 12,
       direction: "horizontal"
-    }, /* @__PURE__ */ __bunny_createElement(IconButton, {
+    }, /* @__PURE__ */ __bunny_createElement(import_react_native16.View, {
+      style: {
+        flexDirection: "row",
+        gap: 6
+      }
+    }, /* @__PURE__ */ __bunny_createElement(ActionIcon, {
+      icon: "WrenchIcon",
+      disabled: !getSettings(plugin.id),
       onPress: function() {
-        showSheet("PluginInfoActionSheet", Promise.resolve().then(() => (init_PluginInfoActionSheet(), PluginInfoActionSheet_exports)), {
+        return navigation2.push("VendettaCustomPage", {
+          title: plugin.manifest.name,
+          render: getSettings(plugin.id)
+        });
+      }
+    }), /* @__PURE__ */ __bunny_createElement(ActionIcon, {
+      icon: "CircleInformationIcon-primary",
+      onPress: function() {
+        return void showSheet("PluginInfoActionSheet", Promise.resolve().then(() => (init_PluginInfoActionSheet(), PluginInfoActionSheet_exports)), {
           plugin,
           navigation: navigation2
         });
-      },
-      size: "sm",
-      variant: "secondary",
-      icon: requireAssetIndex(getSettings(plugin.id) ? "SettingsIcon" : "MoreHorizontalIcon")
-    }), /* @__PURE__ */ __bunny_createElement(TableSwitch, {
+      }
+    })), /* @__PURE__ */ __bunny_createElement(TableSwitch, {
       value: plugin.enabled,
       onValueChange: function(v) {
         if (v)
@@ -7651,7 +7667,7 @@
           },
           rawTabsConfig: {
             useTrailing: function() {
-              return `(${"011f15e-dev"})`;
+              return `(${"ba05c48-dev"})`;
             }
           }
         },
@@ -8175,7 +8191,7 @@
       alert([
         "Failed to load Bunny!\n",
         `Build Number: ${ClientInfoManager2.Build}`,
-        `Bunny: ${"011f15e-dev"}`,
+        `Bunny: ${"ba05c48-dev"}`,
         stack || e?.toString?.()
       ].join("\n"));
     }
