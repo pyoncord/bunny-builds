@@ -2899,7 +2899,7 @@
       init_logger();
       init_toasts();
       import_react_native4 = __toESM(require_react_native());
-      versionHash = "ba05c48-dev";
+      versionHash = "9513d54-dev";
     }
   });
 
@@ -3135,7 +3135,7 @@
   });
 
   // src/metro/common/components.ts
-  var bySingularProp, findSingular, findProp, Alert, CompatButton, HelpMessage, SafeAreaView, ActionSheetRow, Button, TwinButtons, IconButton, RowButton, PressableScale, TableRow, TableRowIcon, TableRowTrailingText, TableRowGroup, TableSwitchRow, TableSwitch, TableRadio, TableCheckbox, FormSwitch, FormRadio, FormCheckbox, Card, RedesignCompat, Stack, TextInput, SegmentedControl, CompatSegmentedControl, FloatingActionButton, ActionSheet, BottomSheetTitleHeader, textsModule, Text, Forms, LegacyForm, LegacyFormArrow, LegacyFormCTA, LegacyFormCTAButton, LegacyFormCardSection, LegacyFormCheckbox, LegacyFormCheckboxRow, LegacyFormCheckmark, LegacyFormDivider, LegacyFormHint, LegacyFormIcon, LegacyFormInput, LegacyFormLabel, LegacyFormRadio, LegacyFormRadioGroup, LegacyFormRadioRow, LegacyFormRow, LegacyFormSection, LegacyFormSelect, LegacyFormSliderRow, LegacyFormSubLabel, LegacyFormSwitch, LegacyFormSwitchRow, LegacyFormTernaryCheckBox, LegacyFormText, LegacyFormTitle;
+  var bySingularProp, findSingular, findProp, LegacyAlert, CompatButton, HelpMessage, SafeAreaView, ActionSheetRow, Button, TwinButtons, IconButton, RowButton, PressableScale, TableRow, TableRowIcon, TableRowTrailingText, TableRowGroup, TableSwitchRow, TableSwitch, TableRadio, TableCheckbox, FormSwitch, FormRadio, FormCheckbox, Card, RedesignCompat, Stack, TextInput, SegmentedControl, CompatSegmentedControl, FloatingActionButton, ActionSheet, BottomSheetTitleHeader, textsModule, Text, Forms, LegacyForm, LegacyFormArrow, LegacyFormCTA, LegacyFormCTAButton, LegacyFormCardSection, LegacyFormCheckbox, LegacyFormCheckboxRow, LegacyFormCheckmark, LegacyFormDivider, LegacyFormHint, LegacyFormIcon, LegacyFormInput, LegacyFormLabel, LegacyFormRadio, LegacyFormRadioGroup, LegacyFormRadioRow, LegacyFormRow, LegacyFormSection, LegacyFormSelect, LegacyFormSliderRow, LegacyFormSubLabel, LegacyFormSwitch, LegacyFormSwitchRow, LegacyFormTernaryCheckBox, LegacyFormText, LegacyFormTitle;
   var init_components = __esm({
     "src/metro/common/components.ts"() {
       "use strict";
@@ -3157,7 +3157,7 @@
           return findByProps(prop)[prop];
         });
       };
-      Alert = findByDisplayNameProxy("FluxContainer(Alert)");
+      LegacyAlert = findByDisplayNameProxy("FluxContainer(Alert)");
       CompatButton = findByPropsProxy("Looks", "Colors", "Sizes");
       HelpMessage = findByNameProxy("HelpMessage");
       SafeAreaView = proxyLazy(function() {
@@ -3214,7 +3214,7 @@
         setError(e.message);
       });
     }
-    return /* @__PURE__ */ __bunny_createElement(Alert, {
+    return /* @__PURE__ */ __bunny_createElement(LegacyAlert, {
       title,
       confirmText,
       confirmColor,
@@ -4007,8 +4007,8 @@
             components: {
               Forms,
               General: ReactNative,
-              Alert,
-              Button,
+              Alert: LegacyAlert,
+              Button: CompatButton,
               HelpMessage: function(...props) {
                 return /* @__PURE__ */ __bunny_createElement(HelpMessage, props);
               },
@@ -7667,7 +7667,7 @@
           },
           rawTabsConfig: {
             useTrailing: function() {
-              return `(${"ba05c48-dev"})`;
+              return `(${"9513d54-dev"})`;
             }
           }
         },
@@ -8191,7 +8191,7 @@
       alert([
         "Failed to load Bunny!\n",
         `Build Number: ${ClientInfoManager2.Build}`,
-        `Bunny: ${"ba05c48-dev"}`,
+        `Bunny: ${"9513d54-dev"}`,
         stack || e?.toString?.()
       ].join("\n"));
     }
