@@ -2406,8 +2406,8 @@
       "use strict";
       init_modules();
       init_throttle();
-      CACHE_VERSION = 32;
-      BUNNY_METRO_CACHE_KEY = `__bunny_metro_cache_key_v${CACHE_VERSION}__`;
+      CACHE_VERSION = 33;
+      BUNNY_METRO_CACHE_KEY = "__bunny_metro_cache_key__";
       (function(ExportsFlags2) {
         ExportsFlags2[ExportsFlags2["EXISTS"] = 1] = "EXISTS";
         ExportsFlags2[ExportsFlags2["BLACKLISTED"] = 2] = "BLACKLISTED";
@@ -2899,7 +2899,7 @@
       init_logger();
       init_toasts();
       import_react_native4 = __toESM(require_react_native());
-      versionHash = "846369d-dev";
+      versionHash = "98398b0-dev";
     }
   });
 
@@ -5142,9 +5142,86 @@
     }
   });
 
-  // node_modules/.pnpm/fuzzysort@2.0.4/node_modules/fuzzysort/fuzzysort.js
+  // node_modules/.pnpm/@swc+helpers@0.5.11/node_modules/@swc/helpers/esm/_construct.js
+  function _construct(Parent, args, Class) {
+    if (_is_native_reflect_construct())
+      _construct = Reflect.construct;
+    else {
+      _construct = function construct(Parent2, args2, Class2) {
+        var a = [
+          null
+        ];
+        a.push.apply(a, args2);
+        var Constructor = Function.bind.apply(Parent2, a);
+        var instance = new Constructor();
+        if (Class2)
+          _set_prototype_of(instance, Class2.prototype);
+        return instance;
+      };
+    }
+    return _construct.apply(null, arguments);
+  }
+  var init_construct = __esm({
+    "node_modules/.pnpm/@swc+helpers@0.5.11/node_modules/@swc/helpers/esm/_construct.js"() {
+      init_is_native_reflect_construct();
+      init_set_prototype_of();
+    }
+  });
+
+  // node_modules/.pnpm/@swc+helpers@0.5.11/node_modules/@swc/helpers/esm/_is_native_function.js
+  function _is_native_function(fn) {
+    return Function.toString.call(fn).indexOf("[native code]") !== -1;
+  }
+  var init_is_native_function = __esm({
+    "node_modules/.pnpm/@swc+helpers@0.5.11/node_modules/@swc/helpers/esm/_is_native_function.js"() {
+    }
+  });
+
+  // node_modules/.pnpm/@swc+helpers@0.5.11/node_modules/@swc/helpers/esm/_wrap_native_super.js
+  function _wrap_native_super(Class) {
+    var _cache = typeof Map === "function" ? /* @__PURE__ */ new Map() : void 0;
+    _wrap_native_super = function _wrap_native_super2(Class2) {
+      if (Class2 === null || !_is_native_function(Class2))
+        return Class2;
+      if (typeof Class2 !== "function")
+        throw new TypeError("Super expression must either be null or a function");
+      if (typeof _cache !== "undefined") {
+        if (_cache.has(Class2))
+          return _cache.get(Class2);
+        _cache.set(Class2, Wrapper);
+      }
+      function Wrapper() {
+        return _construct(Class2, arguments, _get_prototype_of(this).constructor);
+      }
+      Wrapper.prototype = Object.create(Class2.prototype, {
+        constructor: {
+          value: Wrapper,
+          enumerable: false,
+          writable: true,
+          configurable: true
+        }
+      });
+      return _set_prototype_of(Wrapper, Class2);
+    };
+    return _wrap_native_super(Class);
+  }
+  var init_wrap_native_super = __esm({
+    "node_modules/.pnpm/@swc+helpers@0.5.11/node_modules/@swc/helpers/esm/_wrap_native_super.js"() {
+      init_construct();
+      init_get_prototype_of();
+      init_is_native_function();
+      init_set_prototype_of();
+    }
+  });
+
+  // node_modules/.pnpm/fuzzysort@3.0.1/node_modules/fuzzysort/fuzzysort.js
   var require_fuzzysort = __commonJS({
-    "node_modules/.pnpm/fuzzysort@2.0.4/node_modules/fuzzysort/fuzzysort.js"(exports, module) {
+    "node_modules/.pnpm/fuzzysort@3.0.1/node_modules/fuzzysort/fuzzysort.js"(exports, module) {
+      init_class_call_check();
+      init_create_class();
+      init_inherits();
+      init_wrap_native_super();
+      init_create_super();
       (function(root, UMD) {
         if (typeof define === "function" && define.amd)
           define([], UMD);
@@ -5155,18 +5232,10 @@
       })(exports, function(_) {
         "use strict";
         var single = function(search, target) {
-          if (search == "farzher")
-            return {
-              target: "farzher was here (^-^*)/",
-              score: 0,
-              _indexes: [
-                0
-              ]
-            };
           if (!search || !target)
             return NULL;
           var preparedSearch = getPreparedSearch(search);
-          if (!isObj(target))
+          if (!isPrepared(target))
             target = getPrepared(target);
           var searchBitflags = preparedSearch.bitflags;
           if ((searchBitflags & target._bitflags) !== searchBitflags)
@@ -5174,121 +5243,169 @@
           return algorithm(preparedSearch, target);
         };
         var go = function(search, targets, options) {
-          if (search == "farzher")
-            return [
-              {
-                target: "farzher was here (^-^*)/",
-                score: 0,
-                _indexes: [
-                  0
-                ],
-                obj: targets ? targets[0] : NULL
-              }
-            ];
           if (!search)
-            return options && options.all ? all(search, targets, options) : noResults;
+            return options?.all ? all(targets, options) : noResults;
           var preparedSearch = getPreparedSearch(search);
           var searchBitflags = preparedSearch.bitflags;
           var containsSpace = preparedSearch.containsSpace;
-          var threshold = options && options.threshold || INT_MIN;
-          var limit = options && options["limit"] || INT_MAX;
+          var threshold = denormalizeScore(options?.threshold || 0);
+          var limit = options?.limit || INFINITY;
           var resultsLen = 0;
           var limitedCount = 0;
           var targetsLen = targets.length;
-          if (options && options.key) {
+          function push_result(result2) {
+            if (resultsLen < limit) {
+              q.add(result2);
+              ++resultsLen;
+            } else {
+              ++limitedCount;
+              if (result2._score > q.peek()._score)
+                q.replaceTop(result2);
+            }
+          }
+          if (options?.key) {
             var key = options.key;
             for (var i = 0; i < targetsLen; ++i) {
               var obj = targets[i];
               var target = getValue(obj, key);
               if (!target)
                 continue;
-              if (!isObj(target))
+              if (!isPrepared(target))
                 target = getPrepared(target);
               if ((searchBitflags & target._bitflags) !== searchBitflags)
                 continue;
               var result = algorithm(preparedSearch, target);
               if (result === NULL)
                 continue;
-              if (result.score < threshold)
+              if (result._score < threshold)
                 continue;
-              result = {
-                target: result.target,
-                _targetLower: "",
-                _targetLowerCodes: NULL,
-                _nextBeginningIndexes: NULL,
-                _bitflags: 0,
-                score: result.score,
-                _indexes: result._indexes,
-                obj
-              };
-              if (resultsLen < limit) {
-                q.add(result);
-                ++resultsLen;
-              } else {
-                ++limitedCount;
-                if (result.score > q.peek().score)
-                  q.replaceTop(result);
-              }
+              result.obj = obj;
+              push_result(result);
             }
-          } else if (options && options.keys) {
-            var scoreFn = options["scoreFn"] || defaultScoreFn;
+          } else if (options?.keys) {
             var keys = options.keys;
             var keysLen = keys.length;
-            for (var i = 0; i < targetsLen; ++i) {
-              var obj = targets[i];
-              var objResults = new Array(keysLen);
-              for (var keyI = 0; keyI < keysLen; ++keyI) {
-                var key = keys[keyI];
-                var target = getValue(obj, key);
-                if (!target) {
-                  objResults[keyI] = NULL;
-                  continue;
+            outer:
+              for (var i = 0; i < targetsLen; ++i) {
+                var obj = targets[i];
+                {
+                  var keysBitflags = 0;
+                  for (var keyI = 0; keyI < keysLen; ++keyI) {
+                    var key = keys[keyI];
+                    var target = getValue(obj, key);
+                    if (!target) {
+                      tmpTargets[keyI] = noTarget;
+                      continue;
+                    }
+                    if (!isPrepared(target))
+                      target = getPrepared(target);
+                    tmpTargets[keyI] = target;
+                    keysBitflags |= target._bitflags;
+                  }
+                  if ((searchBitflags & keysBitflags) !== searchBitflags)
+                    continue;
                 }
-                if (!isObj(target))
-                  target = getPrepared(target);
-                if ((searchBitflags & target._bitflags) !== searchBitflags)
-                  objResults[keyI] = NULL;
-                else
-                  objResults[keyI] = algorithm(preparedSearch, target);
+                if (containsSpace)
+                  for (var i1 = 0; i1 < preparedSearch.spaceSearches.length; i1++)
+                    keysSpacesBestScores[i1] = NEGATIVE_INFINITY;
+                for (var keyI = 0; keyI < keysLen; ++keyI) {
+                  target = tmpTargets[keyI];
+                  if (target === noTarget) {
+                    tmpResults[keyI] = noTarget;
+                    continue;
+                  }
+                  tmpResults[keyI] = algorithm(
+                    preparedSearch,
+                    target,
+                    /*allowSpaces=*/
+                    false,
+                    /*allowPartialMatch=*/
+                    containsSpace
+                  );
+                  if (tmpResults[keyI] === NULL) {
+                    tmpResults[keyI] = noTarget;
+                    continue;
+                  }
+                  if (containsSpace)
+                    for (var i2 = 0; i2 < preparedSearch.spaceSearches.length; i2++) {
+                      if (allowPartialMatchScores[i2] > -1e3) {
+                        if (keysSpacesBestScores[i2] > NEGATIVE_INFINITY) {
+                          var tmp = (keysSpacesBestScores[i2] + allowPartialMatchScores[i2]) / 4;
+                          if (tmp > keysSpacesBestScores[i2])
+                            keysSpacesBestScores[i2] = tmp;
+                        }
+                      }
+                      if (allowPartialMatchScores[i2] > keysSpacesBestScores[i2])
+                        keysSpacesBestScores[i2] = allowPartialMatchScores[i2];
+                    }
+                }
+                if (containsSpace) {
+                  for (var i3 = 0; i3 < preparedSearch.spaceSearches.length; i3++) {
+                    if (keysSpacesBestScores[i3] === NEGATIVE_INFINITY)
+                      continue outer;
+                  }
+                } else {
+                  var hasAtLeast1Match = false;
+                  for (var i4 = 0; i4 < keysLen; i4++) {
+                    if (tmpResults[i4]._score !== NEGATIVE_INFINITY) {
+                      hasAtLeast1Match = true;
+                      break;
+                    }
+                  }
+                  if (!hasAtLeast1Match)
+                    continue;
+                }
+                var objResults = new KeysResult(keysLen);
+                for (var i5 = 0; i5 < keysLen; i5++) {
+                  objResults[i5] = tmpResults[i5];
+                }
+                if (containsSpace) {
+                  var score = 0;
+                  for (var i6 = 0; i6 < preparedSearch.spaceSearches.length; i6++)
+                    score += keysSpacesBestScores[i6];
+                } else {
+                  var score = NEGATIVE_INFINITY;
+                  for (var i7 = 0; i7 < keysLen; i7++) {
+                    var result = objResults[i7];
+                    if (result._score > -1e3) {
+                      if (score > NEGATIVE_INFINITY) {
+                        var tmp = (score + result._score) / 4;
+                        if (tmp > score)
+                          score = tmp;
+                      }
+                    }
+                    if (result._score > score)
+                      score = result._score;
+                  }
+                }
+                objResults.obj = obj;
+                objResults._score = score;
+                if (options?.scoreFn) {
+                  score = options.scoreFn(objResults);
+                  if (!score)
+                    continue;
+                  score = denormalizeScore(score);
+                  objResults._score = score;
+                }
+                if (score < threshold)
+                  continue;
+                push_result(objResults);
               }
-              objResults.obj = obj;
-              var score = scoreFn(objResults);
-              if (score === NULL)
-                continue;
-              if (score < threshold)
-                continue;
-              objResults.score = score;
-              if (resultsLen < limit) {
-                q.add(objResults);
-                ++resultsLen;
-              } else {
-                ++limitedCount;
-                if (score > q.peek().score)
-                  q.replaceTop(objResults);
-              }
-            }
           } else {
             for (var i = 0; i < targetsLen; ++i) {
               var target = targets[i];
               if (!target)
                 continue;
-              if (!isObj(target))
+              if (!isPrepared(target))
                 target = getPrepared(target);
               if ((searchBitflags & target._bitflags) !== searchBitflags)
                 continue;
               var result = algorithm(preparedSearch, target);
               if (result === NULL)
                 continue;
-              if (result.score < threshold)
+              if (result._score < threshold)
                 continue;
-              if (resultsLen < limit) {
-                q.add(result);
-                ++resultsLen;
-              } else {
-                ++limitedCount;
-                if (result.score > q.peek().score)
-                  q.replaceTop(result);
-              }
+              push_result(result);
             }
           }
           if (resultsLen === 0)
@@ -5299,111 +5416,164 @@
           results.total = resultsLen + limitedCount;
           return results;
         };
-        var highlight = function(result, hOpen, hClose) {
-          if (typeof hOpen === "function")
-            return highlightCallback(result, hOpen);
-          if (result === NULL)
-            return NULL;
-          if (hOpen === void 0)
-            hOpen = "<b>";
-          if (hClose === void 0)
-            hClose = "</b>";
-          var highlighted = "";
-          var matchesIndex = 0;
-          var opened = false;
+        var highlight = function(result, open = "<b>", close = "</b>") {
+          var callback = typeof open === "function" ? open : void 0;
           var target = result.target;
           var targetLen = target.length;
-          var indexes2 = result._indexes;
-          indexes2 = indexes2.slice(0, indexes2.len).sort(function(a, b) {
-            return a - b;
-          });
-          for (var i = 0; i < targetLen; ++i) {
-            var char = target[i];
-            if (indexes2[matchesIndex] === i) {
-              ++matchesIndex;
-              if (!opened) {
-                opened = true;
-                highlighted += hOpen;
-              }
-              if (matchesIndex === indexes2.length) {
-                highlighted += char + hClose + target.substr(i + 1);
-                break;
-              }
-            } else {
-              if (opened) {
-                opened = false;
-                highlighted += hClose;
-              }
-            }
-            highlighted += char;
-          }
-          return highlighted;
-        };
-        var highlightCallback = function(result, cb) {
-          if (result === NULL)
-            return NULL;
-          var target = result.target;
-          var targetLen = target.length;
-          var indexes2 = result._indexes;
-          indexes2 = indexes2.slice(0, indexes2.len).sort(function(a, b) {
-            return a - b;
-          });
+          var indexes = result.indexes;
           var highlighted = "";
           var matchI = 0;
           var indexesI = 0;
           var opened = false;
-          var result = [];
+          var parts = [];
           for (var i = 0; i < targetLen; ++i) {
             var char = target[i];
-            if (indexes2[indexesI] === i) {
+            if (indexes[indexesI] === i) {
               ++indexesI;
               if (!opened) {
                 opened = true;
-                result.push(highlighted);
-                highlighted = "";
+                if (callback) {
+                  parts.push(highlighted);
+                  highlighted = "";
+                } else {
+                  highlighted += open;
+                }
               }
-              if (indexesI === indexes2.length) {
-                highlighted += char;
-                result.push(cb(highlighted, matchI++));
-                highlighted = "";
-                result.push(target.substr(i + 1));
+              if (indexesI === indexes.length) {
+                if (callback) {
+                  highlighted += char;
+                  parts.push(callback(highlighted, matchI++));
+                  highlighted = "";
+                  parts.push(target.substr(i + 1));
+                } else {
+                  highlighted += char + close + target.substr(i + 1);
+                }
                 break;
               }
             } else {
               if (opened) {
                 opened = false;
-                result.push(cb(highlighted, matchI++));
-                highlighted = "";
+                if (callback) {
+                  parts.push(callback(highlighted, matchI++));
+                  highlighted = "";
+                } else {
+                  highlighted += close;
+                }
               }
             }
             highlighted += char;
           }
-          return result;
-        };
-        var indexes = function(result) {
-          return result._indexes.slice(0, result._indexes.len).sort(function(a, b) {
-            return a - b;
-          });
+          return callback ? parts : highlighted;
         };
         var prepare = function(target) {
-          if (typeof target !== "string")
+          if (typeof target === "number")
+            target = "" + target;
+          else if (typeof target !== "string")
             target = "";
           var info = prepareLowerInfo(target);
-          return {
-            "target": target,
+          return new_result(target, {
             _targetLower: info._lower,
             _targetLowerCodes: info.lowerCodes,
-            _nextBeginningIndexes: NULL,
-            _bitflags: info.bitflags,
-            "score": NULL,
-            _indexes: [
-              0
-            ],
-            "obj": NULL
-          };
+            _bitflags: info.bitflags
+          });
+        };
+        var cleanup = function() {
+          preparedCache.clear();
+          preparedSearchCache.clear();
+        };
+        var Result = /* @__PURE__ */ function() {
+          function Result2() {
+            _class_call_check(this, Result2);
+          }
+          _create_class(Result2, [
+            {
+              key: "indexes",
+              get: function get() {
+                return this._indexes.slice(0, this._indexes.len).sort(function(a, b) {
+                  return a - b;
+                });
+              }
+            },
+            {
+              key: "indexes",
+              set: function set(indexes) {
+                return this._indexes = indexes;
+              }
+            },
+            {
+              key: "highlight",
+              value: function value(open, close) {
+                return highlight(this, open, close);
+              }
+            },
+            {
+              key: "score",
+              get: function get() {
+                return normalizeScore(this._score);
+              }
+            },
+            {
+              key: "score",
+              set: function set(score) {
+                this._score = denormalizeScore(score);
+              }
+            }
+          ]);
+          return Result2;
+        }();
+        var KeysResult = /* @__PURE__ */ function(Array1) {
+          _inherits(KeysResult2, Array1);
+          var _super = _create_super(KeysResult2);
+          function KeysResult2() {
+            _class_call_check(this, KeysResult2);
+            return _super.apply(this, arguments);
+          }
+          _create_class(KeysResult2, [
+            {
+              key: "score",
+              get: function get() {
+                return normalizeScore(this._score);
+              }
+            },
+            {
+              key: "score",
+              set: function set(score) {
+                this._score = denormalizeScore(score);
+              }
+            }
+          ]);
+          return KeysResult2;
+        }(_wrap_native_super(Array));
+        var new_result = function(target, options) {
+          var result = new Result();
+          result["target"] = target;
+          result["obj"] = options.obj ?? NULL;
+          result._score = options._score ?? NEGATIVE_INFINITY;
+          result._indexes = options._indexes ?? [];
+          result._targetLower = options._targetLower ?? "";
+          result._targetLowerCodes = options._targetLowerCodes ?? NULL;
+          result._nextBeginningIndexes = options._nextBeginningIndexes ?? NULL;
+          result._bitflags = options._bitflags ?? 0;
+          return result;
+        };
+        var normalizeScore = function(score) {
+          if (score === NEGATIVE_INFINITY)
+            return 0;
+          if (score > 1)
+            return score;
+          return Math.E ** (((-score + 1) ** 0.04307 - 1) * -2);
+        };
+        var denormalizeScore = function(normalizedScore) {
+          if (normalizedScore === 0)
+            return NEGATIVE_INFINITY;
+          if (normalizedScore > 1)
+            return normalizedScore;
+          return 1 - Math.pow(Math.log(normalizedScore) / -2 + 1, 1 / 0.04307);
         };
         var prepareSearch = function(search) {
-          if (typeof search !== "string")
+          if (typeof search === "number")
+            search = "" + search;
+          else if (typeof search !== "string")
             search = "";
           search = search.trim();
           var info = prepareLowerInfo(search);
@@ -5426,9 +5596,9 @@
           }
           return {
             lowerCodes: info.lowerCodes,
-            bitflags: info.bitflags,
-            containsSpace: info.containsSpace,
             _lower: info._lower,
+            containsSpace: info.containsSpace,
+            bitflags: info.bitflags,
             spaceSearches
           };
         };
@@ -5452,53 +5622,44 @@
           preparedSearchCache.set(search, searchPrepared);
           return searchPrepared;
         };
-        var all = function(search, targets, options) {
+        var all = function(targets, options) {
           var results = [];
           results.total = targets.length;
-          var limit = options && options.limit || INT_MAX;
-          if (options && options.key) {
+          var limit = options?.limit || INFINITY;
+          if (options?.key) {
             for (var i = 0; i < targets.length; i++) {
               var obj = targets[i];
               var target = getValue(obj, options.key);
-              if (!target)
+              if (target == NULL)
                 continue;
-              if (!isObj(target))
+              if (!isPrepared(target))
                 target = getPrepared(target);
-              target.score = INT_MIN;
-              target._indexes.len = 0;
-              var result = target;
-              result = {
-                target: result.target,
-                _targetLower: "",
-                _targetLowerCodes: NULL,
-                _nextBeginningIndexes: NULL,
-                _bitflags: 0,
-                score: target.score,
-                _indexes: NULL,
-                obj
-              };
+              var result = new_result(target.target, {
+                _score: target._score,
+                obj: target.obj
+              });
               results.push(result);
               if (results.length >= limit)
                 return results;
             }
-          } else if (options && options.keys) {
+          } else if (options?.keys) {
             for (var i = 0; i < targets.length; i++) {
               var obj = targets[i];
-              var objResults = new Array(options.keys.length);
+              var objResults = new KeysResult(options.keys.length);
               for (var keyI = options.keys.length - 1; keyI >= 0; --keyI) {
                 var target = getValue(obj, options.keys[keyI]);
                 if (!target) {
-                  objResults[keyI] = NULL;
+                  objResults[keyI] = noTarget;
                   continue;
                 }
-                if (!isObj(target))
+                if (!isPrepared(target))
                   target = getPrepared(target);
-                target.score = INT_MIN;
+                target._score = NEGATIVE_INFINITY;
                 target._indexes.len = 0;
                 objResults[keyI] = target;
               }
               objResults.obj = obj;
-              objResults.score = INT_MIN;
+              objResults._score = NEGATIVE_INFINITY;
               results.push(objResults);
               if (results.length >= limit)
                 return results;
@@ -5506,11 +5667,11 @@
           } else {
             for (var i = 0; i < targets.length; i++) {
               var target = targets[i];
-              if (!target)
+              if (target == NULL)
                 continue;
-              if (!isObj(target))
+              if (!isPrepared(target))
                 target = getPrepared(target);
-              target.score = INT_MIN;
+              target._score = NEGATIVE_INFINITY;
               target._indexes.len = 0;
               results.push(target);
               if (results.length >= limit)
@@ -5519,9 +5680,9 @@
           }
           return results;
         };
-        var algorithm = function(preparedSearch, prepared, allowSpaces = false) {
+        var algorithm = function(preparedSearch, prepared, allowSpaces = false, allowPartialMatch = false) {
           if (allowSpaces === false && preparedSearch.containsSpace)
-            return algorithmSpaces(preparedSearch, prepared);
+            return algorithmSpaces(preparedSearch, prepared, allowPartialMatch);
           var searchLower = preparedSearch._lower;
           var searchLowerCodes = preparedSearch.lowerCodes;
           var searchLowerCode = searchLowerCodes[0];
@@ -5550,7 +5711,7 @@
           var nextBeginningIndexes = prepared._nextBeginningIndexes;
           if (nextBeginningIndexes === NULL)
             nextBeginningIndexes = prepared._nextBeginningIndexes = prepareNextBeginningIndexes(prepared.target);
-          var firstPossibleI = targetI = matchesSimple[0] === 0 ? 0 : nextBeginningIndexes[matchesSimple[0] - 1];
+          targetI = matchesSimple[0] === 0 ? 0 : nextBeginningIndexes[matchesSimple[0] - 1];
           var backtrackCount = 0;
           if (targetI !== targetLen)
             for (; ; ) {
@@ -5578,86 +5739,158 @@
                 }
               }
             }
-          var substringIndex = prepared._targetLower.indexOf(searchLower, matchesSimple[0]);
-          var isSubstring = ~substringIndex;
-          if (isSubstring && !successStrict) {
-            for (var i = 0; i < matchesSimpleLen; ++i)
-              matchesSimple[i] = substringIndex + i;
-          }
-          var isSubstringBeginning = false;
-          if (isSubstring) {
-            isSubstringBeginning = prepared._nextBeginningIndexes[substringIndex - 1] === substringIndex;
-          }
-          {
-            if (successStrict) {
-              var matchesBest = matchesStrict;
-              var matchesBestLen = matchesStrictLen;
-            } else {
-              var matchesBest = matchesSimple;
-              var matchesBestLen = matchesSimpleLen;
+          var substringIndex = searchLen <= 1 ? -1 : prepared._targetLower.indexOf(searchLower, matchesSimple[0]);
+          var isSubstring = !!~substringIndex;
+          var isSubstringBeginning = !isSubstring ? false : substringIndex === 0 || prepared._nextBeginningIndexes[substringIndex - 1] === substringIndex;
+          if (isSubstring && !isSubstringBeginning) {
+            for (var i = 0; i < nextBeginningIndexes.length; i = nextBeginningIndexes[i]) {
+              if (i <= substringIndex)
+                continue;
+              for (var s = 0; s < searchLen; s++)
+                if (searchLowerCodes[s] !== prepared._targetLowerCodes[i + s])
+                  break;
+              if (s === searchLen) {
+                substringIndex = i;
+                isSubstringBeginning = true;
+                break;
+              }
             }
-            var score = 0;
+          }
+          var calculateScore = function(matches) {
+            var score2 = 0;
             var extraMatchGroupCount = 0;
-            for (var i = 1; i < searchLen; ++i) {
-              if (matchesBest[i] - matchesBest[i - 1] !== 1) {
-                score -= matchesBest[i];
+            for (var i2 = 1; i2 < searchLen; ++i2) {
+              if (matches[i2] - matches[i2 - 1] !== 1) {
+                score2 -= matches[i2];
                 ++extraMatchGroupCount;
               }
             }
-            var unmatchedDistance = matchesBest[searchLen - 1] - matchesBest[0] - (searchLen - 1);
-            score -= (12 + unmatchedDistance) * extraMatchGroupCount;
-            if (matchesBest[0] !== 0)
-              score -= matchesBest[0] * matchesBest[0] * 0.2;
+            var unmatchedDistance = matches[searchLen - 1] - matches[0] - (searchLen - 1);
+            score2 -= (12 + unmatchedDistance) * extraMatchGroupCount;
+            if (matches[0] !== 0)
+              score2 -= matches[0] * matches[0] * 0.2;
             if (!successStrict) {
-              score *= 1e3;
+              score2 *= 1e3;
             } else {
               var uniqueBeginningIndexes = 1;
-              for (var i = nextBeginningIndexes[0]; i < targetLen; i = nextBeginningIndexes[i])
+              for (var i2 = nextBeginningIndexes[0]; i2 < targetLen; i2 = nextBeginningIndexes[i2])
                 ++uniqueBeginningIndexes;
               if (uniqueBeginningIndexes > 24)
-                score *= (uniqueBeginningIndexes - 24) * 10;
+                score2 *= (uniqueBeginningIndexes - 24) * 10;
             }
+            score2 -= (targetLen - searchLen) / 2;
             if (isSubstring)
-              score /= 1 + searchLen * searchLen * 1;
+              score2 /= 1 + searchLen * searchLen * 1;
             if (isSubstringBeginning)
-              score /= 1 + searchLen * searchLen * 1;
-            score -= targetLen - searchLen;
-            prepared.score = score;
-            for (var i = 0; i < matchesBestLen; ++i)
-              prepared._indexes[i] = matchesBest[i];
-            prepared._indexes.len = matchesBestLen;
-            return prepared;
+              score2 /= 1 + searchLen * searchLen * 1;
+            score2 -= (targetLen - searchLen) / 2;
+            return score2;
+          };
+          if (!successStrict) {
+            if (isSubstring)
+              for (var i = 0; i < searchLen; ++i)
+                matchesSimple[i] = substringIndex + i;
+            var matchesBest = matchesSimple;
+            var score = calculateScore(matchesBest);
+          } else {
+            if (isSubstringBeginning) {
+              for (var i = 0; i < searchLen; ++i)
+                matchesSimple[i] = substringIndex + i;
+              var matchesBest = matchesSimple;
+              var score = calculateScore(matchesSimple);
+            } else {
+              var matchesBest = matchesStrict;
+              var score = calculateScore(matchesStrict);
+            }
           }
+          prepared._score = score;
+          for (var i = 0; i < searchLen; ++i)
+            prepared._indexes[i] = matchesBest[i];
+          prepared._indexes.len = searchLen;
+          return new_result(prepared.target, {
+            _score: prepared._score,
+            _indexes: prepared._indexes
+          });
         };
-        var algorithmSpaces = function(preparedSearch, target) {
+        var algorithmSpaces = function(preparedSearch, target, allowPartialMatch) {
           var seen_indexes = /* @__PURE__ */ new Set();
           var score = 0;
           var result = NULL;
           var first_seen_index_last_search = 0;
           var searches = preparedSearch.spaceSearches;
-          for (var i = 0; i < searches.length; ++i) {
+          var searchesLen = searches.length;
+          var changeslen = 0;
+          var resetNextBeginningIndexes = function() {
+            for (var i3 = changeslen - 1; i3 >= 0; i3--)
+              target._nextBeginningIndexes[nextBeginningIndexesChanges[i3 * 2 + 0]] = nextBeginningIndexesChanges[i3 * 2 + 1];
+          };
+          var hasAtLeast1Match = false;
+          for (var i = 0; i < searchesLen; ++i) {
+            allowPartialMatchScores[i] = NEGATIVE_INFINITY;
             var search = searches[i];
             result = algorithm(search, target);
-            if (result === NULL)
-              return NULL;
-            score += result.score;
+            if (allowPartialMatch) {
+              if (result === NULL)
+                continue;
+              hasAtLeast1Match = true;
+            } else {
+              if (result === NULL) {
+                resetNextBeginningIndexes();
+                return NULL;
+              }
+            }
+            var isTheLastSearch = i === searchesLen - 1;
+            if (!isTheLastSearch) {
+              var indexes = result._indexes;
+              var indexesIsConsecutiveSubstring = true;
+              for (var i1 = 0; i1 < indexes.len - 1; i1++) {
+                if (indexes[i1 + 1] - indexes[i1] !== 1) {
+                  indexesIsConsecutiveSubstring = false;
+                  break;
+                }
+              }
+              if (indexesIsConsecutiveSubstring) {
+                var newBeginningIndex = indexes[indexes.len - 1] + 1;
+                var toReplace = target._nextBeginningIndexes[newBeginningIndex - 1];
+                for (var i2 = newBeginningIndex - 1; i2 >= 0; i2--) {
+                  if (toReplace !== target._nextBeginningIndexes[i2])
+                    break;
+                  target._nextBeginningIndexes[i2] = newBeginningIndex;
+                  nextBeginningIndexesChanges[changeslen * 2 + 0] = i2;
+                  nextBeginningIndexesChanges[changeslen * 2 + 1] = toReplace;
+                  changeslen++;
+                }
+              }
+            }
+            score += result._score / searchesLen;
+            allowPartialMatchScores[i] = result._score / searchesLen;
             if (result._indexes[0] < first_seen_index_last_search) {
-              score -= first_seen_index_last_search - result._indexes[0];
+              score -= (first_seen_index_last_search - result._indexes[0]) * 2;
             }
             first_seen_index_last_search = result._indexes[0];
             for (var j = 0; j < result._indexes.len; ++j)
               seen_indexes.add(result._indexes[j]);
           }
+          if (allowPartialMatch && !hasAtLeast1Match)
+            return NULL;
+          resetNextBeginningIndexes();
           var allowSpacesResult = algorithm(
             preparedSearch,
             target,
             /*allowSpaces=*/
             true
           );
-          if (allowSpacesResult !== NULL && allowSpacesResult.score > score) {
+          if (allowSpacesResult !== NULL && allowSpacesResult._score > score) {
+            if (allowPartialMatch) {
+              for (var i = 0; i < searchesLen; ++i) {
+                allowPartialMatchScores[i] = allowSpacesResult._score / searchesLen;
+              }
+            }
             return allowSpacesResult;
           }
-          result.score = score;
+          if (allowPartialMatch)
+            result = target;
+          result._score = score;
           var i = 0;
           for (var index of seen_indexes)
             result._indexes[i++] = index;
@@ -5720,35 +5953,21 @@
           }
           return nextBeginningIndexes;
         };
-        var cleanup = function() {
-          preparedCache.clear();
-          preparedSearchCache.clear();
-          matchesSimple = [];
-          matchesStrict = [];
-        };
         var preparedCache = /* @__PURE__ */ new Map();
         var preparedSearchCache = /* @__PURE__ */ new Map();
         var matchesSimple = [];
         var matchesStrict = [];
-        var defaultScoreFn = function(a) {
-          var max = INT_MIN;
-          var len = a.length;
-          for (var i = 0; i < len; ++i) {
-            var result = a[i];
-            if (result === NULL)
-              continue;
-            var score = result.score;
-            if (score > max)
-              max = score;
-          }
-          if (max === INT_MIN)
-            return NULL;
-          return max;
-        };
+        var nextBeginningIndexesChanges = [];
+        var keysSpacesBestScores = [];
+        var allowPartialMatchScores = [];
+        var tmpTargets = [];
+        var tmpResults = [];
         var getValue = function(obj, prop) {
           var tmp = obj[prop];
           if (tmp !== void 0)
             return tmp;
+          if (typeof prop === "function")
+            return prop(obj);
           var segs = prop;
           if (!Array.isArray(prop))
             segs = prop.split(".");
@@ -5758,28 +5977,29 @@
             obj = obj[segs[i]];
           return obj;
         };
-        var isObj = function(x) {
-          return typeof x === "object";
+        var isPrepared = function(x) {
+          return typeof x === "object" && typeof x._bitflags === "number";
         };
-        var INT_MAX = Infinity;
-        var INT_MIN = -INT_MAX;
+        var INFINITY = Infinity;
+        var NEGATIVE_INFINITY = -INFINITY;
         var noResults = [];
         noResults.total = 0;
         var NULL = null;
+        var noTarget = prepare("");
         var fastpriorityqueue = function(r) {
           var e = [], o = 0, a = {}, v = function(r2) {
             for (var a2 = 0, v2 = e[a2], c = 1; c < o; ) {
               var s = c + 1;
-              a2 = c, s < o && e[s].score < e[c].score && (a2 = s), e[a2 - 1 >> 1] = e[a2], c = 1 + (a2 << 1);
+              a2 = c, s < o && e[s]._score < e[c]._score && (a2 = s), e[a2 - 1 >> 1] = e[a2], c = 1 + (a2 << 1);
             }
-            for (var f = a2 - 1 >> 1; a2 > 0 && v2.score < e[f].score; f = (a2 = f) - 1 >> 1)
+            for (var f = a2 - 1 >> 1; a2 > 0 && v2._score < e[f]._score; f = (a2 = f) - 1 >> 1)
               e[a2] = e[f];
             e[a2] = v2;
           };
           return a.add = function(r2) {
             var a2 = o;
             e[o++] = r2;
-            for (var v2 = a2 - 1 >> 1; a2 > 0 && r2.score < e[v2].score; v2 = (a2 = v2) - 1 >> 1)
+            for (var v2 = a2 - 1 >> 1; a2 > 0 && r2._score < e[v2]._score; v2 = (a2 = v2) - 1 >> 1)
               e[a2] = e[v2];
             e[a2] = r2;
           }, a.poll = function(r2) {
@@ -5798,9 +6018,7 @@
         return {
           "single": single,
           "go": go,
-          "highlight": highlight,
           "prepare": prepare,
-          "indexes": indexes,
           "cleanup": cleanup
         };
       });
@@ -5808,57 +6026,62 @@
   });
 
   // src/core/ui/components/AddonPage.tsx
-  function getItemsByQuery(items, query) {
-    if (!query)
-      return items;
-    return import_fuzzysort.default.go(query, items, {
-      keys: [
-        "id",
-        "name",
-        "manifest.name",
-        "manifest.description",
-        "manifest.authors.0.name",
-        "manifest.authors.1.name"
-      ]
-    }).map(function(r) {
-      return r.obj;
-    });
-  }
   function AddonPage({ card: CardComponent, ...props }) {
-    useProxy(props.items);
     useProxy(settings);
+    useProxy(props.items);
     var [search, setSearch] = React.useState("");
-    return /* @__PURE__ */ __bunny_createElement(ErrorBoundary, null, /* @__PURE__ */ __bunny_createElement(import_react_native14.FlatList, {
-      ListHeaderComponent: /* @__PURE__ */ __bunny_createElement(import_react_native14.View, null, settings.safeMode?.enabled && /* @__PURE__ */ __bunny_createElement(import_react_native14.View, {
+    var items = (0, import_react2.useMemo)(function() {
+      return Object.values(props.items).filter(function(i) {
+        return typeof i === "object";
+      });
+    }, [
+      props.items
+    ]);
+    var data = (0, import_react2.useMemo)(function() {
+      if (!search)
+        return items;
+      return import_fuzzysort.default.go(search, items, {
+        keys: props.searchKeywords
+      }).map(function(r) {
+        return r.obj;
+      });
+    }, [
+      items,
+      search
+    ]);
+    var headerElement = (0, import_react2.useMemo)(function() {
+      return /* @__PURE__ */ __bunny_createElement(import_react_native14.View, null, settings.safeMode?.enabled && /* @__PURE__ */ __bunny_createElement(import_react_native14.View, {
         style: {
           marginBottom: 10
         }
       }, /* @__PURE__ */ __bunny_createElement(HelpMessage, {
         messageType: 0
       }, props.safeModeMessage), props.safeModeExtras), /* @__PURE__ */ __bunny_createElement(Search_default, {
+        style: {
+          padding: 8
+        },
         onChangeText: function(v) {
           return setSearch(v.toLowerCase());
         },
         placeholder: Strings.SEARCH
-      })),
-      style: {
-        paddingHorizontal: 10,
-        paddingTop: 10
-      },
+      }));
+    }, []);
+    return /* @__PURE__ */ __bunny_createElement(ErrorBoundary, null, /* @__PURE__ */ __bunny_createElement(FlashList, {
+      data,
+      estimatedItemSize: 136,
+      ListHeaderComponent: headerElement,
       contentContainerStyle: {
         paddingBottom: 90,
-        paddingHorizontal: 5,
-        gap: 12
+        paddingHorizontal: 5
       },
-      data: getItemsByQuery(Object.values(props.items).filter(function(i) {
-        return typeof i === "object";
-      }), search),
-      renderItem: function({ item, index }) {
-        return /* @__PURE__ */ __bunny_createElement(RemoveModeContext.Provider, {
-          value: !!props.isRemoveMode
+      renderItem: function({ item }) {
+        return /* @__PURE__ */ __bunny_createElement(import_react_native14.View, {
+          style: {
+            paddingVertical: 6,
+            paddingHorizontal: 8
+          }
         }, /* @__PURE__ */ __bunny_createElement(CardComponent, {
-          item,
-          index
+          item
         }));
       }
     }), /* @__PURE__ */ __bunny_createElement(FloatingActionButton, {
@@ -5878,7 +6101,7 @@
       }
     }));
   }
-  var import_fuzzysort, import_react2, import_react_native14, RemoveModeContext;
+  var import_fuzzysort, import_react2, import_react_native14, FlashList;
   var init_AddonPage = __esm({
     "src/core/ui/components/AddonPage.tsx"() {
       "use strict";
@@ -5887,6 +6110,7 @@
       init_storage();
       init_settings();
       init_constants();
+      init_metro();
       init_common();
       init_components();
       init_alerts();
@@ -5894,7 +6118,7 @@
       import_fuzzysort = __toESM(require_fuzzysort());
       import_react2 = __toESM(require_react());
       import_react_native14 = __toESM(require_react_native());
-      RemoveModeContext = /* @__PURE__ */ (0, import_react2.createContext)(false);
+      ({ FlashList } = findByProps("FlashList"));
     }
   });
 
@@ -5922,23 +6146,10 @@
       init_styles();
       init_common();
       usePluginCardStyles = createStyles({
-        pluginIcon: {
+        smallIcon: {
           tintColor: tokens.colors.LOGO_PRIMARY,
           height: 18,
           width: 18
-        },
-        actionIconContainer: {
-          width: 32,
-          height: 32,
-          borderRadius: 20,
-          backgroundColor: tokens.colors.BACKGROUND_ACCENT,
-          justifyContent: "center",
-          alignItems: "center"
-        },
-        actionIcon: {
-          tintColor: tokens.colors.INTERACTIVE_NORMAL,
-          width: 18,
-          height: 18
         }
       });
     }
@@ -6127,10 +6338,9 @@
     var icon = iconName && requireAssetIndex(iconName);
     return /* @__PURE__ */ __bunny_createElement(Text, {
       numberOfLines: 1,
-      adjustsFontSizeToFit: true,
-      variant: "heading-md/semibold"
+      variant: "heading-lg/semibold"
     }, icon && /* @__PURE__ */ __bunny_createElement(React.Fragment, null, /* @__PURE__ */ __bunny_createElement(import_react_native16.Image, {
-      style: styles3.pluginIcon,
+      style: styles3.smallIcon,
       source: icon
     }), " "), plugin.manifest.name);
   }
@@ -6147,7 +6357,7 @@
         gap: 8
       }
     }, /* @__PURE__ */ __bunny_createElement(import_react_native16.View, {
-      style: styles3.actionIcon
+      style: styles3.smallIcon
     }, /* @__PURE__ */ __bunny_createElement(import_react_native16.Image, {
       tintColor: INTERACTIVE_NORMAL,
       source: requireAssetIndex("WarningIcon")
@@ -6155,27 +6365,8 @@
       variant: "text-sm/semibold"
     }, "There was an error while attempting to start this plugin."));
   }
-  function ActionIcon(props) {
-    var styles3 = usePluginCardStyles();
-    return /* @__PURE__ */ __bunny_createElement(import_react_native16.View, {
-      style: props.disabled && {
-        opacity: 0.4,
-        pointerEvents: "none"
-      }
-    }, /* @__PURE__ */ __bunny_createElement(PressableScale, {
-      onPress: function() {
-        return !props.disabled && props.onPress();
-      }
-    }, /* @__PURE__ */ __bunny_createElement(import_react_native16.View, {
-      style: styles3.actionIconContainer
-    }, /* @__PURE__ */ __bunny_createElement(import_react_native16.Image, {
-      source: requireAssetIndex(props.icon),
-      style: styles3.actionIcon
-    }))));
-  }
   function PluginCard({ item: plugin }) {
     var navigation2 = NavigationNative.useNavigation();
-    var styles3 = usePluginCardStyles();
     useProxy(plugin);
     return /* @__PURE__ */ __bunny_createElement(PluginContext.Provider, {
       value: plugin
@@ -6184,15 +6375,13 @@
     }, /* @__PURE__ */ __bunny_createElement(Status, null), /* @__PURE__ */ __bunny_createElement(import_react_native16.View, {
       style: {
         flexDirection: "row",
-        alignItems: "center"
+        justifyContent: "space-between"
       }
-    }, /* @__PURE__ */ __bunny_createElement(Stack, {
-      spacing: 0
-    }, /* @__PURE__ */ __bunny_createElement(Title, null), /* @__PURE__ */ __bunny_createElement(Authors, null)), /* @__PURE__ */ __bunny_createElement(import_react_native16.View, {
+    }, /* @__PURE__ */ __bunny_createElement(import_react_native16.View, {
       style: {
-        marginLeft: "auto"
+        flexShrink: 1
       }
-    }, /* @__PURE__ */ __bunny_createElement(Stack, {
+    }, /* @__PURE__ */ __bunny_createElement(Title, null), /* @__PURE__ */ __bunny_createElement(Authors, null)), /* @__PURE__ */ __bunny_createElement(import_react_native16.View, null, /* @__PURE__ */ __bunny_createElement(Stack, {
       spacing: 12,
       direction: "horizontal"
     }, /* @__PURE__ */ __bunny_createElement(import_react_native16.View, {
@@ -6200,8 +6389,10 @@
         flexDirection: "row",
         gap: 6
       }
-    }, /* @__PURE__ */ __bunny_createElement(ActionIcon, {
-      icon: "WrenchIcon",
+    }, /* @__PURE__ */ __bunny_createElement(IconButton, {
+      size: "sm",
+      variant: "secondary",
+      icon: requireAssetIndex("WrenchIcon"),
       disabled: !getSettings(plugin.id),
       onPress: function() {
         return navigation2.push("VendettaCustomPage", {
@@ -6209,8 +6400,10 @@
           render: getSettings(plugin.id)
         });
       }
-    }), /* @__PURE__ */ __bunny_createElement(ActionIcon, {
-      icon: "CircleInformationIcon-primary",
+    }), /* @__PURE__ */ __bunny_createElement(IconButton, {
+      size: "sm",
+      variant: "secondary",
+      icon: requireAssetIndex("CircleInformationIcon-primary"),
       onPress: function() {
         return void showSheet("PluginInfoActionSheet", Promise.resolve().then(() => (init_PluginInfoActionSheet(), PluginInfoActionSheet_exports)), {
           plugin,
@@ -6263,6 +6456,15 @@
     useProxy(settings);
     return /* @__PURE__ */ __bunny_createElement(AddonPage, {
       title: Strings.PLUGINS,
+      searchKeywords: [
+        "manifest.name",
+        "manifest.description",
+        function(p) {
+          return p.manifest.authors?.map(function(a) {
+            return a.name;
+          }).join();
+        }
+      ],
       fetchFunction: installPlugin,
       items: plugins,
       safeModeMessage: Strings.SAFE_MODE_NOTICE_PLUGINS,
@@ -6525,6 +6727,15 @@
     useProxy(themes);
     return /* @__PURE__ */ __bunny_createElement(AddonPage, {
       title: Strings.THEMES,
+      searchKeywords: [
+        "manifest.name",
+        "manifest.description",
+        function(p) {
+          return p.manifest.authors?.map(function(a) {
+            return a.name;
+          }).join();
+        }
+      ],
       fetchFunction: installTheme,
       items: themes,
       safeModeMessage: formatString("SAFE_MODE_NOTICE_THEMES", {
@@ -7275,6 +7486,10 @@
     var navigation2 = NavigationNative.useNavigation();
     return /* @__PURE__ */ __bunny_createElement(AddonPage, {
       title: Strings.FONTS,
+      searchKeywords: [
+        "name",
+        "description"
+      ],
       fetchFunction: installFont,
       items: fonts,
       safeModeMessage: Strings.SAFE_MODE_NOTICE_FONTS,
@@ -7664,7 +7879,7 @@
           },
           rawTabsConfig: {
             useTrailing: function() {
-              return `(${"846369d-dev"})`;
+              return `(${"98398b0-dev"})`;
             }
           }
         },
@@ -8188,7 +8403,7 @@
       alert([
         "Failed to load Bunny!\n",
         `Build Number: ${ClientInfoManager2.Build}`,
-        `Bunny: ${"846369d-dev"}`,
+        `Bunny: ${"98398b0-dev"}`,
         stack || e?.toString?.()
       ].join("\n"));
     }
