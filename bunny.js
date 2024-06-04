@@ -2899,7 +2899,7 @@
       init_logger();
       init_toasts();
       import_react_native4 = __toESM(require_react_native());
-      versionHash = "9513d54-dev";
+      versionHash = "846369d-dev";
     }
   });
 
@@ -3729,11 +3729,8 @@
   function SearchIcon() {
     return /* @__PURE__ */ __bunny_createElement(import_react_native9.Image, {
       style: {
-        transform: [
-          {
-            scale: 0.8
-          }
-        ]
+        width: 16,
+        height: 16
       },
       source: requireAssetIndex("search")
     });
@@ -7667,7 +7664,7 @@
           },
           rawTabsConfig: {
             useTrailing: function() {
-              return `(${"9513d54-dev"})`;
+              return `(${"846369d-dev"})`;
             }
           }
         },
@@ -8191,7 +8188,7 @@
       alert([
         "Failed to load Bunny!\n",
         `Build Number: ${ClientInfoManager2.Build}`,
-        `Bunny: ${"9513d54-dev"}`,
+        `Bunny: ${"846369d-dev"}`,
         stack || e?.toString?.()
       ].join("\n"));
     }
