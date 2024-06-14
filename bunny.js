@@ -2899,7 +2899,7 @@
       init_logger();
       init_toasts();
       import_react_native4 = __toESM(require_react_native());
-      versionHash = "98398b0-dev";
+      versionHash = "ff2a752-dev";
     }
   });
 
@@ -7879,7 +7879,7 @@
           },
           rawTabsConfig: {
             useTrailing: function() {
-              return `(${"98398b0-dev"})`;
+              return `(${"ff2a752-dev"})`;
             }
           }
         },
@@ -8353,7 +8353,9 @@
       }
     );
     window.bunny = lib_exports;
-    unload.push(await initPlugins());
+    initPlugins().then(function(u) {
+      return unload.push(u);
+    });
     updateFonts();
     logger.log("Bunny is ready!");
   }
@@ -8395,7 +8397,7 @@
     try {
       Object.freeze = Object.seal = Object;
       await (init_caches(), __toCommonJS(caches_exports)).initMetroCache();
-      (init_src(), __toCommonJS(src_exports)).default();
+      await (init_src(), __toCommonJS(src_exports)).default();
     } catch (e) {
       var { ClientInfoManager: ClientInfoManager2 } = (init_modules(), __toCommonJS(modules_exports));
       var stack = e instanceof Error ? e.stack : void 0;
@@ -8403,7 +8405,7 @@
       alert([
         "Failed to load Bunny!\n",
         `Build Number: ${ClientInfoManager2.Build}`,
-        `Bunny: ${"98398b0-dev"}`,
+        `Bunny: ${"ff2a752-dev"}`,
         stack || e?.toString?.()
       ].join("\n"));
     }
