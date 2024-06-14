@@ -41,7 +41,7 @@
     var dummy = asFunction ? function dummy2() {
     } : {};
     var proxyFactory = function() {
-      return cache ?? (cache = factory());
+      return cache ??= factory();
     };
     var proxy = new Proxy(dummy, lazyHandler);
     proxyToFactoryMap.set(proxy, proxyFactory);
@@ -444,7 +444,7 @@
         return cache;
       },
       unproxy() {
-        cache ?? (cache = findExports(filter));
+        cache ??= findExports(filter);
         if (!cache)
           throw new Error(`${filter.uniq} is ${typeof cache}! (id ${context.moduleId ?? "unknown"})`);
         return cache;
@@ -573,12 +573,13 @@
           if (moduleIds == null || Object.keys(moduleIds).length === 0)
             return void 0;
           for (var id in moduleIds) {
-            var _assetDefinition, _assetDefinition1, _assetDefinition2, _cache, _p;
             var assetIndex = requireModule(Number(id));
             var assetDefinition = assetsModule.getAssetByID(assetIndex);
-            (_assetDefinition1 = assetDefinition).index ?? (_assetDefinition1.index = (_assetDefinition = assetDefinition).id ?? (_assetDefinition.id = assetIndex));
-            (_assetDefinition2 = assetDefinition).moduleId ?? (_assetDefinition2.moduleId = id);
-            (_cache = cache)[_p = p] ?? (_cache[_p] = assetDefinition);
+            if (!assetDefinition)
+              continue;
+            assetDefinition.index ??= assetDefinition.id ??= assetIndex;
+            assetDefinition.moduleId ??= id;
+            cache[p] ??= assetDefinition;
           }
           return cache[p];
         },
@@ -605,7 +606,7 @@
   });
 
   // src/core/polyfills/allSettled.ts
-  var _Promise, allSettledFulfill, allSettledReject, mapAllSettled, allSettled;
+  var allSettledFulfill, allSettledReject, mapAllSettled, allSettled;
   var init_allSettled = __esm({
     "src/core/polyfills/allSettled.ts"() {
       "use strict";
@@ -627,7 +628,7 @@
       allSettled = function(iterator) {
         return Promise.all(Array.from(iterator).map(mapAllSettled));
       };
-      (_Promise = Promise).allSettled ?? (_Promise.allSettled = allSettled);
+      Promise.allSettled ??= allSettled;
     }
   });
 
@@ -1371,13 +1372,11 @@
     ).hex();
   }
   function processData(data) {
-    var _data;
     if (data.semanticColors) {
       var { semanticColors: semanticColors2 } = data;
       for (var key in semanticColors2) {
         for (var index in semanticColors2[key]) {
-          var _semanticColors_key, _index;
-          (_semanticColors_key = semanticColors2[key])[_index = index] && (_semanticColors_key[_index] = normalizeToHex(semanticColors2[key][index]));
+          semanticColors2[key][index] &&= normalizeToHex(semanticColors2[key][index]);
         }
       }
     }
@@ -1389,7 +1388,7 @@
       if (import_react_native2.Platform.OS === "android")
         applyAndroidAlphaKeys(rawColors2);
     }
-    (_data = data).spec ?? (_data.spec = 2);
+    data.spec ??= 2;
     return data;
   }
   function applyAndroidAlphaKeys(rawColors2) {
@@ -1623,8 +1622,7 @@
     });
   }
   function extractInfo(themeName, colorObj) {
-    var _extractInfo;
-    var propName = colorObj[(_extractInfo = extractInfo)._sym ?? (_extractInfo._sym = Object.getOwnPropertySymbols(colorObj)[0])];
+    var propName = colorObj[extractInfo._sym ??= Object.getOwnPropertySymbols(colorObj)[0]];
     var colorDef = color.SemanticColor[propName];
     return [
       propName,
@@ -2073,11 +2071,10 @@
     return !exports || exports === window || exports["<!@ pylix was here :fuyusquish: !@>"] === null || exports.__proto__ === Object.prototype && Reflect.ownKeys(exports).length === 0;
   }
   function onModuleRequire(moduleExports, id) {
-    var _moduleExports;
     indexExportsFlags(id, moduleExports);
-    (_moduleExports = moduleExports).initSentry && (_moduleExports.initSentry = function() {
+    moduleExports.initSentry &&= function() {
       return void 0;
-    });
+    };
     if (moduleExports.default?.track && moduleExports.default.trackMaker)
       moduleExports.default.track = function() {
         return Promise.resolve();
@@ -2358,12 +2355,10 @@
     _metroCache.exportsIndex[id] |= 2;
   }
   function getCacherForUniq(uniq, allFind) {
-    var _metroCache_findIndex, _uniq;
-    var indexObject = (_metroCache_findIndex = _metroCache.findIndex)[_uniq = uniq] ?? (_metroCache_findIndex[_uniq] = {});
+    var indexObject = _metroCache.findIndex[uniq] ??= {};
     return {
       cacheId(moduleId, exports) {
-        var _indexObject, _moduleId;
-        (_indexObject = indexObject)[_moduleId = moduleId] ?? (_indexObject[_moduleId] = extractExportsFlags(exports));
+        indexObject[moduleId] ??= extractExportsFlags(exports);
         saveCache();
       },
       // Finish may not be called by single find
@@ -2377,8 +2372,7 @@
     };
   }
   function getPolyfillModuleCacher(name) {
-    var _metroCache_polyfillIndex, _name;
-    var indexObject = (_metroCache_polyfillIndex = _metroCache.polyfillIndex)[_name = name] ?? (_metroCache_polyfillIndex[_name] = {});
+    var indexObject = _metroCache.polyfillIndex[name] ??= {};
     return {
       getModules() {
         return (init_modules2(), __toCommonJS(modules_exports2)).getCachedPolyfillModules(name);
@@ -2395,8 +2389,7 @@
   }
   function registerAssetCacheId(name, moduleId) {
     if (!isNaN(moduleId)) {
-      var _metroCache_assetsIndex, _name;
-      ((_metroCache_assetsIndex = _metroCache.assetsIndex)[_name = name] ?? (_metroCache_assetsIndex[_name] = {}))[moduleId] = 1;
+      (_metroCache.assetsIndex[name] ??= {})[moduleId] = 1;
       saveCache();
     }
   }
@@ -2899,7 +2892,7 @@
       init_logger();
       init_toasts();
       import_react_native4 = __toESM(require_react_native());
-      versionHash = "ff2a752-dev";
+      versionHash = "5edaf48-dev";
     }
   });
 
@@ -3039,7 +3032,6 @@
     };
   }
   function registerCommand(command) {
-    var _command, _command1, _command2, _command3;
     var builtInCommands = commands.getBuiltInCommands(ApplicationCommandType.CHAT, true, false);
     builtInCommands.sort(function(a, b) {
       return parseInt(b.id) - parseInt(a.id);
@@ -3049,16 +3041,15 @@
     command.__bunny = {
       shouldHide: command.shouldHide
     };
-    (_command = command).applicationId ?? (_command.applicationId = "-1");
-    (_command1 = command).type ?? (_command1.type = ApplicationCommandType.CHAT);
+    command.applicationId ??= "-1";
+    command.type ??= ApplicationCommandType.CHAT;
     command.inputType = ApplicationCommandInputType.BUILT_IN;
-    (_command2 = command).displayName ?? (_command2.displayName = command.name);
-    (_command3 = command).displayDescription ?? (_command3.displayDescription = command.description);
+    command.displayName ??= command.name;
+    command.displayDescription ??= command.description;
     if (command.options)
       for (var opt of command.options) {
-        var _opt, _opt1;
-        (_opt = opt).displayName ?? (_opt.displayName = opt.name);
-        (_opt1 = opt).displayDescription ?? (_opt1.displayDescription = opt.description);
+        opt.displayName ??= opt.name;
+        opt.displayDescription ??= opt.description;
       }
     instead2("execute", command, function(args, orig) {
       Promise.resolve(orig.apply(command, args)).then(function(ret) {
@@ -3261,11 +3252,10 @@
     showInputAlert: () => showInputAlert
   });
   function showConfirmationAlert(options) {
-    var _internalOptions;
     var internalOptions = options;
     internalOptions.body = options.content;
     delete internalOptions.content;
-    (_internalOptions = internalOptions).isDismissable ?? (_internalOptions.isDismissable = true);
+    internalOptions.isDismissable ??= true;
     return Alerts2.show(internalOptions);
   }
   var Alerts2, showCustomAlert, showInputAlert;
@@ -3304,7 +3294,7 @@
   function resolveSemanticColor(sym, theme = ThemeStore2.theme) {
     return colorResolver.resolveSemanticColor(theme, sym);
   }
-  var _color_default, semanticColors, rawColors, ThemeStore2, colorResolver;
+  var semanticColors, rawColors, ThemeStore2, colorResolver;
   var init_color = __esm({
     "src/lib/ui/color.ts"() {
       "use strict";
@@ -3314,7 +3304,7 @@
       semanticColors = color?.default?.colors ?? constants?.ThemeColorMap;
       rawColors = color?.default?.unsafe_rawColors ?? constants?.Colors;
       ThemeStore2 = findByStoreNameProxy("ThemeStore");
-      colorResolver = (_color_default = color.default).meta ?? (_color_default.meta = color.default.internal);
+      colorResolver = color.default.meta ??= color.default.internal;
     }
   });
 
@@ -4628,7 +4618,7 @@
           title: screenOptions
         };
       }
-      navigation2 ?? (navigation2 = tabsNavigationRef.getRootNavigationRef());
+      navigation2 ??= tabsNavigationRef.getRootNavigationRef();
       navigation2.navigate("VendettaCustomPage", {
         ...screenOptions,
         render: function() {
@@ -7879,7 +7869,7 @@
           },
           rawTabsConfig: {
             useTrailing: function() {
-              return `(${"ff2a752-dev"})`;
+              return `(${"5edaf48-dev"})`;
             }
           }
         },
@@ -7960,7 +7950,6 @@
     intercept: () => intercept
   });
   function injectFluxInterceptor() {
-    var _dispatcher, _dispatcher1;
     var cb = function(payload) {
       for (var intercept2 of intercepts) {
         var res = intercept2(payload);
@@ -7975,11 +7964,11 @@
       }
       return blockedSym in payload;
     };
-    ((_dispatcher = dispatcher)._interceptors ?? (_dispatcher._interceptors = [])).unshift(cb);
+    (dispatcher._interceptors ??= []).unshift(cb);
     return function() {
-      return (_dispatcher1 = dispatcher)._interceptors && (_dispatcher1._interceptors = dispatcher._interceptors.filter(function(v) {
+      return dispatcher._interceptors &&= dispatcher._interceptors.filter(function(v) {
         return v !== cb;
-      }));
+      });
     };
   }
   function intercept(cb) {
@@ -8011,10 +8000,9 @@
       }
     ], function(_, ret) {
       var _this = this;
-      var _this_state;
       if (!this.state.error)
         return;
-      (_this_state = this.state).activeTab ?? (_this_state.activeTab = "message");
+      this.state.activeTab ??= "message";
       var tabData = tabs.find(function(t) {
         return t.id === _this.state.activeTab;
       });
@@ -8405,7 +8393,7 @@
       alert([
         "Failed to load Bunny!\n",
         `Build Number: ${ClientInfoManager2.Build}`,
-        `Bunny: ${"ff2a752-dev"}`,
+        `Bunny: ${"5edaf48-dev"}`,
         stack || e?.toString?.()
       ].join("\n"));
     }
