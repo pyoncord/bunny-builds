@@ -2892,7 +2892,7 @@
       init_logger();
       init_toasts();
       import_react_native4 = __toESM(require_react_native());
-      versionHash = "5edaf48-dev";
+      versionHash = "4469339-dev";
     }
   });
 
@@ -7869,7 +7869,7 @@
           },
           rawTabsConfig: {
             useTrailing: function() {
-              return `(${"5edaf48-dev"})`;
+              return `(${"4469339-dev"})`;
             }
           }
         },
@@ -8393,7 +8393,7 @@
       alert([
         "Failed to load Bunny!\n",
         `Build Number: ${ClientInfoManager2.Build}`,
-        `Bunny: ${"5edaf48-dev"}`,
+        `Bunny: ${"4469339-dev"}`,
         stack || e?.toString?.()
       ].join("\n"));
     }
