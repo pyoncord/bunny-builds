@@ -4599,7 +4599,7 @@
       init_logger();
       init_toasts();
       import_react_native9 = __toESM(require_react_native());
-      versionHash = "dff23fa-dev";
+      versionHash = "d88fa5f-dev";
     }
   });
 
@@ -7776,7 +7776,7 @@
           },
           rawTabsConfig: {
             useTrailing: function() {
-              return `(${"dff23fa-dev"})`;
+              return `(${"d88fa5f-dev"})`;
             }
           }
         },
@@ -9692,7 +9692,7 @@
       alert([
         "Failed to load Bunny!\n",
         `Build Number: ${ClientInfoManager2.Build}`,
-        `Bunny: ${"dff23fa-dev"}`,
+        `Bunny: ${"d88fa5f-dev"}`,
         stack || e?.toString?.()
       ].join("\n"));
     }
