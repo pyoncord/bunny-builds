@@ -4599,7 +4599,7 @@
       init_logger();
       init_toasts();
       import_react_native9 = __toESM(require_react_native());
-      versionHash = "d09ce38-dev";
+      versionHash = "dff23fa-dev";
     }
   });
 
@@ -5766,7 +5766,6 @@
           data,
           estimatedItemSize: 136,
           ListHeaderComponent: headerElement,
-          onLoad: console.log,
           contentContainerStyle: {
             paddingBottom: 90,
             paddingHorizontal: 5
@@ -6572,15 +6571,13 @@
       throw new Error("Argument 'data' must be a string");
     return void await FileManager.writeFile("documents", `${prefix}${path}`, data, "utf8");
   }
-  async function readFile(path, fallback, prefix = "pyoncord/") {
+  async function readFile(path, prefix = "pyoncord/") {
     try {
       return await FileManager.readFile(`${FileManager.getConstants().DocumentsDirPath}/${prefix}${path}`, "utf8");
-    } catch (e) {
-      if (fallback == null) {
-        throw new Error(`Errored while reading ${path} doesn't exist`);
-      }
-      await writeFile(path, fallback);
-      return fallback;
+    } catch (err) {
+      throw new Error(`An error occured while writing to '${path}'`, {
+        cause: err
+      });
     }
   }
   async function downloadFile(url2, path, prefix = "pyoncord/") {
@@ -7779,7 +7776,7 @@
           },
           rawTabsConfig: {
             useTrailing: function() {
-              return `(${"d09ce38-dev"})`;
+              return `(${"dff23fa-dev"})`;
             }
           }
         },
@@ -8551,13 +8548,27 @@
     }
   });
 
+  // src/lib/utils/invariant.ts
+  function invariant(condition, message) {
+    if (condition)
+      return;
+    var resolvedMessage = typeof message === "function" ? message() : message;
+    var prefix = "[Invariant Violation]";
+    var value = resolvedMessage ? `${prefix}: ${resolvedMessage}` : prefix;
+    throw new Error(value);
+  }
+  var init_invariant = __esm({
+    "src/lib/utils/invariant.ts"() {
+      "use strict";
+    }
+  });
+
   // src/lib/api/storage/new.ts
-  function createFileBackend2(filePath, dflt = {}) {
+  function createFileBackend2(filePath) {
     return {
       get: async function() {
         try {
-          var raw = await readFile(filePath, JSON.stringify(dflt));
-          return JSON.parse(raw);
+          return JSON.parse(await readFile(filePath));
         } catch (e) {
           throw new Error(`Failed to parse storage '${filePath}: ${e}'`);
         }
@@ -8566,10 +8577,14 @@
         if (!data || typeof data !== "object")
           throw new Error("data needs to be an object");
         await writeFile(filePath, JSON.stringify(data));
+      },
+      exists: async function() {
+        return await fileExists(filePath);
       }
     };
   }
   function _createProxy(target, path, emitter) {
+    var objChildrens = /* @__PURE__ */ new WeakMap();
     return new Proxy(target, {
       get(target2, prop) {
         if (prop === emitterSymbol2)
@@ -8579,15 +8594,19 @@
           prop
         ];
         var value = target2[prop];
+        if (value && typeof value === "object") {
+          var origValue = value;
+          value = objChildrens.get(origValue);
+          if (!value) {
+            value = _createProxy(value, newPath, emitter);
+            objChildrens.set(origValue, value);
+          }
+        }
         if (value != null) {
           emitter.emit("GET", {
             path: newPath,
             value
           });
-          if (typeof value === "object") {
-            return _createProxy(value, newPath, emitter);
-          }
-          return value;
         }
         return value;
       },
@@ -8636,21 +8655,31 @@
       emitter.on("DEL", handler);
       cb(proxy);
     };
-    var backend = createFileBackend2(path, dflt);
+    var backend = createFileBackend2(path);
     if (_loadedPath[path])
       callback(_loadedPath[path]);
-    else
-      backend.get().then(function(d) {
-        return callback(d);
+    else {
+      backend.exists().then(async function(exists) {
+        if (!exists) {
+          await backend.set(dflt);
+          callback(dflt);
+        } else {
+          callback(await backend.get());
+        }
       });
+    }
   }
   async function preloadStorageIfExists(path) {
     if (_loadedPath[path])
       return;
     if (!await fileExists(path))
       return;
-    var data = await createFileBackend2(path).get();
-    _loadedPath[path] = data;
+    try {
+      var data = await createFileBackend2(path).get();
+      invariant(data !== void 0);
+      _loadedPath[path] = data;
+    } catch (e) {
+    }
   }
   function awaitStorage2(...proxies) {
     return Promise.all(proxies.map(function(proxy) {
@@ -8663,6 +8692,7 @@
       "use strict";
       init_fs();
       init_emitter();
+      init_invariant();
       emitterSymbol2 = Symbol.for("bunny.storage.emitter");
       storageInitErrorSymbol = Symbol.for("bunny.storage.initError");
       storagePromiseSymbol = Symbol.for("bunny.storage.promise");
@@ -9307,21 +9337,6 @@
     }
   });
 
-  // src/lib/utils/invariant.ts
-  function invariant(condition, message) {
-    if (condition)
-      return;
-    var resolvedMessage = typeof message === "function" ? message() : message;
-    var prefix = "[Invariant Violation]";
-    var value = resolvedMessage ? `${prefix}: ${resolvedMessage}` : prefix;
-    throw new Error(value);
-  }
-  var init_invariant = __esm({
-    "src/lib/utils/invariant.ts"() {
-      "use strict";
-    }
-  });
-
   // src/lib/managers/plugins.ts
   var plugins_exports3 = {};
   __export(plugins_exports3, {
@@ -9677,7 +9692,7 @@
       alert([
         "Failed to load Bunny!\n",
         `Build Number: ${ClientInfoManager2.Build}`,
-        `Bunny: ${"d09ce38-dev"}`,
+        `Bunny: ${"dff23fa-dev"}`,
         stack || e?.toString?.()
       ].join("\n"));
     }
