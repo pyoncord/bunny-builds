@@ -4023,7 +4023,7 @@
       init_logger();
       init_toasts();
       import_react_native9 = __toESM(require_react_native());
-      versionHash = "605685e-dev";
+      versionHash = "89035fe-dev";
     }
   });
 
@@ -7496,7 +7496,7 @@
           },
           rawTabsConfig: {
             useTrailing: function() {
-              return `(${"605685e-dev"})`;
+              return `(${"89035fe-dev"})`;
             }
           }
         },
@@ -9360,6 +9360,7 @@
     api: () => api_exports,
     debug: () => debug_exports,
     fonts: () => fonts_exports,
+    managers: () => managers,
     metro: () => metro_exports,
     plugins: () => plugins_exports2,
     settings: () => settings_exports,
@@ -9374,7 +9375,7 @@
         d();
     delete window.bunny;
   }
-  var _disposer;
+  var managers, _disposer;
   var init_lib = __esm({
     "src/lib/index.ts"() {
       "use strict";
@@ -9388,6 +9389,26 @@
       init_ui();
       init_utils();
       init_metro();
+      init_fonts();
+      init_plugins4();
+      init_themes();
+      init_lazy();
+      managers = proxyLazy(function() {
+        console.warn("bunny.managers.* is deprecated, and moved the top level (bunny.*). bunny.manager will be eventually removed soon");
+        return {
+          get fonts() {
+            return fonts_exports;
+          },
+          get plugins() {
+            return plugins_exports2;
+          },
+          get themes() {
+            return themes_exports;
+          }
+        };
+      }, {
+        hint: "object"
+      });
       _disposer = [];
       unload.push = function(fn) {
         _disposer.push(fn);
@@ -9485,7 +9506,7 @@
       alert([
         "Failed to load Bunny!\n",
         `Build Number: ${ClientInfoManager2.Build}`,
-        `Bunny: ${"605685e-dev"}`,
+        `Bunny: ${"89035fe-dev"}`,
         stack || e?.toString?.()
       ].join("\n"));
     }
