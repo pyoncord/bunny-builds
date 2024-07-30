@@ -201,6 +201,31 @@
     }
   });
 
+  // src/core/polyfills/promise-all-settled.ts
+  var require_promise_all_settled = __commonJS({
+    "src/core/polyfills/promise-all-settled.ts"() {
+      "use strict";
+      var allSettledFulfill = function(value) {
+        return {
+          status: "fulfilled",
+          value
+        };
+      };
+      var allSettledReject = function(reason) {
+        return {
+          status: "rejected",
+          reason
+        };
+      };
+      var mapAllSettled = function(item) {
+        return Promise.resolve(item).then(allSettledFulfill, allSettledReject);
+      };
+      Promise.allSettled ??= function(iterator) {
+        return Promise.all(Array.from(iterator).map(mapAllSettled));
+      };
+    }
+  });
+
   // src/lib/api/native/modules.ts
   var modules_exports = {};
   __export(modules_exports, {
@@ -460,15 +485,6 @@
     }
   });
 
-  // node_modules/.pnpm/es-toolkit@1.13.1/node_modules/es-toolkit/dist/chunk-BMRTZMRE.mjs
-  function isNotNil(x) {
-    return x !== null && x !== void 0;
-  }
-  var init_chunk_BMRTZMRE = __esm({
-    "node_modules/.pnpm/es-toolkit@1.13.1/node_modules/es-toolkit/dist/chunk-BMRTZMRE.mjs"() {
-    }
-  });
-
   // node_modules/.pnpm/es-toolkit@1.13.1/node_modules/es-toolkit/dist/chunk-WFZXCGEG.mjs
   function omit(obj, keys) {
     var result = __spreadValues({}, obj);
@@ -480,26 +496,6 @@
   var init_chunk_WFZXCGEG = __esm({
     "node_modules/.pnpm/es-toolkit@1.13.1/node_modules/es-toolkit/dist/chunk-WFZXCGEG.mjs"() {
       init_chunk_24FKGR6U();
-    }
-  });
-
-  // node_modules/.pnpm/es-toolkit@1.13.1/node_modules/es-toolkit/dist/chunk-237HGSZS.mjs
-  function uniqWith(arr, areItemsEqual) {
-    var _loop2 = function(item2) {
-      var isUniq = result.every(function(v) {
-        return !areItemsEqual(v, item2);
-      });
-      if (isUniq) {
-        result.push(item2);
-      }
-    };
-    var result = [];
-    for (var item of arr)
-      _loop2(item);
-    return result;
-  }
-  var init_chunk_237HGSZS = __esm({
-    "node_modules/.pnpm/es-toolkit@1.13.1/node_modules/es-toolkit/dist/chunk-237HGSZS.mjs"() {
     }
   });
 
@@ -540,17 +536,15 @@
   // node_modules/.pnpm/es-toolkit@1.13.1/node_modules/es-toolkit/dist/index.mjs
   var init_dist = __esm({
     "node_modules/.pnpm/es-toolkit@1.13.1/node_modules/es-toolkit/dist/index.mjs"() {
-      init_chunk_BMRTZMRE();
       init_chunk_WFZXCGEG();
-      init_chunk_237HGSZS();
       init_chunk_3IP4JVLL();
     }
   });
 
-  // src/metro/enums.ts
+  // src/metro/internals/enums.ts
   var ModuleFlags, ModulesMapInternal;
   var init_enums = __esm({
-    "src/metro/enums.ts"() {
+    "src/metro/internals/enums.ts"() {
       "use strict";
       (function(ModuleFlags2) {
         ModuleFlags2[ModuleFlags2["EXISTS"] = 1] = "EXISTS";
@@ -704,33 +698,6 @@
     }
   });
 
-  // src/core/polyfills/allSettled.ts
-  var allSettledFulfill, allSettledReject, mapAllSettled, allSettled;
-  var init_allSettled = __esm({
-    "src/core/polyfills/allSettled.ts"() {
-      "use strict";
-      allSettledFulfill = function(value) {
-        return {
-          status: "fulfilled",
-          value
-        };
-      };
-      allSettledReject = function(reason) {
-        return {
-          status: "rejected",
-          reason
-        };
-      };
-      mapAllSettled = function(item) {
-        return Promise.resolve(item).then(allSettledFulfill, allSettledReject);
-      };
-      allSettled = function(iterator) {
-        return Promise.all(Array.from(iterator).map(mapAllSettled));
-      };
-      Promise.allSettled ??= allSettled;
-    }
-  });
-
   // node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_create_class.js
   function _defineProperties(target, props) {
     for (var i = 0; i < props.length; i++) {
@@ -772,10 +739,10 @@
     }
   });
 
-  // src/lib/utils/emitter.ts
+  // src/lib/utils/Emitter.ts
   var Events, Emitter;
-  var init_emitter = __esm({
-    "src/lib/utils/emitter.ts"() {
+  var init_Emitter = __esm({
+    "src/lib/utils/Emitter.ts"() {
       "use strict";
       init_class_call_check();
       init_create_class();
@@ -828,6 +795,188 @@
         ]);
         return Emitter2;
       }();
+    }
+  });
+
+  // src/metro/factories.ts
+  var factories_exports = {};
+  __export(factories_exports, {
+    createFilterDefinition: () => createFilterDefinition,
+    createSimpleFilter: () => createSimpleFilter
+  });
+  function createFilterDefinition(fn, uniqMaker) {
+    function createHolder(func, args, raw) {
+      return Object.assign(func, {
+        filter: fn,
+        raw,
+        uniq: [
+          raw && "raw::",
+          uniqMaker(args)
+        ].filter(Boolean).join("")
+      });
+    }
+    var curry = function(raw) {
+      return function(...args) {
+        return createHolder(function(m, id, defaultCheck) {
+          return fn(args, m, id, defaultCheck);
+        }, args, raw);
+      };
+    };
+    return Object.assign(curry(false), {
+      byRaw: curry(true),
+      uniqMaker
+    });
+  }
+  function createSimpleFilter(filter, uniq) {
+    return createFilterDefinition(function(_, m) {
+      return filter(m);
+    }, function() {
+      return `dynamic::${uniq}`;
+    })();
+  }
+  var init_factories = __esm({
+    "src/metro/factories.ts"() {
+      "use strict";
+    }
+  });
+
+  // src/metro/filters.ts
+  var filters_exports = {};
+  __export(filters_exports, {
+    byDisplayName: () => byDisplayName,
+    byFilePath: () => byFilePath,
+    byMutableProp: () => byMutableProp,
+    byName: () => byName,
+    byProps: () => byProps,
+    byStoreName: () => byStoreName,
+    byTypeName: () => byTypeName
+  });
+  var byProps, byName, byDisplayName, byTypeName, byStoreName, byFilePath, byMutableProp;
+  var init_filters = __esm({
+    "src/metro/filters.ts"() {
+      "use strict";
+      init_factories();
+      init_modules2();
+      byProps = createFilterDefinition(function(props, m) {
+        return props.length === 0 ? m[props[0]] : props.every(function(p) {
+          return m[p];
+        });
+      }, function(props) {
+        return `bunny.metro.byProps(${props.join(",")})`;
+      });
+      byName = createFilterDefinition(function([name], m) {
+        return m.name === name;
+      }, function(name) {
+        return `bunny.metro.byName(${name})`;
+      });
+      byDisplayName = createFilterDefinition(function([displayName], m) {
+        return m.displayName === displayName;
+      }, function(name) {
+        return `bunny.metro.byDisplayName(${name})`;
+      });
+      byTypeName = createFilterDefinition(function([typeName], m) {
+        return m.type?.name === typeName;
+      }, function(name) {
+        return `bunny.metro.byTypeName(${name})`;
+      });
+      byStoreName = createFilterDefinition(function([name], m) {
+        return m.getName?.length === 0 && m.getName() === name;
+      }, function(name) {
+        return `bunny.metro.byStoreName(${name})`;
+      });
+      byFilePath = createFilterDefinition(
+        // module return depends on defaultCheck. if true, it'll return module.default, otherwise the whole module
+        // unlike filters like byName, defaultCheck doesn't affect the return since we don't rely on exports, but only its ID
+        // one could say that this is technically a hack, since defaultCheck is meant for filtering exports
+        function([path, exportDefault], _, id, defaultCheck) {
+          return exportDefault === defaultCheck && metroModules[id]?.__filePath === path;
+        },
+        function([path, exportDefault]) {
+          return `bunny.metro.byFilePath(${path},${exportDefault})`;
+        }
+      );
+      byMutableProp = createFilterDefinition(function([prop], m) {
+        return m?.[prop] && !Object.getOwnPropertyDescriptor(m, prop)?.get;
+      }, function(prop) {
+        return `bunny.metro.byMutableProp(${prop})`;
+      });
+    }
+  });
+
+  // src/metro/finders.ts
+  function filterExports(moduleExports, moduleId, filter) {
+    if (moduleExports.default && moduleExports.__esModule && filter(moduleExports.default, moduleId, true)) {
+      return {
+        exports: filter.raw ? moduleExports : moduleExports.default,
+        defaultExport: !filter.raw
+      };
+    }
+    if (!filter.raw && filter(moduleExports, moduleId, false)) {
+      return {
+        exports: moduleExports,
+        defaultExport: false
+      };
+    }
+    return {};
+  }
+  function findModule(filter) {
+    var { cacheId, finish } = getCacherForUniq(filter.uniq, false);
+    for (var [id, moduleExports] of getModules(filter.uniq, false)) {
+      var { exports: testedExports, defaultExport } = filterExports(moduleExports, id, filter);
+      if (testedExports !== void 0) {
+        cacheId(id, testedExports);
+        return {
+          id,
+          defaultExport
+        };
+      }
+    }
+    finish(true);
+    return {};
+  }
+  function findModuleId(filter) {
+    return findModule(filter)?.id;
+  }
+  function findExports(filter) {
+    var { id, defaultExport } = findModule(filter);
+    if (id == null)
+      return;
+    return defaultExport ? requireModule(id).default : requireModule(id);
+  }
+  function findAllModule(filter) {
+    var { cacheId, finish } = getCacherForUniq(filter.uniq, true);
+    var foundExports = [];
+    for (var [id, moduleExports] of getModules(filter.uniq, true)) {
+      var { exports: testedExports, defaultExport } = filterExports(moduleExports, id, filter);
+      if (testedExports !== void 0 && typeof defaultExport === "boolean") {
+        foundExports.push({
+          id,
+          defaultExport
+        });
+        cacheId(id, testedExports);
+      }
+    }
+    finish(foundExports.length === 0);
+    return foundExports;
+  }
+  function findAllModuleId(filter) {
+    return findAllModule(filter).map(function(e) {
+      return e.id;
+    });
+  }
+  function findAllExports(filter) {
+    return findAllModule(filter).map(function(ret) {
+      if (!ret.id)
+        return;
+      var { id, defaultExport } = ret;
+      return defaultExport ? requireModule(id).default : requireModule(id);
+    });
+  }
+  var init_finders = __esm({
+    "src/metro/finders.ts"() {
+      "use strict";
+      init_caches();
+      init_modules2();
     }
   });
 
@@ -951,134 +1100,13 @@
     }
   });
 
-  // src/metro/filters.ts
-  var byProps, byName, byDisplayName, byTypeName, byStoreName, byFilePath, byMutableProp;
-  var init_filters = __esm({
-    "src/metro/filters.ts"() {
-      "use strict";
-      init_modules2();
-      init_utils();
-      byProps = createFilterDefinition(function(props, m) {
-        return props.length === 0 ? m[props[0]] : props.every(function(p) {
-          return m[p];
-        });
-      }, function(props) {
-        return `bunny.metro.byProps(${props.join(",")})`;
-      });
-      byName = createFilterDefinition(function([name], m) {
-        return m.name === name;
-      }, function(name) {
-        return `bunny.metro.byName(${name})`;
-      });
-      byDisplayName = createFilterDefinition(function([displayName], m) {
-        return m.displayName === displayName;
-      }, function(name) {
-        return `bunny.metro.byDisplayName(${name})`;
-      });
-      byTypeName = createFilterDefinition(function([typeName], m) {
-        return m.type?.name === typeName;
-      }, function(name) {
-        return `bunny.metro.byTypeName(${name})`;
-      });
-      byStoreName = createFilterDefinition(function([name], m) {
-        return m.getName?.length === 0 && m.getName() === name;
-      }, function(name) {
-        return `bunny.metro.byStoreName(${name})`;
-      });
-      byFilePath = createFilterDefinition(function([path], _, id, defaultCheck) {
-        return !defaultCheck && metroModules[id]?.__filePath === path;
-      }, function(path) {
-        return `bunny.metro.byFilePath(${path})`;
-      });
-      byMutableProp = createFilterDefinition(function([prop], m) {
-        return m?.[prop] && !Object.getOwnPropertyDescriptor(m, prop)?.get;
-      }, function(prop) {
-        return `bunny.metro.byMutableProp(${prop})`;
-      });
-    }
-  });
-
-  // src/metro/finders.ts
-  function filterExports(moduleExports, moduleId, filter) {
-    if (moduleExports.default && moduleExports.__esModule && filter(moduleExports.default, moduleId, true)) {
-      return [
-        filter.raw ? moduleExports : moduleExports.default,
-        !filter.raw
-      ];
-    }
-    if (!filter.raw && filter(moduleExports, moduleId, false)) {
-      return [
-        moduleExports,
-        false
-      ];
-    }
-    return [
-      void 0,
-      false
-    ];
-  }
-  function findModule(filter) {
-    var { cacheId, finish } = getCacherForUniq(filter.uniq, false);
-    for (var [id, moduleExports] of getModules(filter.uniq, false)) {
-      var [testedExports, defaultExp] = filterExports(moduleExports, id, filter);
-      if (testedExports !== void 0) {
-        cacheId(id, testedExports);
-        return [
-          id,
-          defaultExp
-        ];
-      }
-    }
-    finish(true);
-    return [];
-  }
-  function findModuleId(filter) {
-    return findModule(filter)?.[0];
-  }
-  function findExports(filter) {
-    var [id, defaultExp] = findModule(filter);
-    if (id == null)
-      return;
-    return defaultExp ? requireModule(id).default : requireModule(id);
-  }
-  function findAllModule(filter) {
-    var { cacheId, finish } = getCacherForUniq(filter.uniq, true);
-    var foundExports = [];
-    for (var [id, moduleExports] of getModules(filter.uniq, true)) {
-      var [testedExports, defaultExp] = filterExports(moduleExports, id, filter);
-      if (testedExports !== void 0) {
-        foundExports.push([
-          id,
-          defaultExp
-        ]);
-        cacheId(id, testedExports);
-      }
-    }
-    finish(foundExports.length === 0);
-    return foundExports;
-  }
-  function findAllModuleId(filter) {
-    return findAllModule(filter).map(function(e) {
-      return e[0];
-    });
-  }
-  function findAllExports(filter) {
-    return findAllModule(filter).map(function(ret) {
-      if (!ret.length)
-        return;
-      var [id, defaultExp] = ret;
-      return defaultExp ? requireModule(id).default : requireModule(id);
-    });
-  }
-  var init_finders = __esm({
-    "src/metro/finders.ts"() {
-      "use strict";
-      init_caches();
-      init_modules2();
-    }
-  });
-
   // src/metro/lazy.ts
+  var lazy_exports = {};
+  __export(lazy_exports, {
+    _lazyContextSymbol: () => _lazyContextSymbol,
+    createLazyModule: () => createLazyModule,
+    getLazyContext: () => getLazyContext
+  });
   function getIndexedFind(filter) {
     var modulesMap = getMetroCache().findIndex[filter.uniq];
     if (!modulesMap)
@@ -1148,48 +1176,18 @@
       "use strict";
       init_patcher();
       init_lazy();
-      init_caches();
       init_finders();
+      init_caches();
       init_modules2();
       _lazyContextSymbol = Symbol.for("bunny.metro.lazyContext");
       _lazyContexts = /* @__PURE__ */ new WeakMap();
     }
   });
 
-  // src/metro/utils.ts
-  function createFilterDefinition(fn, uniqMaker) {
-    function createHolder(func, args, raw) {
-      return Object.assign(func, {
-        filter: fn,
-        raw,
-        uniq: [
-          raw && "raw::",
-          uniqMaker(args)
-        ].filter(Boolean).join("")
-      });
-    }
-    var curry = function(raw) {
-      return function(...args) {
-        return createHolder(function(m, id, defaultCheck) {
-          return fn(args, m, id, defaultCheck);
-        }, args, raw);
-      };
-    };
-    return Object.assign(curry(false), {
-      byRaw: curry(true),
-      uniqMaker
-    });
-  }
-  function createSimpleFilter(filter, uniq) {
-    return createFilterDefinition(function(_, m) {
-      return filter(m);
-    }, function() {
-      return `dynamic::${uniq}`;
-    })();
-  }
+  // src/metro/wrappers.ts
   var findByProps, findByPropsLazy, findByPropsAll, findByName, findByNameLazy, findByNameAll, findByDisplayName, findByDisplayNameLazy, findByDisplayNameAll, findByTypeName, findByTypeNameLazy, findByTypeNameAll, findByStoreName, findByStoreNameLazy, findByFilePath, findByFilePathLazy;
-  var init_utils = __esm({
-    "src/metro/utils.ts"() {
+  var init_wrappers = __esm({
+    "src/metro/wrappers.ts"() {
       "use strict";
       init_filters();
       init_finders();
@@ -1236,111 +1234,12 @@
       findByStoreNameLazy = function(name) {
         return createLazyModule(byStoreName(name));
       };
-      findByFilePath = function(path) {
-        return findExports(byFilePath(path));
+      findByFilePath = function(path, expDefault = false) {
+        return findExports(byFilePath(path, expDefault));
       };
-      findByFilePathLazy = function(path) {
-        return createLazyModule(byFilePath(path));
+      findByFilePathLazy = function(path, expDefault = false) {
+        return createLazyModule(byFilePath(path, expDefault));
       };
-    }
-  });
-
-  // src/metro/common/index.ts
-  var common_exports = {};
-  __export(common_exports, {
-    Flux: () => Flux,
-    FluxDispatcher: () => FluxDispatcher,
-    NavigationNative: () => NavigationNative,
-    React: () => React2,
-    ReactNative: () => ReactNative,
-    assets: () => assets,
-    channels: () => channels,
-    clipboard: () => clipboard,
-    commands: () => commands,
-    constants: () => constants,
-    i18n: () => i18n,
-    invites: () => invites,
-    messageUtil: () => messageUtil,
-    navigation: () => navigation,
-    navigationStack: () => navigationStack,
-    semver: () => semver,
-    toasts: () => toasts,
-    tokens: () => tokens,
-    url: () => url
-  });
-  var constants, channels, i18n, url, clipboard, assets, invites, commands, navigation, toasts, messageUtil, navigationStack, NavigationNative, tokens, semver, Flux, FluxDispatcher, React2, ReactNative;
-  var init_common = __esm({
-    "src/metro/common/index.ts"() {
-      "use strict";
-      init_lazy();
-      init_utils();
-      constants = findByPropsLazy("Fonts", "Permissions");
-      channels = findByPropsLazy("getVoiceChannelId");
-      i18n = findByPropsLazy("Messages");
-      url = findByPropsLazy("openURL", "openDeeplink");
-      clipboard = findByPropsLazy("setString", "getString", "hasString");
-      assets = findByPropsLazy("registerAsset");
-      invites = findByPropsLazy("acceptInviteAndTransitionToInviteChannel");
-      commands = findByPropsLazy("getBuiltInCommands");
-      navigation = findByPropsLazy("pushLazy");
-      toasts = proxyLazy(function() {
-        return findByFilePath("modules/toast/native/ToastActionCreators.tsx").default;
-      });
-      messageUtil = findByPropsLazy("sendBotMessage");
-      navigationStack = findByPropsLazy("createStackNavigator");
-      NavigationNative = findByPropsLazy("NavigationContainer");
-      tokens = findByPropsLazy("colors", "unsafe_rawColors");
-      semver = findByPropsLazy("parse", "clean");
-      Flux = findByPropsLazy("connectStores");
-      FluxDispatcher = findByProps("_interceptors");
-      React2 = window.React = findByPropsLazy("createElement");
-      ReactNative = window.ReactNative = findByPropsLazy("AppRegistry");
-    }
-  });
-
-  // src/metro/index.ts
-  var metro_exports = {};
-  __export(metro_exports, {
-    byDisplayName: () => byDisplayName,
-    byFilePath: () => byFilePath,
-    byMutableProp: () => byMutableProp,
-    byName: () => byName,
-    byProps: () => byProps,
-    byStoreName: () => byStoreName,
-    byTypeName: () => byTypeName,
-    common: () => common_exports,
-    createFilterDefinition: () => createFilterDefinition,
-    createSimpleFilter: () => createSimpleFilter,
-    findAllExports: () => findAllExports,
-    findAllModule: () => findAllModule,
-    findAllModuleId: () => findAllModuleId,
-    findByDisplayName: () => findByDisplayName,
-    findByDisplayNameAll: () => findByDisplayNameAll,
-    findByDisplayNameLazy: () => findByDisplayNameLazy,
-    findByFilePath: () => findByFilePath,
-    findByFilePathLazy: () => findByFilePathLazy,
-    findByName: () => findByName,
-    findByNameAll: () => findByNameAll,
-    findByNameLazy: () => findByNameLazy,
-    findByProps: () => findByProps,
-    findByPropsAll: () => findByPropsAll,
-    findByPropsLazy: () => findByPropsLazy,
-    findByStoreName: () => findByStoreName,
-    findByStoreNameLazy: () => findByStoreNameLazy,
-    findByTypeName: () => findByTypeName,
-    findByTypeNameAll: () => findByTypeNameAll,
-    findByTypeNameLazy: () => findByTypeNameLazy,
-    findExports: () => findExports,
-    findModule: () => findModule,
-    findModuleId: () => findModuleId
-  });
-  var init_metro = __esm({
-    "src/metro/index.ts"() {
-      "use strict";
-      init_common();
-      init_filters();
-      init_finders();
-      init_utils();
     }
   });
 
@@ -1348,7 +1247,7 @@
   var require_depsModule = __commonJS({
     "shims/depsModule.ts"(exports, module) {
       "use strict";
-      init_metro();
+      init_wrappers();
       module.exports = {
         "react": findByPropsLazy("createElement"),
         "react-native": findByPropsLazy("AppRegistry"),
@@ -1583,7 +1482,7 @@
   var init_storage = __esm({
     "src/lib/api/storage/index.ts"() {
       "use strict";
-      init_emitter();
+      init_Emitter();
       init_backends();
       emitterSymbol = Symbol.for("vendetta.storage.emitter");
       syncAwaitSymbol = Symbol.for("vendetta.storage.accessor");
@@ -1626,7 +1525,7 @@
   var init_findInReactTree = __esm({
     "src/lib/utils/findInReactTree.ts"() {
       "use strict";
-      init_utils2();
+      init_utils();
       findInReactTree = function(tree, filter) {
         return findInTree(tree, filter, {
           walkable: [
@@ -1703,7 +1602,7 @@
   var init_logger = __esm({
     "src/lib/utils/logger.ts"() {
       "use strict";
-      init_utils();
+      init_wrappers();
       DiscordLogger = findByNameLazy("Logger");
       logger = new DiscordLogger("Bunny");
     }
@@ -1766,11 +1665,11 @@
     safeFetch: () => safeFetch,
     types: () => types_exports
   });
-  var init_utils2 = __esm({
+  var init_utils = __esm({
     "src/lib/utils/index.ts"() {
       "use strict";
       init_constants();
-      init_emitter();
+      init_Emitter();
       init_findInReactTree();
       init_findInTree();
       init_logger();
@@ -1786,7 +1685,7 @@
     }
   });
 
-  // src/lib/managers/themes.ts
+  // src/lib/themes/index.ts
   var themes_exports = {};
   __export(themes_exports, {
     applyTheme: () => applyTheme,
@@ -1808,7 +1707,7 @@
     await createFileBackend(getThemeFilePath() || "theme.json").set(theme);
   }
   function patchChatBackground() {
-    var patches = [
+    var patches2 = [
       after("default", MessagesWrapperConnected, function(_, ret) {
         return enabled ? React.createElement(import_react_native2.ImageBackground, {
           style: {
@@ -1840,7 +1739,7 @@
       })
     ];
     return function() {
-      return patches.forEach(function(x) {
+      return patches2.forEach(function(x) {
         return x();
       });
     };
@@ -1968,7 +1867,7 @@
   async function updateThemes() {
     await awaitStorage(themes);
     var currentTheme2 = getThemeFromLoader();
-    await allSettled(Object.keys(themes).map(function(id) {
+    await Promise.allSettled(Object.keys(themes).map(function(id) {
       return fetchTheme(id, currentTheme2?.id === id);
     }));
   }
@@ -2117,18 +2016,17 @@
   }
   var import_chroma_js, import_react_native2, color, mmkvStorage, appearanceManager, ThemeStore, formDividerModule, MessagesWrapperConnected, MessagesWrapper, isThemeModule, themes, semanticAlternativeMap, origRawColor, inc, vdKey, vdThemeFallback, enabled, currentTheme, storageResolved, discordThemes;
   var init_themes = __esm({
-    "src/lib/managers/themes.ts"() {
+    "src/lib/themes/index.ts"() {
       "use strict";
-      init_allSettled();
       init_loader();
       init_modules();
       init_patcher();
       init_storage();
-      init_utils2();
+      init_utils();
       init_lazy();
       init_filters();
       init_lazy2();
-      init_utils();
+      init_wrappers();
       import_chroma_js = __toESM(require_chroma_js());
       import_react_native2 = __toESM(require_react_native());
       color = findByPropsLazy("SemanticColor");
@@ -2380,7 +2278,7 @@
     }
   });
 
-  // src/lib/settings.ts
+  // src/lib/api/settings.ts
   var settings_exports = {};
   __export(settings_exports, {
     loaderConfig: () => loaderConfig,
@@ -2388,7 +2286,7 @@
   });
   var settings, loaderConfig;
   var init_settings = __esm({
-    "src/lib/settings.ts"() {
+    "src/lib/api/settings.ts"() {
       "use strict";
       init_loader();
       init_storage();
@@ -2537,7 +2435,7 @@
     }
   });
 
-  // src/metro/modules.ts
+  // src/metro/internals/modules.ts
   var modules_exports2 = {};
   __export(modules_exports2, {
     getCachedPolyfillModules: () => getCachedPolyfillModules,
@@ -2715,7 +2613,7 @@
   }
   var _loop, before2, instead2, metroModules, metroRequire, moduleSubscriptions, blacklistedIds, noopHandler, functionToString, patchedInspectSource, patchedImportTracker, _importingModuleId, key;
   var init_modules2 = __esm({
-    "src/metro/modules.ts"() {
+    "src/metro/internals/modules.ts"() {
       "use strict";
       init_caches();
       init_enums();
@@ -2779,7 +2677,7 @@
     }
   });
 
-  // src/metro/caches.ts
+  // src/metro/internals/caches.ts
   var caches_exports = {};
   __export(caches_exports, {
     getCacherForUniq: () => getCacherForUniq,
@@ -2886,7 +2784,7 @@
   }
   var CACHE_VERSION, BUNNY_METRO_CACHE_KEY, _metroCache, getMetroCache, saveCache;
   var init_caches = __esm({
-    "src/metro/caches.ts"() {
+    "src/metro/internals/caches.ts"() {
       "use strict";
       init_modules();
       init_dist();
@@ -2900,6 +2798,56 @@
       saveCache = debounce(function() {
         MMKVManager.setItem(BUNNY_METRO_CACHE_KEY, JSON.stringify(_metroCache));
       }, 1e3);
+    }
+  });
+
+  // src/metro/common/index.ts
+  var common_exports = {};
+  __export(common_exports, {
+    Flux: () => Flux,
+    FluxDispatcher: () => FluxDispatcher,
+    NavigationNative: () => NavigationNative,
+    React: () => React2,
+    ReactNative: () => ReactNative,
+    assets: () => assets,
+    channels: () => channels,
+    clipboard: () => clipboard,
+    commands: () => commands,
+    constants: () => constants,
+    i18n: () => i18n,
+    invites: () => invites,
+    messageUtil: () => messageUtil,
+    navigation: () => navigation,
+    navigationStack: () => navigationStack,
+    semver: () => semver,
+    toasts: () => toasts,
+    tokens: () => tokens,
+    url: () => url
+  });
+  var constants, channels, i18n, url, clipboard, assets, invites, commands, navigation, toasts, messageUtil, navigationStack, NavigationNative, tokens, semver, Flux, FluxDispatcher, React2, ReactNative;
+  var init_common = __esm({
+    "src/metro/common/index.ts"() {
+      "use strict";
+      init_wrappers();
+      constants = findByPropsLazy("Fonts", "Permissions");
+      channels = findByPropsLazy("getVoiceChannelId");
+      i18n = findByPropsLazy("Messages");
+      url = findByPropsLazy("openURL", "openDeeplink");
+      clipboard = findByPropsLazy("setString", "getString", "hasString");
+      assets = findByPropsLazy("registerAsset");
+      invites = findByPropsLazy("acceptInviteAndTransitionToInviteChannel");
+      commands = findByPropsLazy("getBuiltInCommands");
+      navigation = findByPropsLazy("pushLazy");
+      toasts = findByFilePathLazy("modules/toast/native/ToastActionCreators.tsx", true);
+      messageUtil = findByPropsLazy("sendBotMessage");
+      navigationStack = findByPropsLazy("createStackNavigator");
+      NavigationNative = findByPropsLazy("NavigationContainer");
+      tokens = findByPropsLazy("colors", "unsafe_rawColors");
+      semver = findByPropsLazy("parse", "clean");
+      Flux = findByPropsLazy("connectStores");
+      FluxDispatcher = findByProps("_interceptors");
+      React2 = window.React = findByPropsLazy("createElement");
+      ReactNative = window.ReactNative = findByPropsLazy("AppRegistry");
     }
   });
 
@@ -3099,7 +3047,7 @@
     "src/core/i18n/index.ts"() {
       "use strict";
       init_common();
-      init_utils();
+      init_wrappers();
       init_default();
       IntlMessageFormat = findByNameLazy("MessageFormat");
       _currentLocale = null;
@@ -3117,6 +3065,14 @@
     }
   });
 
+  // src/assets/icons/pyoncord.png
+  var pyoncord_default;
+  var init_pyoncord = __esm({
+    "src/assets/icons/pyoncord.png"() {
+      pyoncord_default = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAAXNSR0IArs4c6QAABoBJREFUeF7lW1nIVlUUXasom80kijJKaVQzGtTUjCJteNBmeqigssnIpDIqwmw0GqhQi4iw8SEaHtKgMpNKM7SiyUZpLppoTi0rd2f9nCu36/2+79zxv/5t8MV/n333WWefffb0EQ0iM+sH4AEAowG8CGAqycVVqsgqhWeVbWavAtg/tu4vABNIPphVVih/YwAws2EAlrRQfChJgVM6NQmARwGc0GKHX5PcofTdA2gSAJ8A2KXNJueQPLpsEJoEwI8A+rTZ4GrnIAeQ/KpMEJoEwCoAm3TY3DKSezcKADPbCMDWADYEIK/9B4CVJC2LomYWwv8PgC1JCqxSqJAFmNlOAF6PAfA3ACn3MYBLSD4bqmUgABI3l+T4ULmd+IoCcDeAs9p8RI5NPDNJrminTAYAZAVbkJSlFaaiALwJYEiAFh8CuJHk7Fa8ZqaNbRAgSyzjSc4N5G3LVhQAmfiYDIosBXAGyXeSa8xMJ9orUNb7AAZm9TNpsosCMNnd/9sDlY7Y/gRwAYDZJOUzusjMfvK+JFRcX5J6OgtRUQB2B/BBDg3k8ZeQHBED4AsASoZCaTTJRaHMrfiKAqD1jwM4NqcinwE4mOTnZiYgBWgozSN5RChzJQB40x0A4KMCivwO4GQAFwI4JIMcRYa9i74GhSwgZr5XuWs8LYPyaazPAMh6ojvLeop8tywA5L0V/FSSsbXZ4Eh3DV7udgD8VdgMwK8+JC6iU5a115GcmmVBkrcUC4hdhYPcPX6+RhAWkDysMQB4SzgXwB0Zoroi+q8iKcvLTaVaQMwSZgGYWBMIfUj+nBeBSgDwljADwHk1XIdCL0FlAMRAOL/i0tsgku82zgI8AMruLgNwfV4FA9btQ/KtAL5UlkotIOYTjgdwr6o5eRVts244SWWZuagWALw1DFUGCGBwLk1bLxpG8pW8MmsDwIPQ25W+7wNwTF6FU9bJ2U7L+xLUCkDsSij5keLblASEagmjSL6XVV63AOCtQSVw3d2yytxr3JN7LUklZsHUnQAMcnUE1RRVTi+TXgIwjqSsoiN1CwBmtqvzA28A2LyjhvkYlCKr9vhcp+W1A2BmewB4AcB2nZQr+Hc1aaaQlK9pSbUC4E9eLfCynF8IRoo/JpJUMXYdqgUAM9N3RgFYGKJxDh71FK5WAwbAvgAeShRnPgWwZxoIdQFwEwCV0DfOsbmQJWPi993MZGGqMsdT5e9VdE3GC5UCYGY69ehUQjaSh0dv/5B4j0FCXJ8hrWexHMAIkj9EH6oEADNTZUjNj+MqeOaSIM0nOTb5n2amStH8FEQVNh8eWcJaAHybe7gfU9kLgEzmbd/91VCCujArXdd3hdA2M73fKobKzDTYIK+uRsel7tT75jnKnGvUUtuWpMrra8nMNG12aguZatjKMa7pAsDMtnK9tkdylKVz6lz6snsATFKPwB+M+gtppx//sBoyCyMAkuNppWtYg0CVxeT4tvfPbKcI8zHXpD2RZnaOW3RXDQo27ROrSfYSAGowylv/30iR4qYCQBFSVe9zk0Fd5GKH0QJAPfpO96XJG8mjmyJHOcHFAuA1APvlkbIerzmN5P3SXwBc7IaOblmPN5NVdaXK/RUDRACoTqcOq4KfptA37l1XuKpma0QKrlQ/2LEEJY8i+XQXAD4Q6u+uwZwKKrbtdNWYjMboNDClf0qTl+ktb5W6RsLMbDc/naZK80Cvt/YQSvruYJIr46GwanQTAJzph5Y1/Vk2aVZQCck8xR4kpUgpZGYCQDHNOK9/p6bpRSRvS02GzEx1tZGlaAbopH8DcDnJO0uS2VaMmWnzk1xz9hrXldIob9o+ldf0W+cPZiafkLvbmtDsSY3MytQ7mXUVwJiZrFozTKoK6QcZSVrXAszsSABPFVRIs4MzyjTxgvoo4TsAwCm+Yy2rEC1PswC9CAfm+KBMSsWPW0l+l2N9LUt8UfYKf8Vn/gcAM9MT82VGTeTYngBwdqeB6Ixya2FPAnCSKx4+HPhlBRJ6vsaS/DZwTePYkgCozx7SqpJXl69YmqzFNW6HHRSKxwGhc79XApgV2npqOiBxAE73/ftWOquRqbJT7mGEJoIRhcIaZVGjMm14QT+BucHVDKa7oUSlkT2KIgAUT6/zIwbXYFTmpLxZU909kiIAprhM6+bEDqf7Hy93pY09lSIAFriO7aF+k7/4aYs0i+hxOEQAqIGgNrJ+iDS5p3j4kNP6F9f7+CyBdXonAAAAAElFTkSuQmCC";
+    }
+  });
+
   // shims/jsxRuntime.ts
   function unproxyFirstArg(args) {
     var factory = getProxyFactory(args[0]);
@@ -3129,7 +3085,7 @@
     "shims/jsxRuntime.ts"() {
       "use strict";
       init_lazy();
-      init_utils();
+      init_wrappers();
       jsxRuntime = findByPropsLazy("jsx", "jsxs", "Fragment");
       Fragment = Symbol.for("react.fragment");
       jsx = function(...args) {
@@ -3141,181 +3097,15 @@
     }
   });
 
-  // src/core/vendetta/plugins.ts
-  var plugins, pluginInstance, VdPluginManager;
-  var init_plugins = __esm({
-    "src/core/vendetta/plugins.ts"() {
-      "use strict";
-      init_allSettled();
-      init_storage();
-      init_settings();
-      init_utils2();
-      init_constants();
-      init_logger();
-      plugins = wrapSync(createStorage(createMMKVBackend("VENDETTA_PLUGINS")));
-      pluginInstance = {};
-      VdPluginManager = {
-        plugins,
-        async pluginFetch(url2) {
-          if (url2.startsWith(VD_PROXY_PREFIX)) {
-            url2 = url2.replace(VD_PROXY_PREFIX, BUNNY_PROXY_PREFIX);
-          }
-          return await safeFetch(url2, {
-            cache: "no-store"
-          });
-        },
-        async fetchPlugin(id) {
-          if (!id.endsWith("/"))
-            id += "/";
-          var existingPlugin = plugins[id];
-          var pluginManifest;
-          try {
-            pluginManifest = await (await this.pluginFetch(id + "manifest.json")).json();
-          } catch (e) {
-            throw new Error(`Failed to fetch manifest for ${id}`);
-          }
-          var pluginJs;
-          if (existingPlugin?.manifest.hash !== pluginManifest.hash) {
-            try {
-              pluginJs = await (await this.pluginFetch(id + (pluginManifest.main || "index.js"))).text();
-            } catch (e) {
-            }
-          }
-          if (!pluginJs && !existingPlugin)
-            throw new Error(`Failed to fetch JS for ${id}`);
-          plugins[id] = {
-            id,
-            manifest: pluginManifest,
-            enabled: existingPlugin?.enabled ?? false,
-            update: existingPlugin?.update ?? true,
-            js: pluginJs ?? existingPlugin.js
-          };
-        },
-        async installPlugin(id, enabled2 = true) {
-          if (!id.endsWith("/"))
-            id += "/";
-          if (typeof id !== "string" || id in plugins)
-            throw new Error("Plugin already installed");
-          await this.fetchPlugin(id);
-          if (enabled2)
-            await this.startPlugin(id);
-        },
-        /**
-         * @internal
-         */
-        async evalPlugin(plugin) {
-          var vendettaForPlugins = {
-            ...window.vendetta,
-            plugin: {
-              id: plugin.id,
-              manifest: plugin.manifest,
-              // Wrapping this with wrapSync is NOT an option.
-              storage: await createStorage(createMMKVBackend(plugin.id))
-            },
-            logger: new DiscordLogger(`Bunny \xBB ${plugin.manifest.name}`)
-          };
-          var pluginString = `vendetta=>{return ${plugin.js}}
-//# sourceURL=${plugin.id}`;
-          var raw = (0, eval)(pluginString)(vendettaForPlugins);
-          var ret = typeof raw === "function" ? raw() : raw;
-          return ret?.default ?? ret ?? {};
-        },
-        async startPlugin(id) {
-          if (!id.endsWith("/"))
-            id += "/";
-          var plugin = plugins[id];
-          if (!plugin)
-            throw new Error("Attempted to start non-existent plugin");
-          try {
-            if (!settings.safeMode?.enabled) {
-              var pluginRet = await this.evalPlugin(plugin);
-              pluginInstance[id] = pluginRet;
-              pluginRet.onLoad?.();
-            }
-            plugin.enabled = true;
-          } catch (e) {
-            logger.error(`Plugin ${plugin.id} errored whilst loading, and will be unloaded`, e);
-            try {
-              pluginInstance[plugin.id]?.onUnload?.();
-            } catch (e2) {
-              logger.error(`Plugin ${plugin.id} errored whilst unloading`, e2);
-            }
-            delete pluginInstance[id];
-            plugin.enabled = false;
-          }
-        },
-        stopPlugin(id, disable = true) {
-          if (!id.endsWith("/"))
-            id += "/";
-          var plugin = plugins[id];
-          var pluginRet = pluginInstance[id];
-          if (!plugin)
-            throw new Error("Attempted to stop non-existent plugin");
-          if (!settings.safeMode?.enabled) {
-            try {
-              pluginRet?.onUnload?.();
-            } catch (e) {
-              logger.error(`Plugin ${plugin.id} errored whilst unloading`, e);
-            }
-            delete pluginInstance[id];
-          }
-          disable && (plugin.enabled = false);
-        },
-        async removePlugin(id) {
-          if (!id.endsWith("/"))
-            id += "/";
-          var plugin = plugins[id];
-          if (plugin.enabled)
-            this.stopPlugin(id);
-          delete plugins[id];
-          await purgeStorage(id);
-        },
-        /**
-         * @internal
-         */
-        async initPlugins() {
-          var _this = this;
-          await awaitStorage(settings, plugins);
-          var allIds = Object.keys(plugins);
-          if (!settings.safeMode?.enabled) {
-            await allSettled(allIds.filter(function(pl) {
-              return plugins[pl].enabled;
-            }).map(async function(pl) {
-              return plugins[pl].update && await _this.fetchPlugin(pl).catch(function(e) {
-                return logger.error(e.message);
-              }), await _this.startPlugin(pl);
-            }));
-            allIds.filter(function(pl) {
-              return !plugins[pl].enabled && plugins[pl].update;
-            }).forEach(function(pl) {
-              return _this.fetchPlugin(pl);
-            });
-          }
-          return function() {
-            return _this.stopAllPlugins();
-          };
-        },
-        stopAllPlugins() {
-          var _this = this;
-          return Object.keys(pluginInstance).forEach(function(p) {
-            return _this.stopPlugin(p, false);
-          });
-        },
-        getSettings: function(id) {
-          return pluginInstance[id]?.settings;
-        }
-      };
-    }
-  });
-
   // src/metro/common/components.ts
   var bySingularProp, findSingular, findProp, LegacyAlert, CompatButton, HelpMessage, SafeAreaView, ActionSheetRow, Button, TwinButtons, IconButton, RowButton, PressableScale, TableRow, TableRowIcon, TableRowTrailingText, TableRowGroup, TableSwitchRow, TableSwitch, TableRadio, TableCheckbox, FormSwitch, FormRadio, FormCheckbox, Card, RedesignCompat, Stack, TextInput, SegmentedControl, CompatSegmentedControl, FloatingActionButton, ActionSheet, BottomSheetTitleHeader, textsModule, Text, Forms, LegacyForm, LegacyFormArrow, LegacyFormCTA, LegacyFormCTAButton, LegacyFormCardSection, LegacyFormCheckbox, LegacyFormCheckboxRow, LegacyFormCheckmark, LegacyFormDivider, LegacyFormHint, LegacyFormIcon, LegacyFormInput, LegacyFormLabel, LegacyFormRadio, LegacyFormRadioGroup, LegacyFormRadioRow, LegacyFormRow, LegacyFormSection, LegacyFormSelect, LegacyFormSliderRow, LegacyFormSubLabel, LegacyFormSwitch, LegacyFormSwitchRow, LegacyFormTernaryCheckBox, LegacyFormText, LegacyFormTitle;
   var init_components = __esm({
     "src/metro/common/components.ts"() {
       "use strict";
       init_lazy();
+      init_factories();
       init_finders();
-      init_utils();
+      init_wrappers();
       bySingularProp = createFilterDefinition(function([prop], m) {
         return m[prop] && Object.keys(m).length === 1;
       }, function(prop) {
@@ -3396,7 +3186,7 @@
       "use strict";
       init_themes();
       init_common();
-      init_utils();
+      init_wrappers();
       semanticColors = color?.default?.colors ?? constants?.ThemeColorMap;
       rawColors = color?.default?.unsafe_rawColors ?? constants?.Colors;
       ThemeStore2 = findByStoreNameLazy("ThemeStore");
@@ -3432,7 +3222,7 @@
     "src/lib/ui/styles.ts"() {
       "use strict";
       init_lazy();
-      init_utils();
+      init_wrappers();
       init_color();
       import_react_native3 = __toESM(require_react_native());
       CompatfulRedesign = findByPropsLazy("createStyles");
@@ -3542,7 +3332,7 @@
       init_jsxRuntime();
       init_patcher();
       init_lazy();
-      init_utils();
+      init_wrappers();
       import_react_native5 = __toESM(require_react_native());
       ({ ContextMenu: _ContextMenu } = lazyDestructure(function() {
         return findByProps("ContextMenu");
@@ -3770,407 +3560,6 @@
     }
   });
 
-  // src/lib/ui/toasts.ts
-  var toasts_exports = {};
-  __export(toasts_exports, {
-    showToast: () => showToast
-  });
-  var uuid4, showToast;
-  var init_toasts = __esm({
-    "src/lib/ui/toasts.ts"() {
-      "use strict";
-      init_i18n();
-      init_assets();
-      init_lazy();
-      init_common();
-      init_utils();
-      ({ uuid4 } = lazyDestructure(function() {
-        return findByProps("uuid4");
-      }));
-      showToast = function(content, asset) {
-        return toasts.open({
-          // ? In build 182205/44707, Discord changed their toasts, source is no longer used, rather icon, and a key is needed.
-          // TODO: We could probably have the developer specify a key themselves, but this works to fix toasts
-          key: `vd-toast-${uuid4()}`,
-          content,
-          source: asset,
-          icon: asset
-        });
-      };
-      showToast.showCopyToClipboard = function(message = Strings.COPIED_TO_CLIPBOARD) {
-        showToast(message, findAssetId("toast_copy_link"));
-      };
-    }
-  });
-
-  // src/core/plugins/quickInstall/forumPost.tsx
-  function useExtractThreadContent(thread, _firstMessage = null, actionSheet3 = false) {
-    if (thread.guild_id !== DISCORD_SERVER_ID)
-      return;
-    var postType;
-    if (thread.parent_id === PLUGINS_CHANNEL_ID) {
-      postType = "Plugin";
-    } else if (thread.parent_id === THEMES_CHANNEL_ID && isThemeSupported()) {
-      postType = "Theme";
-    } else
-      return;
-    var { firstMessage } = actionSheet3 ? useFirstForumPostMessage(thread) : {
-      firstMessage: _firstMessage
-    };
-    var urls = firstMessage?.content?.match(HTTP_REGEX_MULTI)?.filter(postMap[postType].urlsFilter);
-    if (!urls || !urls[0])
-      return;
-    if (postType === "Plugin" && !urls[0].endsWith("/"))
-      urls[0] += "/";
-    return [
-      postType,
-      urls[0]
-    ];
-  }
-  function useInstaller(thread, firstMessage = null, actionSheet3 = false) {
-    var [postType, url2] = useExtractThreadContent(thread, firstMessage, actionSheet3) ?? [];
-    useProxy(VdPluginManager.plugins);
-    useProxy(themes);
-    var [isInstalling, setIsInstalling] = React.useState(false);
-    if (!postType || !url2)
-      return [
-        true
-      ];
-    var isInstalled = Boolean(postMap[postType].storage[url2]);
-    var installOrRemove = async function() {
-      setIsInstalling(true);
-      try {
-        await postMap[postType].installOrRemove(url2);
-      } catch (e) {
-        showToast(e.message, findAssetId("Small"));
-      } finally {
-        setIsInstalling(false);
-      }
-    };
-    return [
-      false,
-      postType,
-      isInstalled,
-      isInstalling,
-      installOrRemove
-    ];
-  }
-  function forumPost_default() {
-    var patches = [
-      // actionSheetPatch(),
-      installButtonPatch()
-    ];
-    return function() {
-      return patches.map(function(p) {
-        return p();
-      });
-    };
-  }
-  var useFirstForumPostMessage, forumReactions, postMap, installButtonPatch;
-  var init_forumPost = __esm({
-    "src/core/plugins/quickInstall/forumPost.tsx"() {
-      "use strict";
-      init_jsxRuntime();
-      init_i18n();
-      init_plugins();
-      init_assets();
-      init_loader();
-      init_patcher();
-      init_storage();
-      init_themes();
-      init_constants();
-      init_lazy();
-      init_components();
-      init_utils();
-      init_components2();
-      init_toasts();
-      ({ useFirstForumPostMessage } = lazyDestructure(function() {
-        return findByProps("useFirstForumPostMessage");
-      }));
-      forumReactions = findByPropsLazy("MostCommonForumPostReaction");
-      postMap = {
-        Plugin: {
-          storage: VdPluginManager.plugins,
-          urlsFilter: function(url2) {
-            return url2.startsWith(VD_PROXY_PREFIX);
-          },
-          installOrRemove: function(url2) {
-            var isInstalled = postMap.Plugin.storage[url2];
-            return isInstalled ? VdPluginManager.removePlugin(url2) : VdPluginManager.installPlugin(url2);
-          }
-        },
-        Theme: {
-          storage: themes,
-          urlsFilter: function(url2) {
-            return url2.endsWith(".json");
-          },
-          installOrRemove: function(url2) {
-            var isInstalled = postMap.Theme.storage[url2];
-            return isInstalled ? removeTheme(url2) : installTheme(url2);
-          }
-        }
-      };
-      installButtonPatch = function() {
-        return after("MostCommonForumPostReaction", forumReactions, function([{ thread, firstMessage }], res) {
-          var [shouldReturn, _, installed, loading, installOrRemove] = useInstaller(thread, firstMessage, true);
-          if (shouldReturn)
-            return;
-          return /* @__PURE__ */ jsxs(Fragment, {
-            children: [
-              res,
-              /* @__PURE__ */ jsx(ErrorBoundary, {
-                children: /* @__PURE__ */ jsx(Button, {
-                  size: "sm",
-                  loading,
-                  disabled: loading,
-                  // variant={installed ? "destructive" : "primary"} crashes older version because "destructive" was renamed from "danger" and there's no sane way for compat check horror
-                  variant: installed ? "secondary" : "primary",
-                  text: installed ? Strings.UNINSTALL : Strings.INSTALL,
-                  onPress: installOrRemove,
-                  icon: findAssetId(installed ? "ic_message_delete" : "DownloadIcon"),
-                  style: {
-                    marginLeft: 8
-                  }
-                })
-              })
-            ]
-          });
-        });
-      };
-    }
-  });
-
-  // src/lib/ui/components/InputAlert.tsx
-  function InputAlert({ title, confirmText, confirmColor, onConfirm, cancelText, placeholder, initialValue = "", secureTextEntry }) {
-    var [value, setValue] = React.useState(initialValue);
-    var [error, setError] = React.useState("");
-    function onConfirmWrapper() {
-      var asyncOnConfirm = Promise.resolve(onConfirm(value));
-      asyncOnConfirm.then(function() {
-        Alerts.close();
-      }).catch(function(e) {
-        setError(e.message);
-      });
-    }
-    return /* @__PURE__ */ jsx(LegacyAlert, {
-      title,
-      confirmText,
-      confirmColor,
-      isConfirmButtonDisabled: error.length !== 0,
-      onConfirm: onConfirmWrapper,
-      cancelText,
-      onCancel: function() {
-        return Alerts.close();
-      },
-      children: /* @__PURE__ */ jsx(LegacyFormInput, {
-        placeholder,
-        value,
-        onChange: function(v) {
-          setValue(typeof v === "string" ? v : v.text);
-          if (error)
-            setError("");
-        },
-        returnKeyType: "done",
-        onSubmitEditing: onConfirmWrapper,
-        error: error || void 0,
-        secureTextEntry,
-        autoFocus: true,
-        showBorder: true,
-        style: {
-          alignSelf: "stretch"
-        }
-      })
-    });
-  }
-  var Alerts;
-  var init_InputAlert = __esm({
-    "src/lib/ui/components/InputAlert.tsx"() {
-      "use strict";
-      init_jsxRuntime();
-      init_components();
-      init_utils();
-      Alerts = findByPropsLazy("openLazy", "close");
-    }
-  });
-
-  // src/lib/ui/alerts.ts
-  var alerts_exports = {};
-  __export(alerts_exports, {
-    showConfirmationAlert: () => showConfirmationAlert,
-    showCustomAlert: () => showCustomAlert,
-    showInputAlert: () => showInputAlert
-  });
-  function showConfirmationAlert(options) {
-    var internalOptions = options;
-    internalOptions.body = options.content;
-    delete internalOptions.content;
-    internalOptions.isDismissable ??= true;
-    return Alerts2.show(internalOptions);
-  }
-  var Alerts2, showCustomAlert, showInputAlert;
-  var init_alerts = __esm({
-    "src/lib/ui/alerts.ts"() {
-      "use strict";
-      init_utils();
-      init_InputAlert();
-      Alerts2 = findByPropsLazy("openLazy", "close");
-      showCustomAlert = function(component, props) {
-        return Alerts2.openLazy({
-          importer: async function() {
-            return function() {
-              return React.createElement(component, props);
-            };
-          }
-        });
-      };
-      showInputAlert = function(options) {
-        return showCustomAlert(InputAlert, options);
-      };
-    }
-  });
-
-  // src/core/plugins/quickInstall/url.tsx
-  function typeFromUrl(url2) {
-    if (url2.startsWith(VD_PROXY_PREFIX)) {
-      return "plugin";
-    } else if (url2.endsWith(".json") && isThemeSupported()) {
-      return "theme";
-    }
-  }
-  function installWithToast(type, url2) {
-    (type === "plugin" ? VdPluginManager.installPlugin.bind(VdPluginManager) : installTheme)(url2).then(function() {
-      showToast(Strings.SUCCESSFULLY_INSTALLED, findAssetId("Check"));
-    }).catch(function(e) {
-      showToast(e.message, findAssetId("Small"));
-    });
-  }
-  function url_default() {
-    var patches = new Array();
-    patches.push(after("showSimpleActionSheet", showSimpleActionSheet, function(args) {
-      if (args[0].key !== "LongPressUrl")
-        return;
-      var { header: { title: url2 }, options } = args[0];
-      var urlType = typeFromUrl(url2);
-      if (!urlType)
-        return;
-      options.push({
-        label: Strings.INSTALL_ADDON,
-        onPress: function() {
-          return installWithToast(urlType, url2);
-        }
-      });
-    }));
-    patches.push(instead("handleClick", handleClick, async function(args, orig) {
-      var { href: url2 } = args[0];
-      var urlType = typeFromUrl(url2);
-      if (!urlType)
-        return orig.apply(this, args);
-      if (urlType === "theme" && getChannel(getChannelId())?.parent_id !== THEMES_CHANNEL_ID)
-        return orig.apply(this, args);
-      showConfirmationAlert({
-        title: Strings.HOLD_UP,
-        content: formatString("CONFIRMATION_LINK_IS_A_TYPE", {
-          urlType
-        }),
-        onConfirm: function() {
-          return installWithToast(urlType, url2);
-        },
-        confirmText: Strings.INSTALL,
-        cancelText: Strings.CANCEL,
-        secondaryConfirmText: Strings.OPEN_IN_BROWSER,
-        onConfirmSecondary: function() {
-          return openURL(url2);
-        }
-      });
-    }));
-    return function() {
-      return patches.forEach(function(p) {
-        return p();
-      });
-    };
-  }
-  var showSimpleActionSheet, handleClick, openURL, getChannelId, getChannel;
-  var init_url = __esm({
-    "src/core/plugins/quickInstall/url.tsx"() {
-      "use strict";
-      init_i18n();
-      init_plugins();
-      init_assets();
-      init_loader();
-      init_patcher();
-      init_themes();
-      init_constants();
-      init_lazy();
-      init_common();
-      init_filters();
-      init_finders();
-      init_utils();
-      init_alerts();
-      init_toasts();
-      showSimpleActionSheet = findExports(byMutableProp("showSimpleActionSheet"));
-      handleClick = findByPropsLazy("handleClick");
-      ({ openURL } = lazyDestructure(function() {
-        return url;
-      }));
-      ({ getChannelId } = lazyDestructure(function() {
-        return channels;
-      }));
-      ({ getChannel } = lazyDestructure(function() {
-        return findByProps("getChannel");
-      }));
-    }
-  });
-
-  // src/core/plugins/quickInstall/index.ts
-  var quickInstall_exports = {};
-  __export(quickInstall_exports, {
-    default: () => onLoad
-  });
-  function onLoad() {
-    var patches = new Array();
-    patches.push(forumPost_default());
-    patches.push(url_default());
-    return function() {
-      return patches.forEach(function(p) {
-        return p();
-      });
-    };
-  }
-  var init_quickInstall = __esm({
-    "src/core/plugins/quickInstall/index.ts"() {
-      "use strict";
-      init_forumPost();
-      init_url();
-    }
-  });
-
-  // src/core/plugins/index.ts
-  function initCorePlugins() {
-    var unloads = [
-      (init_quickInstall(), __toCommonJS(quickInstall_exports))
-    ].map(function(p) {
-      return p.default();
-    });
-    return function() {
-      return unloads.forEach(function(m) {
-        return typeof m === "function" && m();
-      });
-    };
-  }
-  var init_plugins2 = __esm({
-    "src/core/plugins/index.ts"() {
-      "use strict";
-    }
-  });
-
-  // src/assets/icons/pyoncord.png
-  var pyoncord_default;
-  var init_pyoncord = __esm({
-    "src/assets/icons/pyoncord.png"() {
-      pyoncord_default = "data:image/png;base64,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";
-    }
-  });
-
   // src/lib/ui/settings/patches/shared.tsx
   function wrapOnPress(onPress, navigation2, renderPromise, screenOptions, props) {
     return async function() {
@@ -4201,7 +3590,7 @@
       "use strict";
       init_jsxRuntime();
       init_common();
-      init_utils();
+      init_wrappers();
       init_components2();
       tabsNavigationRef = findByPropsLazy("getRootNavigationRef");
       CustomPageRenderer = React.memo(function() {
@@ -4289,10 +3678,10 @@
       "use strict";
       init_jsxRuntime();
       init_patcher();
-      init_utils2();
+      init_utils();
       init_common();
       init_components();
-      init_utils();
+      init_wrappers();
       init_settings2();
       init_shared();
     }
@@ -4386,9 +3775,9 @@
     "src/lib/ui/settings/patches/tabs.tsx"() {
       "use strict";
       init_patcher();
-      init_utils2();
-      init_common();
       init_utils();
+      init_common();
+      init_wrappers();
       init_settings2();
       init_shared();
       settingConstants = findByPropsLazy("SETTING_RENDERER_CONFIG");
@@ -4429,6 +3818,39 @@
     }
   });
 
+  // src/lib/ui/toasts.ts
+  var toasts_exports = {};
+  __export(toasts_exports, {
+    showToast: () => showToast
+  });
+  var uuid4, showToast;
+  var init_toasts = __esm({
+    "src/lib/ui/toasts.ts"() {
+      "use strict";
+      init_i18n();
+      init_assets();
+      init_lazy();
+      init_common();
+      init_wrappers();
+      ({ uuid4 } = lazyDestructure(function() {
+        return findByProps("uuid4");
+      }));
+      showToast = function(content, asset) {
+        return toasts.open({
+          // ? In build 182205/44707, Discord changed their toasts, source is no longer used, rather icon, and a key is needed.
+          // TODO: We could probably have the developer specify a key themselves, but this works to fix toasts
+          key: `vd-toast-${uuid4()}`,
+          content,
+          source: asset,
+          icon: asset
+        });
+      };
+      showToast.showCopyToClipboard = function(message = Strings.COPIED_TO_CLIPBOARD) {
+        showToast(message, findAssetId("toast_copy_link"));
+      };
+    }
+  });
+
   // src/core/ui/settings/pages/General/Version.tsx
   function Version({ label, version, icon }) {
     return /* @__PURE__ */ jsx(TableRow, {
@@ -4456,7 +3878,7 @@
     }
   });
 
-  // src/lib/debug.ts
+  // src/lib/api/debug.ts
   var debug_exports = {};
   __export(debug_exports, {
     connectToDebugger: () => connectToDebugger,
@@ -4526,9 +3948,11 @@
     var PlatformConstants = import_react_native9.Platform.constants;
     var rnVer = PlatformConstants.reactNativeVersion;
     return {
-      /** @deprecated */
+      /**
+       * @deprecated use `bunny` field
+       * */
       vendetta: {
-        version: versionHash,
+        version: versionHash.split("-")[0],
         loader: getLoaderName()
       },
       bunny: {
@@ -4588,18 +4012,18 @@
   }
   var import_react_native9, socket, versionHash;
   var init_debug = __esm({
-    "src/lib/debug.ts"() {
+    "src/lib/api/debug.ts"() {
       "use strict";
       init_assets();
       init_loader();
       init_modules();
       init_patcher();
-      init_themes();
       init_settings();
+      init_themes();
       init_logger();
       init_toasts();
       import_react_native9 = __toESM(require_react_native());
-      versionHash = "d637651-dev";
+      versionHash = "605685e-dev";
     }
   });
 
@@ -4721,9 +4145,9 @@
       init_jsxRuntime();
       init_i18n();
       init_Version();
-      init_storage();
       init_debug();
       init_settings();
+      init_storage();
       init_components();
       import_react_native10 = __toESM(require_react_native());
     }
@@ -4877,13 +4301,144 @@
       init_settings3();
       init_About();
       init_assets();
-      init_storage();
       init_debug();
       init_settings();
+      init_storage();
       init_constants();
       init_common();
       init_components();
       import_react_native11 = __toESM(require_react_native());
+    }
+  });
+
+  // src/metro/index.ts
+  var metro_exports = {};
+  __export(metro_exports, {
+    common: () => common_exports,
+    factories: () => factories_exports,
+    filters: () => filters_exports,
+    findAllExports: () => findAllExports,
+    findAllModule: () => findAllModule,
+    findAllModuleId: () => findAllModuleId,
+    findByDisplayName: () => findByDisplayName,
+    findByDisplayNameAll: () => findByDisplayNameAll,
+    findByDisplayNameLazy: () => findByDisplayNameLazy,
+    findByFilePath: () => findByFilePath,
+    findByFilePathLazy: () => findByFilePathLazy,
+    findByName: () => findByName,
+    findByNameAll: () => findByNameAll,
+    findByNameLazy: () => findByNameLazy,
+    findByProps: () => findByProps,
+    findByPropsAll: () => findByPropsAll,
+    findByPropsLazy: () => findByPropsLazy,
+    findByStoreName: () => findByStoreName,
+    findByStoreNameLazy: () => findByStoreNameLazy,
+    findByTypeName: () => findByTypeName,
+    findByTypeNameAll: () => findByTypeNameAll,
+    findByTypeNameLazy: () => findByTypeNameLazy,
+    findExports: () => findExports,
+    findModule: () => findModule,
+    findModuleId: () => findModuleId,
+    lazy: () => lazy_exports
+  });
+  var init_metro = __esm({
+    "src/metro/index.ts"() {
+      "use strict";
+      init_common();
+      init_factories();
+      init_filters();
+      init_finders();
+      init_lazy2();
+      init_wrappers();
+    }
+  });
+
+  // src/lib/ui/components/InputAlert.tsx
+  function InputAlert({ title, confirmText, confirmColor, onConfirm, cancelText, placeholder, initialValue = "", secureTextEntry }) {
+    var [value, setValue] = React.useState(initialValue);
+    var [error, setError] = React.useState("");
+    function onConfirmWrapper() {
+      var asyncOnConfirm = Promise.resolve(onConfirm(value));
+      asyncOnConfirm.then(function() {
+        Alerts.close();
+      }).catch(function(e) {
+        setError(e.message);
+      });
+    }
+    return /* @__PURE__ */ jsx(LegacyAlert, {
+      title,
+      confirmText,
+      confirmColor,
+      isConfirmButtonDisabled: error.length !== 0,
+      onConfirm: onConfirmWrapper,
+      cancelText,
+      onCancel: function() {
+        return Alerts.close();
+      },
+      children: /* @__PURE__ */ jsx(LegacyFormInput, {
+        placeholder,
+        value,
+        onChange: function(v) {
+          setValue(typeof v === "string" ? v : v.text);
+          if (error)
+            setError("");
+        },
+        returnKeyType: "done",
+        onSubmitEditing: onConfirmWrapper,
+        error: error || void 0,
+        secureTextEntry,
+        autoFocus: true,
+        showBorder: true,
+        style: {
+          alignSelf: "stretch"
+        }
+      })
+    });
+  }
+  var Alerts;
+  var init_InputAlert = __esm({
+    "src/lib/ui/components/InputAlert.tsx"() {
+      "use strict";
+      init_jsxRuntime();
+      init_components();
+      init_wrappers();
+      Alerts = findByPropsLazy("openLazy", "close");
+    }
+  });
+
+  // src/lib/ui/alerts.ts
+  var alerts_exports = {};
+  __export(alerts_exports, {
+    showConfirmationAlert: () => showConfirmationAlert,
+    showCustomAlert: () => showCustomAlert,
+    showInputAlert: () => showInputAlert
+  });
+  function showConfirmationAlert(options) {
+    var internalOptions = options;
+    internalOptions.body = options.content;
+    delete internalOptions.content;
+    internalOptions.isDismissable ??= true;
+    return Alerts2.show(internalOptions);
+  }
+  var Alerts2, showCustomAlert, showInputAlert;
+  var init_alerts = __esm({
+    "src/lib/ui/alerts.ts"() {
+      "use strict";
+      init_wrappers();
+      init_InputAlert();
+      Alerts2 = findByPropsLazy("openLazy", "close");
+      showCustomAlert = function(component, props) {
+        return Alerts2.openLazy({
+          importer: async function() {
+            return function() {
+              return React.createElement(component, props);
+            };
+          }
+        });
+      };
+      showInputAlert = function(options) {
+        return showCustomAlert(InputAlert, options);
+      };
     }
   });
 
@@ -5808,8 +5363,8 @@
       init_jsxRuntime();
       init_i18n();
       init_assets();
-      init_storage();
       init_settings();
+      init_storage();
       init_constants();
       init_metro();
       init_common();
@@ -5820,6 +5375,172 @@
       import_react = __toESM(require_react());
       import_react_native12 = __toESM(require_react_native());
       ({ FlashList } = findByProps("FlashList"));
+    }
+  });
+
+  // src/core/vendetta/plugins.ts
+  var plugins, pluginInstance, VdPluginManager;
+  var init_plugins = __esm({
+    "src/core/vendetta/plugins.ts"() {
+      "use strict";
+      init_settings();
+      init_storage();
+      init_utils();
+      init_constants();
+      init_logger();
+      plugins = wrapSync(createStorage(createMMKVBackend("VENDETTA_PLUGINS")));
+      pluginInstance = {};
+      VdPluginManager = {
+        plugins,
+        async pluginFetch(url2) {
+          if (url2.startsWith(VD_PROXY_PREFIX)) {
+            url2 = url2.replace(VD_PROXY_PREFIX, BUNNY_PROXY_PREFIX);
+          }
+          return await safeFetch(url2, {
+            cache: "no-store"
+          });
+        },
+        async fetchPlugin(id) {
+          if (!id.endsWith("/"))
+            id += "/";
+          var existingPlugin = plugins[id];
+          var pluginManifest;
+          try {
+            pluginManifest = await (await this.pluginFetch(id + "manifest.json")).json();
+          } catch (e) {
+            throw new Error(`Failed to fetch manifest for ${id}`);
+          }
+          var pluginJs;
+          if (existingPlugin?.manifest.hash !== pluginManifest.hash) {
+            try {
+              pluginJs = await (await this.pluginFetch(id + (pluginManifest.main || "index.js"))).text();
+            } catch (e) {
+            }
+          }
+          if (!pluginJs && !existingPlugin)
+            throw new Error(`Failed to fetch JS for ${id}`);
+          plugins[id] = {
+            id,
+            manifest: pluginManifest,
+            enabled: existingPlugin?.enabled ?? false,
+            update: existingPlugin?.update ?? true,
+            js: pluginJs ?? existingPlugin.js
+          };
+        },
+        async installPlugin(id, enabled2 = true) {
+          if (!id.endsWith("/"))
+            id += "/";
+          if (typeof id !== "string" || id in plugins)
+            throw new Error("Plugin already installed");
+          await this.fetchPlugin(id);
+          if (enabled2)
+            await this.startPlugin(id);
+        },
+        /**
+         * @internal
+         */
+        async evalPlugin(plugin) {
+          var vendettaForPlugins = {
+            ...window.vendetta,
+            plugin: {
+              id: plugin.id,
+              manifest: plugin.manifest,
+              // Wrapping this with wrapSync is NOT an option.
+              storage: await createStorage(createMMKVBackend(plugin.id))
+            },
+            logger: new DiscordLogger(`Bunny \xBB ${plugin.manifest.name}`)
+          };
+          var pluginString = `vendetta=>{return ${plugin.js}}
+//# sourceURL=${plugin.id}`;
+          var raw = (0, eval)(pluginString)(vendettaForPlugins);
+          var ret = typeof raw === "function" ? raw() : raw;
+          return ret?.default ?? ret ?? {};
+        },
+        async startPlugin(id) {
+          if (!id.endsWith("/"))
+            id += "/";
+          var plugin = plugins[id];
+          if (!plugin)
+            throw new Error("Attempted to start non-existent plugin");
+          try {
+            if (!settings.safeMode?.enabled) {
+              var pluginRet = await this.evalPlugin(plugin);
+              pluginInstance[id] = pluginRet;
+              pluginRet.onLoad?.();
+            }
+            plugin.enabled = true;
+          } catch (e) {
+            logger.error(`Plugin ${plugin.id} errored whilst loading, and will be unloaded`, e);
+            try {
+              pluginInstance[plugin.id]?.onUnload?.();
+            } catch (e2) {
+              logger.error(`Plugin ${plugin.id} errored whilst unloading`, e2);
+            }
+            delete pluginInstance[id];
+            plugin.enabled = false;
+          }
+        },
+        stopPlugin(id, disable = true) {
+          if (!id.endsWith("/"))
+            id += "/";
+          var plugin = plugins[id];
+          var pluginRet = pluginInstance[id];
+          if (!plugin)
+            throw new Error("Attempted to stop non-existent plugin");
+          if (!settings.safeMode?.enabled) {
+            try {
+              pluginRet?.onUnload?.();
+            } catch (e) {
+              logger.error(`Plugin ${plugin.id} errored whilst unloading`, e);
+            }
+            delete pluginInstance[id];
+          }
+          disable && (plugin.enabled = false);
+        },
+        async removePlugin(id) {
+          if (!id.endsWith("/"))
+            id += "/";
+          var plugin = plugins[id];
+          if (plugin.enabled)
+            this.stopPlugin(id);
+          delete plugins[id];
+          await purgeStorage(id);
+        },
+        /**
+         * @internal
+         */
+        async initPlugins() {
+          var _this = this;
+          await awaitStorage(settings, plugins);
+          var allIds = Object.keys(plugins);
+          if (!settings.safeMode?.enabled) {
+            await Promise.allSettled(allIds.filter(function(pl) {
+              return plugins[pl].enabled;
+            }).map(async function(pl) {
+              return plugins[pl].update && await _this.fetchPlugin(pl).catch(function(e) {
+                return logger.error(e.message);
+              }), await _this.startPlugin(pl);
+            }));
+            allIds.filter(function(pl) {
+              return !plugins[pl].enabled && plugins[pl].update;
+            }).forEach(function(pl) {
+              return _this.fetchPlugin(pl);
+            });
+          }
+          return function() {
+            return _this.stopAllPlugins();
+          };
+        },
+        stopAllPlugins() {
+          var _this = this;
+          return Object.keys(pluginInstance).forEach(function(p) {
+            return _this.stopPlugin(p, false);
+          });
+        },
+        getSettings: function(id) {
+          return pluginInstance[id]?.settings;
+        }
+      };
     }
   });
 
@@ -5834,7 +5555,7 @@
   var init_sheets = __esm({
     "src/lib/ui/sheets.ts"() {
       "use strict";
-      init_utils();
+      init_wrappers();
       actionSheet = findByPropsLazy("openLazy", "hideActionSheet");
     }
   });
@@ -5844,8 +5565,8 @@
   var init_usePluginCardStyles = __esm({
     "src/core/ui/settings/pages/Plugins/usePluginCardStyles.ts"() {
       "use strict";
-      init_styles();
       init_common();
+      init_styles();
       usePluginCardStyles = createStyles({
         smallIcon: {
           tintColor: tokens.colors.LOGO_PRIMARY,
@@ -6028,12 +5749,12 @@
       init_plugins();
       init_assets();
       init_storage();
-      init_alerts();
-      init_sheets();
-      init_toasts();
       init_types();
       init_common();
       init_components();
+      init_alerts();
+      init_sheets();
+      init_toasts();
       import_react_native13 = __toESM(require_react_native());
     }
   });
@@ -6140,11 +5861,11 @@
       init_plugins();
       init_assets();
       init_storage();
-      init_sheets();
       init_lazy();
       init_metro();
       init_common();
       init_components();
+      init_sheets();
       import_react2 = __toESM(require_react());
       import_react_native14 = __toESM(require_react_native());
       init_usePluginCardStyles();
@@ -6225,8 +5946,8 @@
       init_AddonPage();
       init_PluginCard();
       init_plugins();
-      init_storage();
       init_settings();
+      init_storage();
     }
   });
 
@@ -6269,7 +5990,7 @@
                     children: [
                       props.overflowActions && /* @__PURE__ */ jsx(IconButton, {
                         onPress: function() {
-                          return showSimpleActionSheet2({
+                          return showSimpleActionSheet({
                             key: "CardOverflow",
                             header: {
                               title: props.overflowTitle,
@@ -6329,7 +6050,7 @@
       })
     });
   }
-  var import_react_native15, hideActionSheet, showSimpleActionSheet2, useStyles2;
+  var import_react_native15, hideActionSheet, showSimpleActionSheet, useStyles2;
   var init_AddonCard = __esm({
     "src/core/ui/components/AddonCard.tsx"() {
       "use strict";
@@ -6337,14 +6058,14 @@
       init_assets();
       init_lazy();
       init_components();
-      init_utils();
+      init_wrappers();
       init_color();
       init_styles();
       import_react_native15 = __toESM(require_react_native());
       ({ hideActionSheet } = lazyDestructure(function() {
         return findByProps("openLazy", "hideActionSheet");
       }));
-      ({ showSimpleActionSheet: showSimpleActionSheet2 } = lazyDestructure(function() {
+      ({ showSimpleActionSheet } = lazyDestructure(function() {
         return findByProps("showSimpleActionSheet");
       }));
       useStyles2 = createStyles({
@@ -6406,14 +6127,13 @@
       console.error("Error while selectAndApply,", e);
     }
   }
-  function ThemeCard({ item: theme, index }) {
+  function ThemeCard({ item: theme }) {
     useProxy(theme);
     var [removed, setRemoved] = React.useState(false);
     if (removed)
       return null;
     var { authors } = theme.data;
     return /* @__PURE__ */ jsx(AddonCard, {
-      index,
       headerLabel: theme.data.name,
       headerSublabel: authors ? `by ${authors.map(function(i) {
         return i.name;
@@ -6482,9 +6202,9 @@
       init_i18n();
       init_AddonCard();
       init_assets();
+      init_settings();
       init_storage();
       init_themes();
-      init_settings();
       init_types();
       init_common();
       init_alerts();
@@ -6536,9 +6256,9 @@
       init_i18n();
       init_AddonPage();
       init_ThemeCard();
+      init_settings();
       init_storage();
       init_themes();
-      init_settings();
       init_components();
     }
   });
@@ -6609,7 +6329,7 @@
     }
   });
 
-  // src/lib/managers/fonts.ts
+  // src/lib/fonts/index.ts
   var fonts_exports = {};
   __export(fonts_exports, {
     fonts: () => fonts,
@@ -6723,11 +6443,11 @@
   }
   var fonts;
   var init_fonts = __esm({
-    "src/lib/managers/fonts.ts"() {
+    "src/lib/fonts/index.ts"() {
       "use strict";
       init_fs();
       init_storage();
-      init_utils2();
+      init_utils();
       fonts = wrapSync(createStorage(createMMKVBackend("BUNNY_FONTS")));
     }
   });
@@ -7165,10 +6885,10 @@
       init_storage();
       init_fonts();
       init_themes();
-      init_utils2();
+      init_utils();
       init_common();
       init_components();
-      init_utils();
+      init_wrappers();
       init_components2();
       import_react3 = __toESM(require_react());
       import_react_native16 = __toESM(require_react_native());
@@ -7316,14 +7036,14 @@
       init_modules();
       init_storage();
       init_fonts();
-      init_alerts();
-      init_styles();
       init_lazy();
       init_types();
       init_metro();
       init_common();
       init_components();
       Skia = __toESM(require_react_native_skia());
+      init_alerts();
+      init_styles();
       import_react4 = __toESM(require_react());
       import_react_native17 = __toESM(require_react_native());
       init_FontEditor();
@@ -7369,15 +7089,15 @@
       init_i18n();
       init_AddonPage();
       init_FontEditor();
+      init_settings();
       init_storage();
       init_fonts();
-      init_settings();
       init_common();
       init_FontCard();
     }
   });
 
-  // src/core/ui/settings/hooks/useFS.ts
+  // src/core/ui/hooks/useFS.ts
   function useFileExists(path, prefix) {
     var [state, setState] = (0, import_react5.useState)(2);
     var check = function() {
@@ -7414,7 +7134,7 @@
   }
   var import_react5, CheckState;
   var init_useFS = __esm({
-    "src/core/ui/settings/hooks/useFS.ts"() {
+    "src/core/ui/hooks/useFS.ts"() {
       "use strict";
       init_fs();
       import_react5 = __toESM(require_react());
@@ -7637,7 +7357,7 @@
                     source: findAssetId("ic_warning_24px")
                   }),
                   onPress: function() {
-                    return showSimpleActionSheet3({
+                    return showSimpleActionSheet2({
                       key: "ErrorBoundaryTools",
                       header: {
                         title: "Which ErrorBoundary do you want to trip?",
@@ -7720,7 +7440,7 @@
       })
     });
   }
-  var import_react_native20, hideActionSheet2, showSimpleActionSheet3, RDT_EMBED_LINK, useStyles3;
+  var import_react_native20, hideActionSheet2, showSimpleActionSheet2, RDT_EMBED_LINK, useStyles3;
   var init_Developer = __esm({
     "src/core/ui/settings/pages/Developer/index.tsx"() {
       "use strict";
@@ -7729,14 +7449,14 @@
       init_useFS();
       init_AssetBrowser();
       init_assets();
-      init_loader();
-      init_storage();
       init_debug();
+      init_loader();
       init_settings();
+      init_storage();
       init_lazy();
       init_common();
       init_components();
-      init_utils();
+      init_wrappers();
       init_color();
       init_components2();
       init_styles();
@@ -7744,7 +7464,7 @@
       ({ hideActionSheet: hideActionSheet2 } = lazyDestructure(function() {
         return findByProps("openLazy", "hideActionSheet");
       }));
-      ({ showSimpleActionSheet: showSimpleActionSheet3 } = lazyDestructure(function() {
+      ({ showSimpleActionSheet: showSimpleActionSheet2 } = lazyDestructure(function() {
         return findByProps("showSimpleActionSheet");
       }));
       RDT_EMBED_LINK = "https://raw.githubusercontent.com/amsyarasyiq/rdt-embedder/main/dist.js";
@@ -7776,7 +7496,7 @@
           },
           rawTabsConfig: {
             useTrailing: function() {
-              return `(${"d637651-dev"})`;
+              return `(${"605685e-dev"})`;
             }
           }
         },
@@ -7843,8 +7563,8 @@
       init_i18n();
       init_assets();
       init_loader();
-      init_storage();
       init_settings();
+      init_storage();
       init_settings2();
     }
   });
@@ -7929,7 +7649,7 @@
       init_types2();
       init_settings();
       init_common();
-      init_utils();
+      init_wrappers();
       util = findByPropsLazy("inspect");
       AsyncFunction = async function() {
         return void 0;
@@ -8038,7 +7758,7 @@
       }
     };
   }
-  var init_plugins3 = __esm({
+  var init_plugins2 = __esm({
     "src/core/commands/plugins.ts"() {
       "use strict";
       init_i18n();
@@ -8065,7 +7785,7 @@
     [
       (init_eval(), __toCommonJS(eval_exports)),
       (init_debug2(), __toCommonJS(debug_exports2)),
-      (init_plugins3(), __toCommonJS(plugins_exports))
+      (init_plugins2(), __toCommonJS(plugins_exports))
     ].forEach(function(r) {
       return registerCommand(r.default());
     });
@@ -8164,18 +7884,6 @@
   });
 
   // src/core/vendetta/api.tsx
-  async function createVdPluginObject(plugin) {
-    return {
-      ...window.vendetta,
-      plugin: {
-        id: plugin.id,
-        manifest: plugin.manifest,
-        // Wrapping this with wrapSync is NOT an option.
-        storage: await createStorage(createMMKVBackend(plugin.id))
-      },
-      logger: new DiscordLogger(`Bunny \xBB ${plugin.manifest.name}`)
-    };
-  }
   var import_react6, import_react_native21, initVendettaObject;
   var init_api = __esm({
     "src/core/vendetta/api.tsx"() {
@@ -8183,14 +7891,14 @@
       init_jsxRuntime();
       init_assets();
       init_commands();
+      init_debug();
       init_loader();
       init_patcher();
-      init_storage();
-      init_storage();
-      init_debug();
-      init_themes();
       init_settings();
-      init_utils2();
+      init_storage();
+      init_storage();
+      init_themes();
+      init_utils();
       init_cyrb64();
       init_logger();
       init_metro();
@@ -8207,6 +7915,11 @@
       import_react_native21 = __toESM(require_react_native());
       init_plugins();
       initVendettaObject = function() {
+        var createStackBasedFilter = function(fn) {
+          return function(filter) {
+            return fn(factories_exports.createSimpleFilter(filter, cyrb64Hash(new Error().stack)));
+          };
+        };
         var api = window.vendetta = {
           patcher: {
             before: patcher_default.before,
@@ -8215,12 +7928,8 @@
           },
           metro: {
             modules: window.modules,
-            find: function(filter) {
-              return findExports(createSimpleFilter(filter, cyrb64Hash(new Error().stack)));
-            },
-            findAll: function(filter) {
-              return findAllExports(createSimpleFilter(filter, cyrb64Hash(new Error().stack)));
-            },
+            find: createStackBasedFilter(findExports),
+            findAll: createStackBasedFilter(findAllExports),
             findByProps: function(...props) {
               if (props.length === 1 && props[0] === "KeyboardAwareScrollView") {
                 props.push("listenToKeyboardEvents");
@@ -8548,6 +8257,292 @@
     }
   });
 
+  // src/core/plugins/vd-quick-install/forumPost.tsx
+  function useExtractThreadContent(thread, _firstMessage = null, actionSheet3 = false) {
+    if (thread.guild_id !== DISCORD_SERVER_ID)
+      return;
+    var postType;
+    if (thread.parent_id === PLUGINS_CHANNEL_ID) {
+      postType = "Plugin";
+    } else if (thread.parent_id === THEMES_CHANNEL_ID && isThemeSupported()) {
+      postType = "Theme";
+    } else
+      return;
+    var { firstMessage } = actionSheet3 ? useFirstForumPostMessage(thread) : {
+      firstMessage: _firstMessage
+    };
+    var urls = firstMessage?.content?.match(HTTP_REGEX_MULTI)?.filter(postMap[postType].urlsFilter);
+    if (!urls || !urls[0])
+      return;
+    if (postType === "Plugin" && !urls[0].endsWith("/"))
+      urls[0] += "/";
+    return [
+      postType,
+      urls[0]
+    ];
+  }
+  function useInstaller(thread, firstMessage = null, actionSheet3 = false) {
+    var [postType, url2] = useExtractThreadContent(thread, firstMessage, actionSheet3) ?? [];
+    useProxy(VdPluginManager.plugins);
+    useProxy(themes);
+    var [isInstalling, setIsInstalling] = React.useState(false);
+    if (!postType || !url2)
+      return [
+        true
+      ];
+    var isInstalled = Boolean(postMap[postType].storage[url2]);
+    var installOrRemove = async function() {
+      setIsInstalling(true);
+      try {
+        await postMap[postType].installOrRemove(url2);
+      } catch (e) {
+        showToast(e.message, findAssetId("Small"));
+      } finally {
+        setIsInstalling(false);
+      }
+    };
+    return [
+      false,
+      postType,
+      isInstalled,
+      isInstalling,
+      installOrRemove
+    ];
+  }
+  function forumPost_default() {
+    var patches2 = [
+      // actionSheetPatch(),
+      installButtonPatch()
+    ];
+    return function() {
+      return patches2.map(function(p) {
+        return p();
+      });
+    };
+  }
+  var useFirstForumPostMessage, forumReactions, postMap, installButtonPatch;
+  var init_forumPost = __esm({
+    "src/core/plugins/vd-quick-install/forumPost.tsx"() {
+      "use strict";
+      init_jsxRuntime();
+      init_i18n();
+      init_plugins();
+      init_assets();
+      init_loader();
+      init_patcher();
+      init_storage();
+      init_themes();
+      init_constants();
+      init_lazy();
+      init_components();
+      init_wrappers();
+      init_components2();
+      init_toasts();
+      ({ useFirstForumPostMessage } = lazyDestructure(function() {
+        return findByProps("useFirstForumPostMessage");
+      }));
+      forumReactions = findByPropsLazy("MostCommonForumPostReaction");
+      postMap = {
+        Plugin: {
+          storage: VdPluginManager.plugins,
+          urlsFilter: function(url2) {
+            return url2.startsWith(VD_PROXY_PREFIX);
+          },
+          installOrRemove: function(url2) {
+            var isInstalled = postMap.Plugin.storage[url2];
+            return isInstalled ? VdPluginManager.removePlugin(url2) : VdPluginManager.installPlugin(url2);
+          }
+        },
+        Theme: {
+          storage: themes,
+          urlsFilter: function(url2) {
+            return url2.endsWith(".json");
+          },
+          installOrRemove: function(url2) {
+            var isInstalled = postMap.Theme.storage[url2];
+            return isInstalled ? removeTheme(url2) : installTheme(url2);
+          }
+        }
+      };
+      installButtonPatch = function() {
+        return after("MostCommonForumPostReaction", forumReactions, function([{ thread, firstMessage }], res) {
+          var [shouldReturn, _, installed, loading, installOrRemove] = useInstaller(thread, firstMessage, true);
+          if (shouldReturn)
+            return;
+          return /* @__PURE__ */ jsxs(Fragment, {
+            children: [
+              res,
+              /* @__PURE__ */ jsx(ErrorBoundary, {
+                children: /* @__PURE__ */ jsx(Button, {
+                  size: "sm",
+                  loading,
+                  disabled: loading,
+                  // variant={installed ? "destructive" : "primary"} crashes older version because "destructive" was renamed from "danger" and there's no sane way for compat check horror
+                  variant: installed ? "secondary" : "primary",
+                  text: installed ? Strings.UNINSTALL : Strings.INSTALL,
+                  onPress: installOrRemove,
+                  icon: findAssetId(installed ? "ic_message_delete" : "DownloadIcon"),
+                  style: {
+                    marginLeft: 8
+                  }
+                })
+              })
+            ]
+          });
+        });
+      };
+    }
+  });
+
+  // src/core/plugins/vd-quick-install/url.tsx
+  function typeFromUrl(url2) {
+    if (url2.startsWith(VD_PROXY_PREFIX)) {
+      return "plugin";
+    } else if (url2.endsWith(".json") && isThemeSupported()) {
+      return "theme";
+    }
+  }
+  function installWithToast(type, url2) {
+    (type === "plugin" ? VdPluginManager.installPlugin.bind(VdPluginManager) : installTheme)(url2).then(function() {
+      showToast(Strings.SUCCESSFULLY_INSTALLED, findAssetId("Check"));
+    }).catch(function(e) {
+      showToast(e.message, findAssetId("Small"));
+    });
+  }
+  function url_default() {
+    var patches2 = new Array();
+    patches2.push(after("showSimpleActionSheet", showSimpleActionSheet3, function(args) {
+      if (args[0].key !== "LongPressUrl")
+        return;
+      var { header: { title: url2 }, options } = args[0];
+      var urlType = typeFromUrl(url2);
+      if (!urlType)
+        return;
+      options.push({
+        label: Strings.INSTALL_ADDON,
+        onPress: function() {
+          return installWithToast(urlType, url2);
+        }
+      });
+    }));
+    patches2.push(instead("handleClick", handleClick, async function(args, orig) {
+      var { href: url2 } = args[0];
+      var urlType = typeFromUrl(url2);
+      if (!urlType)
+        return orig.apply(this, args);
+      if (urlType === "theme" && getChannel(getChannelId())?.parent_id !== THEMES_CHANNEL_ID)
+        return orig.apply(this, args);
+      showConfirmationAlert({
+        title: Strings.HOLD_UP,
+        content: formatString("CONFIRMATION_LINK_IS_A_TYPE", {
+          urlType
+        }),
+        onConfirm: function() {
+          return installWithToast(urlType, url2);
+        },
+        confirmText: Strings.INSTALL,
+        cancelText: Strings.CANCEL,
+        secondaryConfirmText: Strings.OPEN_IN_BROWSER,
+        onConfirmSecondary: function() {
+          return openURL(url2);
+        }
+      });
+    }));
+    return function() {
+      return patches2.forEach(function(p) {
+        return p();
+      });
+    };
+  }
+  var showSimpleActionSheet3, handleClick, openURL, getChannelId, getChannel;
+  var init_url = __esm({
+    "src/core/plugins/vd-quick-install/url.tsx"() {
+      "use strict";
+      init_i18n();
+      init_plugins();
+      init_assets();
+      init_loader();
+      init_patcher();
+      init_themes();
+      init_constants();
+      init_lazy();
+      init_common();
+      init_filters();
+      init_finders();
+      init_wrappers();
+      init_alerts();
+      init_toasts();
+      showSimpleActionSheet3 = findExports(byMutableProp("showSimpleActionSheet"));
+      handleClick = findByPropsLazy("handleClick");
+      ({ openURL } = lazyDestructure(function() {
+        return url;
+      }));
+      ({ getChannelId } = lazyDestructure(function() {
+        return channels;
+      }));
+      ({ getChannel } = lazyDestructure(function() {
+        return findByProps("getChannel");
+      }));
+    }
+  });
+
+  // src/core/plugins/vd-quick-install/index.ts
+  var vd_quick_install_exports = {};
+  __export(vd_quick_install_exports, {
+    default: () => vd_quick_install_default
+  });
+  var patches, vd_quick_install_default;
+  var init_vd_quick_install = __esm({
+    "src/core/plugins/vd-quick-install/index.ts"() {
+      "use strict";
+      init_plugins3();
+      init_forumPost();
+      init_url();
+      patches = [];
+      vd_quick_install_default = defineCorePlugin({
+        manifest: {
+          id: "bunny.quick.install",
+          name: "QuickInstall",
+          version: "1.0.0",
+          description: "Quickly install Vendetta plugins and themes",
+          authors: [
+            {
+              name: "pylixonly"
+            }
+          ]
+        },
+        start() {
+          patches = [
+            forumPost_default(),
+            url_default()
+          ];
+        },
+        stop() {
+          patches.forEach(function(p) {
+            return p();
+          });
+        }
+      });
+    }
+  });
+
+  // src/core/plugins/index.ts
+  function defineCorePlugin(instance) {
+    instance[Symbol.for("bunny.core.plugin")] = true;
+    return instance;
+  }
+  var getCorePlugins;
+  var init_plugins3 = __esm({
+    "src/core/plugins/index.ts"() {
+      "use strict";
+      getCorePlugins = function() {
+        return {
+          "vd-quick-install": (init_vd_quick_install(), __toCommonJS(vd_quick_install_exports))
+        };
+      };
+    }
+  });
+
   // src/lib/utils/invariant.ts
   function invariant(condition, message) {
     if (condition)
@@ -8691,7 +8686,7 @@
     "src/lib/api/storage/new.ts"() {
       "use strict";
       init_fs();
-      init_emitter();
+      init_Emitter();
       init_invariant();
       emitterSymbol2 = Symbol.for("bunny.storage.emitter");
       storageInitErrorSymbol = Symbol.for("bunny.storage.initError");
@@ -9053,7 +9048,7 @@
   }
   async function checkAndRegisterUpdates() {
     await awaitStorage2(pluginRepositories, pluginSettings);
-    var corePlugins = {};
+    var corePlugins = getCorePlugins();
     for (var id in corePlugins) {
       var { default: instance, preenabled } = corePlugins[id];
       pluginSettings[id] ??= {
@@ -9063,13 +9058,13 @@
       manifestToId.set(instance.manifest, id);
       corePluginInstances.set(id, instance);
     }
-    await allSettled(Object.keys(pluginRepositories).map(async function(repo) {
+    await Promise.allSettled(Object.keys(pluginRepositories).map(async function(repo) {
       await updateRepository(repo);
     }));
   }
   async function initPlugins() {
     await awaitStorage2(pluginRepositories, pluginSettings);
-    await allSettled([
+    await Promise.allSettled([
       ...registeredPlugins.keys()
     ].map(async function(id) {
       if (isPluginEnabled(id)) {
@@ -9081,10 +9076,10 @@
   var init_plugins4 = __esm({
     "src/lib/plugins/index.ts"() {
       "use strict";
-      init_allSettled();
+      init_plugins3();
       init_fs();
       init_new();
-      init_utils2();
+      init_utils();
       init_common();
       init_api3();
       corePluginInstances = /* @__PURE__ */ new Map();
@@ -9259,15 +9254,15 @@
       "use strict";
       init_jsxRuntime();
       init_i18n();
+      init_debug();
       init_modules();
       init_patcher();
-      init_debug();
       init_settings();
       init_lazy();
       init_types();
       init_components();
       init_lazy2();
-      init_utils();
+      init_wrappers();
       init_color();
       init_components2();
       init_styles();
@@ -9337,209 +9332,6 @@
     }
   });
 
-  // src/lib/managers/plugins.ts
-  var plugins_exports3 = {};
-  __export(plugins_exports3, {
-    fetchAndStorePlugin: () => fetchAndStorePlugin,
-    getPluginById: () => getPluginById,
-    getSettingsComponent: () => getSettingsComponent,
-    initPlugins: () => initPlugins2,
-    installPlugin: () => installPlugin2,
-    preferredSourceStore: () => preferredSourceStore,
-    removePlugin: () => removePlugin,
-    sourceStore: () => sourceStore,
-    startPlugin: () => startPlugin2,
-    stopPlugin: () => stopPlugin2
-  });
-  function getPluginById(id) {
-    if (!id)
-      return void 0;
-    if (!preferredSourceStore[id]) {
-      for (var plugin of Object.values(sourceStore)) {
-        if (plugin?.id === id) {
-          return plugin;
-        }
-      }
-    }
-    return sourceStore[preferredSourceStore[id]];
-  }
-  async function fetchAndStorePlugin(source) {
-    if (!source.endsWith("/"))
-      source += "/";
-    var existingPlugin = sourceStore[source];
-    var fetch2 = function(url2) {
-      return safeFetch(url2.replace(VD_PROXY_PREFIX, BUNNY_PROXY_PREFIX).replace(OLD_BUNNY_PROXY_PREFIX, BUNNY_PROXY_PREFIX), {
-        cache: "no-store"
-      });
-    };
-    var pluginManifest;
-    try {
-      pluginManifest = await (await fetch2(source + "manifest.json")).json();
-    } catch (e) {
-      throw new Error(`Failed to fetch manifest for ${source}`);
-    }
-    for (var f of [
-      "id",
-      "main",
-      "hash",
-      "bunny"
-    ])
-      invariant(pluginManifest[f], `Plugin manifest does not contain mandatory field: '${f}'`);
-    var pluginJs;
-    if (existingPlugin?.manifest.hash !== pluginManifest.hash) {
-      try {
-        pluginJs = await (await fetch2(source + pluginManifest.main)).text();
-      } catch (e) {
-      }
-    }
-    invariant(pluginJs || existingPlugin, `Failed to fetch JS from ${source}`);
-    return sourceStore[source] = {
-      id: pluginManifest.id,
-      source,
-      manifest: pluginManifest,
-      enabled: existingPlugin?.enabled ?? false,
-      update: existingPlugin?.update ?? true,
-      js: pluginJs ?? existingPlugin.js,
-      error: existingPlugin?.error
-    };
-  }
-  async function installPlugin2(source, enabled2 = true) {
-    if (!source.endsWith("/"))
-      source += "/";
-    invariant(!(source in sourceStore), "Source was already installed");
-    var plugin = await fetchAndStorePlugin(source);
-    if (enabled2)
-      await startPlugin2(plugin.id);
-  }
-  async function evalPlugin(plugin) {
-    var vdObject = await createVdPluginObject(plugin);
-    var pluginString = `vendetta=>{return ${plugin.js}}
-//# sourceURL=${plugin.source}?hash=${plugin.manifest.hash}`;
-    var raw = (0, eval)(pluginString)(vdObject);
-    var ret = typeof raw === "function" ? raw() : raw;
-    return ret?.default ?? ret ?? {};
-  }
-  async function startPlugin2(id) {
-    var plugin = getPluginById(id);
-    invariant(plugin, "Attempted to start non-existent plugin");
-    try {
-      if (arePluginsEnabled()) {
-        var pluginRet = await evalPlugin(plugin);
-        _pluginInstances[id] = pluginRet;
-        pluginRet.onLoad?.();
-      }
-      delete plugin.error;
-      plugin.enabled = true;
-    } catch (e) {
-      logger.error(`Plugin ${plugin.source} errored whilst loading, and will be unloaded`, e);
-      plugin.error = e instanceof Error ? e.stack : String(e);
-      try {
-        _pluginInstances[id]?.onUnload?.();
-      } catch (e2) {
-        logger.error(`Plugin ${plugin.source} errored whilst unloading`, e2);
-      }
-      delete _pluginInstances[id];
-      plugin.enabled = false;
-    }
-  }
-  function stopPlugin2(id, disable = true) {
-    var plugin = getPluginById(id);
-    var pluginInstance2 = _pluginInstances[id];
-    invariant(plugin, "Attempted to stop non-existent plugin");
-    if (arePluginsEnabled()) {
-      try {
-        pluginInstance2?.onUnload?.();
-      } catch (e) {
-        logger.error(`Plugin ${plugin.source} errored whilst unloading`, e);
-      }
-      delete _pluginInstances[id];
-    }
-    if (disable)
-      plugin.enabled = false;
-  }
-  async function removePlugin(id) {
-    var plugin = getPluginById(id);
-    invariant(plugin, "Removing non-existent plugin");
-    if (plugin.enabled)
-      stopPlugin2(id);
-    delete sourceStore[plugin.source];
-    await purgeStorage(plugin.source);
-  }
-  async function initPlugins2() {
-    await awaitStorage(sourceStore, preferredSourceStore, settings);
-    if (arePluginsEnabled()) {
-      var plugins2 = uniqWith(Object.values(sourceStore).map(function(s) {
-        return getPluginById(s.id);
-      }).filter(isNotNil), function(a, b) {
-        return a?.id === b?.id;
-      });
-      var updatePromise = [];
-      var updateAndStart = async function(plugin2) {
-        if (plugin2.update) {
-          try {
-            await fetchAndStorePlugin(plugin2.id);
-          } catch (e) {
-            logger.error(e);
-          }
-        }
-        await startPlugin2(plugin2.id);
-      };
-      for (var plugin of plugins2) {
-        if (plugin.enabled) {
-          updatePromise.push(updateAndStart(plugin));
-        } else if (plugin.update) {
-          fetchAndStorePlugin(plugin.id);
-        }
-      }
-      await allSettled(updatePromise);
-    }
-    return function() {
-      return Object.keys(_pluginInstances).forEach(function(p) {
-        return stopPlugin2(p, false);
-      });
-    };
-  }
-  function getSettingsComponent(id) {
-    return _pluginInstances[id]?.settings;
-  }
-  var arePluginsEnabled, _pluginInstances, sourceStore, preferredSourceStore;
-  var init_plugins5 = __esm({
-    "src/lib/managers/plugins.ts"() {
-      "use strict";
-      init_allSettled();
-      init_api();
-      init_storage();
-      init_settings();
-      init_utils2();
-      init_constants();
-      init_invariant();
-      init_logger();
-      init_dist();
-      arePluginsEnabled = function() {
-        return !settings.safeMode?.enabled;
-      };
-      _pluginInstances = {};
-      sourceStore = wrapSync(createStorage(createMMKVBackend("PLUGIN_SOURCES_STORE")));
-      preferredSourceStore = wrapSync(createStorage(createMMKVBackend("PREFERRED_PLUGIN_SOURCE")));
-    }
-  });
-
-  // src/lib/managers/index.ts
-  var managers_exports = {};
-  __export(managers_exports, {
-    fonts: () => fonts_exports,
-    plugins: () => plugins_exports3,
-    themes: () => themes_exports
-  });
-  var init_managers = __esm({
-    "src/lib/managers/index.ts"() {
-      "use strict";
-      init_fonts();
-      init_plugins5();
-      init_themes();
-    }
-  });
-
   // src/lib/ui/index.ts
   var ui_exports = {};
   __export(ui_exports, {
@@ -9567,10 +9359,11 @@
   __export(lib_exports, {
     api: () => api_exports,
     debug: () => debug_exports,
-    managers: () => managers_exports,
+    fonts: () => fonts_exports,
     metro: () => metro_exports,
     plugins: () => plugins_exports2,
     settings: () => settings_exports,
+    themes: () => themes_exports,
     ui: () => ui_exports,
     unload: () => unload,
     utils: () => utils_exports
@@ -9588,13 +9381,14 @@
       init_global_d();
       init_api2();
       init_debug();
-      init_managers();
-      init_plugins4();
       init_settings();
+      init_fonts();
+      init_plugins4();
+      init_themes();
       init_ui();
-      init_utils2();
+      init_utils();
       init_metro();
-      _disposer = new Array();
+      _disposer = [];
       unload.push = function(fn) {
         _disposer.push(fn);
       };
@@ -9632,7 +9426,6 @@
       initSettings(),
       fixes_default(),
       safeMode_default(),
-      initCorePlugins(),
       checkAndRegisterUpdates()
     ]).then(
       // Push them all to unloader
@@ -9657,19 +9450,18 @@
       "use strict";
       init_fixes();
       init_i18n();
-      init_plugins2();
       init_settings3();
       init_api();
       init_plugins();
       init_commands();
+      init_debug();
       init_flux();
       init_fs();
       init_loader();
       init_modules();
-      init_debug();
       init_fonts();
-      init_themes();
       init_plugins4();
+      init_themes();
       init_logger();
       init_safeMode();
       init_settings2();
@@ -9683,6 +9475,7 @@
   async function initializeBunny() {
     try {
       Object.freeze = Object.seal = Object;
+      require_promise_all_settled();
       await (init_caches(), __toCommonJS(caches_exports)).initMetroCache();
       await (init_src(), __toCommonJS(src_exports)).default();
     } catch (e) {
@@ -9692,7 +9485,7 @@
       alert([
         "Failed to load Bunny!\n",
         `Build Number: ${ClientInfoManager2.Build}`,
-        `Bunny: ${"d637651-dev"}`,
+        `Bunny: ${"605685e-dev"}`,
         stack || e?.toString?.()
       ].join("\n"));
     }
