@@ -981,6 +981,12 @@
   });
 
   // src/lib/utils/lazy.ts
+  var lazy_exports = {};
+  __export(lazy_exports, {
+    getProxyFactory: () => getProxyFactory,
+    lazyDestructure: () => lazyDestructure,
+    proxyLazy: () => proxyLazy
+  });
   function proxyLazy(factory, opts = {}) {
     var cache;
     var dummy = opts.hint !== "object" ? function dummy2() {
@@ -1101,8 +1107,8 @@
   });
 
   // src/metro/lazy.ts
-  var lazy_exports = {};
-  __export(lazy_exports, {
+  var lazy_exports2 = {};
+  __export(lazy_exports2, {
     _lazyContextSymbol: () => _lazyContextSymbol,
     createLazyModule: () => createLazyModule,
     getLazyContext: () => getLazyContext
@@ -1520,6 +1526,33 @@
     }
   });
 
+  // src/lib/utils/cyrb64.ts
+  function cyrb64(str, seed = 0) {
+    var h1 = 3735928559 ^ seed, h2 = 1103547991 ^ seed;
+    for (var i = 0, ch; i < str.length; i++) {
+      ch = str.charCodeAt(i);
+      h1 = Math.imul(h1 ^ ch, 2654435761);
+      h2 = Math.imul(h2 ^ ch, 1597334677);
+    }
+    h1 = Math.imul(h1 ^ h1 >>> 16, 2246822507);
+    h1 ^= Math.imul(h2 ^ h2 >>> 13, 3266489909);
+    h2 = Math.imul(h2 ^ h2 >>> 16, 2246822507);
+    h2 ^= Math.imul(h1 ^ h1 >>> 13, 3266489909);
+    return [
+      h2 >>> 0,
+      h1 >>> 0
+    ];
+  }
+  function cyrb64Hash(str, seed = 0) {
+    var [h2, h1] = cyrb64(str, seed);
+    return h2.toString(36).padStart(7, "0") + h1.toString(36).padStart(7, "0");
+  }
+  var init_cyrb64 = __esm({
+    "src/lib/utils/cyrb64.ts"() {
+      "use strict";
+    }
+  });
+
   // src/lib/utils/findInReactTree.ts
   var findInReactTree;
   var init_findInReactTree = __esm({
@@ -1592,6 +1625,49 @@
     }
   });
 
+  // src/lib/utils/hookDefineProperty.ts
+  function hookDefineProperty(target, property, cb) {
+    var targetAsAny = target;
+    if (property in target) {
+      return void cb(targetAsAny[property]);
+    }
+    var value;
+    Object.defineProperty(targetAsAny, property, {
+      get: function() {
+        return value;
+      },
+      set(v) {
+        value = cb(v) ?? v;
+      },
+      configurable: true,
+      enumerable: false
+    });
+    return function() {
+      delete targetAsAny[property];
+      targetAsAny[property] = value;
+    };
+  }
+  var init_hookDefineProperty = __esm({
+    "src/lib/utils/hookDefineProperty.ts"() {
+      "use strict";
+    }
+  });
+
+  // src/lib/utils/invariant.ts
+  function invariant(condition, message) {
+    if (condition)
+      return;
+    var resolvedMessage = typeof message === "function" ? message() : message;
+    var prefix = "[Invariant Violation]";
+    var value = resolvedMessage ? `${prefix}: ${resolvedMessage}` : prefix;
+    throw new Error(value);
+  }
+  var init_invariant = __esm({
+    "src/lib/utils/invariant.ts"() {
+      "use strict";
+    }
+  });
+
   // src/lib/utils/logger.ts
   var logger_exports = {};
   __export(logger_exports, {
@@ -1631,50 +1707,33 @@
     }
   });
 
-  // src/lib/utils/types.ts
-  var types_exports = {};
-  __export(types_exports, {
-    ButtonColors: () => ButtonColors
-  });
-  var ButtonColors;
-  var init_types = __esm({
-    "src/lib/utils/types.ts"() {
-      "use strict";
-      (function(ButtonColors2) {
-        ButtonColors2["BRAND"] = "brand";
-        ButtonColors2["RED"] = "red";
-        ButtonColors2["GREEN"] = "green";
-        ButtonColors2["PRIMARY"] = "primary";
-        ButtonColors2["TRANSPARENT"] = "transparent";
-        ButtonColors2["GREY"] = "grey";
-        ButtonColors2["LIGHTGREY"] = "lightgrey";
-        ButtonColors2["WHITE"] = "white";
-        ButtonColors2["LINK"] = "link";
-      })(ButtonColors || (ButtonColors = {}));
-    }
-  });
-
   // src/lib/utils/index.ts
   var utils_exports = {};
   __export(utils_exports, {
     Emitter: () => Emitter,
     constants: () => constants_exports,
+    cyrb64: () => cyrb64,
     findInReactTree: () => findInReactTree,
     findInTree: () => findInTree,
+    hookDefineProperty: () => hookDefineProperty,
+    invariant: () => invariant,
+    lazy: () => lazy_exports,
     logger: () => logger_exports,
-    safeFetch: () => safeFetch,
-    types: () => types_exports
+    safeFetch: () => safeFetch
   });
   var init_utils = __esm({
     "src/lib/utils/index.ts"() {
       "use strict";
       init_constants();
+      init_cyrb64();
       init_Emitter();
       init_findInReactTree();
       init_findInTree();
+      init_hookDefineProperty();
+      init_invariant();
+      init_lazy();
       init_logger();
       init_safeFetch();
-      init_types();
     }
   });
 
@@ -4023,7 +4082,7 @@
       init_logger();
       init_toasts();
       import_react_native9 = __toESM(require_react_native());
-      versionHash = "89035fe-dev";
+      versionHash = "652449b-dev";
     }
   });
 
@@ -4339,7 +4398,7 @@
     findExports: () => findExports,
     findModule: () => findModule,
     findModuleId: () => findModuleId,
-    lazy: () => lazy_exports
+    lazy: () => lazy_exports2
   });
   var init_metro = __esm({
     "src/metro/index.ts"() {
@@ -5574,6 +5633,25 @@
           width: 18
         }
       });
+    }
+  });
+
+  // src/lib/utils/types.ts
+  var ButtonColors;
+  var init_types = __esm({
+    "src/lib/utils/types.ts"() {
+      "use strict";
+      (function(ButtonColors2) {
+        ButtonColors2["BRAND"] = "brand";
+        ButtonColors2["RED"] = "red";
+        ButtonColors2["GREEN"] = "green";
+        ButtonColors2["PRIMARY"] = "primary";
+        ButtonColors2["TRANSPARENT"] = "transparent";
+        ButtonColors2["GREY"] = "grey";
+        ButtonColors2["LIGHTGREY"] = "lightgrey";
+        ButtonColors2["WHITE"] = "white";
+        ButtonColors2["LINK"] = "link";
+      })(ButtonColors || (ButtonColors = {}));
     }
   });
 
@@ -7496,7 +7574,7 @@
           },
           rawTabsConfig: {
             useTrailing: function() {
-              return `(${"89035fe-dev"})`;
+              return `(${"652449b-dev"})`;
             }
           }
         },
@@ -7839,33 +7917,6 @@
       init_logger();
       init_common();
       commands2 = [];
-    }
-  });
-
-  // src/lib/utils/cyrb64.ts
-  function cyrb64(str, seed = 0) {
-    var h1 = 3735928559 ^ seed, h2 = 1103547991 ^ seed;
-    for (var i = 0, ch; i < str.length; i++) {
-      ch = str.charCodeAt(i);
-      h1 = Math.imul(h1 ^ ch, 2654435761);
-      h2 = Math.imul(h2 ^ ch, 1597334677);
-    }
-    h1 = Math.imul(h1 ^ h1 >>> 16, 2246822507);
-    h1 ^= Math.imul(h2 ^ h2 >>> 13, 3266489909);
-    h2 = Math.imul(h2 ^ h2 >>> 16, 2246822507);
-    h2 ^= Math.imul(h1 ^ h1 >>> 13, 3266489909);
-    return [
-      h2 >>> 0,
-      h1 >>> 0
-    ];
-  }
-  function cyrb64Hash(str, seed = 0) {
-    var [h2, h1] = cyrb64(str, seed);
-    return h2.toString(36).padStart(7, "0") + h1.toString(36).padStart(7, "0");
-  }
-  var init_cyrb64 = __esm({
-    "src/lib/utils/cyrb64.ts"() {
-      "use strict";
     }
   });
 
@@ -8543,21 +8594,6 @@
     }
   });
 
-  // src/lib/utils/invariant.ts
-  function invariant(condition, message) {
-    if (condition)
-      return;
-    var resolvedMessage = typeof message === "function" ? message() : message;
-    var prefix = "[Invariant Violation]";
-    var value = resolvedMessage ? `${prefix}: ${resolvedMessage}` : prefix;
-    throw new Error(value);
-  }
-  var init_invariant = __esm({
-    "src/lib/utils/invariant.ts"() {
-      "use strict";
-    }
-  });
-
   // src/lib/api/storage/new.ts
   function createFileBackend2(filePath) {
     return {
@@ -8748,9 +8784,11 @@
   __export(api_exports, {
     assets: () => assets_exports,
     commands: () => commands_exports,
+    debug: () => debug_exports,
     flux: () => flux_exports,
     native: () => native_exports,
     patcher: () => patcher_exports,
+    settings: () => settings_exports,
     storage: () => storage_exports
   });
   var init_api2 = __esm({
@@ -8758,9 +8796,11 @@
       "use strict";
       init_assets();
       init_commands();
+      init_debug();
       init_flux();
       init_native();
       init_patcher();
+      init_settings();
       init_storage();
     }
   });
@@ -9358,12 +9398,10 @@
   var lib_exports = {};
   __export(lib_exports, {
     api: () => api_exports,
-    debug: () => debug_exports,
     fonts: () => fonts_exports,
     managers: () => managers,
     metro: () => metro_exports,
     plugins: () => plugins_exports2,
-    settings: () => settings_exports,
     themes: () => themes_exports,
     ui: () => ui_exports,
     unload: () => unload,
@@ -9381,8 +9419,6 @@
       "use strict";
       init_global_d();
       init_api2();
-      init_debug();
-      init_settings();
       init_fonts();
       init_plugins4();
       init_themes();
@@ -9394,7 +9430,7 @@
       init_themes();
       init_lazy();
       managers = proxyLazy(function() {
-        console.warn("bunny.managers.* is deprecated, and moved the top level (bunny.*). bunny.manager will be eventually removed soon");
+        console.warn("bunny.managers.* is deprecated, and moved the top level (bunny.*). bunny.managers will be eventually removed soon");
         return {
           get fonts() {
             return fonts_exports;
@@ -9506,7 +9542,7 @@
       alert([
         "Failed to load Bunny!\n",
         `Build Number: ${ClientInfoManager2.Build}`,
-        `Bunny: ${"89035fe-dev"}`,
+        `Bunny: ${"652449b-dev"}`,
         stack || e?.toString?.()
       ].join("\n"));
     }
