@@ -3786,7 +3786,7 @@
       init_logger();
       init_toasts();
       import_react_native11 = __toESM(require_react_native());
-      versionHash = "e9d80c7-main";
+      versionHash = "22925c0-main";
     }
   });
 
@@ -6274,7 +6274,7 @@
           },
           rawTabsConfig: {
             useTrailing: function() {
-              return `(${"e9d80c7-main"})`;
+              return `(${"22925c0-main"})`;
             }
           }
         },
@@ -6553,11 +6553,12 @@
   });
   function patchCommands() {
     var unpatch2 = after("getBuiltInCommands", commands, function([type], res) {
-      if (type === ApplicationCommandType.CHAT) {
-        return res.concat(commands2.filter(function(c) {
-          return c.__bunny?.shouldHide?.() !== false;
-        }));
-      }
+      return [
+        ...res,
+        ...commands2.filter(function(c) {
+          return (type instanceof Array ? type.includes(c.type) : type === c.type) && c.__bunny?.shouldHide?.() !== false;
+        })
+      ];
     });
     [
       (init_eval(), __toCommonJS(eval_exports)),
@@ -6573,7 +6574,12 @@
   }
   function registerCommand(command) {
     var _command, _command1, _command2, _command3;
-    var builtInCommands = commands.getBuiltInCommands(ApplicationCommandType.CHAT, true, false);
+    var builtInCommands;
+    try {
+      builtInCommands = commands.getBuiltInCommands(ApplicationCommandType.CHAT, true, false);
+    } catch (e) {
+      builtInCommands = commands.getBuiltInCommands(Object.values(ApplicationCommandType), true, false);
+    }
     builtInCommands.sort(function(a, b) {
       return parseInt(b.id) - parseInt(a.id);
     });
@@ -7350,7 +7356,7 @@
       alert([
         "Failed to load Bunny!\n",
         `Build Number: ${ClientInfoManager2.Build}`,
-        `Bunny: ${"e9d80c7-main"}`,
+        `Bunny: ${"22925c0-main"}`,
         stack || e?.toString?.()
       ].join("\n"));
     }
