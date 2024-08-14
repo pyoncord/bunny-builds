@@ -38,13 +38,13 @@
   // node_modules/.pnpm/spitroast@1.4.4/node_modules/spitroast/dist/cjs.js
   var require_cjs = __commonJS({
     "node_modules/.pnpm/spitroast@1.4.4/node_modules/spitroast/dist/cjs.js"(exports, module) {
-      var __defProp3 = Object.defineProperty;
+      var __defProp2 = Object.defineProperty;
       var __getOwnPropDesc2 = Object.getOwnPropertyDescriptor;
       var __getOwnPropNames2 = Object.getOwnPropertyNames;
-      var __hasOwnProp3 = Object.prototype.hasOwnProperty;
+      var __hasOwnProp2 = Object.prototype.hasOwnProperty;
       var __export2 = function(target, all) {
         for (var name in all)
-          __defProp3(target, name, {
+          __defProp2(target, name, {
             get: all[name],
             enumerable: true
           });
@@ -52,8 +52,8 @@
       var __copyProps2 = function(to, from, except, desc) {
         if (from && typeof from === "object" || typeof from === "function") {
           var _loop2 = function(key2) {
-            if (!__hasOwnProp3.call(to, key2) && key2 !== except)
-              __defProp3(to, key2, {
+            if (!__hasOwnProp2.call(to, key2) && key2 !== except)
+              __defProp2(to, key2, {
                 get: function() {
                   return from[key2];
                 },
@@ -66,7 +66,7 @@
         return to;
       };
       var __toCommonJS2 = function(mod) {
-        return __copyProps2(__defProp3({}, "__esModule", {
+        return __copyProps2(__defProp2({}, "__esModule", {
           value: true
         }), mod);
       };
@@ -455,58 +455,14 @@
     }
   });
 
-  // node_modules/.pnpm/es-toolkit@1.13.1/node_modules/es-toolkit/dist/chunk-24FKGR6U.mjs
-  var __defProp2, __getOwnPropSymbols, __hasOwnProp2, __propIsEnum, __defNormalProp, __spreadValues;
-  var init_chunk_24FKGR6U = __esm({
-    "node_modules/.pnpm/es-toolkit@1.13.1/node_modules/es-toolkit/dist/chunk-24FKGR6U.mjs"() {
-      __defProp2 = Object.defineProperty;
-      __getOwnPropSymbols = Object.getOwnPropertySymbols;
-      __hasOwnProp2 = Object.prototype.hasOwnProperty;
-      __propIsEnum = Object.prototype.propertyIsEnumerable;
-      __defNormalProp = function(obj, key, value) {
-        return key in obj ? __defProp2(obj, key, {
-          enumerable: true,
-          configurable: true,
-          writable: true,
-          value
-        }) : obj[key] = value;
-      };
-      __spreadValues = function(a, b) {
-        for (var prop in b || (b = {}))
-          if (__hasOwnProp2.call(b, prop))
-            __defNormalProp(a, prop, b[prop]);
-        if (__getOwnPropSymbols)
-          for (var prop of __getOwnPropSymbols(b)) {
-            if (__propIsEnum.call(b, prop))
-              __defNormalProp(a, prop, b[prop]);
-          }
-        return a;
-      };
-    }
-  });
-
-  // node_modules/.pnpm/es-toolkit@1.13.1/node_modules/es-toolkit/dist/chunk-WFZXCGEG.mjs
-  function omit(obj, keys) {
-    var result = __spreadValues({}, obj);
-    for (var key of keys) {
-      delete result[key];
-    }
-    return result;
-  }
-  var init_chunk_WFZXCGEG = __esm({
-    "node_modules/.pnpm/es-toolkit@1.13.1/node_modules/es-toolkit/dist/chunk-WFZXCGEG.mjs"() {
-      init_chunk_24FKGR6U();
-    }
-  });
-
-  // node_modules/.pnpm/es-toolkit@1.13.1/node_modules/es-toolkit/dist/chunk-3IP4JVLL.mjs
+  // node_modules/.pnpm/es-toolkit@1.15.1/node_modules/es-toolkit/dist/function/debounce.mjs
   function debounce(func, debounceMs, { signal } = {}) {
     var timeoutId = null;
     var debounced = function debounced2(...args) {
       if (timeoutId !== null) {
         clearTimeout(timeoutId);
       }
-      if (signal == null ? void 0 : signal.aborted) {
+      if (signal?.aborted) {
         return;
       }
       timeoutId = setTimeout(function() {
@@ -523,21 +479,36 @@
         timeoutId = null;
       }
     };
-    signal == null ? void 0 : signal.addEventListener("abort", onAbort, {
+    signal?.addEventListener("abort", onAbort, {
       once: true
     });
     return debounced;
   }
-  var init_chunk_3IP4JVLL = __esm({
-    "node_modules/.pnpm/es-toolkit@1.13.1/node_modules/es-toolkit/dist/chunk-3IP4JVLL.mjs"() {
+  var init_debounce = __esm({
+    "node_modules/.pnpm/es-toolkit@1.15.1/node_modules/es-toolkit/dist/function/debounce.mjs"() {
     }
   });
 
-  // node_modules/.pnpm/es-toolkit@1.13.1/node_modules/es-toolkit/dist/index.mjs
+  // node_modules/.pnpm/es-toolkit@1.15.1/node_modules/es-toolkit/dist/object/omit.mjs
+  function omit(obj, keys) {
+    var result = {
+      ...obj
+    };
+    for (var key of keys) {
+      delete result[key];
+    }
+    return result;
+  }
+  var init_omit = __esm({
+    "node_modules/.pnpm/es-toolkit@1.15.1/node_modules/es-toolkit/dist/object/omit.mjs"() {
+    }
+  });
+
+  // node_modules/.pnpm/es-toolkit@1.15.1/node_modules/es-toolkit/dist/index.mjs
   var init_dist = __esm({
-    "node_modules/.pnpm/es-toolkit@1.13.1/node_modules/es-toolkit/dist/index.mjs"() {
-      init_chunk_WFZXCGEG();
-      init_chunk_3IP4JVLL();
+    "node_modules/.pnpm/es-toolkit@1.15.1/node_modules/es-toolkit/dist/index.mjs"() {
+      init_debounce();
+      init_omit();
     }
   });
 
@@ -4082,7 +4053,7 @@
       init_logger();
       init_toasts();
       import_react_native9 = __toESM(require_react_native());
-      versionHash = "652449b-dev";
+      versionHash = "ba70fc4-dev";
     }
   });
 
@@ -7574,7 +7545,7 @@
           },
           rawTabsConfig: {
             useTrailing: function() {
-              return `(${"652449b-dev"})`;
+              return `(${"ba70fc4-dev"})`;
             }
           }
         },
@@ -7854,11 +7825,12 @@
   });
   function patchCommands() {
     var unpatch = after("getBuiltInCommands", commands, function([type], res) {
-      if (type === ApplicationCommandType.CHAT) {
-        return res.concat(commands2.filter(function(c) {
-          return c.__bunny?.shouldHide?.() !== false;
-        }));
-      }
+      return [
+        ...res,
+        ...commands2.filter(function(c) {
+          return (type instanceof Array ? type.includes(c.type) : type === c.type) && c.__bunny?.shouldHide?.() !== false;
+        })
+      ];
     });
     [
       (init_eval(), __toCommonJS(eval_exports)),
@@ -7873,7 +7845,12 @@
     };
   }
   function registerCommand(command) {
-    var builtInCommands = commands.getBuiltInCommands(ApplicationCommandType.CHAT, true, false);
+    var builtInCommands;
+    try {
+      builtInCommands = commands.getBuiltInCommands(ApplicationCommandType.CHAT, true, false);
+    } catch (e) {
+      builtInCommands = commands.getBuiltInCommands(Object.values(ApplicationCommandType), true, false);
+    }
     builtInCommands.sort(function(a, b) {
       return parseInt(b.id) - parseInt(a.id);
     });
@@ -9542,7 +9519,7 @@
       alert([
         "Failed to load Bunny!\n",
         `Build Number: ${ClientInfoManager2.Build}`,
-        `Bunny: ${"652449b-dev"}`,
+        `Bunny: ${"ba70fc4-dev"}`,
         stack || e?.toString?.()
       ].join("\n"));
     }
