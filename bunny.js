@@ -4006,7 +4006,7 @@
       init_logger();
       init_toasts();
       import_react_native8 = __toESM(require_react_native());
-      versionHash = "8dc0b82-dev";
+      versionHash = "fed8887-dev";
     }
   });
 
@@ -4284,6 +4284,24 @@
     }
   });
 
+  // src/lib/utils/isValidHttpUrl.ts
+  function isValidHttpUrl(input) {
+    var url2;
+    try {
+      url2 = new URL(input);
+    } catch (e) {
+      return false;
+    }
+    return url2.protocol === "http:" || url2.protocol === "https:";
+  }
+  var init_isValidHttpUrl = __esm({
+    "src/lib/utils/isValidHttpUrl.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+    }
+  });
+
   // src/metro/index.ts
   var metro_exports = {};
   __export(metro_exports, {
@@ -4325,92 +4343,6 @@
       init_finders();
       init_lazy2();
       init_wrappers();
-    }
-  });
-
-  // src/lib/ui/components/InputAlert.tsx
-  function InputAlert({ title, confirmText, confirmColor, onConfirm, cancelText, placeholder, initialValue = "", secureTextEntry }) {
-    var [value, setValue] = React.useState(initialValue);
-    var [error, setError] = React.useState("");
-    function onConfirmWrapper() {
-      var asyncOnConfirm = Promise.resolve(onConfirm(value));
-      asyncOnConfirm.then(() => {
-        Alerts.close();
-      }).catch((e) => {
-        setError(e.message);
-      });
-    }
-    return /* @__PURE__ */ jsx(LegacyAlert, {
-      title,
-      confirmText,
-      confirmColor,
-      isConfirmButtonDisabled: error.length !== 0,
-      onConfirm: onConfirmWrapper,
-      cancelText,
-      onCancel: () => Alerts.close(),
-      children: /* @__PURE__ */ jsx(LegacyFormInput, {
-        placeholder,
-        value,
-        onChange: (v) => {
-          setValue(typeof v === "string" ? v : v.text);
-          if (error)
-            setError("");
-        },
-        returnKeyType: "done",
-        onSubmitEditing: onConfirmWrapper,
-        error: error || void 0,
-        secureTextEntry,
-        autoFocus: true,
-        showBorder: true,
-        style: {
-          alignSelf: "stretch"
-        }
-      })
-    });
-  }
-  var Alerts;
-  var init_InputAlert = __esm({
-    "src/lib/ui/components/InputAlert.tsx"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_jsxRuntime();
-      init_components();
-      init_wrappers();
-      Alerts = findByPropsLazy("openLazy", "close");
-    }
-  });
-
-  // src/lib/ui/alerts.ts
-  var alerts_exports = {};
-  __export(alerts_exports, {
-    showConfirmationAlert: () => showConfirmationAlert,
-    showCustomAlert: () => showCustomAlert,
-    showInputAlert: () => showInputAlert
-  });
-  function showConfirmationAlert(options) {
-    var internalOptions = options;
-    internalOptions.body = options.content;
-    delete internalOptions.content;
-    internalOptions.isDismissable ??= true;
-    return Alerts2.show(internalOptions);
-  }
-  var Alerts2, showCustomAlert, showInputAlert;
-  var init_alerts = __esm({
-    "src/lib/ui/alerts.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_async_to_generator();
-      init_wrappers();
-      init_InputAlert();
-      Alerts2 = findByPropsLazy("openLazy", "close");
-      showCustomAlert = (component, props) => Alerts2.openLazy({
-        importer: /* @__PURE__ */ _async_to_generator(function* () {
-          return () => React.createElement(component, props);
-        })
-      });
-      showInputAlert = (options) => showCustomAlert(InputAlert, options);
     }
   });
 
@@ -5236,6 +5168,69 @@
   });
 
   // src/core/ui/components/AddonPage.tsx
+  function InputAlert(props) {
+    var [value, setValue] = React.useState("");
+    var [error, setError] = React.useState("");
+    var [isFetching, setIsFetching] = React.useState(false);
+    function onConfirmWrapper() {
+      setIsFetching(true);
+      props.fetchFn(value).then(() => dismissAlert("AddonInputAlert")).catch((e) => e instanceof Error ? setError(e.message) : String(e)).finally(() => setIsFetching(false));
+    }
+    return /* @__PURE__ */ jsx(AlertModal, {
+      title: props.label,
+      content: "Type in the source URL you want to install from:",
+      extraContent: /* @__PURE__ */ jsxs(Stack, {
+        style: {
+          marginTop: -12
+        },
+        children: [
+          /* @__PURE__ */ jsx(TextInput, {
+            autoFocus: true,
+            value,
+            onChange: (v) => {
+              setValue(v);
+              if (error)
+                setError("");
+            },
+            returnKeyType: "done",
+            onSubmitEditing: onConfirmWrapper,
+            state: error ? "error" : void 0,
+            errorMessage: error || void 0
+          }),
+          /* @__PURE__ */ jsx(import_react_native11.ScrollView, {
+            horizontal: true,
+            showsHorizontalScrollIndicator: false,
+            style: {
+              gap: 8
+            },
+            children: /* @__PURE__ */ jsx(Button, {
+              size: "sm",
+              variant: "tertiary",
+              text: "Import from clipboard",
+              icon: findAssetId("ClipboardListIcon"),
+              onPress: () => clipboard.getString().then((str) => setValue(str))
+            })
+          })
+        ]
+      }),
+      actions: /* @__PURE__ */ jsxs(Stack, {
+        children: [
+          /* @__PURE__ */ jsx(Button, {
+            loading: isFetching,
+            text: "Install",
+            variant: "primary",
+            disabled: !value || !isValidHttpUrl(value),
+            onPress: onConfirmWrapper
+          }),
+          /* @__PURE__ */ jsx(AlertActionButton, {
+            disabled: isFetching,
+            text: "Cancel",
+            variant: "secondary"
+          })
+        ]
+      })
+    });
+  }
   function AddonPage({ CardComponent, ...props }) {
     useProxy(settings);
     var [search, setSearch] = React.useState("");
@@ -5260,15 +5255,11 @@
       if (!props.installAction)
         return () => {
         };
-      var { onPress, fetchFn } = props.installAction;
+      var { label, onPress, fetchFn } = props.installAction;
       if (fetchFn) {
-        clipboard.getString().then((content) => showInputAlert({
-          title: props.installAction?.label,
-          initialValue: content.match(HTTP_REGEX_MULTI)?.[0] ?? "",
-          placeholder: Strings.URL_PLACEHOLDER,
-          onConfirm: (input) => fetchFn(input),
-          confirmText: Strings.INSTALL,
-          cancelText: Strings.CANCEL
+        openAlert("AddonInputAlert", /* @__PURE__ */ jsx(InputAlert, {
+          label: label ?? "Install",
+          fetchFn
         }));
       } else {
         onPress?.();
@@ -5405,28 +5396,28 @@
       ]
     });
   }
-  var import_fuzzysort, import_react, import_react_native11, showSimpleActionSheet, hideActionSheet;
+  var import_fuzzysort, import_react, import_react_native11, showSimpleActionSheet, hideActionSheet, openAlert, dismissAlert, AlertModal, AlertActionButton;
   var init_AddonPage = __esm({
     "src/core/ui/components/AddonPage.tsx"() {
       "use strict";
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
       init_jsxRuntime();
-      init_i18n();
       init_assets();
       init_settings();
       init_storage();
-      init_constants();
+      init_isValidHttpUrl();
       init_lazy();
       init_metro();
       init_common();
       init_components();
-      init_alerts();
       init_components2();
       import_fuzzysort = __toESM(require_fuzzysort());
       import_react = __toESM(require_react());
       import_react_native11 = __toESM(require_react_native());
       ({ showSimpleActionSheet, hideActionSheet } = lazyDestructure(() => findByProps("showSimpleActionSheet")));
+      ({ openAlert, dismissAlert } = lazyDestructure(() => findByProps("openAlert", "dismissAlert")));
+      ({ AlertModal, AlertActionButton } = lazyDestructure(() => findByProps("AlertModal", "AlertActions")));
     }
   });
 
@@ -5845,6 +5836,92 @@
     }
   });
 
+  // src/lib/ui/components/InputAlert.tsx
+  function InputAlert2({ title, confirmText, confirmColor, onConfirm, cancelText, placeholder, initialValue = "", secureTextEntry }) {
+    var [value, setValue] = React.useState(initialValue);
+    var [error, setError] = React.useState("");
+    function onConfirmWrapper() {
+      var asyncOnConfirm = Promise.resolve(onConfirm(value));
+      asyncOnConfirm.then(() => {
+        Alerts.close();
+      }).catch((e) => {
+        setError(e.message);
+      });
+    }
+    return /* @__PURE__ */ jsx(LegacyAlert, {
+      title,
+      confirmText,
+      confirmColor,
+      isConfirmButtonDisabled: error.length !== 0,
+      onConfirm: onConfirmWrapper,
+      cancelText,
+      onCancel: () => Alerts.close(),
+      children: /* @__PURE__ */ jsx(LegacyFormInput, {
+        placeholder,
+        value,
+        onChange: (v) => {
+          setValue(typeof v === "string" ? v : v.text);
+          if (error)
+            setError("");
+        },
+        returnKeyType: "done",
+        onSubmitEditing: onConfirmWrapper,
+        error: error || void 0,
+        secureTextEntry,
+        autoFocus: true,
+        showBorder: true,
+        style: {
+          alignSelf: "stretch"
+        }
+      })
+    });
+  }
+  var Alerts;
+  var init_InputAlert = __esm({
+    "src/lib/ui/components/InputAlert.tsx"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_jsxRuntime();
+      init_components();
+      init_wrappers();
+      Alerts = findByPropsLazy("openLazy", "close");
+    }
+  });
+
+  // src/lib/ui/alerts.ts
+  var alerts_exports = {};
+  __export(alerts_exports, {
+    showConfirmationAlert: () => showConfirmationAlert,
+    showCustomAlert: () => showCustomAlert,
+    showInputAlert: () => showInputAlert
+  });
+  function showConfirmationAlert(options) {
+    var internalOptions = options;
+    internalOptions.body = options.content;
+    delete internalOptions.content;
+    internalOptions.isDismissable ??= true;
+    return Alerts2.show(internalOptions);
+  }
+  var Alerts2, showCustomAlert, showInputAlert;
+  var init_alerts = __esm({
+    "src/lib/ui/alerts.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_async_to_generator();
+      init_wrappers();
+      init_InputAlert();
+      Alerts2 = findByPropsLazy("openLazy", "close");
+      showCustomAlert = (component, props) => Alerts2.openLazy({
+        importer: /* @__PURE__ */ _async_to_generator(function* () {
+          return () => React.createElement(component, props);
+        })
+      });
+      showInputAlert = (options) => showCustomAlert(InputAlert2, options);
+    }
+  });
+
   // src/core/ui/settings/pages/Plugins/sheets/VdPluginInfoActionSheet.tsx
   var VdPluginInfoActionSheet_exports = {};
   __export(VdPluginInfoActionSheet_exports, {
@@ -6096,17 +6173,47 @@
         label: "Install a plugin",
         fetchFn: function() {
           var _ref = _async_to_generator(function* (url2) {
-            var install = () => VdPluginManager.installPlugin(url2).then(() => showToast(Strings.TOASTS_INSTALLED_PLUGIN, findAssetId("Check"))).catch((x) => showToast(x?.message ?? `${x}`, findAssetId("Small")));
-            if (!url2.startsWith(VD_PROXY_PREFIX) && !url2.startsWith(BUNNY_PROXY_PREFIX) && !settings.developerSettings)
-              setImmediate(() => showConfirmationAlert({
-                title: Strings.MODAL_UNPROXIED_PLUGIN_HEADER,
-                content: Strings.MODAL_UNPROXIED_PLUGIN_DESC,
-                confirmText: Strings.CONTINUE,
-                onConfirm: install,
-                cancelText: Strings.CANCEL
+            if (!url2.startsWith(VD_PROXY_PREFIX) && !url2.startsWith(BUNNY_PROXY_PREFIX) && !settings.developerSettings) {
+              openAlert2("bunny-plugin-unproxied-confirmation", /* @__PURE__ */ jsx(AlertModal2, {
+                title: "Hold On!",
+                content: "You're trying to install a plugin from an external source. This means you're trusting the creator to run their code in this app. Are you sure you want to continue?",
+                extraContent: /* @__PURE__ */ jsx(Card, {
+                  children: /* @__PURE__ */ jsx(Text, {
+                    variant: "text-md/bold",
+                    children: url2
+                  })
+                }),
+                actions: /* @__PURE__ */ jsxs(AlertActions, {
+                  children: [
+                    /* @__PURE__ */ jsx(AlertActionButton2, {
+                      text: "Continue",
+                      variant: "primary",
+                      onPress: () => {
+                        VdPluginManager.installPlugin(url2).then(() => showToast(Strings.TOASTS_INSTALLED_PLUGIN, findAssetId("Check"))).catch((e) => openAlert2("bunny-plugin-install-failed", /* @__PURE__ */ jsx(AlertModal2, {
+                          title: "Install Failed",
+                          content: `Unable to install plugin from '${url2}':`,
+                          extraContent: /* @__PURE__ */ jsx(Card, {
+                            children: /* @__PURE__ */ jsx(Text, {
+                              variant: "text-md/normal",
+                              children: e instanceof Error ? e.message : String(e)
+                            })
+                          }),
+                          actions: /* @__PURE__ */ jsx(AlertActionButton2, {
+                            text: "Okay",
+                            variant: "primary"
+                          })
+                        })));
+                      }
+                    }),
+                    /* @__PURE__ */ jsx(AlertActionButton2, {
+                      text: "Cancel",
+                      variant: "secondary"
+                    })
+                  ]
+                })
               }));
-            else {
-              return yield install();
+            } else {
+              return yield VdPluginManager.installPlugin(url2);
             }
           });
           return function(url2) {
@@ -6116,6 +6223,7 @@
       }
     });
   }
+  var openAlert2, AlertModal2, AlertActions, AlertActionButton2;
   var init_Plugins = __esm({
     "src/core/ui/settings/pages/Plugins/index.tsx"() {
       "use strict";
@@ -6130,10 +6238,14 @@
       init_assets();
       init_settings();
       init_storage();
-      init_alerts();
       init_toasts();
       init_constants();
+      init_lazy();
+      init_metro();
+      init_components();
       init_vendetta();
+      ({ openAlert: openAlert2 } = lazyDestructure(() => findByProps("openAlert", "dismissAlert")));
+      ({ AlertModal: AlertModal2, AlertActions, AlertActionButton: AlertActionButton2 } = lazyDestructure(() => findByProps("AlertModal", "AlertActions")));
     }
   });
 
@@ -7690,7 +7802,7 @@
           },
           render: () => Promise.resolve().then(() => (init_General(), General_exports)),
           rawTabsConfig: {
-            useTrailing: () => `(${"8dc0b82-dev"})`
+            useTrailing: () => `(${"fed8887-dev"})`
           }
         },
         {
@@ -9614,7 +9726,7 @@
         alert([
           "Failed to load Bunny!\n",
           `Build Number: ${ClientInfoManager2.Build}`,
-          `Bunny: ${"8dc0b82-dev"}`,
+          `Bunny: ${"fed8887-dev"}`,
           stack || e?.toString?.()
         ].join("\n"));
       }
