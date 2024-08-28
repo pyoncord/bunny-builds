@@ -4004,7 +4004,7 @@
       init_logger();
       init_toasts();
       import_react_native8 = __toESM(require_react_native());
-      versionHash = "b629261-dev";
+      versionHash = "f542e8c-dev";
     }
   });
 
@@ -6221,9 +6221,9 @@
     return /* @__PURE__ */ jsx(AddonPage, {
       title: Strings.THEMES,
       searchKeywords: [
-        "manifest.name",
-        "manifest.description",
-        (p) => p.manifest.authors?.map((a) => a.name).join(", ")
+        "data.name",
+        "data.description",
+        (p) => p.data.authors?.map((a) => a.name).join(", ")
       ],
       fetchFunction: installTheme,
       items: Object.values(themes),
@@ -7543,7 +7543,7 @@
           },
           render: () => Promise.resolve().then(() => (init_General(), General_exports)),
           rawTabsConfig: {
-            useTrailing: () => `(${"b629261-dev"})`
+            useTrailing: () => `(${"f542e8c-dev"})`
           }
         },
         {
@@ -9467,7 +9467,7 @@
         alert([
           "Failed to load Bunny!\n",
           `Build Number: ${ClientInfoManager2.Build}`,
-          `Bunny: ${"b629261-dev"}`,
+          `Bunny: ${"f542e8c-dev"}`,
           stack || e?.toString?.()
         ].join("\n"));
       }
