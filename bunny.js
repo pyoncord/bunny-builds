@@ -264,27 +264,6 @@
     }
   });
 
-  // node_modules/.pnpm/es-toolkit@1.15.1/node_modules/es-toolkit/dist/array/chunk.mjs
-  function chunk(arr, size) {
-    if (!Number.isInteger(size) || size <= 0) {
-      throw new Error("Size must be an integer greater than zero.");
-    }
-    var chunkLength = Math.ceil(arr.length / size);
-    var result = Array(chunkLength);
-    for (var index = 0; index < chunkLength; index++) {
-      var start = index * size;
-      var end = start + size;
-      result[index] = arr.slice(start, end);
-    }
-    return result;
-  }
-  var init_chunk = __esm({
-    "node_modules/.pnpm/es-toolkit@1.15.1/node_modules/es-toolkit/dist/array/chunk.mjs"() {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-    }
-  });
-
   // node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_class_call_check.js
   function _class_call_check(instance, Constructor) {
     if (!(instance instanceof Constructor))
@@ -413,16 +392,16 @@
 
   // node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_wrap_native_super.js
   function _wrap_native_super(Class) {
-    var _cache2 = typeof Map === "function" ? /* @__PURE__ */ new Map() : void 0;
+    var _cache = typeof Map === "function" ? /* @__PURE__ */ new Map() : void 0;
     _wrap_native_super = function _wrap_native_super2(Class2) {
       if (Class2 === null || !_is_native_function(Class2))
         return Class2;
       if (typeof Class2 !== "function")
         throw new TypeError("Super expression must either be null or a function");
-      if (typeof _cache2 !== "undefined") {
-        if (_cache2.has(Class2))
-          return _cache2.get(Class2);
-        _cache2.set(Class2, Wrapper);
+      if (typeof _cache !== "undefined") {
+        if (_cache.has(Class2))
+          return _cache.get(Class2);
+        _cache.set(Class2, Wrapper);
       }
       function Wrapper() {
         return _construct(Class2, arguments, _get_prototype_of(this).constructor);
@@ -514,7 +493,7 @@
     }
   });
 
-  // node_modules/.pnpm/es-toolkit@1.15.1/node_modules/es-toolkit/dist/function/debounce.mjs
+  // node_modules/.pnpm/es-toolkit@1.16.0/node_modules/es-toolkit/dist/function/debounce.mjs
   function debounce(func, debounceMs, { signal } = {}) {
     var timeoutId = null;
     var debounced = function debounced2(...args) {
@@ -544,13 +523,13 @@
     return debounced;
   }
   var init_debounce = __esm({
-    "node_modules/.pnpm/es-toolkit@1.15.1/node_modules/es-toolkit/dist/function/debounce.mjs"() {
+    "node_modules/.pnpm/es-toolkit@1.16.0/node_modules/es-toolkit/dist/function/debounce.mjs"() {
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
     }
   });
 
-  // node_modules/.pnpm/es-toolkit@1.15.1/node_modules/es-toolkit/dist/object/omit.mjs
+  // node_modules/.pnpm/es-toolkit@1.16.0/node_modules/es-toolkit/dist/object/omit.mjs
   function omit(obj, keys) {
     var result = {
       ...obj
@@ -561,18 +540,17 @@
     return result;
   }
   var init_omit = __esm({
-    "node_modules/.pnpm/es-toolkit@1.15.1/node_modules/es-toolkit/dist/object/omit.mjs"() {
+    "node_modules/.pnpm/es-toolkit@1.16.0/node_modules/es-toolkit/dist/object/omit.mjs"() {
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
     }
   });
 
-  // node_modules/.pnpm/es-toolkit@1.15.1/node_modules/es-toolkit/dist/index.mjs
+  // node_modules/.pnpm/es-toolkit@1.16.0/node_modules/es-toolkit/dist/index.mjs
   var init_dist = __esm({
-    "node_modules/.pnpm/es-toolkit@1.15.1/node_modules/es-toolkit/dist/index.mjs"() {
+    "node_modules/.pnpm/es-toolkit@1.16.0/node_modules/es-toolkit/dist/index.mjs"() {
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
-      init_chunk();
       init_debounce();
       init_omit();
     }
@@ -1345,6 +1323,8 @@
   });
   function createProxy(target = {}) {
     var emitter = new Emitter();
+    var parentTarget = target;
+    var childrens = /* @__PURE__ */ new WeakMap();
     function createProxy1(target2, path) {
       return new Proxy(target2, {
         get(target3, prop) {
@@ -1357,19 +1337,36 @@
           var value = target3[prop];
           if (value !== void 0 && value !== null) {
             emitter.emit("GET", {
+              parent: parentTarget,
               path: newPath,
               value
             });
             if (typeof value === "object") {
-              return createProxy1(value, newPath);
+              if (childrens.has(value))
+                return childrens.get(value);
+              var childrenProxy = createProxy1(value, newPath);
+              childrens.set(value, childrenProxy);
+              return childrenProxy;
             }
             return value;
           }
           return value;
         },
         set(target3, prop, value) {
-          target3[prop] = value;
+          if (typeof value === "object") {
+            if (childrens.has(value))
+              return childrens.get(value);
+            var childrenProxy = createProxy1(value, [
+              ...path,
+              prop
+            ]);
+            childrens.set(value, childrenProxy);
+            target3[prop] = childrenProxy;
+          } else {
+            target3[prop] = value;
+          }
           emitter.emit("SET", {
+            parent: parentTarget,
             path: [
               ...path,
               prop
@@ -1379,9 +1376,12 @@
           return true;
         },
         deleteProperty(target3, prop) {
+          var value = typeof target3[prop] === "object" ? childrens.get(target3[prop]) : target3[prop];
           var success = delete target3[prop];
           if (success)
             emitter.emit("DEL", {
+              value,
+              parent: parentTarget,
               path: [
                 ...path,
                 prop
@@ -1397,19 +1397,29 @@
     };
   }
   function useProxy(storage) {
-    var emitter = storage[emitterSymbol];
+    var emitter = storage?.[emitterSymbol];
     if (!emitter)
-      throw new Error("storage[emitterSymbol] is undefined");
+      throw new Error("storage?.[emitterSymbol] is undefined");
     var [, forceUpdate] = React.useReducer((n) => ~n, 0);
     React.useEffect(() => {
-      var listener = () => forceUpdate();
+      var listener = (event, data) => {
+        if (event === "DEL" && data.value === storage)
+          return;
+        console.log({
+          event,
+          data
+        });
+        forceUpdate();
+      };
       emitter.on("SET", listener);
       emitter.on("DEL", listener);
       return () => {
         emitter.off("SET", listener);
         emitter.off("DEL", listener);
       };
-    }, []);
+    }, [
+      storage
+    ]);
     return storage;
   }
   function createStorage(backend) {
@@ -3994,7 +4004,7 @@
       init_logger();
       init_toasts();
       import_react_native8 = __toESM(require_react_native());
-      versionHash = "5afcb7b-dev";
+      versionHash = "b629261-dev";
     }
   });
 
@@ -5183,22 +5193,17 @@
   function AddonPage({ card: CardComponent, ...props }) {
     useProxy(settings);
     var [search, setSearch] = React.useState("");
-    var items = (0, import_react.useMemo)(() => {
+    var results = (0, import_react.useMemo)(() => {
       var values = props.items;
       if (props.resolveItem)
         values = values.map(props.resolveItem);
-      return values.filter((i) => i && typeof i === "object");
-    }, [
-      props.items
-    ]);
-    var data = (0, import_react.useMemo)(() => {
-      if (!search)
-        return items;
+      var items = values.filter((i) => i && typeof i === "object");
       return import_fuzzysort.default.go(search, items, {
-        keys: props.searchKeywords
-      }).map((r) => r.obj);
+        keys: props.searchKeywords,
+        all: true
+      });
     }, [
-      items,
+      props.items,
       search
     ]);
     var headerElement = /* @__PURE__ */ jsxs(import_react_native11.View, {
@@ -5227,7 +5232,7 @@
     return /* @__PURE__ */ jsxs(ErrorBoundary, {
       children: [
         /* @__PURE__ */ jsx(FlashList, {
-          data,
+          data: results,
           extraData: search,
           estimatedItemSize: 136,
           ListHeaderComponent: headerElement,
@@ -5242,7 +5247,8 @@
           }),
           ListFooterComponent: props.ListFooterComponent,
           renderItem: ({ item }) => /* @__PURE__ */ jsx(CardComponent, {
-            item
+            item: item.obj,
+            result: item
           })
         }),
         (props.fetchFunction ?? props.onFabPress) && /* @__PURE__ */ jsx(FloatingActionButton, {
@@ -5320,10 +5326,58 @@
   });
 
   // src/core/ui/settings/pages/Plugins/components/PluginCard.tsx
+  function getHighlightColor() {
+    return (0, import_chroma_js2.default)(tokens.unsafe_rawColors.YELLOW_300).alpha(0.3).hex();
+  }
+  function Title() {
+    var styles3 = usePluginCardStyles();
+    var { plugin, result } = useCardContext();
+    var highlightedNode = result[0].highlight((m, i) => /* @__PURE__ */ jsx(Text, {
+      style: {
+        backgroundColor: getHighlightColor()
+      },
+      children: m
+    }, i));
+    var icon = plugin.icon && findAssetId(plugin.icon);
+    var textNode = /* @__PURE__ */ jsx(Text, {
+      numberOfLines: 1,
+      variant: "heading-lg/semibold",
+      children: highlightedNode.length ? highlightedNode : plugin.name
+    });
+    return /* @__PURE__ */ jsxs(import_react_native12.View, {
+      style: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 6
+      },
+      children: [
+        icon && /* @__PURE__ */ jsx(import_react_native12.Image, {
+          style: styles3.smallIcon,
+          source: icon
+        }),
+        textNode
+      ]
+    });
+  }
   function Authors() {
-    var plugin = usePlugin();
+    var { plugin, result } = useCardContext();
     if (!plugin.authors)
       return null;
+    var highlightedNode = result[2].highlight((m, i) => /* @__PURE__ */ jsx(Text, {
+      style: {
+        backgroundColor: getHighlightColor()
+      },
+      children: m
+    }, i));
+    if (highlightedNode.length > 0)
+      return /* @__PURE__ */ jsxs(Text, {
+        variant: "text-md/semibold",
+        color: "text-muted",
+        children: [
+          "by ",
+          highlightedNode
+        ]
+      });
     var children = [
       "by "
     ];
@@ -5338,34 +5392,30 @@
       children
     });
   }
-  function Title() {
-    var styles3 = usePluginCardStyles();
-    var plugin = usePlugin();
-    var icon = plugin.icon && findAssetId(plugin.icon);
-    var textElement = /* @__PURE__ */ jsx(Text, {
-      numberOfLines: 1,
-      variant: "heading-lg/semibold",
-      children: plugin.name
-    });
-    return !icon ? textElement : /* @__PURE__ */ jsxs(import_react_native12.View, {
+  function Description() {
+    var { plugin, result } = useCardContext();
+    var highlightedNode = result[1].highlight((m, i) => /* @__PURE__ */ jsx(Text, {
       style: {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 6
+        backgroundColor: getHighlightColor()
       },
-      children: [
-        /* @__PURE__ */ jsx(import_react_native12.Image, {
-          style: styles3.smallIcon,
-          source: icon
-        }),
-        textElement
-      ]
+      children: m
+    }, i));
+    return /* @__PURE__ */ jsx(Text, {
+      variant: "text-md/medium",
+      children: highlightedNode.length ? highlightedNode : plugin.description
     });
   }
-  function PluginCard({ item: plugin }) {
+  function PluginCard({ result, item: plugin }) {
     plugin.usePluginState();
-    return /* @__PURE__ */ jsx(PluginContext.Provider, {
-      value: plugin,
+    var cardContextValue = (0, import_react2.useMemo)(() => ({
+      plugin,
+      result
+    }), [
+      plugin,
+      result
+    ]);
+    return /* @__PURE__ */ jsx(CardContext.Provider, {
+      value: cardContextValue,
       children: /* @__PURE__ */ jsx(Card, {
         children: /* @__PURE__ */ jsxs(Stack, {
           spacing: 16,
@@ -5402,16 +5452,13 @@
                 })
               ]
             }),
-            /* @__PURE__ */ jsx(Text, {
-              variant: "text-md/medium",
-              children: plugin.description
-            })
+            /* @__PURE__ */ jsx(Description, {})
           ]
         })
       })
     });
   }
-  var import_react2, import_react_native12, PluginContext, usePlugin, Actions;
+  var import_chroma_js2, import_react2, import_react_native12, CardContext, useCardContext, Actions;
   var init_PluginCard = __esm({
     "src/core/ui/settings/pages/Plugins/components/PluginCard.tsx"() {
       "use strict";
@@ -5423,12 +5470,13 @@
       init_common();
       init_components();
       init_sheets();
+      import_chroma_js2 = __toESM(require_chroma_js());
       import_react2 = __toESM(require_react());
       import_react_native12 = __toESM(require_react_native());
-      PluginContext = /* @__PURE__ */ (0, import_react2.createContext)(null);
-      usePlugin = () => (0, import_react2.useContext)(PluginContext);
+      CardContext = /* @__PURE__ */ (0, import_react2.createContext)(null);
+      useCardContext = () => (0, import_react2.useContext)(CardContext);
       Actions = /* @__PURE__ */ (0, import_react2.memo)(() => {
-        var plugin = usePlugin();
+        var { plugin } = useCardContext();
         var navigation2 = NavigationNative.useNavigation();
         return /* @__PURE__ */ jsxs(import_react_native12.View, {
           style: {
@@ -5634,6 +5682,581 @@
     }
   });
 
+  // src/lib/utils/types.ts
+  var ButtonColors;
+  var init_types = __esm({
+    "src/lib/utils/types.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      (function(ButtonColors2) {
+        ButtonColors2["BRAND"] = "brand";
+        ButtonColors2["RED"] = "red";
+        ButtonColors2["GREEN"] = "green";
+        ButtonColors2["PRIMARY"] = "primary";
+        ButtonColors2["TRANSPARENT"] = "transparent";
+        ButtonColors2["GREY"] = "grey";
+        ButtonColors2["LIGHTGREY"] = "lightgrey";
+        ButtonColors2["WHITE"] = "white";
+        ButtonColors2["LINK"] = "link";
+      })(ButtonColors || (ButtonColors = {}));
+    }
+  });
+
+  // src/core/ui/settings/pages/Plugins/sheets/VdPluginInfoActionSheet.tsx
+  var VdPluginInfoActionSheet_exports = {};
+  __export(VdPluginInfoActionSheet_exports, {
+    default: () => PluginInfoActionSheet
+  });
+  function PluginInfoActionSheet({ plugin, navigation: navigation2 }) {
+    plugin.usePluginState();
+    var vdPlugin = VdPluginManager.plugins[plugin.id];
+    var SettingsComponent = plugin.getPluginSettingsComponent();
+    return /* @__PURE__ */ jsx(ActionSheet, {
+      children: /* @__PURE__ */ jsxs(import_react_native13.ScrollView, {
+        children: [
+          /* @__PURE__ */ jsxs(import_react_native13.View, {
+            style: {
+              flexDirection: "row",
+              alignItems: "center",
+              paddingVertical: 24
+            },
+            children: [
+              /* @__PURE__ */ jsx(Text, {
+                variant: "heading-xl/semibold",
+                children: plugin.name
+              }),
+              /* @__PURE__ */ jsx(import_react_native13.View, {
+                style: {
+                  marginLeft: "auto"
+                },
+                children: SettingsComponent && /* @__PURE__ */ jsx(Button, {
+                  size: "md",
+                  text: "Configure",
+                  variant: "secondary",
+                  icon: findAssetId("WrenchIcon"),
+                  onPress: () => {
+                    hideSheet("PluginInfoActionSheet");
+                    navigation2.push("BUNNY_CUSTOM_PAGE", {
+                      title: plugin.name,
+                      render: SettingsComponent
+                    });
+                  }
+                })
+              })
+            ]
+          }),
+          /* @__PURE__ */ jsxs(ActionSheetRow.Group, {
+            children: [
+              /* @__PURE__ */ jsx(ActionSheetRow, {
+                label: Strings.REFETCH,
+                icon: /* @__PURE__ */ jsx(TableRow.Icon, {
+                  source: findAssetId("RetryIcon")
+                }),
+                onPress: /* @__PURE__ */ _async_to_generator(function* () {
+                  if (vdPlugin.enabled)
+                    VdPluginManager.stopPlugin(plugin.id, false);
+                  try {
+                    yield VdPluginManager.fetchPlugin(plugin.id);
+                    showToast(Strings.PLUGIN_REFETCH_SUCCESSFUL, findAssetId("toast_image_saved"));
+                  } catch (e) {
+                    showToast(Strings.PLUGIN_REFETCH_FAILED, findAssetId("Small"));
+                  }
+                  if (vdPlugin.enabled)
+                    yield VdPluginManager.startPlugin(plugin.id);
+                  hideSheet("PluginInfoActionSheet");
+                })
+              }),
+              /* @__PURE__ */ jsx(ActionSheetRow, {
+                label: Strings.COPY_URL,
+                icon: /* @__PURE__ */ jsx(TableRow.Icon, {
+                  source: findAssetId("copy")
+                }),
+                onPress: () => {
+                  clipboard.setString(plugin.id);
+                  showToast.showCopyToClipboard();
+                }
+              }),
+              /* @__PURE__ */ jsx(ActionSheetRow, {
+                label: vdPlugin.update ? Strings.DISABLE_UPDATES : Strings.ENABLE_UPDATES,
+                icon: /* @__PURE__ */ jsx(TableRow.Icon, {
+                  source: findAssetId("ic_download_24px")
+                }),
+                onPress: () => {
+                  vdPlugin.update = !vdPlugin.update;
+                  showToast(formatString("TOASTS_PLUGIN_UPDATE", {
+                    update: vdPlugin.update,
+                    name: plugin.name
+                  }), findAssetId("toast_image_saved"));
+                }
+              }),
+              /* @__PURE__ */ jsx(ActionSheetRow, {
+                label: Strings.CLEAR_DATA,
+                icon: /* @__PURE__ */ jsx(TableRow.Icon, {
+                  source: findAssetId("ic_duplicate")
+                }),
+                onPress: () => showConfirmationAlert({
+                  title: Strings.HOLD_UP,
+                  content: formatString("ARE_YOU_SURE_TO_CLEAR_DATA", {
+                    name: plugin.name
+                  }),
+                  confirmText: Strings.CLEAR,
+                  cancelText: Strings.CANCEL,
+                  confirmColor: ButtonColors.RED,
+                  onConfirm: /* @__PURE__ */ _async_to_generator(function* () {
+                    if (vdPlugin.enabled)
+                      VdPluginManager.stopPlugin(plugin.id, false);
+                    try {
+                      yield VdPluginManager.fetchPlugin(plugin.id);
+                      showToast(Strings.PLUGIN_REFETCH_SUCCESSFUL, findAssetId("toast_image_saved"));
+                    } catch (e) {
+                      showToast(Strings.PLUGIN_REFETCH_FAILED, findAssetId("Small"));
+                    }
+                    var message;
+                    try {
+                      purgeStorage(plugin.id);
+                      message = [
+                        "CLEAR_DATA_SUCCESSFUL",
+                        "trash"
+                      ];
+                    } catch (e) {
+                      message = [
+                        "CLEAR_DATA_FAILED",
+                        "Small"
+                      ];
+                    }
+                    showToast(formatString(message[0], {
+                      name: plugin.name
+                    }), findAssetId(message[1]));
+                    if (vdPlugin.enabled)
+                      yield VdPluginManager.startPlugin(plugin.id);
+                    hideSheet("PluginInfoActionSheet");
+                  })
+                })
+              }),
+              /* @__PURE__ */ jsx(ActionSheetRow, {
+                label: Strings.DELETE,
+                icon: /* @__PURE__ */ jsx(TableRow.Icon, {
+                  source: findAssetId("ic_message_delete")
+                }),
+                onPress: () => showConfirmationAlert({
+                  title: Strings.HOLD_UP,
+                  content: formatString("ARE_YOU_SURE_TO_DELETE_PLUGIN", {
+                    name: plugin.name
+                  }),
+                  confirmText: Strings.DELETE,
+                  cancelText: Strings.CANCEL,
+                  confirmColor: ButtonColors.RED,
+                  onConfirm: () => {
+                    try {
+                      VdPluginManager.removePlugin(plugin.id);
+                    } catch (e) {
+                      showToast(String(e), findAssetId("Small"));
+                    }
+                    hideSheet("PluginInfoActionSheet");
+                  }
+                })
+              })
+            ]
+          })
+        ]
+      })
+    });
+  }
+  var import_react_native13;
+  var init_VdPluginInfoActionSheet = __esm({
+    "src/core/ui/settings/pages/Plugins/sheets/VdPluginInfoActionSheet.tsx"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_async_to_generator();
+      init_jsxRuntime();
+      init_i18n();
+      init_plugins();
+      init_assets();
+      init_storage();
+      init_types();
+      init_common();
+      init_components();
+      init_alerts();
+      init_sheets();
+      init_toasts();
+      import_react_native13 = __toESM(require_react_native());
+    }
+  });
+
+  // src/core/ui/settings/pages/Plugins/models/vendetta.ts
+  function unifyVdPlugin(vdPlugin) {
+    return {
+      id: vdPlugin.id,
+      name: vdPlugin.manifest.name,
+      description: vdPlugin.manifest.description,
+      authors: vdPlugin.manifest.authors,
+      icon: vdPlugin.manifest.vendetta?.icon,
+      isEnabled: () => vdPlugin.enabled,
+      isInstalled: () => Boolean(vdPlugin && VdPluginManager.plugins[vdPlugin.id]),
+      usePluginState() {
+        useProxy(VdPluginManager.plugins[vdPlugin.id]);
+      },
+      toggle(start) {
+        start ? VdPluginManager.startPlugin(vdPlugin.id) : VdPluginManager.stopPlugin(vdPlugin.id);
+      },
+      resolveSheetComponent() {
+        return Promise.resolve().then(() => (init_VdPluginInfoActionSheet(), VdPluginInfoActionSheet_exports));
+      },
+      getPluginSettingsComponent() {
+        return VdPluginManager.getSettings(vdPlugin.id);
+      }
+    };
+  }
+  var init_vendetta = __esm({
+    "src/core/ui/settings/pages/Plugins/models/vendetta.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_plugins();
+      init_storage();
+    }
+  });
+
+  // src/core/ui/settings/pages/Plugins/index.tsx
+  var Plugins_exports = {};
+  __export(Plugins_exports, {
+    default: () => Plugins
+  });
+  function PluginPage(props) {
+    var items = props.useItems();
+    return /* @__PURE__ */ jsx(AddonPage, {
+      card: PluginCard,
+      title: Strings.PLUGINS,
+      searchKeywords: [
+        "name",
+        "description",
+        (p) => p.authors?.map((a) => typeof a === "string" ? a : a.name).join()
+      ],
+      safeModeMessage: Strings.SAFE_MODE_NOTICE_PLUGINS,
+      items,
+      ...props
+    });
+  }
+  function Plugins() {
+    useProxy(settings);
+    return /* @__PURE__ */ jsx(PluginPage, {
+      useItems: () => useProxy(VdPluginManager.plugins) && Object.values(VdPluginManager.plugins),
+      resolveItem: unifyVdPlugin,
+      fetchFunction: (url2) => VdPluginManager.installPlugin(url2)
+    });
+  }
+  var init_Plugins = __esm({
+    "src/core/ui/settings/pages/Plugins/index.tsx"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_jsxRuntime();
+      init_i18n();
+      init_AddonPage();
+      init_PluginCard();
+      init_plugins();
+      init_settings();
+      init_storage();
+      init_vendetta();
+    }
+  });
+
+  // src/core/ui/components/AddonCard.tsx
+  function AddonCard(props) {
+    var styles3 = useStyles2();
+    return /* @__PURE__ */ jsx(Card, {
+      children: /* @__PURE__ */ jsxs(Stack, {
+        spacing: 16,
+        children: [
+          /* @__PURE__ */ jsxs(import_react_native14.View, {
+            style: {
+              flexDirection: "row",
+              alignItems: "center"
+            },
+            children: [
+              /* @__PURE__ */ jsxs(import_react_native14.View, {
+                style: styles3.headerLeading,
+                children: [
+                  /* @__PURE__ */ jsx(Text, {
+                    style: styles3.headerLabel,
+                    children: props.headerLabel
+                  }),
+                  props.headerSublabel && /* @__PURE__ */ jsx(Text, {
+                    style: styles3.headerSubtitle,
+                    children: props.headerSublabel
+                  })
+                ]
+              }),
+              /* @__PURE__ */ jsxs(import_react_native14.View, {
+                style: [
+                  styles3.headerTrailing,
+                  {
+                    marginLeft: "auto"
+                  }
+                ],
+                children: [
+                  /* @__PURE__ */ jsxs(import_react_native14.View, {
+                    style: styles3.actions,
+                    children: [
+                      props.overflowActions && /* @__PURE__ */ jsx(IconButton, {
+                        onPress: () => showSimpleActionSheet({
+                          key: "CardOverflow",
+                          header: {
+                            title: props.overflowTitle,
+                            icon: props.headerIcon && /* @__PURE__ */ jsx(LegacyFormRow.Icon, {
+                              style: {
+                                marginRight: 8
+                              },
+                              source: findAssetId(props.headerIcon)
+                            }),
+                            onClose: () => hideActionSheet()
+                          },
+                          options: props.overflowActions?.map((i) => ({
+                            ...i,
+                            icon: findAssetId(i.icon)
+                          }))
+                        }),
+                        size: "sm",
+                        variant: "secondary",
+                        icon: findAssetId("CircleInformationIcon-primary")
+                      }),
+                      props.actions?.map(({ icon, onPress, disabled }) => /* @__PURE__ */ jsx(IconButton, {
+                        onPress,
+                        disabled,
+                        size: "sm",
+                        variant: "secondary",
+                        icon: findAssetId(icon)
+                      }))
+                    ]
+                  }),
+                  props.toggleType && (props.toggleType === "switch" ? /* @__PURE__ */ jsx(FormSwitch, {
+                    value: props.toggleValue(),
+                    onValueChange: props.onToggleChange
+                  }) : /* @__PURE__ */ jsx(import_react_native14.TouchableOpacity, {
+                    onPress: () => {
+                      props.onToggleChange?.(!props.toggleValue());
+                    },
+                    children: /* @__PURE__ */ jsx(FormRadio, {
+                      selected: props.toggleValue()
+                    })
+                  }))
+                ]
+              })
+            ]
+          }),
+          props.descriptionLabel && /* @__PURE__ */ jsx(Text, {
+            variant: "text-md/medium",
+            children: props.descriptionLabel
+          })
+        ]
+      })
+    });
+  }
+  var import_react_native14, hideActionSheet, showSimpleActionSheet, useStyles2;
+  var init_AddonCard = __esm({
+    "src/core/ui/components/AddonCard.tsx"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_jsxRuntime();
+      init_assets();
+      init_lazy();
+      init_components();
+      init_wrappers();
+      init_color();
+      init_styles();
+      import_react_native14 = __toESM(require_react_native());
+      ({ hideActionSheet } = lazyDestructure(() => findByProps("openLazy", "hideActionSheet")));
+      ({ showSimpleActionSheet } = lazyDestructure(() => findByProps("showSimpleActionSheet")));
+      useStyles2 = createStyles({
+        card: {
+          backgroundColor: semanticColors?.CARD_SECONDARY_BG,
+          borderRadius: 12,
+          overflow: "hidden"
+        },
+        header: {
+          padding: 0
+        },
+        headerLeading: {
+          flexDirection: "column",
+          justifyContent: "center",
+          scale: 1.2
+        },
+        headerTrailing: {
+          display: "flex",
+          flexDirection: "row",
+          gap: 15,
+          alignItems: "center"
+        },
+        headerLabel: {
+          ...TextStyleSheet["heading-md/semibold"],
+          color: semanticColors.TEXT_NORMAL
+        },
+        headerSubtitle: {
+          ...TextStyleSheet["text-md/semibold"],
+          color: semanticColors.TEXT_MUTED
+        },
+        descriptionLabel: {
+          ...TextStyleSheet["text-md/semibold"],
+          color: semanticColors.TEXT_NORMAL
+        },
+        actions: {
+          flexDirection: "row-reverse",
+          alignItems: "center",
+          gap: 5
+        },
+        iconStyle: {
+          tintColor: semanticColors.LOGO_PRIMARY,
+          opacity: 0.2,
+          height: 64,
+          width: 64,
+          left: void 0,
+          right: "30%",
+          top: "-10%"
+        }
+      });
+    }
+  });
+
+  // src/core/ui/settings/pages/Themes/ThemeCard.tsx
+  function selectAndApply(value, theme) {
+    try {
+      selectTheme(value ? theme : null);
+      applyTheme(value ? theme : null);
+    } catch (e) {
+      console.error("Error while selectAndApply,", e);
+    }
+  }
+  function ThemeCard({ item: theme }) {
+    useProxy(theme);
+    var [removed, setRemoved] = React.useState(false);
+    if (removed)
+      return null;
+    var { authors } = theme.data;
+    return /* @__PURE__ */ jsx(AddonCard, {
+      headerLabel: theme.data.name,
+      headerSublabel: authors ? `by ${authors.map((i) => i.name).join(", ")}` : "",
+      descriptionLabel: theme.data.description ?? "No description.",
+      toggleType: !settings.safeMode?.enabled ? "radio" : void 0,
+      toggleValue: () => themes[theme.id].selected,
+      onToggleChange: (v) => {
+        selectAndApply(v, theme);
+      },
+      overflowTitle: theme.data.name,
+      overflowActions: [
+        {
+          icon: "ic_sync_24px",
+          label: Strings.REFETCH,
+          onPress: () => {
+            fetchTheme(theme.id, theme.selected).then(() => {
+              showToast(Strings.THEME_REFETCH_SUCCESSFUL, findAssetId("toast_image_saved"));
+            }).catch(() => {
+              showToast(Strings.THEME_REFETCH_FAILED, findAssetId("Small"));
+            });
+          }
+        },
+        {
+          icon: "copy",
+          label: Strings.COPY_URL,
+          onPress: () => {
+            clipboard.setString(theme.id);
+            showToast.showCopyToClipboard();
+          }
+        },
+        {
+          icon: "ic_message_delete",
+          label: Strings.DELETE,
+          isDestructive: true,
+          onPress: () => showConfirmationAlert({
+            title: Strings.HOLD_UP,
+            content: formatString("ARE_YOU_SURE_TO_DELETE_THEME", {
+              name: theme.data.name
+            }),
+            confirmText: Strings.DELETE,
+            cancelText: Strings.CANCEL,
+            confirmColor: ButtonColors.RED,
+            onConfirm: () => {
+              removeTheme(theme.id).then((wasSelected) => {
+                setRemoved(true);
+                if (wasSelected)
+                  selectAndApply(false, theme);
+              }).catch((e) => {
+                showToast(e.message, findAssetId("Small"));
+              });
+            }
+          })
+        }
+      ]
+    });
+  }
+  var init_ThemeCard = __esm({
+    "src/core/ui/settings/pages/Themes/ThemeCard.tsx"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_jsxRuntime();
+      init_i18n();
+      init_AddonCard();
+      init_assets();
+      init_settings();
+      init_storage();
+      init_themes();
+      init_types();
+      init_common();
+      init_alerts();
+      init_toasts();
+    }
+  });
+
+  // src/core/ui/settings/pages/Themes/index.tsx
+  var Themes_exports = {};
+  __export(Themes_exports, {
+    default: () => Themes
+  });
+  function Themes() {
+    useProxy(settings);
+    useProxy(themes);
+    return /* @__PURE__ */ jsx(AddonPage, {
+      title: Strings.THEMES,
+      searchKeywords: [
+        "manifest.name",
+        "manifest.description",
+        (p) => p.manifest.authors?.map((a) => a.name).join(", ")
+      ],
+      fetchFunction: installTheme,
+      items: Object.values(themes),
+      safeModeMessage: formatString("SAFE_MODE_NOTICE_THEMES", {
+        enabled: Boolean(settings.safeMode?.currentThemeId)
+      }),
+      safeModeExtras: settings.safeMode?.currentThemeId ? /* @__PURE__ */ jsx(Button, {
+        text: Strings.DISABLE_THEME,
+        size: "small",
+        onPress: () => delete settings.safeMode?.currentThemeId,
+        style: {
+          marginTop: 8
+        }
+      }) : void 0,
+      card: ThemeCard
+    });
+  }
+  var init_Themes = __esm({
+    "src/core/ui/settings/pages/Themes/index.tsx"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_jsxRuntime();
+      init_i18n();
+      init_AddonPage();
+      init_ThemeCard();
+      init_settings();
+      init_storage();
+      init_themes();
+      init_components();
+    }
+  });
+
   // src/lib/api/native/fs.ts
   var fs_exports = {};
   __export(fs_exports, {
@@ -5735,211 +6358,1794 @@
     }
   });
 
-  // src/lib/api/storage/new.ts
-  function createFileBackend2(filePath) {
-    return {
-      get: /* @__PURE__ */ _async_to_generator(function* () {
+  // src/lib/fonts/index.ts
+  var fonts_exports = {};
+  __export(fonts_exports, {
+    fonts: () => fonts,
+    installFont: () => installFont,
+    removeFont: () => removeFont,
+    saveFont: () => saveFont,
+    selectFont: () => selectFont,
+    updateFonts: () => updateFonts,
+    validateFont: () => validateFont
+  });
+  function writeFont(font) {
+    return _writeFont.apply(this, arguments);
+  }
+  function _writeFont() {
+    _writeFont = _async_to_generator(function* (font) {
+      if (!font && font !== null)
+        throw new Error("Arg font must be a valid object or null");
+      if (font) {
+        yield writeFile("fonts.json", JSON.stringify(font));
+      } else {
+        yield removeFile("fonts.json");
+      }
+    });
+    return _writeFont.apply(this, arguments);
+  }
+  function validateFont(font) {
+    if (!font || typeof font !== "object")
+      throw new Error("URL returned a null/non-object JSON");
+    if (typeof font.spec !== "number")
+      throw new Error("Invalid font 'spec' number");
+    if (font.spec !== 1)
+      throw new Error("Only fonts which follows spec:1 are supported");
+    var requiredFields = [
+      "name",
+      "main"
+    ];
+    if (requiredFields.some((f) => !font[f]))
+      throw new Error(`Font is missing one of the fields: ${requiredFields}`);
+    if (font.name.startsWith("__"))
+      throw new Error("Font names cannot start with __");
+    if (font.name in fonts)
+      throw new Error(`There is already a font named '${font.name}' installed`);
+  }
+  function saveFont(data) {
+    return _saveFont.apply(this, arguments);
+  }
+  function _saveFont() {
+    _saveFont = _async_to_generator(function* (data, selected = false) {
+      var fontDefJson;
+      if (typeof data === "object" && data.__source)
+        data = data.__source;
+      if (typeof data === "string") {
         try {
-          return JSON.parse(yield readFile(filePath));
+          fontDefJson = yield (yield safeFetch(data)).json();
+          fontDefJson.__source = data;
         } catch (e) {
-          throw new Error(`Failed to parse storage from '${filePath}'`, {
+          throw new Error(`Failed to fetch fonts at ${data}`, {
             cause: e
           });
         }
-      }),
-      set: function() {
-        var _ref = _async_to_generator(function* (data) {
-          if (!data || typeof data !== "object")
-            throw new Error("data needs to be an object");
-          yield writeFile(filePath, JSON.stringify(data));
+      } else {
+        fontDefJson = data;
+      }
+      validateFont(fontDefJson);
+      try {
+        yield Promise.all(Object.entries(fontDefJson.main).map(function() {
+          var _ref = _async_to_generator(function* ([font, url2]) {
+            var ext = url2.split(".").pop();
+            if (ext !== "ttf" && ext !== "otf")
+              ext = "ttf";
+            var path = `downloads/fonts/${fontDefJson.name}/${font}.${ext}`;
+            if (!(yield fileExists(path)))
+              yield downloadFile(url2, path);
+          });
+          return function(_) {
+            return _ref.apply(this, arguments);
+          };
+        }()));
+      } catch (e) {
+        throw new Error("Failed to download font assets", {
+          cause: e
         });
-        return function(data) {
-          return _ref.apply(this, arguments);
-        };
-      }(),
-      exists: /* @__PURE__ */ _async_to_generator(function* () {
-        return yield fileExists(filePath);
-      })
-    };
+      }
+      fonts[fontDefJson.name] = fontDefJson;
+      if (selected)
+        writeFont(fonts[fontDefJson.name]);
+      return fontDefJson;
+    });
+    return _saveFont.apply(this, arguments);
   }
-  function _createProxy(target, path, emitter) {
-    var objChildrens = /* @__PURE__ */ new WeakMap();
-    return new Proxy(target, {
-      get(target2, prop) {
-        if (prop === emitterSymbol2)
-          return emitter;
-        var newPath = [
-          ...path,
-          prop
-        ];
-        var value = target2[prop];
-        if (value && typeof value === "object") {
-          var origValue = value;
-          value = objChildrens.get(origValue);
-          if (!value) {
-            value = _createProxy(origValue, newPath, emitter);
-            objChildrens.set(origValue, value);
-          }
-        }
-        if (value != null) {
-          emitter.emit("GET", {
-            path: newPath,
-            value
-          });
-        }
-        return value;
-      },
-      set(target2, prop, value) {
-        target2[prop] = value;
-        emitter.emit("SET", {
-          path: [
-            ...path,
-            prop
-          ],
-          value
-        });
-        return true;
-      },
-      deleteProperty(target2, prop) {
-        var success = delete target2[prop];
-        if (success)
-          emitter.emit("DEL", {
-            path: [
-              ...path,
-              prop
-            ]
-          });
-        return success;
+  function installFont(url2) {
+    return _installFont.apply(this, arguments);
+  }
+  function _installFont() {
+    _installFont = _async_to_generator(function* (url2, selected = false) {
+      if (typeof url2 !== "string" || Object.values(fonts).some((f) => typeof f === "object" && f.__source === url2)) {
+        throw new Error("Invalid source or font was already installed");
+      }
+      var font = yield saveFont(url2);
+      if (selected)
+        yield selectFont(font.name);
+    });
+    return _installFont.apply(this, arguments);
+  }
+  function selectFont(name) {
+    return _selectFont.apply(this, arguments);
+  }
+  function _selectFont() {
+    _selectFont = _async_to_generator(function* (name) {
+      if (name && !(name in fonts))
+        throw new Error("Selected font does not exist!");
+      if (name) {
+        fonts.__selected = name;
+      } else {
+        delete fonts.__selected;
+      }
+      yield writeFont(name == null ? null : fonts[name]);
+    });
+    return _selectFont.apply(this, arguments);
+  }
+  function removeFont(name) {
+    return _removeFont.apply(this, arguments);
+  }
+  function _removeFont() {
+    _removeFont = _async_to_generator(function* (name) {
+      var selected = fonts.__selected === name;
+      if (selected)
+        yield selectFont(null);
+      delete fonts[name];
+      try {
+        yield clearFolder(`downloads/fonts/${name}`);
+      } catch (e) {
       }
     });
+    return _removeFont.apply(this, arguments);
   }
-  function createProxy2(target = {}) {
-    var emitter = new Emitter();
-    return {
-      proxy: _createProxy(target, [], emitter),
-      emitter
-    };
+  function updateFonts() {
+    return _updateFonts.apply(this, arguments);
   }
-  function useProxy2(storage) {
-    if (storage[storageInitErrorSymbol])
-      throw new Error("An error occured while initializing the storage", {
-        cause: storage[storageInitErrorSymbol]
-      });
-    var emitter = storage[emitterSymbol2];
-    if (emitter == null) {
-      throw new Error(`InvalidArgumentException - storage[emitterSymbol] is ${typeof emitter}`);
-    }
-    var [, forceUpdate] = React.useReducer((n) => ~n, 0);
-    React.useEffect(() => {
-      var listener = () => forceUpdate();
-      emitter.on("SET", listener);
-      emitter.on("DEL", listener);
-      return () => {
-        emitter.off("SET", listener);
-        emitter.off("DEL", listener);
-      };
-    }, []);
-  }
-  function updateStorageAsync(path, value) {
-    return _updateStorageAsync.apply(this, arguments);
-  }
-  function _updateStorageAsync() {
-    _updateStorageAsync = _async_to_generator(function* (path, value) {
-      _loadedPath[path] = value;
-      yield createFileBackend2(path).set(value);
+  function _updateFonts() {
+    _updateFonts = _async_to_generator(function* () {
+      yield awaitStorage(fonts);
+      yield allSettled(Object.keys(fonts).map((name) => saveFont(fonts[name], fonts.__selected === name)));
     });
-    return _updateStorageAsync.apply(this, arguments);
+    return _updateFonts.apply(this, arguments);
   }
-  function createStorageAndCallback(path, dflt = {}, cb) {
-    var callback = (data) => {
-      var { proxy, emitter } = createProxy2(data);
-      var handler = () => backend.set(proxy);
-      emitter.on("SET", handler);
-      emitter.on("DEL", handler);
-      cb(proxy);
-    };
-    var backend = createFileBackend2(path);
-    if (_loadedPath[path])
-      callback(_loadedPath[path]);
-    else {
-      backend.exists().then(function() {
-        var _ref = _async_to_generator(function* (exists) {
-          if (!exists) {
-            yield backend.set(dflt);
-            callback(dflt);
-          } else {
-            callback(yield backend.get());
-          }
-        });
-        return function(exists) {
-          return _ref.apply(this, arguments);
-        };
-      }());
-    }
-  }
-  function preloadStorageIfExists(path) {
-    return _preloadStorageIfExists.apply(this, arguments);
-  }
-  function _preloadStorageIfExists() {
-    _preloadStorageIfExists = _async_to_generator(function* (path) {
-      if (_loadedPath[path])
-        return _loadedPath[path];
-      var backend = createFileBackend2(path);
-      if (yield backend.exists()) {
-        return _loadedPath[path] = yield backend.get();
-      }
-      console.log("no " + path);
-    });
-    return _preloadStorageIfExists.apply(this, arguments);
-  }
-  function getPreloadedStorage(path) {
-    return _loadedPath[path];
-  }
-  function awaitStorage2(...proxies) {
-    return Promise.all(proxies.map((proxy) => proxy[storagePromiseSymbol]));
-  }
-  var emitterSymbol2, storageInitErrorSymbol, storagePromiseSymbol, _loadedPath, createStorage2;
-  var init_new = __esm({
-    "src/lib/api/storage/new.ts"() {
+  var fonts;
+  var init_fonts = __esm({
+    "src/lib/fonts/index.ts"() {
       "use strict";
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
       init_async_to_generator();
       init_fs();
-      init_Emitter();
-      emitterSymbol2 = Symbol.for("bunny.storage.emitter");
-      storageInitErrorSymbol = Symbol.for("bunny.storage.initError");
-      storagePromiseSymbol = Symbol.for("bunny.storage.promise");
-      _loadedPath = {};
-      createStorage2 = (path, dflt = {}) => {
-        var promise = new Promise((r) => resolvePromise = r);
-        var awaited, resolved, error, resolvePromise;
-        createStorageAndCallback(path, dflt, (proxy) => {
-          awaited = proxy;
-          resolved = true;
-          resolvePromise();
-        });
-        var check = () => {
-          if (resolved)
-            return true;
-          throw new Error("Attempted to access storage without initializing");
-        };
-        return new Proxy({}, {
-          ...Object.fromEntries(Object.getOwnPropertyNames(Reflect).map((k) => [
-            k,
-            (t, ...a) => {
-              return check() && Reflect[k](awaited, ...a);
+      init_storage();
+      init_utils();
+      fonts = wrapSync(createStorage(createMMKVBackend("BUNNY_FONTS")));
+    }
+  });
+
+  // src/core/ui/settings/pages/Fonts/FontEditor.tsx
+  function guessFontName(urls) {
+    var fileNames = urls.map((url2) => {
+      var { pathname } = new URL(url2);
+      var fileName = pathname.replace(/\.[^/.]+$/, "");
+      return fileName.split("/").pop();
+    }).filter(Boolean);
+    var shortest = fileNames.reduce((shortest2, name) => {
+      return name.length < shortest2.length ? name : shortest2;
+    }, fileNames[0] || "");
+    return shortest?.replace(/-[A-Za-z]*$/, "") || null;
+  }
+  function RevengeFontsExtractor({ fonts: fonts2, setName }) {
+    var currentTheme2 = getCurrentTheme().data;
+    var themeFonts = currentTheme2.fonts;
+    var [fontName, setFontName] = (0, import_react3.useState)(guessFontName(Object.values(themeFonts)));
+    var [error, setError] = (0, import_react3.useState)(void 0);
+    return /* @__PURE__ */ jsxs(import_react_native15.View, {
+      style: {
+        padding: 8,
+        paddingBottom: 16,
+        gap: 12
+      },
+      children: [
+        /* @__PURE__ */ jsx(TextInput, {
+          autoFocus: true,
+          size: "md",
+          label: Strings.FONT_NAME,
+          value: fontName,
+          placeholder: fontName || "Whitney",
+          onChange: setFontName,
+          errorMessage: error,
+          state: error ? "error" : void 0
+        }),
+        /* @__PURE__ */ jsx(Text, {
+          variant: "text-xs/normal",
+          color: "text-muted",
+          children: formatString("THEME_EXTRACTOR_DESC", {
+            fonts: Object.keys(themeFonts).join(Strings.SEPARATOR)
+          })
+        }),
+        /* @__PURE__ */ jsx(Button, {
+          size: "md",
+          variant: "primary",
+          text: Strings.EXTRACT,
+          disabled: !fontName,
+          onPress: () => {
+            if (!fontName)
+              return;
+            try {
+              validateFont({
+                spec: 1,
+                name: fontName,
+                main: themeFonts
+              });
+              setName(fontName);
+              Object.assign(fonts2, themeFonts);
+              actionSheet2.hideActionSheet();
+            } catch (e) {
+              setError(String(e));
             }
-          ])),
-          get(target, prop, recv) {
-            if (prop === storageInitErrorSymbol)
-              return error;
-            if (prop === storagePromiseSymbol)
-              return promise;
-            return check() && Reflect.get(awaited ?? target, prop, recv);
           }
+        })
+      ]
+    });
+  }
+  function JsonFontImporter({ fonts: fonts2, setName, setSource }) {
+    var [fontLink, setFontLink] = (0, import_react3.useState)("");
+    var [saving, setSaving] = (0, import_react3.useState)(false);
+    var [error, setError] = (0, import_react3.useState)(void 0);
+    return /* @__PURE__ */ jsxs(import_react_native15.View, {
+      style: {
+        padding: 8,
+        paddingBottom: 16,
+        gap: 12
+      },
+      children: [
+        /* @__PURE__ */ jsx(TextInput, {
+          autoFocus: true,
+          size: "md",
+          label: "Font Link",
+          value: fontLink,
+          placeholder: "https://link.to/font/pack.json",
+          onChange: setFontLink,
+          errorMessage: error,
+          state: error ? "error" : void 0
+        }),
+        /* @__PURE__ */ jsx(Button, {
+          size: "md",
+          variant: "primary",
+          text: "Import",
+          disabled: !fontLink || saving,
+          loading: saving,
+          onPress: () => {
+            setSaving(true);
+            _async_to_generator(function* () {
+              var res = yield safeFetch(fontLink, {
+                cache: "no-store"
+              });
+              var json = yield res.json();
+              validateFont(json);
+              setName(json.name);
+              setSource(fontLink);
+              Object.assign(fonts2, json.main);
+            })().then(() => actionSheet2.hideActionSheet()).catch((e) => setError(String(e))).finally(() => setSaving(false));
+          }
+        })
+      ]
+    });
+  }
+  function EntryEditorActionSheet(props) {
+    var [familyName, setFamilyName] = (0, import_react3.useState)(props.name);
+    var [fontUrl, setFontUrl] = (0, import_react3.useState)(props.fontEntries[props.name]);
+    return /* @__PURE__ */ jsxs(import_react_native15.View, {
+      style: {
+        padding: 8,
+        paddingBottom: 16,
+        gap: 12
+      },
+      children: [
+        /* @__PURE__ */ jsx(TextInput, {
+          autoFocus: true,
+          size: "md",
+          label: "Family Name (to override)",
+          value: familyName,
+          placeholder: "ggsans-Bold",
+          onChange: setFamilyName
+        }),
+        /* @__PURE__ */ jsx(TextInput, {
+          size: "md",
+          label: "Font URL",
+          value: fontUrl,
+          placeholder: "https://link.to/the/font.ttf",
+          onChange: setFontUrl
+        }),
+        /* @__PURE__ */ jsx(Button, {
+          size: "md",
+          variant: "primary",
+          text: "Apply",
+          onPress: () => {
+            delete props.fontEntries[props.name];
+            props.fontEntries[familyName] = fontUrl;
+          }
+        })
+      ]
+    });
+  }
+  function promptActionSheet(Component, fontEntries, props) {
+    actionSheet2.openLazy(Promise.resolve({
+      default: () => /* @__PURE__ */ jsx(ErrorBoundary, {
+        children: /* @__PURE__ */ jsxs(ActionSheet, {
+          children: [
+            /* @__PURE__ */ jsx(BottomSheetTitleHeader, {
+              title: "Import Font"
+            }),
+            /* @__PURE__ */ jsx(Component, {
+              fonts: fontEntries,
+              ...props
+            })
+          ]
+        })
+      })
+    }), "FontEditorActionSheet");
+  }
+  function NewEntryRow({ fontEntry }) {
+    var nameRef = (0, import_react3.useRef)();
+    var urlRef = (0, import_react3.useRef)();
+    var [nameSet, setNameSet] = (0, import_react3.useState)(false);
+    var [error, setError] = (0, import_react3.useState)();
+    return /* @__PURE__ */ jsxs(import_react_native15.View, {
+      style: {
+        flexDirection: "row",
+        gap: 8,
+        justifyContent: "flex-start"
+      },
+      children: [
+        /* @__PURE__ */ jsx(import_react_native15.View, {
+          style: {
+            flex: 1
+          },
+          children: /* @__PURE__ */ jsx(TextInput, {
+            isRound: true,
+            size: "md",
+            label: nameSet ? nameRef.current : void 0,
+            placeholder: nameSet ? "https://path.to/the/file.ttf" : "PostScript name (e.g. ggsans-Bold)",
+            leadingIcon: () => nameSet ? null : /* @__PURE__ */ jsx(TableRow.Icon, {
+              source: findAssetId("PlusSmallIcon")
+            }),
+            leadingText: nameSet ? nameRef.current : "",
+            onChange: (text) => (nameSet ? urlRef : nameRef).current = text,
+            errorMessage: error,
+            state: error ? "error" : void 0
+          })
+        }),
+        nameSet && /* @__PURE__ */ jsx(IconButton, {
+          size: "md",
+          variant: "secondary",
+          onPress: () => {
+            nameRef.current = "";
+            setNameSet(false);
+          },
+          icon: findAssetId("TrashIcon")
+        }),
+        /* @__PURE__ */ jsx(IconButton, {
+          size: "md",
+          variant: "primary",
+          onPress: () => {
+            if (!nameSet && nameRef.current) {
+              setNameSet(true);
+            } else if (nameSet && nameRef.current && urlRef.current) {
+              try {
+                var parsedUrl = new URL(urlRef.current);
+                if (!parsedUrl.protocol || !parsedUrl.host) {
+                  throw "Invalid URL";
+                }
+                fontEntry[nameRef.current] = urlRef.current;
+                nameRef.current = void 0;
+                urlRef.current = void 0;
+                setNameSet(false);
+              } catch (e) {
+                setError(String(e));
+              }
+            }
+          },
+          icon: findAssetId(nameSet ? "PlusSmallIcon" : "ArrowLargeRightIcon")
+        })
+      ]
+    });
+  }
+  function FontEditor(props) {
+    var [name, setName] = (0, import_react3.useState)(props.name);
+    var [source, setSource] = (0, import_react3.useState)();
+    var [importing, setIsImporting] = (0, import_react3.useState)(false);
+    var memoEntry = (0, import_react3.useMemo)(() => {
+      return createProxy(props.name ? {
+        ...fonts[props.name].main
+      } : {}).proxy;
+    }, [
+      props.name
+    ]);
+    var fontEntries = useProxy(memoEntry);
+    var navigation2 = NavigationNative.useNavigation();
+    return /* @__PURE__ */ jsx(import_react_native15.ScrollView, {
+      style: {
+        flex: 1
+      },
+      contentContainerStyle: {
+        paddingBottom: 38
+      },
+      children: /* @__PURE__ */ jsxs(Stack, {
+        style: {
+          paddingVertical: 24,
+          paddingHorizontal: 12
+        },
+        spacing: 12,
+        children: [
+          !props.name ? /* @__PURE__ */ jsxs(TableRowGroup, {
+            title: "Import",
+            children: [
+              getCurrentTheme()?.data?.fonts && /* @__PURE__ */ jsx(TableRow, {
+                label: Strings.LABEL_EXTRACT_FONTS_FROM_THEME,
+                subLabel: Strings.DESC_EXTRACT_FONTS_FROM_THEME,
+                icon: /* @__PURE__ */ jsx(TableRow.Icon, {
+                  source: findAssetId("HammerIcon")
+                }),
+                onPress: () => promptActionSheet(RevengeFontsExtractor, fontEntries, {
+                  setName
+                })
+              }),
+              /* @__PURE__ */ jsx(TableRow, {
+                label: "Import font entries from a link",
+                subLabel: "Directly import from a link with a pre-configured JSON file",
+                icon: /* @__PURE__ */ jsx(TableRow.Icon, {
+                  source: findAssetId("LinkIcon")
+                }),
+                onPress: () => promptActionSheet(JsonFontImporter, fontEntries, {
+                  setName,
+                  setSource
+                })
+              })
+            ]
+          }) : /* @__PURE__ */ jsxs(TableRowGroup, {
+            title: "Actions",
+            children: [
+              /* @__PURE__ */ jsx(TableRow, {
+                label: "Refetch fonts from source",
+                icon: /* @__PURE__ */ jsx(TableRow.Icon, {
+                  source: findAssetId("RetryIcon")
+                }),
+                onPress: /* @__PURE__ */ _async_to_generator(function* () {
+                  var ftCopy = {
+                    ...fonts[props.name]
+                  };
+                  yield removeFont(props.name);
+                  yield saveFont(ftCopy);
+                  navigation2.goBack();
+                })
+              }),
+              /* @__PURE__ */ jsx(TableRow, {
+                label: "Delete font pack",
+                icon: /* @__PURE__ */ jsx(TableRow.Icon, {
+                  source: findAssetId("TrashIcon")
+                }),
+                onPress: () => removeFont(props.name).then(() => navigation2.goBack())
+              })
+            ]
+          }),
+          /* @__PURE__ */ jsx(TextInput, {
+            size: "lg",
+            value: name,
+            label: Strings.FONT_NAME,
+            placeholder: "Whitney",
+            onChange: setName
+          }),
+          /* @__PURE__ */ jsxs(TableRowGroup, {
+            title: "Font Entries",
+            children: [
+              Object.entries(fontEntries).map(([name2, url2]) => {
+                return /* @__PURE__ */ jsx(TableRow, {
+                  label: name2,
+                  subLabel: url2,
+                  trailing: /* @__PURE__ */ jsxs(Stack, {
+                    spacing: 2,
+                    direction: "horizontal",
+                    children: [
+                      /* @__PURE__ */ jsx(IconButton, {
+                        size: "sm",
+                        variant: "secondary",
+                        icon: findAssetId("PencilIcon"),
+                        onPress: () => promptActionSheet(EntryEditorActionSheet, fontEntries, {
+                          name: name2,
+                          fontEntries
+                        })
+                      }),
+                      /* @__PURE__ */ jsx(IconButton, {
+                        size: "sm",
+                        variant: "secondary",
+                        icon: findAssetId("TrashIcon"),
+                        onPress: () => delete fontEntries[name2]
+                      })
+                    ]
+                  })
+                });
+              }),
+              /* @__PURE__ */ jsx(TableRow, {
+                label: /* @__PURE__ */ jsx(NewEntryRow, {
+                  fontEntry: fontEntries
+                })
+              })
+            ]
+          }),
+          /* @__PURE__ */ jsx(import_react_native15.View, {
+            style: {
+              flexDirection: "row",
+              justifyContent: "flex-end",
+              bottom: 0,
+              left: 0
+            },
+            children: /* @__PURE__ */ jsx(Button, {
+              size: "lg",
+              loading: importing,
+              disabled: importing || !name || Object.keys(fontEntries).length === 0,
+              variant: "primary",
+              text: props.name ? "Save" : "Import",
+              onPress: /* @__PURE__ */ _async_to_generator(function* () {
+                if (!name)
+                  return;
+                setIsImporting(true);
+                if (!props.name) {
+                  saveFont({
+                    spec: 1,
+                    name,
+                    main: fontEntries,
+                    __source: source
+                  }).then(() => navigation2.goBack()).finally(() => setIsImporting(false));
+                } else {
+                  Object.assign(fonts[props.name], {
+                    name,
+                    main: fontEntries,
+                    __edited: true
+                  });
+                  setIsImporting(false);
+                  navigation2.goBack();
+                }
+              }),
+              icon: findAssetId(props.name ? "toast_image_saved" : "DownloadIcon"),
+              style: {
+                marginLeft: 8
+              }
+            })
+          })
+        ]
+      })
+    });
+  }
+  var import_react3, import_react_native15, actionSheet2;
+  var init_FontEditor = __esm({
+    "src/core/ui/settings/pages/Fonts/FontEditor.tsx"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_async_to_generator();
+      init_jsxRuntime();
+      init_i18n();
+      init_assets();
+      init_storage();
+      init_fonts();
+      init_themes();
+      init_utils();
+      init_common();
+      init_components();
+      init_wrappers();
+      init_components2();
+      import_react3 = __toESM(require_react());
+      import_react_native15 = __toESM(require_react_native());
+      actionSheet2 = findByPropsLazy("hideActionSheet");
+    }
+  });
+
+  // src/metro/index.ts
+  var metro_exports = {};
+  __export(metro_exports, {
+    common: () => common_exports,
+    factories: () => factories_exports,
+    filters: () => filters_exports,
+    findAllExports: () => findAllExports,
+    findAllModule: () => findAllModule,
+    findAllModuleId: () => findAllModuleId,
+    findByDisplayName: () => findByDisplayName,
+    findByDisplayNameAll: () => findByDisplayNameAll,
+    findByDisplayNameLazy: () => findByDisplayNameLazy,
+    findByFilePath: () => findByFilePath,
+    findByFilePathLazy: () => findByFilePathLazy,
+    findByName: () => findByName,
+    findByNameAll: () => findByNameAll,
+    findByNameLazy: () => findByNameLazy,
+    findByProps: () => findByProps,
+    findByPropsAll: () => findByPropsAll,
+    findByPropsLazy: () => findByPropsLazy,
+    findByStoreName: () => findByStoreName,
+    findByStoreNameLazy: () => findByStoreNameLazy,
+    findByTypeName: () => findByTypeName,
+    findByTypeNameAll: () => findByTypeNameAll,
+    findByTypeNameLazy: () => findByTypeNameLazy,
+    findExports: () => findExports,
+    findModule: () => findModule,
+    findModuleId: () => findModuleId,
+    lazy: () => lazy_exports2
+  });
+  var init_metro = __esm({
+    "src/metro/index.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_common();
+      init_factories();
+      init_filters();
+      init_finders();
+      init_lazy2();
+      init_wrappers();
+    }
+  });
+
+  // globals:@shopify/react-native-skia
+  var require_react_native_skia = __commonJS({
+    "globals:@shopify/react-native-skia"(exports, module) {
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      module.exports = require_depsModule()["@shopify/react-native-skia"];
+    }
+  });
+
+  // src/core/ui/settings/pages/Fonts/FontCard.tsx
+  function FontPreview({ font }) {
+    var TEXT_NORMAL = useToken(tokens.colors.TEXT_NORMAL);
+    var { fontFamily: fontFamilyList, fontSize } = TextStyleSheet["text-md/medium"];
+    var fontFamily = fontFamilyList.split(/,/g)[0];
+    var typeface = Skia.useFont(font.main[fontFamily])?.getTypeface();
+    var paragraph = (0, import_react4.useMemo)(() => {
+      if (!typeface)
+        return null;
+      var fMgr = SkiaApi.TypefaceFontProvider.Make();
+      fMgr.registerFont(typeface, fontFamily);
+      return SkiaApi.ParagraphBuilder.Make({}, fMgr).pushStyle({
+        color: SkiaApi.Color(TEXT_NORMAL),
+        fontFamilies: [
+          fontFamily
+        ],
+        fontSize
+      }).addText("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.").pop().build();
+    }, [
+      typeface
+    ]);
+    return (
+      // This does not work, actually :woeis:
+      /* @__PURE__ */ jsx(import_react_native16.View, {
+        style: {
+          height: 64
+        },
+        children: typeface ? /* @__PURE__ */ jsx(Skia.Canvas, {
+          style: {
+            height: 64
+          },
+          children: /* @__PURE__ */ jsx(Skia.Paragraph, {
+            paragraph,
+            x: 0,
+            y: 0,
+            width: 300
+          })
+        }) : /* @__PURE__ */ jsx(import_react_native16.View, {
+          style: {
+            justifyContent: "center",
+            alignItems: "center"
+          },
+          children: /* @__PURE__ */ jsx(Text, {
+            color: "text-muted",
+            variant: "heading-lg/semibold",
+            children: "Loading..."
+          })
+        })
+      })
+    );
+  }
+  function FontCard({ item: font }) {
+    useProxy(fonts);
+    var navigation2 = NavigationNative.useNavigation();
+    var selected = fonts.__selected === font.name;
+    return /* @__PURE__ */ jsx(Card, {
+      children: /* @__PURE__ */ jsxs(Stack, {
+        spacing: 16,
+        children: [
+          /* @__PURE__ */ jsxs(import_react_native16.View, {
+            style: {
+              flexDirection: "row",
+              alignItems: "center"
+            },
+            children: [
+              /* @__PURE__ */ jsx(import_react_native16.View, {
+                children: /* @__PURE__ */ jsx(Text, {
+                  variant: "heading-lg/semibold",
+                  children: font.name
+                })
+              }),
+              /* @__PURE__ */ jsx(import_react_native16.View, {
+                style: {
+                  marginLeft: "auto"
+                },
+                children: /* @__PURE__ */ jsxs(Stack, {
+                  spacing: 12,
+                  direction: "horizontal",
+                  children: [
+                    /* @__PURE__ */ jsx(IconButton, {
+                      onPress: () => {
+                        navigation2.push("BUNNY_CUSTOM_PAGE", {
+                          title: "Edit Font",
+                          render: () => /* @__PURE__ */ jsx(FontEditor, {
+                            name: font.name
+                          })
+                        });
+                      },
+                      size: "sm",
+                      variant: "secondary",
+                      disabled: selected,
+                      icon: findAssetId("PencilIcon")
+                    }),
+                    /* @__PURE__ */ jsx(Button, {
+                      size: "sm",
+                      variant: selected ? "secondary" : "primary",
+                      text: selected ? "Unapply" : "Apply",
+                      onPress: /* @__PURE__ */ _async_to_generator(function* () {
+                        yield selectFont(selected ? null : font.name);
+                        showConfirmationAlert({
+                          title: Strings.HOLD_UP,
+                          content: "Reload Discord to apply changes?",
+                          confirmText: Strings.RELOAD,
+                          cancelText: Strings.CANCEL,
+                          confirmColor: ButtonColors.RED,
+                          onConfirm: BundleUpdaterManager.reload
+                        });
+                      })
+                    })
+                  ]
+                })
+              })
+            ]
+          }),
+          /* @__PURE__ */ jsx(FontPreview, {
+            font
+          })
+        ]
+      })
+    });
+  }
+  var Skia, import_react4, import_react_native16, useToken;
+  var init_FontCard = __esm({
+    "src/core/ui/settings/pages/Fonts/FontCard.tsx"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_async_to_generator();
+      init_jsxRuntime();
+      init_i18n();
+      init_assets();
+      init_modules();
+      init_storage();
+      init_fonts();
+      init_lazy();
+      init_types();
+      init_metro();
+      init_common();
+      init_components();
+      Skia = __toESM(require_react_native_skia());
+      init_alerts();
+      init_styles();
+      import_react4 = __toESM(require_react());
+      import_react_native16 = __toESM(require_react_native());
+      init_FontEditor();
+      ({ useToken } = lazyDestructure(() => findByProps("useToken")));
+    }
+  });
+
+  // src/core/ui/settings/pages/Fonts/index.tsx
+  var Fonts_exports = {};
+  __export(Fonts_exports, {
+    default: () => Fonts
+  });
+  function Fonts() {
+    useProxy(settings);
+    useProxy(fonts);
+    var navigation2 = NavigationNative.useNavigation();
+    return /* @__PURE__ */ jsx(AddonPage, {
+      title: Strings.FONTS,
+      searchKeywords: [
+        "name",
+        "description"
+      ],
+      fetchFunction: installFont,
+      items: Object.values(fonts),
+      safeModeMessage: Strings.SAFE_MODE_NOTICE_FONTS,
+      card: FontCard,
+      onFabPress: () => {
+        navigation2.push("BUNNY_CUSTOM_PAGE", {
+          title: "Import Font",
+          render: () => /* @__PURE__ */ jsx(FontEditor, {})
         });
+      }
+    });
+  }
+  var init_Fonts = __esm({
+    "src/core/ui/settings/pages/Fonts/index.tsx"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_jsxRuntime();
+      init_i18n();
+      init_AddonPage();
+      init_FontEditor();
+      init_settings();
+      init_storage();
+      init_fonts();
+      init_common();
+      init_FontCard();
+    }
+  });
+
+  // src/core/ui/hooks/useFS.ts
+  function useFileExists(path, prefix) {
+    var [state, setState] = (0, import_react5.useState)(2);
+    var check = () => fileExists(path, prefix).then((exists) => setState(exists ? 1 : 0)).catch(() => setState(3));
+    var customFS = (0, import_react5.useMemo)(() => new Proxy(fs_exports, {
+      get(target, p, receiver) {
+        var val = Reflect.get(target, p, receiver);
+        if (typeof val !== "function")
+          return;
+        return (...args) => {
+          var promise = (check(), val(...args));
+          if (promise?.constructor?.name === "Promise") {
+            setState(2);
+            promise.finally(check);
+          }
+          return promise;
+        };
+      }
+    }), []);
+    (0, import_react5.useEffect)(() => void check(), []);
+    return [
+      state,
+      customFS
+    ];
+  }
+  var import_react5, CheckState;
+  var init_useFS = __esm({
+    "src/core/ui/hooks/useFS.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_fs();
+      import_react5 = __toESM(require_react());
+      (function(CheckState2) {
+        CheckState2[CheckState2["FALSE"] = 0] = "FALSE";
+        CheckState2[CheckState2["TRUE"] = 1] = "TRUE";
+        CheckState2[CheckState2["LOADING"] = 2] = "LOADING";
+        CheckState2[CheckState2["ERROR"] = 3] = "ERROR";
+      })(CheckState || (CheckState = {}));
+    }
+  });
+
+  // src/core/ui/settings/pages/Developer/AssetDisplay.tsx
+  function AssetDisplay({ asset }) {
+    return /* @__PURE__ */ jsx(LegacyFormRow, {
+      label: `${asset.name} - ${asset.id}`,
+      trailing: /* @__PURE__ */ jsx(import_react_native17.Image, {
+        source: asset.id,
+        style: {
+          width: 32,
+          height: 32
+        }
+      }),
+      onPress: () => {
+        clipboard.setString(asset.name);
+        showToast.showCopyToClipboard();
+      }
+    });
+  }
+  var import_react_native17;
+  var init_AssetDisplay = __esm({
+    "src/core/ui/settings/pages/Developer/AssetDisplay.tsx"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_jsxRuntime();
+      init_common();
+      init_components();
+      init_toasts();
+      import_react_native17 = __toESM(require_react_native());
+    }
+  });
+
+  // src/core/ui/settings/pages/Developer/AssetBrowser.tsx
+  function AssetBrowser() {
+    var [search, setSearch] = React.useState("");
+    return /* @__PURE__ */ jsx(ErrorBoundary, {
+      children: /* @__PURE__ */ jsxs(import_react_native18.View, {
+        style: {
+          flex: 1
+        },
+        children: [
+          /* @__PURE__ */ jsx(Search_default, {
+            style: {
+              margin: 10
+            },
+            onChangeText: (v) => setSearch(v)
+          }),
+          /* @__PURE__ */ jsx(import_react_native18.FlatList, {
+            data: Object.values(assetsMap).filter((a) => a.name.includes(search) || a.id.toString() === search),
+            renderItem: ({ item }) => /* @__PURE__ */ jsx(AssetDisplay, {
+              asset: item
+            }),
+            ItemSeparatorComponent: LegacyFormDivider,
+            keyExtractor: (item) => item.name
+          })
+        ]
+      })
+    });
+  }
+  var import_react_native18;
+  var init_AssetBrowser = __esm({
+    "src/core/ui/settings/pages/Developer/AssetBrowser.tsx"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_jsxRuntime();
+      init_AssetDisplay();
+      init_assets();
+      init_components();
+      init_components2();
+      import_react_native18 = __toESM(require_react_native());
+    }
+  });
+
+  // src/core/ui/settings/pages/Developer/index.tsx
+  var Developer_exports = {};
+  __export(Developer_exports, {
+    default: () => Developer
+  });
+  function Developer() {
+    var [rdtFileExists, fs] = useFileExists("preloads/reactDevtools.js");
+    var styles3 = useStyles3();
+    var navigation2 = NavigationNative.useNavigation();
+    useProxy(settings);
+    useProxy(loaderConfig);
+    return /* @__PURE__ */ jsx(ErrorBoundary, {
+      children: /* @__PURE__ */ jsx(import_react_native19.ScrollView, {
+        style: {
+          flex: 1
+        },
+        contentContainerStyle: {
+          paddingBottom: 38
+        },
+        children: /* @__PURE__ */ jsxs(Stack, {
+          style: {
+            paddingVertical: 24,
+            paddingHorizontal: 12
+          },
+          spacing: 24,
+          children: [
+            /* @__PURE__ */ jsx(TextInput, {
+              label: Strings.DEBUGGER_URL,
+              placeholder: "127.0.0.1:9090",
+              size: "md",
+              leadingIcon: () => /* @__PURE__ */ jsx(LegacyFormText, {
+                style: styles3.leadingText,
+                children: "ws://"
+              }),
+              defaultValue: settings.debuggerUrl,
+              onChange: (v) => settings.debuggerUrl = v
+            }),
+            /* @__PURE__ */ jsxs(TableRowGroup, {
+              title: Strings.DEBUG,
+              children: [
+                /* @__PURE__ */ jsx(TableRow, {
+                  label: Strings.CONNECT_TO_DEBUG_WEBSOCKET,
+                  icon: /* @__PURE__ */ jsx(TableRow.Icon, {
+                    source: findAssetId("copy")
+                  }),
+                  onPress: () => connectToDebugger(settings.debuggerUrl)
+                }),
+                isReactDevToolsPreloaded() && /* @__PURE__ */ jsx(Fragment, {
+                  children: /* @__PURE__ */ jsx(TableRow, {
+                    label: Strings.CONNECT_TO_REACT_DEVTOOLS,
+                    icon: /* @__PURE__ */ jsx(TableRow.Icon, {
+                      source: findAssetId("ic_badge_staff")
+                    }),
+                    onPress: () => window[getReactDevToolsProp() || "__vendetta_rdc"]?.connectToDevTools({
+                      host: settings.debuggerUrl.split(":")?.[0],
+                      resolveRNStyle: import_react_native19.StyleSheet.flatten
+                    })
+                  })
+                })
+              ]
+            }),
+            isLoaderConfigSupported() && /* @__PURE__ */ jsx(Fragment, {
+              children: /* @__PURE__ */ jsxs(TableRowGroup, {
+                title: "Loader config",
+                children: [
+                  /* @__PURE__ */ jsx(TableSwitchRow, {
+                    label: Strings.LOAD_FROM_CUSTOM_URL,
+                    subLabel: Strings.LOAD_FROM_CUSTOM_URL_DEC,
+                    icon: /* @__PURE__ */ jsx(TableRow.Icon, {
+                      source: findAssetId("copy")
+                    }),
+                    value: loaderConfig.customLoadUrl.enabled,
+                    onValueChange: (v) => {
+                      loaderConfig.customLoadUrl.enabled = v;
+                    }
+                  }),
+                  loaderConfig.customLoadUrl.enabled && /* @__PURE__ */ jsx(TableRow, {
+                    label: /* @__PURE__ */ jsx(TextInput, {
+                      defaultValue: loaderConfig.customLoadUrl.url,
+                      size: "md",
+                      onChange: (v) => loaderConfig.customLoadUrl.url = v,
+                      placeholder: "http://localhost:4040/vendetta.js",
+                      label: Strings.BUNNY_URL
+                    })
+                  }),
+                  isReactDevToolsPreloaded() && isVendettaLoader() && /* @__PURE__ */ jsx(TableSwitchRow, {
+                    label: Strings.LOAD_REACT_DEVTOOLS,
+                    subLabel: `${Strings.VERSION}: ${getReactDevToolsVersion()}`,
+                    icon: /* @__PURE__ */ jsx(TableRow.Icon, {
+                      source: findAssetId("ic_badge_staff")
+                    }),
+                    value: loaderConfig.loadReactDevTools,
+                    onValueChange: (v) => {
+                      loaderConfig.loadReactDevTools = v;
+                    }
+                  })
+                ]
+              })
+            }),
+            /* @__PURE__ */ jsxs(TableRowGroup, {
+              title: "Other",
+              children: [
+                /* @__PURE__ */ jsx(TableRow, {
+                  arrow: true,
+                  label: Strings.ASSET_BROWSER,
+                  icon: /* @__PURE__ */ jsx(TableRow.Icon, {
+                    source: findAssetId("ic_image")
+                  }),
+                  trailing: TableRow.Arrow,
+                  onPress: () => navigation2.push("BUNNY_CUSTOM_PAGE", {
+                    title: Strings.ASSET_BROWSER,
+                    render: AssetBrowser
+                  })
+                }),
+                /* @__PURE__ */ jsx(TableRow, {
+                  arrow: true,
+                  label: Strings.ERROR_BOUNDARY_TOOLS_LABEL,
+                  icon: /* @__PURE__ */ jsx(TableRow.Icon, {
+                    source: findAssetId("ic_warning_24px")
+                  }),
+                  onPress: () => showSimpleActionSheet2({
+                    key: "ErrorBoundaryTools",
+                    header: {
+                      title: "Which ErrorBoundary do you want to trip?",
+                      icon: /* @__PURE__ */ jsx(TableRow.Icon, {
+                        style: {
+                          marginRight: 8
+                        },
+                        source: findAssetId("ic_warning_24px")
+                      }),
+                      onClose: () => hideActionSheet2()
+                    },
+                    options: [
+                      // @ts-expect-error
+                      // Of course, to trigger an error, we need to do something incorrectly. The below will do!
+                      {
+                        label: Strings.BUNNY,
+                        onPress: () => navigation2.push("BUNNY_CUSTOM_PAGE", {
+                          render: () => /* @__PURE__ */ jsx("undefined", {})
+                        })
+                      },
+                      {
+                        label: "Discord",
+                        isDestructive: true,
+                        onPress: () => navigation2.push("BUNNY_CUSTOM_PAGE", {
+                          noErrorBoundary: true
+                        })
+                      }
+                    ]
+                  })
+                }),
+                /* @__PURE__ */ jsx(TableRow, {
+                  label: Strings.INSTALL_REACT_DEVTOOLS,
+                  subLabel: Strings.RESTART_REQUIRED_TO_TAKE_EFFECT,
+                  icon: /* @__PURE__ */ jsx(TableRow.Icon, {
+                    source: findAssetId("DownloadIcon")
+                  }),
+                  trailing: /* @__PURE__ */ jsx(Button, {
+                    size: "sm",
+                    loading: rdtFileExists === CheckState.LOADING,
+                    disabled: rdtFileExists === CheckState.LOADING,
+                    variant: rdtFileExists === CheckState.TRUE ? "secondary" : "primary",
+                    text: rdtFileExists === CheckState.TRUE ? Strings.UNINSTALL : Strings.INSTALL,
+                    onPress: /* @__PURE__ */ _async_to_generator(function* () {
+                      if (rdtFileExists === CheckState.FALSE) {
+                        fs.downloadFile(RDT_EMBED_LINK, "preloads/reactDevtools.js");
+                      } else if (rdtFileExists === CheckState.TRUE) {
+                        fs.removeFile("preloads/reactDevtools.js");
+                      }
+                    }),
+                    icon: findAssetId(rdtFileExists === CheckState.TRUE ? "ic_message_delete" : "DownloadIcon"),
+                    style: {
+                      marginLeft: 8
+                    }
+                  })
+                }),
+                /* @__PURE__ */ jsx(TableSwitchRow, {
+                  label: Strings.ENABLE_EVAL_COMMAND,
+                  subLabel: Strings.ENABLE_EVAL_COMMAND_DESC,
+                  icon: /* @__PURE__ */ jsx(TableRow.Icon, {
+                    source: findAssetId("PencilIcon")
+                  }),
+                  value: settings.enableEvalCommand,
+                  onValueChange: (v) => {
+                    settings.enableEvalCommand = v;
+                  }
+                })
+              ]
+            })
+          ]
+        })
+      })
+    });
+  }
+  var import_react_native19, hideActionSheet2, showSimpleActionSheet2, RDT_EMBED_LINK, useStyles3;
+  var init_Developer = __esm({
+    "src/core/ui/settings/pages/Developer/index.tsx"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_async_to_generator();
+      init_jsxRuntime();
+      init_i18n();
+      init_useFS();
+      init_AssetBrowser();
+      init_assets();
+      init_debug();
+      init_loader();
+      init_settings();
+      init_storage();
+      init_lazy();
+      init_common();
+      init_components();
+      init_wrappers();
+      init_color();
+      init_components2();
+      init_styles();
+      import_react_native19 = __toESM(require_react_native());
+      ({ hideActionSheet: hideActionSheet2 } = lazyDestructure(() => findByProps("openLazy", "hideActionSheet")));
+      ({ showSimpleActionSheet: showSimpleActionSheet2 } = lazyDestructure(() => findByProps("showSimpleActionSheet")));
+      RDT_EMBED_LINK = "https://raw.githubusercontent.com/amsyarasyiq/rdt-embedder/main/dist.js";
+      useStyles3 = createStyles({
+        leadingText: {
+          ...TextStyleSheet["heading-md/semibold"],
+          color: semanticColors.TEXT_MUTED,
+          marginRight: -4
+        }
+      });
+    }
+  });
+
+  // src/core/ui/settings/index.ts
+  function initSettings() {
+    registerSection({
+      name: "Bunny",
+      items: [
+        {
+          key: "BUNNY",
+          title: () => Strings.BUNNY,
+          icon: {
+            uri: pyoncord_default
+          },
+          render: () => Promise.resolve().then(() => (init_General(), General_exports)),
+          rawTabsConfig: {
+            useTrailing: () => `(${"b629261-dev"})`
+          }
+        },
+        {
+          key: "BUNNY_PLUGINS",
+          title: () => Strings.PLUGINS,
+          icon: findAssetId("ActivitiesIcon"),
+          render: () => Promise.resolve().then(() => (init_Plugins(), Plugins_exports))
+        },
+        {
+          key: "BUNNY_THEMES",
+          title: () => Strings.THEMES,
+          icon: findAssetId("PaintPaletteIcon"),
+          render: () => Promise.resolve().then(() => (init_Themes(), Themes_exports)),
+          usePredicate: () => isThemeSupported()
+        },
+        {
+          key: "BUNNY_FONTS",
+          title: () => Strings.FONTS,
+          icon: findAssetId("ic_add_text"),
+          render: () => Promise.resolve().then(() => (init_Fonts(), Fonts_exports)),
+          usePredicate: () => isFontSupported()
+        },
+        {
+          key: "BUNNY_DEVELOPER",
+          title: () => Strings.DEVELOPER,
+          icon: findAssetId("WrenchIcon"),
+          render: () => Promise.resolve().then(() => (init_Developer(), Developer_exports)),
+          usePredicate: () => useProxy(settings).developerSettings ?? false
+        }
+      ]
+    });
+    registerSection({
+      name: "Vendetta",
+      items: []
+    });
+  }
+  var init_settings3 = __esm({
+    "src/core/ui/settings/index.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_pyoncord();
+      init_i18n();
+      init_assets();
+      init_loader();
+      init_settings();
+      init_storage();
+      init_settings2();
+    }
+  });
+
+  // src/lib/api/commands/types.ts
+  var ApplicationCommandInputType, ApplicationCommandOptionType, ApplicationCommandType;
+  var init_types2 = __esm({
+    "src/lib/api/commands/types.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      (function(ApplicationCommandInputType2) {
+        ApplicationCommandInputType2[ApplicationCommandInputType2["BUILT_IN"] = 0] = "BUILT_IN";
+        ApplicationCommandInputType2[ApplicationCommandInputType2["BUILT_IN_TEXT"] = 1] = "BUILT_IN_TEXT";
+        ApplicationCommandInputType2[ApplicationCommandInputType2["BUILT_IN_INTEGRATION"] = 2] = "BUILT_IN_INTEGRATION";
+        ApplicationCommandInputType2[ApplicationCommandInputType2["BOT"] = 3] = "BOT";
+        ApplicationCommandInputType2[ApplicationCommandInputType2["PLACEHOLDER"] = 4] = "PLACEHOLDER";
+      })(ApplicationCommandInputType || (ApplicationCommandInputType = {}));
+      (function(ApplicationCommandOptionType2) {
+        ApplicationCommandOptionType2[ApplicationCommandOptionType2["SUB_COMMAND"] = 1] = "SUB_COMMAND";
+        ApplicationCommandOptionType2[ApplicationCommandOptionType2["SUB_COMMAND_GROUP"] = 2] = "SUB_COMMAND_GROUP";
+        ApplicationCommandOptionType2[ApplicationCommandOptionType2["STRING"] = 3] = "STRING";
+        ApplicationCommandOptionType2[ApplicationCommandOptionType2["INTEGER"] = 4] = "INTEGER";
+        ApplicationCommandOptionType2[ApplicationCommandOptionType2["BOOLEAN"] = 5] = "BOOLEAN";
+        ApplicationCommandOptionType2[ApplicationCommandOptionType2["USER"] = 6] = "USER";
+        ApplicationCommandOptionType2[ApplicationCommandOptionType2["CHANNEL"] = 7] = "CHANNEL";
+        ApplicationCommandOptionType2[ApplicationCommandOptionType2["ROLE"] = 8] = "ROLE";
+        ApplicationCommandOptionType2[ApplicationCommandOptionType2["MENTIONABLE"] = 9] = "MENTIONABLE";
+        ApplicationCommandOptionType2[ApplicationCommandOptionType2["NUMBER"] = 10] = "NUMBER";
+        ApplicationCommandOptionType2[ApplicationCommandOptionType2["ATTACHMENT"] = 11] = "ATTACHMENT";
+      })(ApplicationCommandOptionType || (ApplicationCommandOptionType = {}));
+      (function(ApplicationCommandType2) {
+        ApplicationCommandType2[ApplicationCommandType2["CHAT"] = 1] = "CHAT";
+        ApplicationCommandType2[ApplicationCommandType2["USER"] = 2] = "USER";
+        ApplicationCommandType2[ApplicationCommandType2["MESSAGE"] = 3] = "MESSAGE";
+      })(ApplicationCommandType || (ApplicationCommandType = {}));
+    }
+  });
+
+  // src/core/commands/eval.ts
+  var eval_exports = {};
+  __export(eval_exports, {
+    default: () => eval_default
+  });
+  function wrapInJSCodeblock(resString) {
+    return "```js\n" + resString.replaceAll("`", "`" + ZERO_WIDTH_SPACE_CHARACTER) + "\n```";
+  }
+  var util, AsyncFunction, ZERO_WIDTH_SPACE_CHARACTER, eval_default;
+  var init_eval = __esm({
+    "src/core/commands/eval.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_async_to_generator();
+      init_i18n();
+      init_types2();
+      init_settings();
+      init_common();
+      init_wrappers();
+      util = findByPropsLazy("inspect");
+      AsyncFunction = _async_to_generator(function* () {
+        return void 0;
+      }).constructor;
+      ZERO_WIDTH_SPACE_CHARACTER = "\u200B";
+      eval_default = () => ({
+        name: "eval",
+        description: Strings.COMMAND_EVAL_DESC,
+        shouldHide: () => settings.enableEvalCommand === true,
+        options: [
+          {
+            name: "code",
+            type: ApplicationCommandOptionType.STRING,
+            description: Strings.COMMAND_EVAL_OPT_CODE,
+            required: true
+          },
+          {
+            name: "async",
+            type: ApplicationCommandOptionType.BOOLEAN,
+            description: Strings.COMMAND_EVAL_OPT_ASYNC
+          }
+        ],
+        execute([code, async], ctx) {
+          return _async_to_generator(function* () {
+            try {
+              var res = util.inspect(async?.value ? yield AsyncFunction(code.value)() : eval?.(code.value));
+              var trimmedRes = res.length > 2e3 ? res.slice(0, 2e3) + "..." : res;
+              messageUtil.sendBotMessage(ctx.channel.id, wrapInJSCodeblock(trimmedRes));
+            } catch (err) {
+              messageUtil.sendBotMessage(ctx.channel.id, wrapInJSCodeblock(err?.stack ?? err));
+            }
+          })();
+        }
+      });
+    }
+  });
+
+  // src/core/commands/debug.ts
+  var debug_exports2 = {};
+  __export(debug_exports2, {
+    default: () => debug_default
+  });
+  var debug_default;
+  var init_debug2 = __esm({
+    "src/core/commands/debug.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_i18n();
+      init_types2();
+      init_debug();
+      init_common();
+      debug_default = () => ({
+        name: "debug",
+        description: Strings.COMMAND_DEBUG_DESC,
+        options: [
+          {
+            name: "ephemeral",
+            type: ApplicationCommandOptionType.BOOLEAN,
+            description: Strings.COMMAND_DEBUG_OPT_EPHEMERALLY
+          }
+        ],
+        execute([ephemeral], ctx) {
+          var info = getDebugInfo();
+          var content = [
+            "**Bunny Debug Info**",
+            `> Bunny: ${info.bunny.version} (${info.bunny.loader.name} ${info.bunny.loader.version})`,
+            `> Discord: ${info.discord.version} (${info.discord.build})`,
+            `> React: ${info.react.version} (RN ${info.react.nativeVersion})`,
+            `> Hermes: ${info.hermes.version} (bcv${info.hermes.bytecodeVersion})`,
+            `> System: ${info.os.name} ${info.os.version} ${info.os.sdk ? `(SDK ${info.os.sdk})` : ""}`.trimEnd(),
+            `> Device: ${info.device.model} (${info.device.codename})`
+          ].join("\n");
+          if (ephemeral?.value) {
+            messageUtil.sendBotMessage(ctx.channel.id, content);
+          } else {
+            messageUtil.sendMessage(ctx.channel.id, {
+              content
+            });
+          }
+        }
+      });
+    }
+  });
+
+  // src/core/commands/plugins.ts
+  var plugins_exports = {};
+  __export(plugins_exports, {
+    default: () => plugins_default
+  });
+  var plugins_default;
+  var init_plugins2 = __esm({
+    "src/core/commands/plugins.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_i18n();
+      init_plugins();
+      init_types2();
+      init_common();
+      plugins_default = () => ({
+        name: "plugins",
+        description: Strings.COMMAND_PLUGINS_DESC,
+        options: [
+          {
+            name: "ephemeral",
+            displayName: "ephemeral",
+            type: ApplicationCommandOptionType.BOOLEAN,
+            description: Strings.COMMAND_DEBUG_OPT_EPHEMERALLY
+          }
+        ],
+        execute([ephemeral], ctx) {
+          var plugins2 = Object.values(VdPluginManager.plugins).filter(Boolean);
+          plugins2.sort((a, b) => a.manifest.name.localeCompare(b.manifest.name));
+          var enabled2 = plugins2.filter((p) => p.enabled).map((p) => p.manifest.name);
+          var disabled = plugins2.filter((p) => !p.enabled).map((p) => p.manifest.name);
+          var content = [
+            `**Installed Plugins (${plugins2.length}):**`,
+            ...enabled2.length > 0 ? [
+              `Enabled (${enabled2.length}):`,
+              "> " + enabled2.join(", ")
+            ] : [],
+            ...disabled.length > 0 ? [
+              `Disabled (${disabled.length}):`,
+              "> " + disabled.join(", ")
+            ] : []
+          ].join("\n");
+          if (ephemeral?.value) {
+            messageUtil.sendBotMessage(ctx.channel.id, content);
+          } else {
+            messageUtil.sendMessage(ctx.channel.id, {
+              content
+            });
+          }
+        }
+      });
+    }
+  });
+
+  // src/lib/api/commands/index.ts
+  var commands_exports = {};
+  __export(commands_exports, {
+    patchCommands: () => patchCommands,
+    registerCommand: () => registerCommand
+  });
+  function patchCommands() {
+    var unpatch = after("getBuiltInCommands", commands, ([type], res) => {
+      return [
+        ...res,
+        ...commands2.filter((c) => (type instanceof Array ? type.includes(c.type) : type === c.type) && c.__bunny?.shouldHide?.() !== false)
+      ];
+    });
+    [
+      (init_eval(), __toCommonJS(eval_exports)),
+      (init_debug2(), __toCommonJS(debug_exports2)),
+      (init_plugins2(), __toCommonJS(plugins_exports))
+    ].forEach((r) => registerCommand(r.default()));
+    return () => {
+      commands2 = [];
+      unpatch();
+    };
+  }
+  function registerCommand(command) {
+    var builtInCommands;
+    try {
+      builtInCommands = commands.getBuiltInCommands(ApplicationCommandType.CHAT, true, false);
+    } catch (e) {
+      builtInCommands = commands.getBuiltInCommands(Object.values(ApplicationCommandType), true, false);
+    }
+    builtInCommands.sort((a, b) => parseInt(b.id) - parseInt(a.id));
+    var lastCommand = builtInCommands[builtInCommands.length - 1];
+    command.id = (parseInt(lastCommand.id, 10) - 1).toString();
+    command.__bunny = {
+      shouldHide: command.shouldHide
+    };
+    command.applicationId ??= "-1";
+    command.type ??= ApplicationCommandType.CHAT;
+    command.inputType = ApplicationCommandInputType.BUILT_IN;
+    command.displayName ??= command.name;
+    command.displayDescription ??= command.description;
+    if (command.options)
+      for (var opt of command.options) {
+        opt.displayName ??= opt.name;
+        opt.displayDescription ??= opt.description;
+      }
+    instead("execute", command, (args, orig) => {
+      Promise.resolve(orig.apply(command, args)).then((ret) => {
+        if (ret && typeof ret === "object") {
+          messageUtil.sendMessage(args[1].channel.id, ret);
+        }
+      }).catch((err) => {
+        logger.error("Failed to execute command", err);
+      });
+    });
+    commands2.push(command);
+    return () => commands2 = commands2.filter(({ id }) => id !== command.id);
+  }
+  var commands2;
+  var init_commands = __esm({
+    "src/lib/api/commands/index.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_types2();
+      init_patcher();
+      init_logger();
+      init_common();
+      commands2 = [];
+    }
+  });
+
+  // globals:lodash
+  var require_lodash = __commonJS({
+    "globals:lodash"(exports, module) {
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      module.exports = require_depsModule()["lodash"];
+    }
+  });
+
+  // globals:util
+  var require_util = __commonJS({
+    "globals:util"(exports, module) {
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      module.exports = require_depsModule()["util"];
+    }
+  });
+
+  // src/core/vendetta/api.tsx
+  var import_react6, import_react_native20, initVendettaObject;
+  var init_api = __esm({
+    "src/core/vendetta/api.tsx"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_jsxRuntime();
+      init_assets();
+      init_commands();
+      init_debug();
+      init_loader();
+      init_patcher();
+      init_settings();
+      init_storage();
+      init_storage();
+      init_themes();
+      init_utils();
+      init_cyrb64();
+      init_logger();
+      init_metro();
+      init_common();
+      init_components();
+      init_components();
+      init_alerts();
+      init_color();
+      init_components2();
+      init_styles();
+      init_toasts();
+      init_dist();
+      import_react6 = __toESM(require_react());
+      import_react_native20 = __toESM(require_react_native());
+      init_plugins();
+      initVendettaObject = () => {
+        var createStackBasedFilter = (fn) => {
+          return (filter) => {
+            return fn(factories_exports.createSimpleFilter(filter, cyrb64Hash(new Error().stack)));
+          };
+        };
+        var api = window.vendetta = {
+          patcher: {
+            before: patcher_default.before,
+            after: patcher_default.after,
+            instead: patcher_default.instead
+          },
+          metro: {
+            modules: window.modules,
+            find: createStackBasedFilter(findExports),
+            findAll: createStackBasedFilter(findAllExports),
+            findByProps: (...props) => {
+              if (props.length === 1 && props[0] === "KeyboardAwareScrollView") {
+                props.push("listenToKeyboardEvents");
+              }
+              var ret = findByProps(...props);
+              if (ret == null) {
+                if (props.includes("ActionSheetTitleHeader")) {
+                  var module = findByProps("ActionSheetRow");
+                  return {
+                    ...module,
+                    ActionSheetTitleHeader: module.BottomSheetTitleHeader,
+                    ActionSheetContentContainer: ({ children }) => {
+                      (0, import_react6.useEffect)(() => console.warn("Discord has removed 'ActionSheetContentContainer', please move into something else. This has been temporarily replaced with View"), []);
+                      return /* @__PURE__ */ (0, import_react6.createElement)(import_react_native20.View, null, children);
+                    }
+                  };
+                }
+              }
+              return ret;
+            },
+            findByPropsAll: (...props) => findByPropsAll(...props),
+            findByName: (name, defaultExp) => {
+              if (name === "create" && typeof defaultExp === "undefined") {
+                return findByName("create", false).default;
+              }
+              return findByName(name, defaultExp ?? true);
+            },
+            findByNameAll: (name, defaultExp = true) => findByNameAll(name, defaultExp),
+            findByDisplayName: (displayName, defaultExp = true) => findByDisplayName(displayName, defaultExp),
+            findByDisplayNameAll: (displayName, defaultExp = true) => findByDisplayNameAll(displayName, defaultExp),
+            findByTypeName: (typeName, defaultExp = true) => findByTypeName(typeName, defaultExp),
+            findByTypeNameAll: (typeName, defaultExp = true) => findByTypeNameAll(typeName, defaultExp),
+            findByStoreName: (name) => findByStoreName(name),
+            common: {
+              constants,
+              channels,
+              i18n,
+              url,
+              toasts,
+              stylesheet: {
+                createThemedStyleSheet
+              },
+              clipboard,
+              assets,
+              invites,
+              commands,
+              navigation,
+              navigationStack,
+              NavigationNative,
+              Flux,
+              FluxDispatcher,
+              React: React2,
+              ReactNative,
+              moment: require_moment(),
+              chroma: require_chroma_js(),
+              lodash: require_lodash(),
+              util: require_util()
+            }
+          },
+          constants: {
+            DISCORD_SERVER: "https://discord.gg/n9QQ4XhhJP",
+            GITHUB: "https://github.com/vendetta-mod",
+            PROXY_PREFIX: "https://vd-plugins.github.io/proxy",
+            HTTP_REGEX: /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_+.~#?&/=]*)$/,
+            HTTP_REGEX_MULTI: /https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_+.~#?&//=]*)/g,
+            DISCORD_SERVER_ID: "1015931589865246730",
+            PLUGINS_CHANNEL_ID: "1091880384561684561",
+            THEMES_CHANNEL_ID: "1091880434939482202"
+          },
+          utils: {
+            findInReactTree: (tree, filter) => findInReactTree(tree, filter),
+            findInTree: (tree, filter, options) => findInTree(tree, filter, options),
+            safeFetch: (input, options, timeout) => safeFetch(input, options, timeout),
+            unfreeze: (obj) => Object.isFrozen(obj) ? {
+              ...obj
+            } : obj,
+            without: (object, ...keys) => omit(object, keys)
+          },
+          debug: {
+            connectToDebugger: (url2) => connectToDebugger(url2),
+            getDebugInfo: () => getDebugInfo()
+          },
+          ui: {
+            components: {
+              Forms,
+              General: ReactNative,
+              Alert: LegacyAlert,
+              Button: CompatButton,
+              HelpMessage: (...props) => /* @__PURE__ */ jsx(HelpMessage, {
+                ...props
+              }),
+              SafeAreaView: (...props) => /* @__PURE__ */ jsx(SafeAreaView, {
+                ...props
+              }),
+              Summary,
+              ErrorBoundary,
+              Codeblock,
+              Search: Search_default
+            },
+            toasts: {
+              showToast: (content, asset) => showToast(content, asset)
+            },
+            alerts: {
+              showConfirmationAlert: (options) => showConfirmationAlert(options),
+              showCustomAlert: (component, props) => showCustomAlert(component, props),
+              showInputAlert: (options) => showInputAlert(options)
+            },
+            assets: {
+              all: assetsMap,
+              find: (filter) => findAsset(filter),
+              getAssetByName: (name) => findAsset(name),
+              getAssetByID: (id) => findAsset(id),
+              getAssetIDByName: (name) => findAssetId(name)
+            },
+            semanticColors,
+            rawColors
+          },
+          plugins: {
+            plugins: VdPluginManager.plugins,
+            fetchPlugin: (source) => VdPluginManager.fetchPlugin(source),
+            installPlugin: (source, enabled2 = true) => VdPluginManager.installPlugin(source, enabled2),
+            startPlugin: (id) => VdPluginManager.startPlugin(id),
+            stopPlugin: (id, disable = true) => VdPluginManager.stopPlugin(id, disable),
+            removePlugin: (id) => VdPluginManager.removePlugin(id),
+            getSettings: (id) => VdPluginManager.getSettings(id)
+          },
+          themes: {
+            themes,
+            fetchTheme: (id, selected) => fetchTheme(id, selected),
+            installTheme: (id) => installTheme(id),
+            selectTheme: (id) => selectTheme(id === "default" ? null : themes[id]),
+            removeTheme: (id) => removeTheme(id),
+            getCurrentTheme: () => getThemeFromLoader(),
+            updateThemes: () => updateThemes()
+          },
+          commands: {
+            registerCommand
+          },
+          storage: {
+            createProxy: (target) => createProxy(target),
+            useProxy: (_storage) => useProxy(_storage),
+            createStorage: (backend) => createStorage(backend),
+            wrapSync: (store) => wrapSync(store),
+            awaitSyncWrapper: (store) => awaitStorage(store),
+            createMMKVBackend: (store) => createMMKVBackend(store),
+            createFileBackend: (file) => {
+              if (isPyonLoader() && file === "vendetta_theme.json") {
+                file = "pyoncord/current-theme.json";
+              }
+              return createFileBackend(file);
+            }
+          },
+          settings,
+          loader: {
+            identity: getVendettaLoaderIdentity() ?? void 0,
+            config: loaderConfig
+          },
+          logger: {
+            log: (...message) => console.log(...message),
+            info: (...message) => console.info(...message),
+            warn: (...message) => console.warn(...message),
+            error: (...message) => console.error(...message),
+            time: (...message) => console.time(...message),
+            trace: (...message) => console.trace(...message),
+            verbose: (...message) => console.log(...message)
+          },
+          version: versionHash,
+          unload: () => {
+            delete window.vendetta;
+          }
+        };
+        return () => api.unload();
       };
+    }
+  });
+
+  // src/lib/api/flux/index.ts
+  var flux_exports = {};
+  __export(flux_exports, {
+    dispatcher: () => dispatcher,
+    injectFluxInterceptor: () => injectFluxInterceptor,
+    intercept: () => intercept
+  });
+  function injectFluxInterceptor() {
+    var cb = (payload) => {
+      for (var intercept2 of intercepts) {
+        var res = intercept2(payload);
+        if (res == null) {
+          continue;
+        } else if (!res) {
+          payload[blockedSym] = true;
+        } else if (typeof res === "object") {
+          Object.assign(payload, res);
+          payload[modifiedSym] = true;
+        }
+      }
+      return blockedSym in payload;
+    };
+    (dispatcher._interceptors ??= []).unshift(cb);
+    return () => dispatcher._interceptors &&= dispatcher._interceptors.filter((v) => v !== cb);
+  }
+  function intercept(cb) {
+    intercepts.push(cb);
+    return () => {
+      intercepts = intercepts.filter((i) => i !== cb);
+    };
+  }
+  var blockedSym, modifiedSym, dispatcher, intercepts;
+  var init_flux = __esm({
+    "src/lib/api/flux/index.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_common();
+      blockedSym = Symbol.for("bunny.flux.blocked");
+      modifiedSym = Symbol.for("bunny.flux.modified");
+      dispatcher = FluxDispatcher;
+      intercepts = [];
     }
   });
 
@@ -6091,7 +8297,7 @@
       showToast(e.message, findAssetId("Small"));
     });
   }
-  var showSimpleActionSheet, handleClick, openURL, getChannelId, getChannel, url_default;
+  var showSimpleActionSheet3, handleClick, openURL, getChannelId, getChannel, url_default;
   var init_url = __esm({
     "src/core/plugins/quickinstall/url.tsx"() {
       "use strict";
@@ -6112,14 +8318,14 @@
       init_wrappers();
       init_alerts();
       init_toasts();
-      showSimpleActionSheet = findExports(byMutableProp("showSimpleActionSheet"));
+      showSimpleActionSheet3 = findExports(byMutableProp("showSimpleActionSheet"));
       handleClick = findByPropsLazy("handleClick");
       ({ openURL } = lazyDestructure(() => url));
       ({ getChannelId } = lazyDestructure(() => channels));
       ({ getChannel } = lazyDestructure(() => findByProps("getChannel")));
       url_default = () => {
         var patches2 = new Array();
-        patches2.push(after("showSimpleActionSheet", showSimpleActionSheet, (args) => {
+        patches2.push(after("showSimpleActionSheet", showSimpleActionSheet3, (args) => {
           if (args[0].key !== "LongPressUrl")
             return;
           var { header: { title: url2 }, options } = args[0];
@@ -6171,7 +8377,7 @@
       "use strict";
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
-      init_plugins2();
+      init_plugins3();
       init_forumPost();
       init_url();
       patches = [];
@@ -6204,7 +8410,7 @@
     return instance;
   }
   var getCorePlugins;
-  var init_plugins2 = __esm({
+  var init_plugins3 = __esm({
     "src/core/plugins/index.ts"() {
       "use strict";
       init_asyncIteratorSymbol();
@@ -6215,314 +8421,191 @@
     }
   });
 
-  // src/lib/api/commands/types.ts
-  var ApplicationCommandInputType, ApplicationCommandOptionType, ApplicationCommandType;
-  var init_types = __esm({
-    "src/lib/api/commands/types.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      (function(ApplicationCommandInputType2) {
-        ApplicationCommandInputType2[ApplicationCommandInputType2["BUILT_IN"] = 0] = "BUILT_IN";
-        ApplicationCommandInputType2[ApplicationCommandInputType2["BUILT_IN_TEXT"] = 1] = "BUILT_IN_TEXT";
-        ApplicationCommandInputType2[ApplicationCommandInputType2["BUILT_IN_INTEGRATION"] = 2] = "BUILT_IN_INTEGRATION";
-        ApplicationCommandInputType2[ApplicationCommandInputType2["BOT"] = 3] = "BOT";
-        ApplicationCommandInputType2[ApplicationCommandInputType2["PLACEHOLDER"] = 4] = "PLACEHOLDER";
-      })(ApplicationCommandInputType || (ApplicationCommandInputType = {}));
-      (function(ApplicationCommandOptionType2) {
-        ApplicationCommandOptionType2[ApplicationCommandOptionType2["SUB_COMMAND"] = 1] = "SUB_COMMAND";
-        ApplicationCommandOptionType2[ApplicationCommandOptionType2["SUB_COMMAND_GROUP"] = 2] = "SUB_COMMAND_GROUP";
-        ApplicationCommandOptionType2[ApplicationCommandOptionType2["STRING"] = 3] = "STRING";
-        ApplicationCommandOptionType2[ApplicationCommandOptionType2["INTEGER"] = 4] = "INTEGER";
-        ApplicationCommandOptionType2[ApplicationCommandOptionType2["BOOLEAN"] = 5] = "BOOLEAN";
-        ApplicationCommandOptionType2[ApplicationCommandOptionType2["USER"] = 6] = "USER";
-        ApplicationCommandOptionType2[ApplicationCommandOptionType2["CHANNEL"] = 7] = "CHANNEL";
-        ApplicationCommandOptionType2[ApplicationCommandOptionType2["ROLE"] = 8] = "ROLE";
-        ApplicationCommandOptionType2[ApplicationCommandOptionType2["MENTIONABLE"] = 9] = "MENTIONABLE";
-        ApplicationCommandOptionType2[ApplicationCommandOptionType2["NUMBER"] = 10] = "NUMBER";
-        ApplicationCommandOptionType2[ApplicationCommandOptionType2["ATTACHMENT"] = 11] = "ATTACHMENT";
-      })(ApplicationCommandOptionType || (ApplicationCommandOptionType = {}));
-      (function(ApplicationCommandType2) {
-        ApplicationCommandType2[ApplicationCommandType2["CHAT"] = 1] = "CHAT";
-        ApplicationCommandType2[ApplicationCommandType2["USER"] = 2] = "USER";
-        ApplicationCommandType2[ApplicationCommandType2["MESSAGE"] = 3] = "MESSAGE";
-      })(ApplicationCommandType || (ApplicationCommandType = {}));
-    }
-  });
-
-  // src/core/commands/eval.ts
-  var eval_exports = {};
-  __export(eval_exports, {
-    default: () => eval_default
-  });
-  function wrapInJSCodeblock(resString) {
-    return "```js\n" + resString.replaceAll("`", "`" + ZERO_WIDTH_SPACE_CHARACTER) + "\n```";
+  // src/lib/api/storage/new.ts
+  function createFileBackend2(filePath) {
+    return {
+      get: /* @__PURE__ */ _async_to_generator(function* () {
+        try {
+          return JSON.parse(yield readFile(filePath));
+        } catch (e) {
+          throw new Error(`Failed to parse storage from '${filePath}'`, {
+            cause: e
+          });
+        }
+      }),
+      set: function() {
+        var _ref = _async_to_generator(function* (data) {
+          if (!data || typeof data !== "object")
+            throw new Error("data needs to be an object");
+          yield writeFile(filePath, JSON.stringify(data));
+        });
+        return function(data) {
+          return _ref.apply(this, arguments);
+        };
+      }(),
+      exists: /* @__PURE__ */ _async_to_generator(function* () {
+        return yield fileExists(filePath);
+      })
+    };
   }
-  var util, AsyncFunction, ZERO_WIDTH_SPACE_CHARACTER, eval_default;
-  var init_eval = __esm({
-    "src/core/commands/eval.ts"() {
+  function _createProxy(target, path, emitter) {
+    var objChildrens = /* @__PURE__ */ new WeakMap();
+    return new Proxy(target, {
+      get(target2, prop) {
+        if (prop === emitterSymbol2)
+          return emitter;
+        var newPath = [
+          ...path,
+          prop
+        ];
+        var value = target2[prop];
+        if (value && typeof value === "object") {
+          var origValue = value;
+          value = objChildrens.get(origValue);
+          if (!value) {
+            value = _createProxy(origValue, newPath, emitter);
+            objChildrens.set(origValue, value);
+          }
+        }
+        if (value != null) {
+          emitter.emit("GET", {
+            path: newPath,
+            value
+          });
+        }
+        return value;
+      },
+      set(target2, prop, value) {
+        target2[prop] = value;
+        emitter.emit("SET", {
+          path: [
+            ...path,
+            prop
+          ],
+          value
+        });
+        return true;
+      },
+      deleteProperty(target2, prop) {
+        var success = delete target2[prop];
+        if (success)
+          emitter.emit("DEL", {
+            path: [
+              ...path,
+              prop
+            ]
+          });
+        return success;
+      }
+    });
+  }
+  function createProxy2(target = {}) {
+    var emitter = new Emitter();
+    return {
+      proxy: _createProxy(target, [], emitter),
+      emitter
+    };
+  }
+  function updateStorageAsync(path, value) {
+    return _updateStorageAsync.apply(this, arguments);
+  }
+  function _updateStorageAsync() {
+    _updateStorageAsync = _async_to_generator(function* (path, value) {
+      _loadedPath[path] = value;
+      yield createFileBackend2(path).set(value);
+    });
+    return _updateStorageAsync.apply(this, arguments);
+  }
+  function createStorageAndCallback(path, dflt = {}, cb) {
+    var callback = (data) => {
+      var { proxy, emitter } = createProxy2(data);
+      var handler = () => backend.set(proxy);
+      emitter.on("SET", handler);
+      emitter.on("DEL", handler);
+      cb(proxy);
+    };
+    var backend = createFileBackend2(path);
+    if (_loadedPath[path])
+      callback(_loadedPath[path]);
+    else {
+      backend.exists().then(function() {
+        var _ref = _async_to_generator(function* (exists) {
+          if (!exists) {
+            yield backend.set(dflt);
+            callback(dflt);
+          } else {
+            callback(yield backend.get());
+          }
+        });
+        return function(exists) {
+          return _ref.apply(this, arguments);
+        };
+      }());
+    }
+  }
+  function preloadStorageIfExists(path) {
+    return _preloadStorageIfExists.apply(this, arguments);
+  }
+  function _preloadStorageIfExists() {
+    _preloadStorageIfExists = _async_to_generator(function* (path) {
+      if (_loadedPath[path])
+        return _loadedPath[path];
+      var backend = createFileBackend2(path);
+      if (yield backend.exists()) {
+        return _loadedPath[path] = yield backend.get();
+      }
+      console.log("no " + path);
+    });
+    return _preloadStorageIfExists.apply(this, arguments);
+  }
+  function getPreloadedStorage(path) {
+    return _loadedPath[path];
+  }
+  function awaitStorage2(...proxies) {
+    return Promise.all(proxies.map((proxy) => proxy[storagePromiseSymbol]));
+  }
+  var emitterSymbol2, storageInitErrorSymbol, storagePromiseSymbol, _loadedPath, createStorage2;
+  var init_new = __esm({
+    "src/lib/api/storage/new.ts"() {
       "use strict";
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
       init_async_to_generator();
-      init_i18n();
-      init_types();
-      init_settings();
-      init_common();
-      init_wrappers();
-      util = findByPropsLazy("inspect");
-      AsyncFunction = _async_to_generator(function* () {
-        return void 0;
-      }).constructor;
-      ZERO_WIDTH_SPACE_CHARACTER = "\u200B";
-      eval_default = () => ({
-        name: "eval",
-        description: Strings.COMMAND_EVAL_DESC,
-        shouldHide: () => settings.enableEvalCommand === true,
-        options: [
-          {
-            name: "code",
-            type: ApplicationCommandOptionType.STRING,
-            description: Strings.COMMAND_EVAL_OPT_CODE,
-            required: true
-          },
-          {
-            name: "async",
-            type: ApplicationCommandOptionType.BOOLEAN,
-            description: Strings.COMMAND_EVAL_OPT_ASYNC
-          }
-        ],
-        execute([code, async], ctx) {
-          return _async_to_generator(function* () {
-            try {
-              var res = util.inspect(async?.value ? yield AsyncFunction(code.value)() : eval?.(code.value));
-              var trimmedRes = res.length > 2e3 ? res.slice(0, 2e3) + "..." : res;
-              messageUtil.sendBotMessage(ctx.channel.id, wrapInJSCodeblock(trimmedRes));
-            } catch (err) {
-              messageUtil.sendBotMessage(ctx.channel.id, wrapInJSCodeblock(err?.stack ?? err));
+      init_fs();
+      init_Emitter();
+      emitterSymbol2 = Symbol.for("bunny.storage.emitter");
+      storageInitErrorSymbol = Symbol.for("bunny.storage.initError");
+      storagePromiseSymbol = Symbol.for("bunny.storage.promise");
+      _loadedPath = {};
+      createStorage2 = (path, dflt = {}) => {
+        var promise = new Promise((r) => resolvePromise = r);
+        var awaited, resolved, error, resolvePromise;
+        createStorageAndCallback(path, dflt, (proxy) => {
+          awaited = proxy;
+          resolved = true;
+          resolvePromise();
+        });
+        var check = () => {
+          if (resolved)
+            return true;
+          throw new Error("Attempted to access storage without initializing");
+        };
+        return new Proxy({}, {
+          ...Object.fromEntries(Object.getOwnPropertyNames(Reflect).map((k) => [
+            k,
+            (t, ...a) => {
+              return check() && Reflect[k](awaited, ...a);
             }
-          })();
-        }
-      });
-    }
-  });
-
-  // src/core/commands/debug.ts
-  var debug_exports2 = {};
-  __export(debug_exports2, {
-    default: () => debug_default
-  });
-  var debug_default;
-  var init_debug2 = __esm({
-    "src/core/commands/debug.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_i18n();
-      init_types();
-      init_debug();
-      init_common();
-      debug_default = () => ({
-        name: "debug",
-        description: Strings.COMMAND_DEBUG_DESC,
-        options: [
-          {
-            name: "ephemeral",
-            type: ApplicationCommandOptionType.BOOLEAN,
-            description: Strings.COMMAND_DEBUG_OPT_EPHEMERALLY
+          ])),
+          get(target, prop, recv) {
+            if (prop === storageInitErrorSymbol)
+              return error;
+            if (prop === storagePromiseSymbol)
+              return promise;
+            return check() && Reflect.get(awaited ?? target, prop, recv);
           }
-        ],
-        execute([ephemeral], ctx) {
-          var info = getDebugInfo();
-          var content = [
-            "**Bunny Debug Info**",
-            `> Bunny: ${info.bunny.version} (${info.bunny.loader.name} ${info.bunny.loader.version})`,
-            `> Discord: ${info.discord.version} (${info.discord.build})`,
-            `> React: ${info.react.version} (RN ${info.react.nativeVersion})`,
-            `> Hermes: ${info.hermes.version} (bcv${info.hermes.bytecodeVersion})`,
-            `> System: ${info.os.name} ${info.os.version} ${info.os.sdk ? `(SDK ${info.os.sdk})` : ""}`.trimEnd(),
-            `> Device: ${info.device.model} (${info.device.codename})`
-          ].join("\n");
-          if (ephemeral?.value) {
-            messageUtil.sendBotMessage(ctx.channel.id, content);
-          } else {
-            messageUtil.sendMessage(ctx.channel.id, {
-              content
-            });
-          }
-        }
-      });
-    }
-  });
-
-  // src/core/commands/plugins.ts
-  var plugins_exports = {};
-  __export(plugins_exports, {
-    default: () => plugins_default
-  });
-  var plugins_default;
-  var init_plugins3 = __esm({
-    "src/core/commands/plugins.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_i18n();
-      init_plugins();
-      init_types();
-      init_common();
-      plugins_default = () => ({
-        name: "plugins",
-        description: Strings.COMMAND_PLUGINS_DESC,
-        options: [
-          {
-            name: "ephemeral",
-            displayName: "ephemeral",
-            type: ApplicationCommandOptionType.BOOLEAN,
-            description: Strings.COMMAND_DEBUG_OPT_EPHEMERALLY
-          }
-        ],
-        execute([ephemeral], ctx) {
-          var plugins2 = Object.values(VdPluginManager.plugins).filter(Boolean);
-          plugins2.sort((a, b) => a.manifest.name.localeCompare(b.manifest.name));
-          var enabled2 = plugins2.filter((p) => p.enabled).map((p) => p.manifest.name);
-          var disabled = plugins2.filter((p) => !p.enabled).map((p) => p.manifest.name);
-          var content = [
-            `**Installed Plugins (${plugins2.length}):**`,
-            ...enabled2.length > 0 ? [
-              `Enabled (${enabled2.length}):`,
-              "> " + enabled2.join(", ")
-            ] : [],
-            ...disabled.length > 0 ? [
-              `Disabled (${disabled.length}):`,
-              "> " + disabled.join(", ")
-            ] : []
-          ].join("\n");
-          if (ephemeral?.value) {
-            messageUtil.sendBotMessage(ctx.channel.id, content);
-          } else {
-            messageUtil.sendMessage(ctx.channel.id, {
-              content
-            });
-          }
-        }
-      });
-    }
-  });
-
-  // src/lib/api/commands/index.ts
-  var commands_exports = {};
-  __export(commands_exports, {
-    patchCommands: () => patchCommands,
-    registerCommand: () => registerCommand
-  });
-  function patchCommands() {
-    var unpatch = after("getBuiltInCommands", commands, ([type], res) => {
-      return [
-        ...res,
-        ...commands2.filter((c) => (type instanceof Array ? type.includes(c.type) : type === c.type) && c.__bunny?.shouldHide?.() !== false)
-      ];
-    });
-    [
-      (init_eval(), __toCommonJS(eval_exports)),
-      (init_debug2(), __toCommonJS(debug_exports2)),
-      (init_plugins3(), __toCommonJS(plugins_exports))
-    ].forEach((r) => registerCommand(r.default()));
-    return () => {
-      commands2 = [];
-      unpatch();
-    };
-  }
-  function registerCommand(command) {
-    var builtInCommands;
-    try {
-      builtInCommands = commands.getBuiltInCommands(ApplicationCommandType.CHAT, true, false);
-    } catch (e) {
-      builtInCommands = commands.getBuiltInCommands(Object.values(ApplicationCommandType), true, false);
-    }
-    builtInCommands.sort((a, b) => parseInt(b.id) - parseInt(a.id));
-    var lastCommand = builtInCommands[builtInCommands.length - 1];
-    command.id = (parseInt(lastCommand.id, 10) - 1).toString();
-    command.__bunny = {
-      shouldHide: command.shouldHide
-    };
-    command.applicationId ??= "-1";
-    command.type ??= ApplicationCommandType.CHAT;
-    command.inputType = ApplicationCommandInputType.BUILT_IN;
-    command.displayName ??= command.name;
-    command.displayDescription ??= command.description;
-    if (command.options)
-      for (var opt of command.options) {
-        opt.displayName ??= opt.name;
-        opt.displayDescription ??= opt.description;
-      }
-    instead("execute", command, (args, orig) => {
-      Promise.resolve(orig.apply(command, args)).then((ret) => {
-        if (ret && typeof ret === "object") {
-          messageUtil.sendMessage(args[1].channel.id, ret);
-        }
-      }).catch((err) => {
-        logger.error("Failed to execute command", err);
-      });
-    });
-    commands2.push(command);
-    return () => commands2 = commands2.filter(({ id }) => id !== command.id);
-  }
-  var commands2;
-  var init_commands = __esm({
-    "src/lib/api/commands/index.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_types();
-      init_patcher();
-      init_logger();
-      init_common();
-      commands2 = [];
-    }
-  });
-
-  // src/lib/api/flux/index.ts
-  var flux_exports = {};
-  __export(flux_exports, {
-    dispatcher: () => dispatcher,
-    injectFluxInterceptor: () => injectFluxInterceptor,
-    intercept: () => intercept
-  });
-  function injectFluxInterceptor() {
-    var cb = (payload) => {
-      for (var intercept2 of intercepts) {
-        var res = intercept2(payload);
-        if (res == null) {
-          continue;
-        } else if (!res) {
-          payload[blockedSym] = true;
-        } else if (typeof res === "object") {
-          Object.assign(payload, res);
-          payload[modifiedSym] = true;
-        }
-      }
-      return blockedSym in payload;
-    };
-    (dispatcher._interceptors ??= []).unshift(cb);
-    return () => dispatcher._interceptors &&= dispatcher._interceptors.filter((v) => v !== cb);
-  }
-  function intercept(cb) {
-    intercepts.push(cb);
-    return () => {
-      intercepts = intercepts.filter((i) => i !== cb);
-    };
-  }
-  var blockedSym, modifiedSym, dispatcher, intercepts;
-  var init_flux = __esm({
-    "src/lib/api/flux/index.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_common();
-      blockedSym = Symbol.for("bunny.flux.blocked");
-      modifiedSym = Symbol.for("bunny.flux.modified");
-      dispatcher = FluxDispatcher;
-      intercepts = [];
+        });
+      };
     }
   });
 
@@ -6556,7 +8639,7 @@
     settings: () => settings_exports,
     storage: () => storage_exports
   });
-  var init_api = __esm({
+  var init_api2 = __esm({
     "src/lib/api/index.ts"() {
       "use strict";
       init_asyncIteratorSymbol();
@@ -6612,12 +8695,12 @@
       disposers
     };
   }
-  var init_api2 = __esm({
+  var init_api3 = __esm({
     "src/lib/plugins/api.ts"() {
       "use strict";
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
-      init_api();
+      init_api2();
       init_commands();
       init_new();
       init_logger();
@@ -6968,13 +9051,13 @@
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
       init_async_to_generator();
-      init_plugins2();
+      init_plugins3();
       init_fs();
       init_new();
       init_utils();
       init_constants();
       init_common();
-      init_api2();
+      init_api3();
       corePluginInstances = /* @__PURE__ */ new Map();
       registeredPlugins = /* @__PURE__ */ new Map();
       pluginInstances = /* @__PURE__ */ new Map();
@@ -6990,6338 +9073,6 @@
     }
   });
 
-  // src/core/ui/settings/pages/Plugins/sheets/PluginInfoActionSheet.tsx
-  var PluginInfoActionSheet_exports = {};
-  __export(PluginInfoActionSheet_exports, {
-    default: () => PluginInfoActionSheet
-  });
-  function PluginInfoActionSheet({ plugin, navigation: navigation2 }) {
-    plugin.usePluginState();
-    return /* @__PURE__ */ jsx(ActionSheet, {
-      children: /* @__PURE__ */ jsx(import_react_native13.ScrollView, {
-        children: /* @__PURE__ */ jsxs(import_react_native13.View, {
-          style: {
-            flexDirection: "row",
-            alignItems: "center",
-            paddingVertical: 24
-          },
-          children: [
-            /* @__PURE__ */ jsx(Text, {
-              variant: "heading-xl/semibold",
-              children: plugin.name
-            }),
-            /* @__PURE__ */ jsx(import_react_native13.View, {
-              style: {
-                marginLeft: "auto"
-              },
-              children: plugin.getPluginSettingsComponent() && /* @__PURE__ */ jsx(Button, {
-                size: "md",
-                text: "Configure",
-                variant: "secondary",
-                icon: findAssetId("WrenchIcon"),
-                onPress: () => {
-                  hideSheet("PluginInfoActionSheet");
-                  navigation2.push("BUNNY_CUSTOM_PAGE", {
-                    title: plugin.name,
-                    render: plugin.getPluginSettingsComponent()
-                  });
-                }
-              })
-            })
-          ]
-        })
-      })
-    });
-  }
-  var import_react_native13;
-  var init_PluginInfoActionSheet = __esm({
-    "src/core/ui/settings/pages/Plugins/sheets/PluginInfoActionSheet.tsx"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_jsxRuntime();
-      init_assets();
-      init_sheets();
-      init_components();
-      import_react_native13 = __toESM(require_react_native());
-    }
-  });
-
-  // src/core/ui/settings/pages/Plugins/models/bunny.ts
-  function unifyBunnyPlugin(manifest) {
-    return {
-      id: manifest.id,
-      name: manifest.name,
-      description: manifest.description,
-      authors: manifest.authors,
-      isEnabled() {
-        return isPluginEnabled(getId(manifest));
-      },
-      usePluginState() {
-        useProxy2(pluginSettings);
-      },
-      toggle(start) {
-        start ? enablePlugin(getId(manifest), true) : disablePlugin(getId(manifest));
-      },
-      resolveSheetComponent() {
-        return Promise.resolve().then(() => (init_PluginInfoActionSheet(), PluginInfoActionSheet_exports));
-      },
-      getPluginSettingsComponent() {
-        return getPluginSettingsComponent(getId(manifest));
-      }
-    };
-  }
-  var init_bunny = __esm({
-    "src/core/ui/settings/pages/Plugins/models/bunny.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_new();
-      init_plugins4();
-    }
-  });
-
-  // src/lib/utils/types.ts
-  var ButtonColors;
-  var init_types2 = __esm({
-    "src/lib/utils/types.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      (function(ButtonColors2) {
-        ButtonColors2["BRAND"] = "brand";
-        ButtonColors2["RED"] = "red";
-        ButtonColors2["GREEN"] = "green";
-        ButtonColors2["PRIMARY"] = "primary";
-        ButtonColors2["TRANSPARENT"] = "transparent";
-        ButtonColors2["GREY"] = "grey";
-        ButtonColors2["LIGHTGREY"] = "lightgrey";
-        ButtonColors2["WHITE"] = "white";
-        ButtonColors2["LINK"] = "link";
-      })(ButtonColors || (ButtonColors = {}));
-    }
-  });
-
-  // src/core/ui/settings/pages/Plugins/sheets/VdPluginInfoActionSheet.tsx
-  var VdPluginInfoActionSheet_exports = {};
-  __export(VdPluginInfoActionSheet_exports, {
-    default: () => PluginInfoActionSheet2
-  });
-  function PluginInfoActionSheet2({ plugin, navigation: navigation2 }) {
-    plugin.usePluginState();
-    var vdPlugin = VdPluginManager.plugins[plugin.id];
-    var SettingsComponent = plugin.getPluginSettingsComponent();
-    return /* @__PURE__ */ jsx(ActionSheet, {
-      children: /* @__PURE__ */ jsxs(import_react_native14.ScrollView, {
-        children: [
-          /* @__PURE__ */ jsxs(import_react_native14.View, {
-            style: {
-              flexDirection: "row",
-              alignItems: "center",
-              paddingVertical: 24
-            },
-            children: [
-              /* @__PURE__ */ jsx(Text, {
-                variant: "heading-xl/semibold",
-                children: plugin.name
-              }),
-              /* @__PURE__ */ jsx(import_react_native14.View, {
-                style: {
-                  marginLeft: "auto"
-                },
-                children: SettingsComponent && /* @__PURE__ */ jsx(Button, {
-                  size: "md",
-                  text: "Configure",
-                  variant: "secondary",
-                  icon: findAssetId("WrenchIcon"),
-                  onPress: () => {
-                    hideSheet("PluginInfoActionSheet");
-                    navigation2.push("BUNNY_CUSTOM_PAGE", {
-                      title: plugin.name,
-                      render: SettingsComponent
-                    });
-                  }
-                })
-              })
-            ]
-          }),
-          /* @__PURE__ */ jsxs(ActionSheetRow.Group, {
-            children: [
-              /* @__PURE__ */ jsx(ActionSheetRow, {
-                label: Strings.REFETCH,
-                icon: /* @__PURE__ */ jsx(TableRow.Icon, {
-                  source: findAssetId("RetryIcon")
-                }),
-                onPress: /* @__PURE__ */ _async_to_generator(function* () {
-                  if (vdPlugin.enabled)
-                    VdPluginManager.stopPlugin(plugin.id, false);
-                  try {
-                    yield VdPluginManager.fetchPlugin(plugin.id);
-                    showToast(Strings.PLUGIN_REFETCH_SUCCESSFUL, findAssetId("toast_image_saved"));
-                  } catch (e) {
-                    showToast(Strings.PLUGIN_REFETCH_FAILED, findAssetId("Small"));
-                  }
-                  if (vdPlugin.enabled)
-                    yield VdPluginManager.startPlugin(plugin.id);
-                  hideSheet("PluginInfoActionSheet");
-                })
-              }),
-              /* @__PURE__ */ jsx(ActionSheetRow, {
-                label: Strings.COPY_URL,
-                icon: /* @__PURE__ */ jsx(TableRow.Icon, {
-                  source: findAssetId("copy")
-                }),
-                onPress: () => {
-                  clipboard.setString(plugin.id);
-                  showToast.showCopyToClipboard();
-                }
-              }),
-              /* @__PURE__ */ jsx(ActionSheetRow, {
-                label: vdPlugin.update ? Strings.DISABLE_UPDATES : Strings.ENABLE_UPDATES,
-                icon: /* @__PURE__ */ jsx(TableRow.Icon, {
-                  source: findAssetId("ic_download_24px")
-                }),
-                onPress: () => {
-                  vdPlugin.update = !vdPlugin.update;
-                  showToast(formatString("TOASTS_PLUGIN_UPDATE", {
-                    update: vdPlugin.update,
-                    name: plugin.name
-                  }), findAssetId("toast_image_saved"));
-                }
-              }),
-              /* @__PURE__ */ jsx(ActionSheetRow, {
-                label: Strings.CLEAR_DATA,
-                icon: /* @__PURE__ */ jsx(TableRow.Icon, {
-                  source: findAssetId("ic_duplicate")
-                }),
-                onPress: () => showConfirmationAlert({
-                  title: Strings.HOLD_UP,
-                  content: formatString("ARE_YOU_SURE_TO_CLEAR_DATA", {
-                    name: plugin.name
-                  }),
-                  confirmText: Strings.CLEAR,
-                  cancelText: Strings.CANCEL,
-                  confirmColor: ButtonColors.RED,
-                  onConfirm: /* @__PURE__ */ _async_to_generator(function* () {
-                    if (vdPlugin.enabled)
-                      VdPluginManager.stopPlugin(plugin.id, false);
-                    try {
-                      yield VdPluginManager.fetchPlugin(plugin.id);
-                      showToast(Strings.PLUGIN_REFETCH_SUCCESSFUL, findAssetId("toast_image_saved"));
-                    } catch (e) {
-                      showToast(Strings.PLUGIN_REFETCH_FAILED, findAssetId("Small"));
-                    }
-                    var message;
-                    try {
-                      purgeStorage(plugin.id);
-                      message = [
-                        "CLEAR_DATA_SUCCESSFUL",
-                        "trash"
-                      ];
-                    } catch (e) {
-                      message = [
-                        "CLEAR_DATA_FAILED",
-                        "Small"
-                      ];
-                    }
-                    showToast(formatString(message[0], {
-                      name: plugin.name
-                    }), findAssetId(message[1]));
-                    if (vdPlugin.enabled)
-                      yield VdPluginManager.startPlugin(plugin.id);
-                    hideSheet("PluginInfoActionSheet");
-                  })
-                })
-              }),
-              /* @__PURE__ */ jsx(ActionSheetRow, {
-                label: Strings.DELETE,
-                icon: /* @__PURE__ */ jsx(TableRow.Icon, {
-                  source: findAssetId("ic_message_delete")
-                }),
-                onPress: () => showConfirmationAlert({
-                  title: Strings.HOLD_UP,
-                  content: formatString("ARE_YOU_SURE_TO_DELETE_PLUGIN", {
-                    name: plugin.name
-                  }),
-                  confirmText: Strings.DELETE,
-                  cancelText: Strings.CANCEL,
-                  confirmColor: ButtonColors.RED,
-                  onConfirm: () => {
-                    try {
-                      VdPluginManager.removePlugin(plugin.id);
-                    } catch (e) {
-                      showToast(String(e), findAssetId("Small"));
-                    }
-                    hideSheet("PluginInfoActionSheet");
-                  }
-                })
-              })
-            ]
-          })
-        ]
-      })
-    });
-  }
-  var import_react_native14;
-  var init_VdPluginInfoActionSheet = __esm({
-    "src/core/ui/settings/pages/Plugins/sheets/VdPluginInfoActionSheet.tsx"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_async_to_generator();
-      init_jsxRuntime();
-      init_i18n();
-      init_plugins();
-      init_assets();
-      init_storage();
-      init_types2();
-      init_common();
-      init_components();
-      init_alerts();
-      init_sheets();
-      init_toasts();
-      import_react_native14 = __toESM(require_react_native());
-    }
-  });
-
-  // src/core/ui/settings/pages/Plugins/models/vendetta.ts
-  function unifyVdPlugin(vdPlugin) {
-    return {
-      id: vdPlugin.id,
-      name: vdPlugin.manifest.name,
-      description: vdPlugin.manifest.description,
-      authors: vdPlugin.manifest.authors,
-      icon: vdPlugin.manifest.vendetta?.icon,
-      isEnabled: () => vdPlugin.enabled,
-      usePluginState() {
-        useProxy(VdPluginManager.plugins[vdPlugin.id]);
-      },
-      toggle(start) {
-        start ? VdPluginManager.startPlugin(vdPlugin.id) : VdPluginManager.stopPlugin(vdPlugin.id);
-      },
-      resolveSheetComponent() {
-        return Promise.resolve().then(() => (init_VdPluginInfoActionSheet(), VdPluginInfoActionSheet_exports));
-      },
-      getPluginSettingsComponent() {
-        return VdPluginManager.getSettings(vdPlugin.id);
-      }
-    };
-  }
-  var init_vendetta = __esm({
-    "src/core/ui/settings/pages/Plugins/models/vendetta.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_plugins();
-      init_storage();
-    }
-  });
-
-  // node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_async_iterator.js
-  function _async_iterator(iterable) {
-    var method, async, sync, retry = 2;
-    for ("undefined" != typeof Symbol && (async = asyncIteratorSymbol, sync = Symbol.iterator); retry--; ) {
-      if (async && null != (method = iterable[async]))
-        return method.call(iterable);
-      if (sync && null != (method = iterable[sync]))
-        return new AsyncFromSyncIterator(method.call(iterable));
-      async = "@@asyncIterator", sync = "@@iterator";
-    }
-    throw new TypeError("Object is not async iterable");
-  }
-  function AsyncFromSyncIterator(s) {
-    function AsyncFromSyncIteratorContinuation(r) {
-      if (Object(r) !== r)
-        return Promise.reject(new TypeError(r + " is not an object."));
-      var done = r.done;
-      return Promise.resolve(r.value).then(function(value) {
-        return {
-          value,
-          done
-        };
-      });
-    }
-    return AsyncFromSyncIterator = function AsyncFromSyncIterator2(s2) {
-      this.s = s2, this.n = s2.next;
-    }, AsyncFromSyncIterator.prototype = {
-      s: null,
-      n: null,
-      next: function next() {
-        return AsyncFromSyncIteratorContinuation(this.n.apply(this.s, arguments));
-      },
-      return: function _return(value) {
-        var ret = this.s.return;
-        return void 0 === ret ? Promise.resolve({
-          value,
-          done: true
-        }) : AsyncFromSyncIteratorContinuation(ret.apply(this.s, arguments));
-      },
-      throw: function _throw(value) {
-        var thr = this.s.return;
-        return void 0 === thr ? Promise.reject(value) : AsyncFromSyncIteratorContinuation(thr.apply(this.s, arguments));
-      }
-    }, new AsyncFromSyncIterator(s);
-  }
-  var init_async_iterator = __esm({
-    "node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_async_iterator.js"() {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-    }
-  });
-
-  // node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_await_value.js
-  function _await_value(value) {
-    this.wrapped = value;
-  }
-  var init_await_value = __esm({
-    "node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_await_value.js"() {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-    }
-  });
-
-  // node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_await_async_generator.js
-  function _await_async_generator(value) {
-    return new _await_value(value);
-  }
-  var init_await_async_generator = __esm({
-    "node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_await_async_generator.js"() {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_await_value();
-    }
-  });
-
-  // node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_async_generator.js
-  function _async_generator(gen) {
-    var front, back;
-    function send(key, arg) {
-      return new Promise(function(resolve, reject) {
-        var request = {
-          key,
-          arg,
-          resolve,
-          reject,
-          next: null
-        };
-        if (back)
-          back = back.next = request;
-        else {
-          front = back = request;
-          resume(key, arg);
-        }
-      });
-    }
-    function resume(key, arg) {
-      try {
-        var result = gen[key](arg);
-        var value = result.value;
-        var wrappedAwait = value instanceof _await_value;
-        Promise.resolve(wrappedAwait ? value.wrapped : value).then(function(arg2) {
-          if (wrappedAwait) {
-            resume("next", arg2);
-            return;
-          }
-          settle(result.done ? "return" : "normal", arg2);
-        }, function(err) {
-          resume("throw", err);
-        });
-      } catch (err) {
-        settle("throw", err);
-      }
-    }
-    function settle(type, value) {
-      switch (type) {
-        case "return":
-          front.resolve({
-            value,
-            done: true
-          });
-          break;
-        case "throw":
-          front.reject(value);
-          break;
-        default:
-          front.resolve({
-            value,
-            done: false
-          });
-          break;
-      }
-      front = front.next;
-      if (front)
-        resume(front.key, front.arg);
-      else
-        back = null;
-    }
-    this._invoke = send;
-    if (typeof gen.return !== "function")
-      this.return = void 0;
-  }
-  var init_async_generator = __esm({
-    "node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_async_generator.js"() {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_await_value();
-      if (typeof Symbol === "function" && asyncIteratorSymbol) {
-        _async_generator.prototype[asyncIteratorSymbol] = function() {
-          return this;
-        };
-      }
-      _async_generator.prototype.next = function(arg) {
-        return this._invoke("next", arg);
-      };
-      _async_generator.prototype.throw = function(arg) {
-        return this._invoke("throw", arg);
-      };
-      _async_generator.prototype.return = function(arg) {
-        return this._invoke("return", arg);
-      };
-    }
-  });
-
-  // node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_wrap_async_generator.js
-  function _wrap_async_generator(fn) {
-    return function() {
-      return new _async_generator(fn.apply(this, arguments));
-    };
-  }
-  var init_wrap_async_generator = __esm({
-    "node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_wrap_async_generator.js"() {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_async_generator();
-    }
-  });
-
-  // node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_class_apply_descriptor_get.js
-  function _class_apply_descriptor_get(receiver, descriptor) {
-    if (descriptor.get)
-      return descriptor.get.call(receiver);
-    return descriptor.value;
-  }
-  var init_class_apply_descriptor_get = __esm({
-    "node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_class_apply_descriptor_get.js"() {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-    }
-  });
-
-  // node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_class_extract_field_descriptor.js
-  function _class_extract_field_descriptor(receiver, privateMap, action) {
-    if (!privateMap.has(receiver))
-      throw new TypeError("attempted to " + action + " private field on non-instance");
-    return privateMap.get(receiver);
-  }
-  var init_class_extract_field_descriptor = __esm({
-    "node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_class_extract_field_descriptor.js"() {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-    }
-  });
-
-  // node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_class_private_field_get.js
-  function _class_private_field_get(receiver, privateMap) {
-    var descriptor = _class_extract_field_descriptor(receiver, privateMap, "get");
-    return _class_apply_descriptor_get(receiver, descriptor);
-  }
-  var init_class_private_field_get = __esm({
-    "node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_class_private_field_get.js"() {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_class_apply_descriptor_get();
-      init_class_extract_field_descriptor();
-    }
-  });
-
-  // node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_check_private_redeclaration.js
-  function _check_private_redeclaration(obj, privateCollection) {
-    if (privateCollection.has(obj)) {
-      throw new TypeError("Cannot initialize the same private elements twice on an object");
-    }
-  }
-  var init_check_private_redeclaration = __esm({
-    "node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_check_private_redeclaration.js"() {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-    }
-  });
-
-  // node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_class_private_field_init.js
-  function _class_private_field_init(obj, privateMap, value) {
-    _check_private_redeclaration(obj, privateMap);
-    privateMap.set(obj, value);
-  }
-  var init_class_private_field_init = __esm({
-    "node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_class_private_field_init.js"() {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_check_private_redeclaration();
-    }
-  });
-
-  // node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_class_apply_descriptor_set.js
-  function _class_apply_descriptor_set(receiver, descriptor, value) {
-    if (descriptor.set)
-      descriptor.set.call(receiver, value);
-    else {
-      if (!descriptor.writable) {
-        throw new TypeError("attempted to set read only private field");
-      }
-      descriptor.value = value;
-    }
-  }
-  var init_class_apply_descriptor_set = __esm({
-    "node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_class_apply_descriptor_set.js"() {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-    }
-  });
-
-  // node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_class_private_field_set.js
-  function _class_private_field_set(receiver, privateMap, value) {
-    var descriptor = _class_extract_field_descriptor(receiver, privateMap, "set");
-    _class_apply_descriptor_set(receiver, descriptor, value);
-    return value;
-  }
-  var init_class_private_field_set = __esm({
-    "node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_class_private_field_set.js"() {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_class_apply_descriptor_set();
-      init_class_extract_field_descriptor();
-    }
-  });
-
-  // node_modules/.pnpm/@tanstack+query-core@5.51.21/node_modules/@tanstack/query-core/build/modern/subscribable.js
-  var Subscribable;
-  var init_subscribable = __esm({
-    "node_modules/.pnpm/@tanstack+query-core@5.51.21/node_modules/@tanstack/query-core/build/modern/subscribable.js"() {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_class_call_check();
-      init_create_class();
-      Subscribable = /* @__PURE__ */ function() {
-        "use strict";
-        function Subscribable2() {
-          _class_call_check(this, Subscribable2);
-          this.listeners = /* @__PURE__ */ new Set();
-          this.subscribe = this.subscribe.bind(this);
-        }
-        _create_class(Subscribable2, [
-          {
-            key: "subscribe",
-            value: function subscribe(listener) {
-              this.listeners.add(listener);
-              this.onSubscribe();
-              return () => {
-                this.listeners.delete(listener);
-                this.onUnsubscribe();
-              };
-            }
-          },
-          {
-            key: "hasListeners",
-            value: function hasListeners() {
-              return this.listeners.size > 0;
-            }
-          },
-          {
-            key: "onSubscribe",
-            value: function onSubscribe() {
-            }
-          },
-          {
-            key: "onUnsubscribe",
-            value: function onUnsubscribe() {
-            }
-          }
-        ]);
-        return Subscribable2;
-      }();
-    }
-  });
-
-  // node_modules/.pnpm/@tanstack+query-core@5.51.21/node_modules/@tanstack/query-core/build/modern/utils.js
-  function noop() {
-    return void 0;
-  }
-  function functionalUpdate(updater, input) {
-    return typeof updater === "function" ? updater(input) : updater;
-  }
-  function isValidTimeout(value) {
-    return typeof value === "number" && value >= 0 && value !== Infinity;
-  }
-  function timeUntilStale(updatedAt, staleTime) {
-    return Math.max(updatedAt + (staleTime || 0) - Date.now(), 0);
-  }
-  function resolveStaleTime(staleTime, query) {
-    return typeof staleTime === "function" ? staleTime(query) : staleTime;
-  }
-  function resolveEnabled(enabled2, query) {
-    return typeof enabled2 === "function" ? enabled2(query) : enabled2;
-  }
-  function matchQuery(filters, query) {
-    var { type = "all", exact, fetchStatus, predicate, queryKey, stale } = filters;
-    if (queryKey) {
-      if (exact) {
-        if (query.queryHash !== hashQueryKeyByOptions(queryKey, query.options)) {
-          return false;
-        }
-      } else if (!partialMatchKey(query.queryKey, queryKey)) {
-        return false;
-      }
-    }
-    if (type !== "all") {
-      var isActive = query.isActive();
-      if (type === "active" && !isActive) {
-        return false;
-      }
-      if (type === "inactive" && isActive) {
-        return false;
-      }
-    }
-    if (typeof stale === "boolean" && query.isStale() !== stale) {
-      return false;
-    }
-    if (fetchStatus && fetchStatus !== query.state.fetchStatus) {
-      return false;
-    }
-    if (predicate && !predicate(query)) {
-      return false;
-    }
-    return true;
-  }
-  function matchMutation(filters, mutation) {
-    var { exact, status, predicate, mutationKey } = filters;
-    if (mutationKey) {
-      if (!mutation.options.mutationKey) {
-        return false;
-      }
-      if (exact) {
-        if (hashKey(mutation.options.mutationKey) !== hashKey(mutationKey)) {
-          return false;
-        }
-      } else if (!partialMatchKey(mutation.options.mutationKey, mutationKey)) {
-        return false;
-      }
-    }
-    if (status && mutation.state.status !== status) {
-      return false;
-    }
-    if (predicate && !predicate(mutation)) {
-      return false;
-    }
-    return true;
-  }
-  function hashQueryKeyByOptions(queryKey, options) {
-    var hashFn = options?.queryKeyHashFn || hashKey;
-    return hashFn(queryKey);
-  }
-  function hashKey(queryKey) {
-    return JSON.stringify(queryKey, (_, val) => isPlainObject(val) ? Object.keys(val).sort().reduce((result, key) => {
-      result[key] = val[key];
-      return result;
-    }, {}) : val);
-  }
-  function partialMatchKey(a, b) {
-    if (a === b) {
-      return true;
-    }
-    if (typeof a !== typeof b) {
-      return false;
-    }
-    if (a && b && typeof a === "object" && typeof b === "object") {
-      return !Object.keys(b).some((key) => !partialMatchKey(a[key], b[key]));
-    }
-    return false;
-  }
-  function replaceEqualDeep(a, b) {
-    if (a === b) {
-      return a;
-    }
-    var array = isPlainArray(a) && isPlainArray(b);
-    if (array || isPlainObject(a) && isPlainObject(b)) {
-      var aItems = array ? a : Object.keys(a);
-      var aSize = aItems.length;
-      var bItems = array ? b : Object.keys(b);
-      var bSize = bItems.length;
-      var copy = array ? [] : {};
-      var equalItems = 0;
-      for (var i = 0; i < bSize; i++) {
-        var key = array ? i : bItems[i];
-        if ((!array && aItems.includes(key) || array) && a[key] === void 0 && b[key] === void 0) {
-          copy[key] = void 0;
-          equalItems++;
-        } else {
-          copy[key] = replaceEqualDeep(a[key], b[key]);
-          if (copy[key] === a[key] && a[key] !== void 0) {
-            equalItems++;
-          }
-        }
-      }
-      return aSize === bSize && equalItems === aSize ? a : copy;
-    }
-    return b;
-  }
-  function shallowEqualObjects(a, b) {
-    if (!b || Object.keys(a).length !== Object.keys(b).length) {
-      return false;
-    }
-    for (var key in a) {
-      if (a[key] !== b[key]) {
-        return false;
-      }
-    }
-    return true;
-  }
-  function isPlainArray(value) {
-    return Array.isArray(value) && value.length === Object.keys(value).length;
-  }
-  function isPlainObject(o) {
-    if (!hasObjectPrototype(o)) {
-      return false;
-    }
-    var ctor = o.constructor;
-    if (ctor === void 0) {
-      return true;
-    }
-    var prot = ctor.prototype;
-    if (!hasObjectPrototype(prot)) {
-      return false;
-    }
-    if (!prot.hasOwnProperty("isPrototypeOf")) {
-      return false;
-    }
-    if (Object.getPrototypeOf(o) !== Object.prototype) {
-      return false;
-    }
-    return true;
-  }
-  function hasObjectPrototype(o) {
-    return Object.prototype.toString.call(o) === "[object Object]";
-  }
-  function sleep(timeout) {
-    return new Promise((resolve) => {
-      setTimeout(resolve, timeout);
-    });
-  }
-  function replaceData(prevData, data, options) {
-    if (typeof options.structuralSharing === "function") {
-      return options.structuralSharing(prevData, data);
-    } else if (options.structuralSharing !== false) {
-      return replaceEqualDeep(prevData, data);
-    }
-    return data;
-  }
-  function addToEnd(items, item, max = 0) {
-    var newItems = [
-      ...items,
-      item
-    ];
-    return max && newItems.length > max ? newItems.slice(1) : newItems;
-  }
-  function addToStart(items, item, max = 0) {
-    var newItems = [
-      item,
-      ...items
-    ];
-    return max && newItems.length > max ? newItems.slice(0, -1) : newItems;
-  }
-  function ensureQueryFn(options, fetchOptions) {
-    if (true) {
-      if (options.queryFn === skipToken) {
-        console.error(`Attempted to invoke queryFn when set to skipToken. This is likely a configuration error. Query hash: '${options.queryHash}'`);
-      }
-    }
-    if (!options.queryFn && fetchOptions?.initialPromise) {
-      return () => fetchOptions.initialPromise;
-    }
-    if (!options.queryFn || options.queryFn === skipToken) {
-      return () => Promise.reject(new Error(`Missing queryFn: '${options.queryHash}'`));
-    }
-    return options.queryFn;
-  }
-  var isServer, skipToken;
-  var init_utils2 = __esm({
-    "node_modules/.pnpm/@tanstack+query-core@5.51.21/node_modules/@tanstack/query-core/build/modern/utils.js"() {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      isServer = typeof window === "undefined" || "Deno" in globalThis;
-      skipToken = Symbol();
-    }
-  });
-
-  // node_modules/.pnpm/@tanstack+query-core@5.51.21/node_modules/@tanstack/query-core/build/modern/focusManager.js
-  var _focused, _cleanup, _setup, FocusManager, focusManager;
-  var init_focusManager = __esm({
-    "node_modules/.pnpm/@tanstack+query-core@5.51.21/node_modules/@tanstack/query-core/build/modern/focusManager.js"() {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_assert_this_initialized();
-      init_class_call_check();
-      init_class_private_field_get();
-      init_class_private_field_init();
-      init_class_private_field_set();
-      init_create_class();
-      init_inherits();
-      init_create_super();
-      init_subscribable();
-      init_utils2();
-      FocusManager = (_focused = /* @__PURE__ */ new WeakMap(), _cleanup = /* @__PURE__ */ new WeakMap(), _setup = /* @__PURE__ */ new WeakMap(), /* @__PURE__ */ function(Subscribable2) {
-        "use strict";
-        _inherits(_class5, Subscribable2);
-        var _super = _create_super(_class5);
-        function _class5() {
-          _class_call_check(this, _class5);
-          var _this;
-          _this = _super.call(this);
-          _class_private_field_init(_assert_this_initialized(_this), _focused, {
-            writable: true,
-            value: void 0
-          });
-          _class_private_field_init(_assert_this_initialized(_this), _cleanup, {
-            writable: true,
-            value: void 0
-          });
-          _class_private_field_init(_assert_this_initialized(_this), _setup, {
-            writable: true,
-            value: void 0
-          });
-          _class_private_field_set(_assert_this_initialized(_this), _setup, (onFocus) => {
-            if (!isServer && window.addEventListener) {
-              var listener = () => onFocus();
-              window.addEventListener("visibilitychange", listener, false);
-              return () => {
-                window.removeEventListener("visibilitychange", listener);
-              };
-            }
-            return;
-          });
-          return _this;
-        }
-        _create_class(_class5, [
-          {
-            key: "onSubscribe",
-            value: function onSubscribe() {
-              if (!_class_private_field_get(this, _cleanup)) {
-                this.setEventListener(_class_private_field_get(this, _setup));
-              }
-            }
-          },
-          {
-            key: "onUnsubscribe",
-            value: function onUnsubscribe() {
-              var _this, _this1, _ref;
-              if (!this.hasListeners()) {
-                (_this = _class_private_field_get(_ref = _this1 = this, _cleanup)) === null || _this === void 0 ? void 0 : _this.call(_this1);
-                _class_private_field_set(this, _cleanup, void 0);
-              }
-            }
-          },
-          {
-            key: "setEventListener",
-            value: function setEventListener(setup) {
-              var _this, _this1, _ref;
-              _class_private_field_set(this, _setup, setup);
-              (_this = _class_private_field_get(_ref = _this1 = this, _cleanup)) === null || _this === void 0 ? void 0 : _this.call(_this1);
-              _class_private_field_set(this, _cleanup, setup((focused) => {
-                if (typeof focused === "boolean") {
-                  this.setFocused(focused);
-                } else {
-                  this.onFocus();
-                }
-              }));
-            }
-          },
-          {
-            key: "setFocused",
-            value: function setFocused(focused) {
-              var changed = _class_private_field_get(this, _focused) !== focused;
-              if (changed) {
-                _class_private_field_set(this, _focused, focused);
-                this.onFocus();
-              }
-            }
-          },
-          {
-            key: "onFocus",
-            value: function onFocus() {
-              var isFocused = this.isFocused();
-              this.listeners.forEach((listener) => {
-                listener(isFocused);
-              });
-            }
-          },
-          {
-            key: "isFocused",
-            value: function isFocused() {
-              if (typeof _class_private_field_get(this, _focused) === "boolean") {
-                return _class_private_field_get(this, _focused);
-              }
-              return globalThis.document?.visibilityState !== "hidden";
-            }
-          }
-        ]);
-        return _class5;
-      }(Subscribable));
-      focusManager = new FocusManager();
-    }
-  });
-
-  // node_modules/.pnpm/@tanstack+query-core@5.51.21/node_modules/@tanstack/query-core/build/modern/onlineManager.js
-  var _online, _cleanup2, _setup2, OnlineManager, onlineManager;
-  var init_onlineManager = __esm({
-    "node_modules/.pnpm/@tanstack+query-core@5.51.21/node_modules/@tanstack/query-core/build/modern/onlineManager.js"() {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_assert_this_initialized();
-      init_class_call_check();
-      init_class_private_field_get();
-      init_class_private_field_init();
-      init_class_private_field_set();
-      init_create_class();
-      init_inherits();
-      init_create_super();
-      init_subscribable();
-      init_utils2();
-      OnlineManager = (_online = /* @__PURE__ */ new WeakMap(), _cleanup2 = /* @__PURE__ */ new WeakMap(), _setup2 = /* @__PURE__ */ new WeakMap(), /* @__PURE__ */ function(Subscribable2) {
-        "use strict";
-        _inherits(_class5, Subscribable2);
-        var _super = _create_super(_class5);
-        function _class5() {
-          _class_call_check(this, _class5);
-          var _this;
-          _this = _super.call(this);
-          _class_private_field_init(_assert_this_initialized(_this), _online, {
-            writable: true,
-            value: true
-          });
-          _class_private_field_init(_assert_this_initialized(_this), _cleanup2, {
-            writable: true,
-            value: void 0
-          });
-          _class_private_field_init(_assert_this_initialized(_this), _setup2, {
-            writable: true,
-            value: void 0
-          });
-          _class_private_field_set(_assert_this_initialized(_this), _setup2, (onOnline) => {
-            if (!isServer && window.addEventListener) {
-              var onlineListener = () => onOnline(true);
-              var offlineListener = () => onOnline(false);
-              window.addEventListener("online", onlineListener, false);
-              window.addEventListener("offline", offlineListener, false);
-              return () => {
-                window.removeEventListener("online", onlineListener);
-                window.removeEventListener("offline", offlineListener);
-              };
-            }
-            return;
-          });
-          return _this;
-        }
-        _create_class(_class5, [
-          {
-            key: "onSubscribe",
-            value: function onSubscribe() {
-              if (!_class_private_field_get(this, _cleanup2)) {
-                this.setEventListener(_class_private_field_get(this, _setup2));
-              }
-            }
-          },
-          {
-            key: "onUnsubscribe",
-            value: function onUnsubscribe() {
-              var _this, _this1, _ref;
-              if (!this.hasListeners()) {
-                (_this = _class_private_field_get(_ref = _this1 = this, _cleanup2)) === null || _this === void 0 ? void 0 : _this.call(_this1);
-                _class_private_field_set(this, _cleanup2, void 0);
-              }
-            }
-          },
-          {
-            key: "setEventListener",
-            value: function setEventListener(setup) {
-              var _this, _this1, _ref;
-              _class_private_field_set(this, _setup2, setup);
-              (_this = _class_private_field_get(_ref = _this1 = this, _cleanup2)) === null || _this === void 0 ? void 0 : _this.call(_this1);
-              _class_private_field_set(this, _cleanup2, setup(this.setOnline.bind(this)));
-            }
-          },
-          {
-            key: "setOnline",
-            value: function setOnline(online) {
-              var changed = _class_private_field_get(this, _online) !== online;
-              if (changed) {
-                _class_private_field_set(this, _online, online);
-                this.listeners.forEach((listener) => {
-                  listener(online);
-                });
-              }
-            }
-          },
-          {
-            key: "isOnline",
-            value: function isOnline() {
-              return _class_private_field_get(this, _online);
-            }
-          }
-        ]);
-        return _class5;
-      }(Subscribable));
-      onlineManager = new OnlineManager();
-    }
-  });
-
-  // node_modules/.pnpm/@tanstack+query-core@5.51.21/node_modules/@tanstack/query-core/build/modern/retryer.js
-  function defaultRetryDelay(failureCount) {
-    return Math.min(1e3 * 2 ** failureCount, 3e4);
-  }
-  function canFetch(networkMode) {
-    return (networkMode ?? "online") === "online" ? onlineManager.isOnline() : true;
-  }
-  function isCancelledError(value) {
-    return value instanceof CancelledError;
-  }
-  function createRetryer(config) {
-    var isRetryCancelled = false;
-    var failureCount = 0;
-    var isResolved = false;
-    var continueFn;
-    var promiseResolve;
-    var promiseReject;
-    var promise = new Promise((outerResolve, outerReject) => {
-      promiseResolve = outerResolve;
-      promiseReject = outerReject;
-    });
-    var cancel = (cancelOptions) => {
-      if (!isResolved) {
-        reject(new CancelledError(cancelOptions));
-        config.abort?.();
-      }
-    };
-    var cancelRetry = () => {
-      isRetryCancelled = true;
-    };
-    var continueRetry = () => {
-      isRetryCancelled = false;
-    };
-    var canContinue = () => focusManager.isFocused() && (config.networkMode === "always" || onlineManager.isOnline()) && config.canRun();
-    var canStart = () => canFetch(config.networkMode) && config.canRun();
-    var resolve = (value) => {
-      if (!isResolved) {
-        isResolved = true;
-        config.onSuccess?.(value);
-        continueFn?.();
-        promiseResolve(value);
-      }
-    };
-    var reject = (value) => {
-      if (!isResolved) {
-        isResolved = true;
-        config.onError?.(value);
-        continueFn?.();
-        promiseReject(value);
-      }
-    };
-    var pause = () => {
-      return new Promise((continueResolve) => {
-        continueFn = (value) => {
-          if (isResolved || canContinue()) {
-            continueResolve(value);
-          }
-        };
-        config.onPause?.();
-      }).then(() => {
-        continueFn = void 0;
-        if (!isResolved) {
-          config.onContinue?.();
-        }
-      });
-    };
-    var run = () => {
-      if (isResolved) {
-        return;
-      }
-      var promiseOrValue;
-      var initialPromise = failureCount === 0 ? config.initialPromise : void 0;
-      try {
-        promiseOrValue = initialPromise ?? config.fn();
-      } catch (error) {
-        promiseOrValue = Promise.reject(error);
-      }
-      Promise.resolve(promiseOrValue).then(resolve).catch((error) => {
-        if (isResolved) {
-          return;
-        }
-        var retry = config.retry ?? (isServer ? 0 : 3);
-        var retryDelay = config.retryDelay ?? defaultRetryDelay;
-        var delay = typeof retryDelay === "function" ? retryDelay(failureCount, error) : retryDelay;
-        var shouldRetry = retry === true || typeof retry === "number" && failureCount < retry || typeof retry === "function" && retry(failureCount, error);
-        if (isRetryCancelled || !shouldRetry) {
-          reject(error);
-          return;
-        }
-        failureCount++;
-        config.onFail?.(failureCount, error);
-        sleep(delay).then(() => {
-          return canContinue() ? void 0 : pause();
-        }).then(() => {
-          if (isRetryCancelled) {
-            reject(error);
-          } else {
-            run();
-          }
-        });
-      });
-    };
-    return {
-      promise,
-      cancel,
-      continue: () => {
-        continueFn?.();
-        return promise;
-      },
-      cancelRetry,
-      continueRetry,
-      canStart,
-      start: () => {
-        if (canStart()) {
-          run();
-        } else {
-          pause().then(run);
-        }
-        return promise;
-      }
-    };
-  }
-  var CancelledError;
-  var init_retryer = __esm({
-    "node_modules/.pnpm/@tanstack+query-core@5.51.21/node_modules/@tanstack/query-core/build/modern/retryer.js"() {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_class_call_check();
-      init_inherits();
-      init_wrap_native_super();
-      init_create_super();
-      init_focusManager();
-      init_onlineManager();
-      init_utils2();
-      CancelledError = /* @__PURE__ */ function(Error1) {
-        "use strict";
-        _inherits(CancelledError2, Error1);
-        var _super = _create_super(CancelledError2);
-        function CancelledError2(options) {
-          _class_call_check(this, CancelledError2);
-          var _this;
-          _this = _super.call(this, "CancelledError");
-          _this.revert = options?.revert;
-          _this.silent = options?.silent;
-          return _this;
-        }
-        return CancelledError2;
-      }(_wrap_native_super(Error));
-    }
-  });
-
-  // node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_class_private_method_get.js
-  function _class_private_method_get(receiver, privateSet, fn) {
-    if (!privateSet.has(receiver))
-      throw new TypeError("attempted to get private field on non-instance");
-    return fn;
-  }
-  var init_class_private_method_get = __esm({
-    "node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_class_private_method_get.js"() {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-    }
-  });
-
-  // node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_class_private_method_init.js
-  function _class_private_method_init(obj, privateSet) {
-    _check_private_redeclaration(obj, privateSet);
-    privateSet.add(obj);
-  }
-  var init_class_private_method_init = __esm({
-    "node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_class_private_method_init.js"() {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_check_private_redeclaration();
-    }
-  });
-
-  // node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_super_prop_base.js
-  function _super_prop_base(object, property) {
-    while (!Object.prototype.hasOwnProperty.call(object, property)) {
-      object = _get_prototype_of(object);
-      if (object === null)
-        break;
-    }
-    return object;
-  }
-  var init_super_prop_base = __esm({
-    "node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_super_prop_base.js"() {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_get_prototype_of();
-    }
-  });
-
-  // node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_get.js
-  function _get(target, property, receiver) {
-    if (typeof Reflect !== "undefined" && Reflect.get)
-      _get = Reflect.get;
-    else {
-      _get = function get(target2, property2, receiver2) {
-        var base = _super_prop_base(target2, property2);
-        if (!base)
-          return;
-        var desc = Object.getOwnPropertyDescriptor(base, property2);
-        if (desc.get)
-          return desc.get.call(receiver2 || target2);
-        return desc.value;
-      };
-    }
-    return _get(target, property, receiver || target);
-  }
-  var init_get = __esm({
-    "node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_get.js"() {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_super_prop_base();
-    }
-  });
-
-  // node_modules/.pnpm/@tanstack+query-core@5.51.21/node_modules/@tanstack/query-core/build/modern/notifyManager.js
-  function createNotifyManager() {
-    var queue = [];
-    var transactions = 0;
-    var notifyFn = (callback) => {
-      callback();
-    };
-    var batchNotifyFn = (callback) => {
-      callback();
-    };
-    var scheduleFn = (cb) => setTimeout(cb, 0);
-    var setScheduler = (fn) => {
-      scheduleFn = fn;
-    };
-    var batch = (callback) => {
-      var result;
-      transactions++;
-      try {
-        result = callback();
-      } finally {
-        transactions--;
-        if (!transactions) {
-          flush();
-        }
-      }
-      return result;
-    };
-    var schedule = (callback) => {
-      if (transactions) {
-        queue.push(callback);
-      } else {
-        scheduleFn(() => {
-          notifyFn(callback);
-        });
-      }
-    };
-    var batchCalls = (callback) => {
-      return (...args) => {
-        schedule(() => {
-          callback(...args);
-        });
-      };
-    };
-    var flush = () => {
-      var originalQueue = queue;
-      queue = [];
-      if (originalQueue.length) {
-        scheduleFn(() => {
-          batchNotifyFn(() => {
-            originalQueue.forEach((callback) => {
-              notifyFn(callback);
-            });
-          });
-        });
-      }
-    };
-    var setNotifyFunction = (fn) => {
-      notifyFn = fn;
-    };
-    var setBatchNotifyFunction = (fn) => {
-      batchNotifyFn = fn;
-    };
-    return {
-      batch,
-      batchCalls,
-      schedule,
-      setNotifyFunction,
-      setBatchNotifyFunction,
-      setScheduler
-    };
-  }
-  var notifyManager;
-  var init_notifyManager = __esm({
-    "node_modules/.pnpm/@tanstack+query-core@5.51.21/node_modules/@tanstack/query-core/build/modern/notifyManager.js"() {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      notifyManager = createNotifyManager();
-    }
-  });
-
-  // node_modules/.pnpm/@tanstack+query-core@5.51.21/node_modules/@tanstack/query-core/build/modern/removable.js
-  var _gcTimeout, Removable;
-  var init_removable = __esm({
-    "node_modules/.pnpm/@tanstack+query-core@5.51.21/node_modules/@tanstack/query-core/build/modern/removable.js"() {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_class_call_check();
-      init_class_private_field_get();
-      init_class_private_field_init();
-      init_class_private_field_set();
-      init_create_class();
-      init_utils2();
-      Removable = (_gcTimeout = /* @__PURE__ */ new WeakMap(), /* @__PURE__ */ function() {
-        "use strict";
-        function _class5() {
-          _class_call_check(this, _class5);
-          _class_private_field_init(this, _gcTimeout, {
-            writable: true,
-            value: void 0
-          });
-        }
-        _create_class(_class5, [
-          {
-            key: "destroy",
-            value: function destroy() {
-              this.clearGcTimeout();
-            }
-          },
-          {
-            key: "scheduleGc",
-            value: function scheduleGc() {
-              this.clearGcTimeout();
-              if (isValidTimeout(this.gcTime)) {
-                _class_private_field_set(this, _gcTimeout, setTimeout(() => {
-                  this.optionalRemove();
-                }, this.gcTime));
-              }
-            }
-          },
-          {
-            key: "updateGcTime",
-            value: function updateGcTime(newGcTime) {
-              this.gcTime = Math.max(this.gcTime || 0, newGcTime ?? (isServer ? Infinity : 5 * 60 * 1e3));
-            }
-          },
-          {
-            key: "clearGcTimeout",
-            value: function clearGcTimeout() {
-              if (_class_private_field_get(this, _gcTimeout)) {
-                clearTimeout(_class_private_field_get(this, _gcTimeout));
-                _class_private_field_set(this, _gcTimeout, void 0);
-              }
-            }
-          }
-        ]);
-        return _class5;
-      }());
-    }
-  });
-
-  // node_modules/.pnpm/@tanstack+query-core@5.51.21/node_modules/@tanstack/query-core/build/modern/query.js
-  function fetchState(data, options) {
-    return {
-      fetchFailureCount: 0,
-      fetchFailureReason: null,
-      fetchStatus: canFetch(options.networkMode) ? "fetching" : "paused",
-      ...data === void 0 && {
-        error: null,
-        status: "pending"
-      }
-    };
-  }
-  function getDefaultState(options) {
-    var data = typeof options.initialData === "function" ? options.initialData() : options.initialData;
-    var hasData = data !== void 0;
-    var initialDataUpdatedAt = hasData ? typeof options.initialDataUpdatedAt === "function" ? options.initialDataUpdatedAt() : options.initialDataUpdatedAt : 0;
-    return {
-      data,
-      dataUpdateCount: 0,
-      dataUpdatedAt: hasData ? initialDataUpdatedAt ?? Date.now() : 0,
-      error: null,
-      errorUpdateCount: 0,
-      errorUpdatedAt: 0,
-      fetchFailureCount: 0,
-      fetchFailureReason: null,
-      fetchMeta: null,
-      isInvalidated: false,
-      status: hasData ? "success" : "pending",
-      fetchStatus: "idle"
-    };
-  }
-  function dispatch(action) {
-    var reducer = (state) => {
-      switch (action.type) {
-        case "failed":
-          return {
-            ...state,
-            fetchFailureCount: action.failureCount,
-            fetchFailureReason: action.error
-          };
-        case "pause":
-          return {
-            ...state,
-            fetchStatus: "paused"
-          };
-        case "continue":
-          return {
-            ...state,
-            fetchStatus: "fetching"
-          };
-        case "fetch":
-          return {
-            ...state,
-            ...fetchState(state.data, this.options),
-            fetchMeta: action.meta ?? null
-          };
-        case "success":
-          return {
-            ...state,
-            data: action.data,
-            dataUpdateCount: state.dataUpdateCount + 1,
-            dataUpdatedAt: action.dataUpdatedAt ?? Date.now(),
-            error: null,
-            isInvalidated: false,
-            status: "success",
-            ...!action.manual && {
-              fetchStatus: "idle",
-              fetchFailureCount: 0,
-              fetchFailureReason: null
-            }
-          };
-        case "error":
-          var error = action.error;
-          if (isCancelledError(error) && error.revert && _class_private_field_get(this, _revertState)) {
-            return {
-              ..._class_private_field_get(this, _revertState),
-              fetchStatus: "idle"
-            };
-          }
-          return {
-            ...state,
-            error,
-            errorUpdateCount: state.errorUpdateCount + 1,
-            errorUpdatedAt: Date.now(),
-            fetchFailureCount: state.fetchFailureCount + 1,
-            fetchFailureReason: error,
-            fetchStatus: "idle",
-            status: "error"
-          };
-        case "invalidate":
-          return {
-            ...state,
-            isInvalidated: true
-          };
-        case "setState":
-          return {
-            ...state,
-            ...action.state
-          };
-      }
-    };
-    this.state = reducer(this.state);
-    notifyManager.batch(() => {
-      this.observers.forEach((observer) => {
-        observer.onQueryUpdate();
-      });
-      _class_private_field_get(this, _cache).notify({
-        query: this,
-        type: "updated",
-        action
-      });
-    });
-  }
-  var _initialState, _revertState, _cache, _retryer, _defaultOptions, _abortSignalConsumed, _dispatch, _class, Query;
-  var init_query = __esm({
-    "node_modules/.pnpm/@tanstack+query-core@5.51.21/node_modules/@tanstack/query-core/build/modern/query.js"() {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_assert_this_initialized();
-      init_class_call_check();
-      init_class_private_field_get();
-      init_class_private_field_init();
-      init_class_private_field_set();
-      init_class_private_method_get();
-      init_class_private_method_init();
-      init_create_class();
-      init_get();
-      init_get_prototype_of();
-      init_inherits();
-      init_create_super();
-      init_utils2();
-      init_notifyManager();
-      init_retryer();
-      init_removable();
-      Query = (_initialState = /* @__PURE__ */ new WeakMap(), _revertState = /* @__PURE__ */ new WeakMap(), _cache = /* @__PURE__ */ new WeakMap(), _retryer = /* @__PURE__ */ new WeakMap(), _defaultOptions = /* @__PURE__ */ new WeakMap(), _abortSignalConsumed = /* @__PURE__ */ new WeakMap(), _dispatch = /* @__PURE__ */ new WeakSet(), _class = /* @__PURE__ */ function(Removable2) {
-        "use strict";
-        _inherits(_class5, Removable2);
-        var _super = _create_super(_class5);
-        function _class5(config) {
-          _class_call_check(this, _class5);
-          var _this;
-          _this = _super.call(this);
-          _class_private_method_init(_assert_this_initialized(_this), _dispatch);
-          _class_private_field_init(_assert_this_initialized(_this), _initialState, {
-            writable: true,
-            value: void 0
-          });
-          _class_private_field_init(_assert_this_initialized(_this), _revertState, {
-            writable: true,
-            value: void 0
-          });
-          _class_private_field_init(_assert_this_initialized(_this), _cache, {
-            writable: true,
-            value: void 0
-          });
-          _class_private_field_init(_assert_this_initialized(_this), _retryer, {
-            writable: true,
-            value: void 0
-          });
-          _class_private_field_init(_assert_this_initialized(_this), _defaultOptions, {
-            writable: true,
-            value: void 0
-          });
-          _class_private_field_init(_assert_this_initialized(_this), _abortSignalConsumed, {
-            writable: true,
-            value: void 0
-          });
-          _class_private_field_set(_assert_this_initialized(_this), _abortSignalConsumed, false);
-          _class_private_field_set(_assert_this_initialized(_this), _defaultOptions, config.defaultOptions);
-          _this.setOptions(config.options);
-          _this.observers = [];
-          _class_private_field_set(_assert_this_initialized(_this), _cache, config.cache);
-          _this.queryKey = config.queryKey;
-          _this.queryHash = config.queryHash;
-          _class_private_field_set(_assert_this_initialized(_this), _initialState, getDefaultState(_this.options));
-          _this.state = config.state ?? _class_private_field_get(_assert_this_initialized(_this), _initialState);
-          _this.scheduleGc();
-          return _this;
-        }
-        _create_class(_class5, [
-          {
-            key: "meta",
-            get: function get() {
-              return this.options.meta;
-            }
-          },
-          {
-            key: "promise",
-            get: function get() {
-              return _class_private_field_get(this, _retryer)?.promise;
-            }
-          },
-          {
-            key: "setOptions",
-            value: function setOptions(options) {
-              this.options = {
-                ..._class_private_field_get(this, _defaultOptions),
-                ...options
-              };
-              this.updateGcTime(this.options.gcTime);
-            }
-          },
-          {
-            key: "optionalRemove",
-            value: function optionalRemove() {
-              if (!this.observers.length && this.state.fetchStatus === "idle") {
-                _class_private_field_get(this, _cache).remove(this);
-              }
-            }
-          },
-          {
-            key: "setData",
-            value: function setData(newData, options) {
-              var data = replaceData(this.state.data, newData, this.options);
-              _class_private_method_get(this, _dispatch, dispatch).call(this, {
-                data,
-                type: "success",
-                dataUpdatedAt: options?.updatedAt,
-                manual: options?.manual
-              });
-              return data;
-            }
-          },
-          {
-            key: "setState",
-            value: function setState(state, setStateOptions) {
-              _class_private_method_get(this, _dispatch, dispatch).call(this, {
-                type: "setState",
-                state,
-                setStateOptions
-              });
-            }
-          },
-          {
-            key: "cancel",
-            value: function cancel(options) {
-              var promise = _class_private_field_get(this, _retryer)?.promise;
-              _class_private_field_get(this, _retryer)?.cancel(options);
-              return promise ? promise.then(noop).catch(noop) : Promise.resolve();
-            }
-          },
-          {
-            key: "destroy",
-            value: function destroy() {
-              _get(_get_prototype_of(_class5.prototype), "destroy", this).call(this);
-              this.cancel({
-                silent: true
-              });
-            }
-          },
-          {
-            key: "reset",
-            value: function reset() {
-              this.destroy();
-              this.setState(_class_private_field_get(this, _initialState));
-            }
-          },
-          {
-            key: "isActive",
-            value: function isActive() {
-              return this.observers.some((observer) => resolveEnabled(observer.options.enabled, this) !== false);
-            }
-          },
-          {
-            key: "isDisabled",
-            value: function isDisabled() {
-              return this.getObserversCount() > 0 && !this.isActive();
-            }
-          },
-          {
-            key: "isStale",
-            value: function isStale2() {
-              if (this.state.isInvalidated) {
-                return true;
-              }
-              if (this.getObserversCount() > 0) {
-                return this.observers.some((observer) => observer.getCurrentResult().isStale);
-              }
-              return this.state.data === void 0;
-            }
-          },
-          {
-            key: "isStaleByTime",
-            value: function isStaleByTime(staleTime = 0) {
-              return this.state.isInvalidated || this.state.data === void 0 || !timeUntilStale(this.state.dataUpdatedAt, staleTime);
-            }
-          },
-          {
-            key: "onFocus",
-            value: function onFocus() {
-              var observer = this.observers.find((x) => x.shouldFetchOnWindowFocus());
-              observer?.refetch({
-                cancelRefetch: false
-              });
-              _class_private_field_get(this, _retryer)?.continue();
-            }
-          },
-          {
-            key: "onOnline",
-            value: function onOnline() {
-              var observer = this.observers.find((x) => x.shouldFetchOnReconnect());
-              observer?.refetch({
-                cancelRefetch: false
-              });
-              _class_private_field_get(this, _retryer)?.continue();
-            }
-          },
-          {
-            key: "addObserver",
-            value: function addObserver(observer) {
-              if (!this.observers.includes(observer)) {
-                this.observers.push(observer);
-                this.clearGcTimeout();
-                _class_private_field_get(this, _cache).notify({
-                  type: "observerAdded",
-                  query: this,
-                  observer
-                });
-              }
-            }
-          },
-          {
-            key: "removeObserver",
-            value: function removeObserver(observer) {
-              if (this.observers.includes(observer)) {
-                this.observers = this.observers.filter((x) => x !== observer);
-                if (!this.observers.length) {
-                  if (_class_private_field_get(this, _retryer)) {
-                    if (_class_private_field_get(this, _abortSignalConsumed)) {
-                      _class_private_field_get(this, _retryer).cancel({
-                        revert: true
-                      });
-                    } else {
-                      _class_private_field_get(this, _retryer).cancelRetry();
-                    }
-                  }
-                  this.scheduleGc();
-                }
-                _class_private_field_get(this, _cache).notify({
-                  type: "observerRemoved",
-                  query: this,
-                  observer
-                });
-              }
-            }
-          },
-          {
-            key: "getObserversCount",
-            value: function getObserversCount() {
-              return this.observers.length;
-            }
-          },
-          {
-            key: "invalidate",
-            value: function invalidate() {
-              if (!this.state.isInvalidated) {
-                _class_private_method_get(this, _dispatch, dispatch).call(this, {
-                  type: "invalidate"
-                });
-              }
-            }
-          },
-          {
-            key: "fetch",
-            value: function fetch2(options, fetchOptions) {
-              if (this.state.fetchStatus !== "idle") {
-                if (this.state.data !== void 0 && fetchOptions?.cancelRefetch) {
-                  this.cancel({
-                    silent: true
-                  });
-                } else if (_class_private_field_get(this, _retryer)) {
-                  _class_private_field_get(this, _retryer).continueRetry();
-                  return _class_private_field_get(this, _retryer).promise;
-                }
-              }
-              if (options) {
-                this.setOptions(options);
-              }
-              if (!this.options.queryFn) {
-                var observer = this.observers.find((x) => x.options.queryFn);
-                if (observer) {
-                  this.setOptions(observer.options);
-                }
-              }
-              if (true) {
-                if (!Array.isArray(this.options.queryKey)) {
-                  console.error(`As of v4, queryKey needs to be an Array. If you are using a string like 'repoData', please change it to an Array, e.g. ['repoData']`);
-                }
-              }
-              var abortController = new AbortController();
-              var addSignalProperty = (object) => {
-                Object.defineProperty(object, "signal", {
-                  enumerable: true,
-                  get: () => {
-                    _class_private_field_set(this, _abortSignalConsumed, true);
-                    return abortController.signal;
-                  }
-                });
-              };
-              var fetchFn = () => {
-                var queryFn = ensureQueryFn(this.options, fetchOptions);
-                var queryFnContext = {
-                  queryKey: this.queryKey,
-                  meta: this.meta
-                };
-                addSignalProperty(queryFnContext);
-                _class_private_field_set(this, _abortSignalConsumed, false);
-                if (this.options.persister) {
-                  return this.options.persister(queryFn, queryFnContext, this);
-                }
-                return queryFn(queryFnContext);
-              };
-              var context = {
-                fetchOptions,
-                options: this.options,
-                queryKey: this.queryKey,
-                state: this.state,
-                fetchFn
-              };
-              addSignalProperty(context);
-              this.options.behavior?.onFetch(context, this);
-              _class_private_field_set(this, _revertState, this.state);
-              if (this.state.fetchStatus === "idle" || this.state.fetchMeta !== context.fetchOptions?.meta) {
-                _class_private_method_get(this, _dispatch, dispatch).call(this, {
-                  type: "fetch",
-                  meta: context.fetchOptions?.meta
-                });
-              }
-              var onError = (error) => {
-                if (!(isCancelledError(error) && error.silent)) {
-                  _class_private_method_get(this, _dispatch, dispatch).call(this, {
-                    type: "error",
-                    error
-                  });
-                }
-                if (!isCancelledError(error)) {
-                  _class_private_field_get(this, _cache).config.onError?.(error, this);
-                  _class_private_field_get(this, _cache).config.onSettled?.(this.state.data, error, this);
-                }
-                if (!this.isFetchingOptimistic) {
-                  this.scheduleGc();
-                }
-                this.isFetchingOptimistic = false;
-              };
-              _class_private_field_set(this, _retryer, createRetryer({
-                initialPromise: fetchOptions?.initialPromise,
-                fn: context.fetchFn,
-                abort: abortController.abort.bind(abortController),
-                onSuccess: (data) => {
-                  if (data === void 0) {
-                    if (true) {
-                      console.error(`Query data cannot be undefined. Please make sure to return a value other than undefined from your query function. Affected query key: ${this.queryHash}`);
-                    }
-                    onError(new Error(`${this.queryHash} data is undefined`));
-                    return;
-                  }
-                  this.setData(data);
-                  _class_private_field_get(this, _cache).config.onSuccess?.(data, this);
-                  _class_private_field_get(this, _cache).config.onSettled?.(data, this.state.error, this);
-                  if (!this.isFetchingOptimistic) {
-                    this.scheduleGc();
-                  }
-                  this.isFetchingOptimistic = false;
-                },
-                onError,
-                onFail: (failureCount, error) => {
-                  _class_private_method_get(this, _dispatch, dispatch).call(this, {
-                    type: "failed",
-                    failureCount,
-                    error
-                  });
-                },
-                onPause: () => {
-                  _class_private_method_get(this, _dispatch, dispatch).call(this, {
-                    type: "pause"
-                  });
-                },
-                onContinue: () => {
-                  _class_private_method_get(this, _dispatch, dispatch).call(this, {
-                    type: "continue"
-                  });
-                },
-                retry: context.options.retry,
-                retryDelay: context.options.retryDelay,
-                networkMode: context.options.networkMode,
-                canRun: () => true
-              }));
-              return _class_private_field_get(this, _retryer).start();
-            }
-          }
-        ]);
-        return _class5;
-      }(Removable), _class);
-    }
-  });
-
-  // node_modules/.pnpm/@tanstack+query-core@5.51.21/node_modules/@tanstack/query-core/build/modern/queryCache.js
-  var _queries, QueryCache;
-  var init_queryCache = __esm({
-    "node_modules/.pnpm/@tanstack+query-core@5.51.21/node_modules/@tanstack/query-core/build/modern/queryCache.js"() {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_assert_this_initialized();
-      init_class_call_check();
-      init_class_private_field_get();
-      init_class_private_field_init();
-      init_class_private_field_set();
-      init_create_class();
-      init_inherits();
-      init_create_super();
-      init_utils2();
-      init_query();
-      init_notifyManager();
-      init_subscribable();
-      QueryCache = (_queries = /* @__PURE__ */ new WeakMap(), /* @__PURE__ */ function(Subscribable2) {
-        "use strict";
-        _inherits(_class5, Subscribable2);
-        var _super = _create_super(_class5);
-        function _class5(config = {}) {
-          _class_call_check(this, _class5);
-          var _this;
-          _this = _super.call(this);
-          _class_private_field_init(_assert_this_initialized(_this), _queries, {
-            writable: true,
-            value: void 0
-          });
-          _this.config = config;
-          _class_private_field_set(_assert_this_initialized(_this), _queries, /* @__PURE__ */ new Map());
-          return _this;
-        }
-        _create_class(_class5, [
-          {
-            key: "build",
-            value: function build(client, options, state) {
-              var queryKey = options.queryKey;
-              var queryHash = options.queryHash ?? hashQueryKeyByOptions(queryKey, options);
-              var query = this.get(queryHash);
-              if (!query) {
-                query = new Query({
-                  cache: this,
-                  queryKey,
-                  queryHash,
-                  options: client.defaultQueryOptions(options),
-                  state,
-                  defaultOptions: client.getQueryDefaults(queryKey)
-                });
-                this.add(query);
-              }
-              return query;
-            }
-          },
-          {
-            key: "add",
-            value: function add(query) {
-              if (!_class_private_field_get(this, _queries).has(query.queryHash)) {
-                _class_private_field_get(this, _queries).set(query.queryHash, query);
-                this.notify({
-                  type: "added",
-                  query
-                });
-              }
-            }
-          },
-          {
-            key: "remove",
-            value: function remove(query) {
-              var queryInMap = _class_private_field_get(this, _queries).get(query.queryHash);
-              if (queryInMap) {
-                query.destroy();
-                if (queryInMap === query) {
-                  _class_private_field_get(this, _queries).delete(query.queryHash);
-                }
-                this.notify({
-                  type: "removed",
-                  query
-                });
-              }
-            }
-          },
-          {
-            key: "clear",
-            value: function clear() {
-              notifyManager.batch(() => {
-                this.getAll().forEach((query) => {
-                  this.remove(query);
-                });
-              });
-            }
-          },
-          {
-            key: "get",
-            value: function get(queryHash) {
-              return _class_private_field_get(this, _queries).get(queryHash);
-            }
-          },
-          {
-            key: "getAll",
-            value: function getAll() {
-              return [
-                ..._class_private_field_get(this, _queries).values()
-              ];
-            }
-          },
-          {
-            key: "find",
-            value: function find(filters) {
-              var defaultedFilters = {
-                exact: true,
-                ...filters
-              };
-              return this.getAll().find((query) => matchQuery(defaultedFilters, query));
-            }
-          },
-          {
-            key: "findAll",
-            value: function findAll(filters = {}) {
-              var queries = this.getAll();
-              return Object.keys(filters).length > 0 ? queries.filter((query) => matchQuery(filters, query)) : queries;
-            }
-          },
-          {
-            key: "notify",
-            value: function notify3(event) {
-              notifyManager.batch(() => {
-                this.listeners.forEach((listener) => {
-                  listener(event);
-                });
-              });
-            }
-          },
-          {
-            key: "onFocus",
-            value: function onFocus() {
-              notifyManager.batch(() => {
-                this.getAll().forEach((query) => {
-                  query.onFocus();
-                });
-              });
-            }
-          },
-          {
-            key: "onOnline",
-            value: function onOnline() {
-              notifyManager.batch(() => {
-                this.getAll().forEach((query) => {
-                  query.onOnline();
-                });
-              });
-            }
-          }
-        ]);
-        return _class5;
-      }(Subscribable));
-    }
-  });
-
-  // node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_class_apply_descriptor_update.js
-  function _class_apply_descriptor_update(receiver, descriptor) {
-    if (descriptor.set) {
-      if (!descriptor.get)
-        throw new TypeError("attempted to read set only private field");
-      if (!("__destrWrapper" in descriptor)) {
-        descriptor.__destrWrapper = {
-          set value(v) {
-            descriptor.set.call(receiver, v);
-          },
-          get value() {
-            return descriptor.get.call(receiver);
-          }
-        };
-      }
-      return descriptor.__destrWrapper;
-    } else {
-      if (!descriptor.writable) {
-        throw new TypeError("attempted to set read only private field");
-      }
-      return descriptor;
-    }
-  }
-  var init_class_apply_descriptor_update = __esm({
-    "node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_class_apply_descriptor_update.js"() {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-    }
-  });
-
-  // node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_class_private_field_update.js
-  function _class_private_field_update(receiver, privateMap) {
-    var descriptor = _class_extract_field_descriptor(receiver, privateMap, "update");
-    return _class_apply_descriptor_update(receiver, descriptor);
-  }
-  var init_class_private_field_update = __esm({
-    "node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_class_private_field_update.js"() {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_class_apply_descriptor_update();
-      init_class_extract_field_descriptor();
-    }
-  });
-
-  // node_modules/.pnpm/@tanstack+query-core@5.51.21/node_modules/@tanstack/query-core/build/modern/mutation.js
-  function getDefaultState2() {
-    return {
-      context: void 0,
-      data: void 0,
-      error: null,
-      failureCount: 0,
-      failureReason: null,
-      isPaused: false,
-      status: "idle",
-      variables: void 0,
-      submittedAt: 0
-    };
-  }
-  function dispatch2(action) {
-    var reducer = (state) => {
-      switch (action.type) {
-        case "failed":
-          return {
-            ...state,
-            failureCount: action.failureCount,
-            failureReason: action.error
-          };
-        case "pause":
-          return {
-            ...state,
-            isPaused: true
-          };
-        case "continue":
-          return {
-            ...state,
-            isPaused: false
-          };
-        case "pending":
-          return {
-            ...state,
-            context: action.context,
-            data: void 0,
-            failureCount: 0,
-            failureReason: null,
-            error: null,
-            isPaused: action.isPaused,
-            status: "pending",
-            variables: action.variables,
-            submittedAt: Date.now()
-          };
-        case "success":
-          return {
-            ...state,
-            data: action.data,
-            failureCount: 0,
-            failureReason: null,
-            error: null,
-            status: "success",
-            isPaused: false
-          };
-        case "error":
-          return {
-            ...state,
-            data: void 0,
-            error: action.error,
-            failureCount: state.failureCount + 1,
-            failureReason: action.error,
-            isPaused: false,
-            status: "error"
-          };
-      }
-    };
-    this.state = reducer(this.state);
-    notifyManager.batch(() => {
-      _class_private_field_get(this, _observers).forEach((observer) => {
-        observer.onMutationUpdate(action);
-      });
-      _class_private_field_get(this, _mutationCache).notify({
-        mutation: this,
-        type: "updated",
-        action
-      });
-    });
-  }
-  var _observers, _mutationCache, _retryer2, _dispatch2, _class2, Mutation;
-  var init_mutation = __esm({
-    "node_modules/.pnpm/@tanstack+query-core@5.51.21/node_modules/@tanstack/query-core/build/modern/mutation.js"() {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_assert_this_initialized();
-      init_async_to_generator();
-      init_class_call_check();
-      init_class_private_field_get();
-      init_class_private_field_init();
-      init_class_private_field_set();
-      init_class_private_method_get();
-      init_class_private_method_init();
-      init_create_class();
-      init_inherits();
-      init_create_super();
-      init_notifyManager();
-      init_removable();
-      init_retryer();
-      Mutation = (_observers = /* @__PURE__ */ new WeakMap(), _mutationCache = /* @__PURE__ */ new WeakMap(), _retryer2 = /* @__PURE__ */ new WeakMap(), _dispatch2 = /* @__PURE__ */ new WeakSet(), _class2 = /* @__PURE__ */ function(Removable2) {
-        "use strict";
-        _inherits(_class5, Removable2);
-        var _super = _create_super(_class5);
-        function _class5(config) {
-          _class_call_check(this, _class5);
-          var _this;
-          _this = _super.call(this);
-          _class_private_method_init(_assert_this_initialized(_this), _dispatch2);
-          _class_private_field_init(_assert_this_initialized(_this), _observers, {
-            writable: true,
-            value: void 0
-          });
-          _class_private_field_init(_assert_this_initialized(_this), _mutationCache, {
-            writable: true,
-            value: void 0
-          });
-          _class_private_field_init(_assert_this_initialized(_this), _retryer2, {
-            writable: true,
-            value: void 0
-          });
-          _this.mutationId = config.mutationId;
-          _class_private_field_set(_assert_this_initialized(_this), _mutationCache, config.mutationCache);
-          _class_private_field_set(_assert_this_initialized(_this), _observers, []);
-          _this.state = config.state || getDefaultState2();
-          _this.setOptions(config.options);
-          _this.scheduleGc();
-          return _this;
-        }
-        _create_class(_class5, [
-          {
-            key: "setOptions",
-            value: function setOptions(options) {
-              this.options = options;
-              this.updateGcTime(this.options.gcTime);
-            }
-          },
-          {
-            key: "meta",
-            get: function get() {
-              return this.options.meta;
-            }
-          },
-          {
-            key: "addObserver",
-            value: function addObserver(observer) {
-              if (!_class_private_field_get(this, _observers).includes(observer)) {
-                _class_private_field_get(this, _observers).push(observer);
-                this.clearGcTimeout();
-                _class_private_field_get(this, _mutationCache).notify({
-                  type: "observerAdded",
-                  mutation: this,
-                  observer
-                });
-              }
-            }
-          },
-          {
-            key: "removeObserver",
-            value: function removeObserver(observer) {
-              _class_private_field_set(this, _observers, _class_private_field_get(this, _observers).filter((x) => x !== observer));
-              this.scheduleGc();
-              _class_private_field_get(this, _mutationCache).notify({
-                type: "observerRemoved",
-                mutation: this,
-                observer
-              });
-            }
-          },
-          {
-            key: "optionalRemove",
-            value: function optionalRemove() {
-              if (!_class_private_field_get(this, _observers).length) {
-                if (this.state.status === "pending") {
-                  this.scheduleGc();
-                } else {
-                  _class_private_field_get(this, _mutationCache).remove(this);
-                }
-              }
-            }
-          },
-          {
-            key: "continue",
-            value: function _continue() {
-              return _class_private_field_get(this, _retryer2)?.continue() ?? // continuing a mutation assumes that variables are set, mutation must have been dehydrated before
-              this.execute(this.state.variables);
-            }
-          },
-          {
-            key: "execute",
-            value: function execute(variables) {
-              var _this = this;
-              return _async_to_generator(function* () {
-                _class_private_field_set(_this, _retryer2, createRetryer({
-                  fn: () => {
-                    if (!_this.options.mutationFn) {
-                      return Promise.reject(new Error("No mutationFn found"));
-                    }
-                    return _this.options.mutationFn(variables);
-                  },
-                  onFail: (failureCount, error) => {
-                    _class_private_method_get(_this, _dispatch2, dispatch2).call(_this, {
-                      type: "failed",
-                      failureCount,
-                      error
-                    });
-                  },
-                  onPause: () => {
-                    _class_private_method_get(_this, _dispatch2, dispatch2).call(_this, {
-                      type: "pause"
-                    });
-                  },
-                  onContinue: () => {
-                    _class_private_method_get(_this, _dispatch2, dispatch2).call(_this, {
-                      type: "continue"
-                    });
-                  },
-                  retry: _this.options.retry ?? 0,
-                  retryDelay: _this.options.retryDelay,
-                  networkMode: _this.options.networkMode,
-                  canRun: () => _class_private_field_get(_this, _mutationCache).canRun(_this)
-                }));
-                var restored = _this.state.status === "pending";
-                var isPaused = !_class_private_field_get(_this, _retryer2).canStart();
-                try {
-                  if (!restored) {
-                    _class_private_method_get(_this, _dispatch2, dispatch2).call(_this, {
-                      type: "pending",
-                      variables,
-                      isPaused
-                    });
-                    yield _class_private_field_get(_this, _mutationCache).config.onMutate?.(variables, _this);
-                    var context = yield _this.options.onMutate?.(variables);
-                    if (context !== _this.state.context) {
-                      _class_private_method_get(_this, _dispatch2, dispatch2).call(_this, {
-                        type: "pending",
-                        context,
-                        variables,
-                        isPaused
-                      });
-                    }
-                  }
-                  var data = yield _class_private_field_get(_this, _retryer2).start();
-                  yield _class_private_field_get(_this, _mutationCache).config.onSuccess?.(data, variables, _this.state.context, _this);
-                  yield _this.options.onSuccess?.(data, variables, _this.state.context);
-                  yield _class_private_field_get(_this, _mutationCache).config.onSettled?.(data, null, _this.state.variables, _this.state.context, _this);
-                  yield _this.options.onSettled?.(data, null, variables, _this.state.context);
-                  _class_private_method_get(_this, _dispatch2, dispatch2).call(_this, {
-                    type: "success",
-                    data
-                  });
-                  return data;
-                } catch (error) {
-                  try {
-                    yield _class_private_field_get(_this, _mutationCache).config.onError?.(error, variables, _this.state.context, _this);
-                    yield _this.options.onError?.(error, variables, _this.state.context);
-                    yield _class_private_field_get(_this, _mutationCache).config.onSettled?.(void 0, error, _this.state.variables, _this.state.context, _this);
-                    yield _this.options.onSettled?.(void 0, error, variables, _this.state.context);
-                    throw error;
-                  } finally {
-                    _class_private_method_get(_this, _dispatch2, dispatch2).call(_this, {
-                      type: "error",
-                      error
-                    });
-                  }
-                } finally {
-                  _class_private_field_get(_this, _mutationCache).runNext(_this);
-                }
-              })();
-            }
-          }
-        ]);
-        return _class5;
-      }(Removable), _class2);
-    }
-  });
-
-  // node_modules/.pnpm/@tanstack+query-core@5.51.21/node_modules/@tanstack/query-core/build/modern/mutationCache.js
-  function scopeFor(mutation) {
-    return mutation.options.scope?.id ?? String(mutation.mutationId);
-  }
-  var _mutations, _mutationId, MutationCache;
-  var init_mutationCache = __esm({
-    "node_modules/.pnpm/@tanstack+query-core@5.51.21/node_modules/@tanstack/query-core/build/modern/mutationCache.js"() {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_assert_this_initialized();
-      init_class_call_check();
-      init_class_private_field_get();
-      init_class_private_field_init();
-      init_class_private_field_set();
-      init_class_private_field_update();
-      init_create_class();
-      init_inherits();
-      init_create_super();
-      init_notifyManager();
-      init_mutation();
-      init_utils2();
-      init_subscribable();
-      MutationCache = (_mutations = /* @__PURE__ */ new WeakMap(), _mutationId = /* @__PURE__ */ new WeakMap(), /* @__PURE__ */ function(Subscribable2) {
-        "use strict";
-        _inherits(_class5, Subscribable2);
-        var _super = _create_super(_class5);
-        function _class5(config = {}) {
-          _class_call_check(this, _class5);
-          var _this;
-          _this = _super.call(this);
-          _class_private_field_init(_assert_this_initialized(_this), _mutations, {
-            writable: true,
-            value: void 0
-          });
-          _class_private_field_init(_assert_this_initialized(_this), _mutationId, {
-            writable: true,
-            value: void 0
-          });
-          _this.config = config;
-          _class_private_field_set(_assert_this_initialized(_this), _mutations, /* @__PURE__ */ new Map());
-          _class_private_field_set(_assert_this_initialized(_this), _mutationId, Date.now());
-          return _this;
-        }
-        _create_class(_class5, [
-          {
-            key: "build",
-            value: function build(client, options, state) {
-              var mutation = new Mutation({
-                mutationCache: this,
-                mutationId: ++_class_private_field_update(this, _mutationId).value,
-                options: client.defaultMutationOptions(options),
-                state
-              });
-              this.add(mutation);
-              return mutation;
-            }
-          },
-          {
-            key: "add",
-            value: function add(mutation) {
-              var scope = scopeFor(mutation);
-              var mutations = _class_private_field_get(this, _mutations).get(scope) ?? [];
-              mutations.push(mutation);
-              _class_private_field_get(this, _mutations).set(scope, mutations);
-              this.notify({
-                type: "added",
-                mutation
-              });
-            }
-          },
-          {
-            key: "remove",
-            value: function remove(mutation) {
-              var scope = scopeFor(mutation);
-              if (_class_private_field_get(this, _mutations).has(scope)) {
-                var mutations = _class_private_field_get(this, _mutations).get(scope)?.filter((x) => x !== mutation);
-                if (mutations) {
-                  if (mutations.length === 0) {
-                    _class_private_field_get(this, _mutations).delete(scope);
-                  } else {
-                    _class_private_field_get(this, _mutations).set(scope, mutations);
-                  }
-                }
-              }
-              this.notify({
-                type: "removed",
-                mutation
-              });
-            }
-          },
-          {
-            key: "canRun",
-            value: function canRun(mutation) {
-              var firstPendingMutation = _class_private_field_get(this, _mutations).get(scopeFor(mutation))?.find((m) => m.state.status === "pending");
-              return !firstPendingMutation || firstPendingMutation === mutation;
-            }
-          },
-          {
-            key: "runNext",
-            value: function runNext(mutation) {
-              var foundMutation = _class_private_field_get(this, _mutations).get(scopeFor(mutation))?.find((m) => m !== mutation && m.state.isPaused);
-              return foundMutation?.continue() ?? Promise.resolve();
-            }
-          },
-          {
-            key: "clear",
-            value: function clear() {
-              notifyManager.batch(() => {
-                this.getAll().forEach((mutation) => {
-                  this.remove(mutation);
-                });
-              });
-            }
-          },
-          {
-            key: "getAll",
-            value: function getAll() {
-              return [
-                ..._class_private_field_get(this, _mutations).values()
-              ].flat();
-            }
-          },
-          {
-            key: "find",
-            value: function find(filters) {
-              var defaultedFilters = {
-                exact: true,
-                ...filters
-              };
-              return this.getAll().find((mutation) => matchMutation(defaultedFilters, mutation));
-            }
-          },
-          {
-            key: "findAll",
-            value: function findAll(filters = {}) {
-              return this.getAll().filter((mutation) => matchMutation(filters, mutation));
-            }
-          },
-          {
-            key: "notify",
-            value: function notify3(event) {
-              notifyManager.batch(() => {
-                this.listeners.forEach((listener) => {
-                  listener(event);
-                });
-              });
-            }
-          },
-          {
-            key: "resumePausedMutations",
-            value: function resumePausedMutations() {
-              var pausedMutations = this.getAll().filter((x) => x.state.isPaused);
-              return notifyManager.batch(() => Promise.all(pausedMutations.map((mutation) => mutation.continue().catch(noop))));
-            }
-          }
-        ]);
-        return _class5;
-      }(Subscribable));
-    }
-  });
-
-  // node_modules/.pnpm/@tanstack+query-core@5.51.21/node_modules/@tanstack/query-core/build/modern/infiniteQueryBehavior.js
-  function infiniteQueryBehavior(pages) {
-    return {
-      onFetch: (context, query) => {
-        var fetchFn = function() {
-          var _ref = _async_to_generator(function* () {
-            var options = context.options;
-            var direction = context.fetchOptions?.meta?.fetchMore?.direction;
-            var oldPages = context.state.data?.pages || [];
-            var oldPageParams = context.state.data?.pageParams || [];
-            var empty = {
-              pages: [],
-              pageParams: []
-            };
-            var cancelled = false;
-            var addSignalProperty = (object) => {
-              Object.defineProperty(object, "signal", {
-                enumerable: true,
-                get: () => {
-                  if (context.signal.aborted) {
-                    cancelled = true;
-                  } else {
-                    context.signal.addEventListener("abort", () => {
-                      cancelled = true;
-                    });
-                  }
-                  return context.signal;
-                }
-              });
-            };
-            var queryFn = ensureQueryFn(context.options, context.fetchOptions);
-            var fetchPage = function() {
-              var _ref2 = _async_to_generator(function* (data, param2, previous2) {
-                if (cancelled) {
-                  return Promise.reject();
-                }
-                if (param2 == null && data.pages.length) {
-                  return Promise.resolve(data);
-                }
-                var queryFnContext = {
-                  queryKey: context.queryKey,
-                  pageParam: param2,
-                  direction: previous2 ? "backward" : "forward",
-                  meta: context.options.meta
-                };
-                addSignalProperty(queryFnContext);
-                var page = yield queryFn(queryFnContext);
-                var { maxPages } = context.options;
-                var addTo = previous2 ? addToStart : addToEnd;
-                return {
-                  pages: addTo(data.pages, page, maxPages),
-                  pageParams: addTo(data.pageParams, param2, maxPages)
-                };
-              });
-              return function fetchPage2(data, param2, previous2) {
-                return _ref2.apply(this, arguments);
-              };
-            }();
-            var result;
-            if (direction && oldPages.length) {
-              var previous = direction === "backward";
-              var pageParamFn = previous ? getPreviousPageParam : getNextPageParam;
-              var oldData = {
-                pages: oldPages,
-                pageParams: oldPageParams
-              };
-              var param = pageParamFn(options, oldData);
-              result = yield fetchPage(oldData, param, previous);
-            } else {
-              result = yield fetchPage(empty, oldPageParams[0] ?? options.initialPageParam);
-              var remainingPages = pages ?? oldPages.length;
-              for (var i = 1; i < remainingPages; i++) {
-                var param1 = getNextPageParam(options, result);
-                if (param1 == null) {
-                  break;
-                }
-                result = yield fetchPage(result, param1);
-              }
-            }
-            return result;
-          });
-          return function fetchFn2() {
-            return _ref.apply(this, arguments);
-          };
-        }();
-        if (context.options.persister) {
-          context.fetchFn = () => {
-            return context.options.persister?.(fetchFn, {
-              queryKey: context.queryKey,
-              meta: context.options.meta,
-              signal: context.signal
-            }, query);
-          };
-        } else {
-          context.fetchFn = fetchFn;
-        }
-      }
-    };
-  }
-  function getNextPageParam(options, { pages, pageParams }) {
-    var lastIndex = pages.length - 1;
-    return pages.length > 0 ? options.getNextPageParam(pages[lastIndex], pages, pageParams[lastIndex], pageParams) : void 0;
-  }
-  function getPreviousPageParam(options, { pages, pageParams }) {
-    return pages.length > 0 ? options.getPreviousPageParam?.(pages[0], pages, pageParams[0], pageParams) : void 0;
-  }
-  var init_infiniteQueryBehavior = __esm({
-    "node_modules/.pnpm/@tanstack+query-core@5.51.21/node_modules/@tanstack/query-core/build/modern/infiniteQueryBehavior.js"() {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_async_to_generator();
-      init_utils2();
-    }
-  });
-
-  // node_modules/.pnpm/@tanstack+query-core@5.51.21/node_modules/@tanstack/query-core/build/modern/queryClient.js
-  var _queryCache, _mutationCache2, _defaultOptions2, _queryDefaults, _mutationDefaults, _mountCount, _unsubscribeFocus, _unsubscribeOnline, QueryClient;
-  var init_queryClient = __esm({
-    "node_modules/.pnpm/@tanstack+query-core@5.51.21/node_modules/@tanstack/query-core/build/modern/queryClient.js"() {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_async_to_generator();
-      init_class_call_check();
-      init_class_private_field_get();
-      init_class_private_field_init();
-      init_class_private_field_set();
-      init_class_private_field_update();
-      init_create_class();
-      init_utils2();
-      init_queryCache();
-      init_mutationCache();
-      init_focusManager();
-      init_onlineManager();
-      init_notifyManager();
-      init_infiniteQueryBehavior();
-      QueryClient = (_queryCache = /* @__PURE__ */ new WeakMap(), _mutationCache2 = /* @__PURE__ */ new WeakMap(), _defaultOptions2 = /* @__PURE__ */ new WeakMap(), _queryDefaults = /* @__PURE__ */ new WeakMap(), _mutationDefaults = /* @__PURE__ */ new WeakMap(), _mountCount = /* @__PURE__ */ new WeakMap(), _unsubscribeFocus = /* @__PURE__ */ new WeakMap(), _unsubscribeOnline = /* @__PURE__ */ new WeakMap(), /* @__PURE__ */ function() {
-        "use strict";
-        function _class5(config = {}) {
-          _class_call_check(this, _class5);
-          _class_private_field_init(this, _queryCache, {
-            writable: true,
-            value: void 0
-          });
-          _class_private_field_init(this, _mutationCache2, {
-            writable: true,
-            value: void 0
-          });
-          _class_private_field_init(this, _defaultOptions2, {
-            writable: true,
-            value: void 0
-          });
-          _class_private_field_init(this, _queryDefaults, {
-            writable: true,
-            value: void 0
-          });
-          _class_private_field_init(this, _mutationDefaults, {
-            writable: true,
-            value: void 0
-          });
-          _class_private_field_init(this, _mountCount, {
-            writable: true,
-            value: void 0
-          });
-          _class_private_field_init(this, _unsubscribeFocus, {
-            writable: true,
-            value: void 0
-          });
-          _class_private_field_init(this, _unsubscribeOnline, {
-            writable: true,
-            value: void 0
-          });
-          _class_private_field_set(this, _queryCache, config.queryCache || new QueryCache());
-          _class_private_field_set(this, _mutationCache2, config.mutationCache || new MutationCache());
-          _class_private_field_set(this, _defaultOptions2, config.defaultOptions || {});
-          _class_private_field_set(this, _queryDefaults, /* @__PURE__ */ new Map());
-          _class_private_field_set(this, _mutationDefaults, /* @__PURE__ */ new Map());
-          _class_private_field_set(this, _mountCount, 0);
-        }
-        _create_class(_class5, [
-          {
-            key: "mount",
-            value: function mount() {
-              _class_private_field_update(this, _mountCount).value++;
-              if (_class_private_field_get(this, _mountCount) !== 1)
-                return;
-              var _this = this;
-              _class_private_field_set(this, _unsubscribeFocus, focusManager.subscribe(function() {
-                var _ref = _async_to_generator(function* (focused) {
-                  if (focused) {
-                    yield _this.resumePausedMutations();
-                    _class_private_field_get(_this, _queryCache).onFocus();
-                  }
-                });
-                return function(focused) {
-                  return _ref.apply(this, arguments);
-                };
-              }()));
-              var _this1 = this;
-              _class_private_field_set(this, _unsubscribeOnline, onlineManager.subscribe(function() {
-                var _ref = _async_to_generator(function* (online) {
-                  if (online) {
-                    yield _this1.resumePausedMutations();
-                    _class_private_field_get(_this1, _queryCache).onOnline();
-                  }
-                });
-                return function(online) {
-                  return _ref.apply(this, arguments);
-                };
-              }()));
-            }
-          },
-          {
-            key: "unmount",
-            value: function unmount() {
-              var _this, _this1, _ref, _this2, _this3, _ref1;
-              _class_private_field_update(this, _mountCount).value--;
-              if (_class_private_field_get(this, _mountCount) !== 0)
-                return;
-              (_this = _class_private_field_get(_ref = _this1 = this, _unsubscribeFocus)) === null || _this === void 0 ? void 0 : _this.call(_this1);
-              _class_private_field_set(this, _unsubscribeFocus, void 0);
-              (_this2 = _class_private_field_get(_ref1 = _this3 = this, _unsubscribeOnline)) === null || _this2 === void 0 ? void 0 : _this2.call(_this3);
-              _class_private_field_set(this, _unsubscribeOnline, void 0);
-            }
-          },
-          {
-            key: "isFetching",
-            value: function isFetching(filters) {
-              return _class_private_field_get(this, _queryCache).findAll({
-                ...filters,
-                fetchStatus: "fetching"
-              }).length;
-            }
-          },
-          {
-            key: "isMutating",
-            value: function isMutating(filters) {
-              return _class_private_field_get(this, _mutationCache2).findAll({
-                ...filters,
-                status: "pending"
-              }).length;
-            }
-          },
-          {
-            key: "getQueryData",
-            value: function getQueryData(queryKey) {
-              var options = this.defaultQueryOptions({
-                queryKey
-              });
-              return _class_private_field_get(this, _queryCache).get(options.queryHash)?.state.data;
-            }
-          },
-          {
-            key: "ensureQueryData",
-            value: function ensureQueryData(options) {
-              var cachedData = this.getQueryData(options.queryKey);
-              if (cachedData === void 0)
-                return this.fetchQuery(options);
-              else {
-                var defaultedOptions = this.defaultQueryOptions(options);
-                var query = _class_private_field_get(this, _queryCache).build(this, defaultedOptions);
-                if (options.revalidateIfStale && query.isStaleByTime(resolveStaleTime(defaultedOptions.staleTime, query))) {
-                  void this.prefetchQuery(defaultedOptions);
-                }
-                return Promise.resolve(cachedData);
-              }
-            }
-          },
-          {
-            key: "getQueriesData",
-            value: function getQueriesData(filters) {
-              return _class_private_field_get(this, _queryCache).findAll(filters).map(({ queryKey, state }) => {
-                var data = state.data;
-                return [
-                  queryKey,
-                  data
-                ];
-              });
-            }
-          },
-          {
-            key: "setQueryData",
-            value: function setQueryData(queryKey, updater, options) {
-              var defaultedOptions = this.defaultQueryOptions({
-                queryKey
-              });
-              var query = _class_private_field_get(this, _queryCache).get(defaultedOptions.queryHash);
-              var prevData = query?.state.data;
-              var data = functionalUpdate(updater, prevData);
-              if (data === void 0) {
-                return void 0;
-              }
-              return _class_private_field_get(this, _queryCache).build(this, defaultedOptions).setData(data, {
-                ...options,
-                manual: true
-              });
-            }
-          },
-          {
-            key: "setQueriesData",
-            value: function setQueriesData(filters, updater, options) {
-              return notifyManager.batch(() => _class_private_field_get(this, _queryCache).findAll(filters).map(({ queryKey }) => [
-                queryKey,
-                this.setQueryData(queryKey, updater, options)
-              ]));
-            }
-          },
-          {
-            key: "getQueryState",
-            value: function getQueryState(queryKey) {
-              var options = this.defaultQueryOptions({
-                queryKey
-              });
-              return _class_private_field_get(this, _queryCache).get(options.queryHash)?.state;
-            }
-          },
-          {
-            key: "removeQueries",
-            value: function removeQueries(filters) {
-              var queryCache = _class_private_field_get(this, _queryCache);
-              notifyManager.batch(() => {
-                queryCache.findAll(filters).forEach((query) => {
-                  queryCache.remove(query);
-                });
-              });
-            }
-          },
-          {
-            key: "resetQueries",
-            value: function resetQueries(filters, options) {
-              var queryCache = _class_private_field_get(this, _queryCache);
-              var refetchFilters = {
-                type: "active",
-                ...filters
-              };
-              return notifyManager.batch(() => {
-                queryCache.findAll(filters).forEach((query) => {
-                  query.reset();
-                });
-                return this.refetchQueries(refetchFilters, options);
-              });
-            }
-          },
-          {
-            key: "cancelQueries",
-            value: function cancelQueries(filters = {}, cancelOptions = {}) {
-              var defaultedCancelOptions = {
-                revert: true,
-                ...cancelOptions
-              };
-              var promises = notifyManager.batch(() => _class_private_field_get(this, _queryCache).findAll(filters).map((query) => query.cancel(defaultedCancelOptions)));
-              return Promise.all(promises).then(noop).catch(noop);
-            }
-          },
-          {
-            key: "invalidateQueries",
-            value: function invalidateQueries(filters = {}, options = {}) {
-              return notifyManager.batch(() => {
-                _class_private_field_get(this, _queryCache).findAll(filters).forEach((query) => {
-                  query.invalidate();
-                });
-                if (filters.refetchType === "none") {
-                  return Promise.resolve();
-                }
-                var refetchFilters = {
-                  ...filters,
-                  type: filters.refetchType ?? filters.type ?? "active"
-                };
-                return this.refetchQueries(refetchFilters, options);
-              });
-            }
-          },
-          {
-            key: "refetchQueries",
-            value: function refetchQueries(filters = {}, options) {
-              var fetchOptions = {
-                ...options,
-                cancelRefetch: options?.cancelRefetch ?? true
-              };
-              var promises = notifyManager.batch(() => _class_private_field_get(this, _queryCache).findAll(filters).filter((query) => !query.isDisabled()).map((query) => {
-                var promise = query.fetch(void 0, fetchOptions);
-                if (!fetchOptions.throwOnError) {
-                  promise = promise.catch(noop);
-                }
-                return query.state.fetchStatus === "paused" ? Promise.resolve() : promise;
-              }));
-              return Promise.all(promises).then(noop);
-            }
-          },
-          {
-            key: "fetchQuery",
-            value: function fetchQuery(options) {
-              var defaultedOptions = this.defaultQueryOptions(options);
-              if (defaultedOptions.retry === void 0) {
-                defaultedOptions.retry = false;
-              }
-              var query = _class_private_field_get(this, _queryCache).build(this, defaultedOptions);
-              return query.isStaleByTime(resolveStaleTime(defaultedOptions.staleTime, query)) ? query.fetch(defaultedOptions) : Promise.resolve(query.state.data);
-            }
-          },
-          {
-            key: "prefetchQuery",
-            value: function prefetchQuery(options) {
-              return this.fetchQuery(options).then(noop).catch(noop);
-            }
-          },
-          {
-            key: "fetchInfiniteQuery",
-            value: function fetchInfiniteQuery(options) {
-              options.behavior = infiniteQueryBehavior(options.pages);
-              return this.fetchQuery(options);
-            }
-          },
-          {
-            key: "prefetchInfiniteQuery",
-            value: function prefetchInfiniteQuery(options) {
-              return this.fetchInfiniteQuery(options).then(noop).catch(noop);
-            }
-          },
-          {
-            key: "resumePausedMutations",
-            value: function resumePausedMutations() {
-              if (onlineManager.isOnline()) {
-                return _class_private_field_get(this, _mutationCache2).resumePausedMutations();
-              }
-              return Promise.resolve();
-            }
-          },
-          {
-            key: "getQueryCache",
-            value: function getQueryCache() {
-              return _class_private_field_get(this, _queryCache);
-            }
-          },
-          {
-            key: "getMutationCache",
-            value: function getMutationCache() {
-              return _class_private_field_get(this, _mutationCache2);
-            }
-          },
-          {
-            key: "getDefaultOptions",
-            value: function getDefaultOptions() {
-              return _class_private_field_get(this, _defaultOptions2);
-            }
-          },
-          {
-            key: "setDefaultOptions",
-            value: function setDefaultOptions(options) {
-              _class_private_field_set(this, _defaultOptions2, options);
-            }
-          },
-          {
-            key: "setQueryDefaults",
-            value: function setQueryDefaults(queryKey, options) {
-              _class_private_field_get(this, _queryDefaults).set(hashKey(queryKey), {
-                queryKey,
-                defaultOptions: options
-              });
-            }
-          },
-          {
-            key: "getQueryDefaults",
-            value: function getQueryDefaults(queryKey) {
-              var defaults = [
-                ..._class_private_field_get(this, _queryDefaults).values()
-              ];
-              var result = {};
-              defaults.forEach((queryDefault) => {
-                if (partialMatchKey(queryKey, queryDefault.queryKey)) {
-                  result = {
-                    ...result,
-                    ...queryDefault.defaultOptions
-                  };
-                }
-              });
-              return result;
-            }
-          },
-          {
-            key: "setMutationDefaults",
-            value: function setMutationDefaults(mutationKey, options) {
-              _class_private_field_get(this, _mutationDefaults).set(hashKey(mutationKey), {
-                mutationKey,
-                defaultOptions: options
-              });
-            }
-          },
-          {
-            key: "getMutationDefaults",
-            value: function getMutationDefaults(mutationKey) {
-              var defaults = [
-                ..._class_private_field_get(this, _mutationDefaults).values()
-              ];
-              var result = {};
-              defaults.forEach((queryDefault) => {
-                if (partialMatchKey(mutationKey, queryDefault.mutationKey)) {
-                  result = {
-                    ...result,
-                    ...queryDefault.defaultOptions
-                  };
-                }
-              });
-              return result;
-            }
-          },
-          {
-            key: "defaultQueryOptions",
-            value: function defaultQueryOptions(options) {
-              if (options._defaulted) {
-                return options;
-              }
-              var defaultedOptions = {
-                ..._class_private_field_get(this, _defaultOptions2).queries,
-                ...this.getQueryDefaults(options.queryKey),
-                ...options,
-                _defaulted: true
-              };
-              if (!defaultedOptions.queryHash) {
-                defaultedOptions.queryHash = hashQueryKeyByOptions(defaultedOptions.queryKey, defaultedOptions);
-              }
-              if (defaultedOptions.refetchOnReconnect === void 0) {
-                defaultedOptions.refetchOnReconnect = defaultedOptions.networkMode !== "always";
-              }
-              if (defaultedOptions.throwOnError === void 0) {
-                defaultedOptions.throwOnError = !!defaultedOptions.suspense;
-              }
-              if (!defaultedOptions.networkMode && defaultedOptions.persister) {
-                defaultedOptions.networkMode = "offlineFirst";
-              }
-              if (defaultedOptions.enabled !== true && defaultedOptions.queryFn === skipToken) {
-                defaultedOptions.enabled = false;
-              }
-              return defaultedOptions;
-            }
-          },
-          {
-            key: "defaultMutationOptions",
-            value: function defaultMutationOptions(options) {
-              if (options?._defaulted) {
-                return options;
-              }
-              return {
-                ..._class_private_field_get(this, _defaultOptions2).mutations,
-                ...options?.mutationKey && this.getMutationDefaults(options.mutationKey),
-                ...options,
-                _defaulted: true
-              };
-            }
-          },
-          {
-            key: "clear",
-            value: function clear() {
-              _class_private_field_get(this, _queryCache).clear();
-              _class_private_field_get(this, _mutationCache2).clear();
-            }
-          }
-        ]);
-        return _class5;
-      }());
-    }
-  });
-
-  // node_modules/.pnpm/@tanstack+query-core@5.51.21/node_modules/@tanstack/query-core/build/modern/queryObserver.js
-  function shouldLoadOnMount(query, options) {
-    return resolveEnabled(options.enabled, query) !== false && query.state.data === void 0 && !(query.state.status === "error" && options.retryOnMount === false);
-  }
-  function shouldFetchOnMount(query, options) {
-    return shouldLoadOnMount(query, options) || query.state.data !== void 0 && shouldFetchOn(query, options, options.refetchOnMount);
-  }
-  function shouldFetchOn(query, options, field) {
-    if (resolveEnabled(options.enabled, query) !== false) {
-      var value = typeof field === "function" ? field(query) : field;
-      return value === "always" || value !== false && isStale(query, options);
-    }
-    return false;
-  }
-  function shouldFetchOptionally(query, prevQuery, options, prevOptions) {
-    return (query !== prevQuery || resolveEnabled(prevOptions.enabled, query) === false) && (!options.suspense || query.state.status !== "error") && isStale(query, options);
-  }
-  function isStale(query, options) {
-    return resolveEnabled(options.enabled, query) !== false && query.isStaleByTime(resolveStaleTime(options.staleTime, query));
-  }
-  function shouldAssignObserverCurrentProperties(observer, optimisticResult) {
-    if (!shallowEqualObjects(observer.getCurrentResult(), optimisticResult)) {
-      return true;
-    }
-    return false;
-  }
-  function executeFetch(fetchOptions) {
-    _class_private_method_get(this, _updateQuery, updateQuery).call(this);
-    var promise = _class_private_field_get(this, _currentQuery).fetch(this.options, fetchOptions);
-    if (!fetchOptions?.throwOnError) {
-      promise = promise.catch(noop);
-    }
-    return promise;
-  }
-  function updateStaleTimeout() {
-    _class_private_method_get(this, _clearStaleTimeout, clearStaleTimeout).call(this);
-    var staleTime = resolveStaleTime(this.options.staleTime, _class_private_field_get(this, _currentQuery));
-    if (isServer || _class_private_field_get(this, _currentResult).isStale || !isValidTimeout(staleTime)) {
-      return;
-    }
-    var time = timeUntilStale(_class_private_field_get(this, _currentResult).dataUpdatedAt, staleTime);
-    var timeout = time + 1;
-    _class_private_field_set(this, _staleTimeoutId, setTimeout(() => {
-      if (!_class_private_field_get(this, _currentResult).isStale) {
-        this.updateResult();
-      }
-    }, timeout));
-  }
-  function computeRefetchInterval() {
-    return (typeof this.options.refetchInterval === "function" ? this.options.refetchInterval(_class_private_field_get(this, _currentQuery)) : this.options.refetchInterval) ?? false;
-  }
-  function updateRefetchInterval(nextInterval) {
-    _class_private_method_get(this, _clearRefetchInterval, clearRefetchInterval).call(this);
-    _class_private_field_set(this, _currentRefetchInterval, nextInterval);
-    if (isServer || resolveEnabled(this.options.enabled, _class_private_field_get(this, _currentQuery)) === false || !isValidTimeout(_class_private_field_get(this, _currentRefetchInterval)) || _class_private_field_get(this, _currentRefetchInterval) === 0) {
-      return;
-    }
-    _class_private_field_set(this, _refetchIntervalId, setInterval(() => {
-      if (this.options.refetchIntervalInBackground || focusManager.isFocused()) {
-        _class_private_method_get(this, _executeFetch, executeFetch).call(this);
-      }
-    }, _class_private_field_get(this, _currentRefetchInterval)));
-  }
-  function updateTimers() {
-    _class_private_method_get(this, _updateStaleTimeout, updateStaleTimeout).call(this);
-    _class_private_method_get(this, _updateRefetchInterval, updateRefetchInterval).call(this, _class_private_method_get(this, _computeRefetchInterval, computeRefetchInterval).call(this));
-  }
-  function clearStaleTimeout() {
-    if (_class_private_field_get(this, _staleTimeoutId)) {
-      clearTimeout(_class_private_field_get(this, _staleTimeoutId));
-      _class_private_field_set(this, _staleTimeoutId, void 0);
-    }
-  }
-  function clearRefetchInterval() {
-    if (_class_private_field_get(this, _refetchIntervalId)) {
-      clearInterval(_class_private_field_get(this, _refetchIntervalId));
-      _class_private_field_set(this, _refetchIntervalId, void 0);
-    }
-  }
-  function updateQuery() {
-    var query = _class_private_field_get(this, _client).getQueryCache().build(_class_private_field_get(this, _client), this.options);
-    if (query === _class_private_field_get(this, _currentQuery)) {
-      return;
-    }
-    var prevQuery = _class_private_field_get(this, _currentQuery);
-    _class_private_field_set(this, _currentQuery, query);
-    _class_private_field_set(this, _currentQueryInitialState, query.state);
-    if (this.hasListeners()) {
-      prevQuery?.removeObserver(this);
-      query.addObserver(this);
-    }
-  }
-  function notify(notifyOptions) {
-    notifyManager.batch(() => {
-      if (notifyOptions.listeners) {
-        this.listeners.forEach((listener) => {
-          listener(_class_private_field_get(this, _currentResult));
-        });
-      }
-      _class_private_field_get(this, _client).getQueryCache().notify({
-        query: _class_private_field_get(this, _currentQuery),
-        type: "observerResultsUpdated"
-      });
-    });
-  }
-  var _client, _currentQuery, _currentQueryInitialState, _currentResult, _currentResultState, _currentResultOptions, _selectError, _selectFn, _selectResult, _lastQueryWithDefinedData, _staleTimeoutId, _refetchIntervalId, _currentRefetchInterval, _trackedProps, _executeFetch, _updateStaleTimeout, _computeRefetchInterval, _updateRefetchInterval, _updateTimers, _clearStaleTimeout, _clearRefetchInterval, _updateQuery, _notify, _class3, QueryObserver;
-  var init_queryObserver = __esm({
-    "node_modules/.pnpm/@tanstack+query-core@5.51.21/node_modules/@tanstack/query-core/build/modern/queryObserver.js"() {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_assert_this_initialized();
-      init_class_call_check();
-      init_class_private_field_get();
-      init_class_private_field_init();
-      init_class_private_field_set();
-      init_class_private_method_get();
-      init_class_private_method_init();
-      init_create_class();
-      init_inherits();
-      init_create_super();
-      init_utils2();
-      init_notifyManager();
-      init_focusManager();
-      init_subscribable();
-      init_query();
-      QueryObserver = (_client = /* @__PURE__ */ new WeakMap(), _currentQuery = /* @__PURE__ */ new WeakMap(), _currentQueryInitialState = /* @__PURE__ */ new WeakMap(), _currentResult = /* @__PURE__ */ new WeakMap(), _currentResultState = /* @__PURE__ */ new WeakMap(), _currentResultOptions = /* @__PURE__ */ new WeakMap(), _selectError = /* @__PURE__ */ new WeakMap(), _selectFn = /* @__PURE__ */ new WeakMap(), _selectResult = /* @__PURE__ */ new WeakMap(), _lastQueryWithDefinedData = /* @__PURE__ */ new WeakMap(), _staleTimeoutId = /* @__PURE__ */ new WeakMap(), _refetchIntervalId = /* @__PURE__ */ new WeakMap(), _currentRefetchInterval = /* @__PURE__ */ new WeakMap(), _trackedProps = /* @__PURE__ */ new WeakMap(), _executeFetch = /* @__PURE__ */ new WeakSet(), _updateStaleTimeout = /* @__PURE__ */ new WeakSet(), _computeRefetchInterval = /* @__PURE__ */ new WeakSet(), _updateRefetchInterval = /* @__PURE__ */ new WeakSet(), _updateTimers = /* @__PURE__ */ new WeakSet(), _clearStaleTimeout = /* @__PURE__ */ new WeakSet(), _clearRefetchInterval = /* @__PURE__ */ new WeakSet(), _updateQuery = /* @__PURE__ */ new WeakSet(), _notify = /* @__PURE__ */ new WeakSet(), _class3 = /* @__PURE__ */ function(Subscribable2) {
-        "use strict";
-        _inherits(_class5, Subscribable2);
-        var _super = _create_super(_class5);
-        function _class5(client, options) {
-          _class_call_check(this, _class5);
-          var _this;
-          _this = _super.call(this);
-          _class_private_method_init(_assert_this_initialized(_this), _executeFetch);
-          _class_private_method_init(_assert_this_initialized(_this), _updateStaleTimeout);
-          _class_private_method_init(_assert_this_initialized(_this), _computeRefetchInterval);
-          _class_private_method_init(_assert_this_initialized(_this), _updateRefetchInterval);
-          _class_private_method_init(_assert_this_initialized(_this), _updateTimers);
-          _class_private_method_init(_assert_this_initialized(_this), _clearStaleTimeout);
-          _class_private_method_init(_assert_this_initialized(_this), _clearRefetchInterval);
-          _class_private_method_init(_assert_this_initialized(_this), _updateQuery);
-          _class_private_method_init(_assert_this_initialized(_this), _notify);
-          _class_private_field_init(_assert_this_initialized(_this), _client, {
-            writable: true,
-            value: void 0
-          });
-          _class_private_field_init(_assert_this_initialized(_this), _currentQuery, {
-            writable: true,
-            value: void 0
-          });
-          _class_private_field_init(_assert_this_initialized(_this), _currentQueryInitialState, {
-            writable: true,
-            value: void 0
-          });
-          _class_private_field_init(_assert_this_initialized(_this), _currentResult, {
-            writable: true,
-            value: void 0
-          });
-          _class_private_field_init(_assert_this_initialized(_this), _currentResultState, {
-            writable: true,
-            value: void 0
-          });
-          _class_private_field_init(_assert_this_initialized(_this), _currentResultOptions, {
-            writable: true,
-            value: void 0
-          });
-          _class_private_field_init(_assert_this_initialized(_this), _selectError, {
-            writable: true,
-            value: void 0
-          });
-          _class_private_field_init(_assert_this_initialized(_this), _selectFn, {
-            writable: true,
-            value: void 0
-          });
-          _class_private_field_init(_assert_this_initialized(_this), _selectResult, {
-            writable: true,
-            value: void 0
-          });
-          _class_private_field_init(_assert_this_initialized(_this), _lastQueryWithDefinedData, {
-            writable: true,
-            value: void 0
-          });
-          _class_private_field_init(_assert_this_initialized(_this), _staleTimeoutId, {
-            writable: true,
-            value: void 0
-          });
-          _class_private_field_init(_assert_this_initialized(_this), _refetchIntervalId, {
-            writable: true,
-            value: void 0
-          });
-          _class_private_field_init(_assert_this_initialized(_this), _currentRefetchInterval, {
-            writable: true,
-            value: void 0
-          });
-          _class_private_field_init(_assert_this_initialized(_this), _trackedProps, {
-            writable: true,
-            value: /* @__PURE__ */ new Set()
-          });
-          _this.options = options;
-          _class_private_field_set(_assert_this_initialized(_this), _client, client);
-          _class_private_field_set(_assert_this_initialized(_this), _selectError, null);
-          _this.bindMethods();
-          _this.setOptions(options);
-          return _this;
-        }
-        _create_class(_class5, [
-          {
-            key: "bindMethods",
-            value: function bindMethods() {
-              this.refetch = this.refetch.bind(this);
-            }
-          },
-          {
-            key: "onSubscribe",
-            value: function onSubscribe() {
-              if (this.listeners.size === 1) {
-                _class_private_field_get(this, _currentQuery).addObserver(this);
-                if (shouldFetchOnMount(_class_private_field_get(this, _currentQuery), this.options)) {
-                  _class_private_method_get(this, _executeFetch, executeFetch).call(this);
-                } else {
-                  this.updateResult();
-                }
-                _class_private_method_get(this, _updateTimers, updateTimers).call(this);
-              }
-            }
-          },
-          {
-            key: "onUnsubscribe",
-            value: function onUnsubscribe() {
-              if (!this.hasListeners()) {
-                this.destroy();
-              }
-            }
-          },
-          {
-            key: "shouldFetchOnReconnect",
-            value: function shouldFetchOnReconnect() {
-              return shouldFetchOn(_class_private_field_get(this, _currentQuery), this.options, this.options.refetchOnReconnect);
-            }
-          },
-          {
-            key: "shouldFetchOnWindowFocus",
-            value: function shouldFetchOnWindowFocus() {
-              return shouldFetchOn(_class_private_field_get(this, _currentQuery), this.options, this.options.refetchOnWindowFocus);
-            }
-          },
-          {
-            key: "destroy",
-            value: function destroy() {
-              this.listeners = /* @__PURE__ */ new Set();
-              _class_private_method_get(this, _clearStaleTimeout, clearStaleTimeout).call(this);
-              _class_private_method_get(this, _clearRefetchInterval, clearRefetchInterval).call(this);
-              _class_private_field_get(this, _currentQuery).removeObserver(this);
-            }
-          },
-          {
-            key: "setOptions",
-            value: function setOptions(options, notifyOptions) {
-              var prevOptions = this.options;
-              var prevQuery = _class_private_field_get(this, _currentQuery);
-              this.options = _class_private_field_get(this, _client).defaultQueryOptions(options);
-              if (this.options.enabled !== void 0 && typeof this.options.enabled !== "boolean" && typeof this.options.enabled !== "function" && typeof resolveEnabled(this.options.enabled, _class_private_field_get(this, _currentQuery)) !== "boolean") {
-                throw new Error("Expected enabled to be a boolean or a callback that returns a boolean");
-              }
-              _class_private_method_get(this, _updateQuery, updateQuery).call(this);
-              _class_private_field_get(this, _currentQuery).setOptions(this.options);
-              if (prevOptions._defaulted && !shallowEqualObjects(this.options, prevOptions)) {
-                _class_private_field_get(this, _client).getQueryCache().notify({
-                  type: "observerOptionsUpdated",
-                  query: _class_private_field_get(this, _currentQuery),
-                  observer: this
-                });
-              }
-              var mounted = this.hasListeners();
-              if (mounted && shouldFetchOptionally(_class_private_field_get(this, _currentQuery), prevQuery, this.options, prevOptions)) {
-                _class_private_method_get(this, _executeFetch, executeFetch).call(this);
-              }
-              this.updateResult(notifyOptions);
-              if (mounted && (_class_private_field_get(this, _currentQuery) !== prevQuery || resolveEnabled(this.options.enabled, _class_private_field_get(this, _currentQuery)) !== resolveEnabled(prevOptions.enabled, _class_private_field_get(this, _currentQuery)) || resolveStaleTime(this.options.staleTime, _class_private_field_get(this, _currentQuery)) !== resolveStaleTime(prevOptions.staleTime, _class_private_field_get(this, _currentQuery)))) {
-                _class_private_method_get(this, _updateStaleTimeout, updateStaleTimeout).call(this);
-              }
-              var nextRefetchInterval = _class_private_method_get(this, _computeRefetchInterval, computeRefetchInterval).call(this);
-              if (mounted && (_class_private_field_get(this, _currentQuery) !== prevQuery || resolveEnabled(this.options.enabled, _class_private_field_get(this, _currentQuery)) !== resolveEnabled(prevOptions.enabled, _class_private_field_get(this, _currentQuery)) || nextRefetchInterval !== _class_private_field_get(this, _currentRefetchInterval))) {
-                _class_private_method_get(this, _updateRefetchInterval, updateRefetchInterval).call(this, nextRefetchInterval);
-              }
-            }
-          },
-          {
-            key: "getOptimisticResult",
-            value: function getOptimisticResult(options) {
-              var query = _class_private_field_get(this, _client).getQueryCache().build(_class_private_field_get(this, _client), options);
-              var result = this.createResult(query, options);
-              if (shouldAssignObserverCurrentProperties(this, result)) {
-                _class_private_field_set(this, _currentResult, result);
-                _class_private_field_set(this, _currentResultOptions, this.options);
-                _class_private_field_set(this, _currentResultState, _class_private_field_get(this, _currentQuery).state);
-              }
-              return result;
-            }
-          },
-          {
-            key: "getCurrentResult",
-            value: function getCurrentResult() {
-              return _class_private_field_get(this, _currentResult);
-            }
-          },
-          {
-            key: "trackResult",
-            value: function trackResult(result, onPropTracked) {
-              var trackedResult = {};
-              Object.keys(result).forEach((key) => {
-                Object.defineProperty(trackedResult, key, {
-                  configurable: false,
-                  enumerable: true,
-                  get: () => {
-                    this.trackProp(key);
-                    onPropTracked?.(key);
-                    return result[key];
-                  }
-                });
-              });
-              return trackedResult;
-            }
-          },
-          {
-            key: "trackProp",
-            value: function trackProp(key) {
-              _class_private_field_get(this, _trackedProps).add(key);
-            }
-          },
-          {
-            key: "getCurrentQuery",
-            value: function getCurrentQuery() {
-              return _class_private_field_get(this, _currentQuery);
-            }
-          },
-          {
-            key: "refetch",
-            value: function refetch({ ...options } = {}) {
-              return this.fetch({
-                ...options
-              });
-            }
-          },
-          {
-            key: "fetchOptimistic",
-            value: function fetchOptimistic2(options) {
-              var defaultedOptions = _class_private_field_get(this, _client).defaultQueryOptions(options);
-              var query = _class_private_field_get(this, _client).getQueryCache().build(_class_private_field_get(this, _client), defaultedOptions);
-              query.isFetchingOptimistic = true;
-              return query.fetch().then(() => this.createResult(query, defaultedOptions));
-            }
-          },
-          {
-            key: "fetch",
-            value: function fetch2(fetchOptions) {
-              return _class_private_method_get(this, _executeFetch, executeFetch).call(this, {
-                ...fetchOptions,
-                cancelRefetch: fetchOptions.cancelRefetch ?? true
-              }).then(() => {
-                this.updateResult();
-                return _class_private_field_get(this, _currentResult);
-              });
-            }
-          },
-          {
-            key: "createResult",
-            value: function createResult(query, options) {
-              var prevQuery = _class_private_field_get(this, _currentQuery);
-              var prevOptions = this.options;
-              var prevResult = _class_private_field_get(this, _currentResult);
-              var prevResultState = _class_private_field_get(this, _currentResultState);
-              var prevResultOptions = _class_private_field_get(this, _currentResultOptions);
-              var queryChange = query !== prevQuery;
-              var queryInitialState = queryChange ? query.state : _class_private_field_get(this, _currentQueryInitialState);
-              var { state } = query;
-              var newState = {
-                ...state
-              };
-              var isPlaceholderData = false;
-              var data;
-              if (options._optimisticResults) {
-                var mounted = this.hasListeners();
-                var fetchOnMount = !mounted && shouldFetchOnMount(query, options);
-                var fetchOptionally = mounted && shouldFetchOptionally(query, prevQuery, options, prevOptions);
-                if (fetchOnMount || fetchOptionally) {
-                  newState = {
-                    ...newState,
-                    ...fetchState(state.data, query.options)
-                  };
-                }
-                if (options._optimisticResults === "isRestoring") {
-                  newState.fetchStatus = "idle";
-                }
-              }
-              var { error, errorUpdatedAt, status } = newState;
-              if (options.select && newState.data !== void 0) {
-                if (prevResult && newState.data === prevResultState?.data && options.select === _class_private_field_get(this, _selectFn)) {
-                  data = _class_private_field_get(this, _selectResult);
-                } else {
-                  try {
-                    _class_private_field_set(this, _selectFn, options.select);
-                    data = options.select(newState.data);
-                    data = replaceData(prevResult?.data, data, options);
-                    _class_private_field_set(this, _selectResult, data);
-                    _class_private_field_set(this, _selectError, null);
-                  } catch (selectError) {
-                    _class_private_field_set(this, _selectError, selectError);
-                  }
-                }
-              } else {
-                data = newState.data;
-              }
-              if (options.placeholderData !== void 0 && data === void 0 && status === "pending") {
-                var placeholderData;
-                if (prevResult?.isPlaceholderData && options.placeholderData === prevResultOptions?.placeholderData) {
-                  placeholderData = prevResult.data;
-                } else {
-                  placeholderData = typeof options.placeholderData === "function" ? options.placeholderData(_class_private_field_get(this, _lastQueryWithDefinedData)?.state.data, _class_private_field_get(this, _lastQueryWithDefinedData)) : options.placeholderData;
-                  if (options.select && placeholderData !== void 0) {
-                    try {
-                      placeholderData = options.select(placeholderData);
-                      _class_private_field_set(this, _selectError, null);
-                    } catch (selectError) {
-                      _class_private_field_set(this, _selectError, selectError);
-                    }
-                  }
-                }
-                if (placeholderData !== void 0) {
-                  status = "success";
-                  data = replaceData(prevResult?.data, placeholderData, options);
-                  isPlaceholderData = true;
-                }
-              }
-              if (_class_private_field_get(this, _selectError)) {
-                error = _class_private_field_get(this, _selectError);
-                data = _class_private_field_get(this, _selectResult);
-                errorUpdatedAt = Date.now();
-                status = "error";
-              }
-              var isFetching = newState.fetchStatus === "fetching";
-              var isPending = status === "pending";
-              var isError = status === "error";
-              var isLoading = isPending && isFetching;
-              var hasData = data !== void 0;
-              var result = {
-                status,
-                fetchStatus: newState.fetchStatus,
-                isPending,
-                isSuccess: status === "success",
-                isError,
-                isInitialLoading: isLoading,
-                isLoading,
-                data,
-                dataUpdatedAt: newState.dataUpdatedAt,
-                error,
-                errorUpdatedAt,
-                failureCount: newState.fetchFailureCount,
-                failureReason: newState.fetchFailureReason,
-                errorUpdateCount: newState.errorUpdateCount,
-                isFetched: newState.dataUpdateCount > 0 || newState.errorUpdateCount > 0,
-                isFetchedAfterMount: newState.dataUpdateCount > queryInitialState.dataUpdateCount || newState.errorUpdateCount > queryInitialState.errorUpdateCount,
-                isFetching,
-                isRefetching: isFetching && !isPending,
-                isLoadingError: isError && !hasData,
-                isPaused: newState.fetchStatus === "paused",
-                isPlaceholderData,
-                isRefetchError: isError && hasData,
-                isStale: isStale(query, options),
-                refetch: this.refetch
-              };
-              return result;
-            }
-          },
-          {
-            key: "updateResult",
-            value: function updateResult2(notifyOptions) {
-              var prevResult = _class_private_field_get(this, _currentResult);
-              var nextResult = this.createResult(_class_private_field_get(this, _currentQuery), this.options);
-              _class_private_field_set(this, _currentResultState, _class_private_field_get(this, _currentQuery).state);
-              _class_private_field_set(this, _currentResultOptions, this.options);
-              if (_class_private_field_get(this, _currentResultState).data !== void 0) {
-                _class_private_field_set(this, _lastQueryWithDefinedData, _class_private_field_get(this, _currentQuery));
-              }
-              if (shallowEqualObjects(nextResult, prevResult)) {
-                return;
-              }
-              _class_private_field_set(this, _currentResult, nextResult);
-              var defaultNotifyOptions = {};
-              var shouldNotifyListeners = () => {
-                if (!prevResult) {
-                  return true;
-                }
-                var { notifyOnChangeProps } = this.options;
-                var notifyOnChangePropsValue = typeof notifyOnChangeProps === "function" ? notifyOnChangeProps() : notifyOnChangeProps;
-                if (notifyOnChangePropsValue === "all" || !notifyOnChangePropsValue && !_class_private_field_get(this, _trackedProps).size) {
-                  return true;
-                }
-                var includedProps = new Set(notifyOnChangePropsValue ?? _class_private_field_get(this, _trackedProps));
-                if (this.options.throwOnError) {
-                  includedProps.add("error");
-                }
-                return Object.keys(_class_private_field_get(this, _currentResult)).some((key) => {
-                  var typedKey = key;
-                  var changed = _class_private_field_get(this, _currentResult)[typedKey] !== prevResult[typedKey];
-                  return changed && includedProps.has(typedKey);
-                });
-              };
-              if (notifyOptions?.listeners !== false && shouldNotifyListeners()) {
-                defaultNotifyOptions.listeners = true;
-              }
-              _class_private_method_get(this, _notify, notify).call(this, {
-                ...defaultNotifyOptions,
-                ...notifyOptions
-              });
-            }
-          },
-          {
-            key: "onQueryUpdate",
-            value: function onQueryUpdate() {
-              this.updateResult();
-              if (this.hasListeners()) {
-                _class_private_method_get(this, _updateTimers, updateTimers).call(this);
-              }
-            }
-          }
-        ]);
-        return _class5;
-      }(Subscribable), _class3);
-    }
-  });
-
-  // node_modules/.pnpm/@tanstack+query-core@5.51.21/node_modules/@tanstack/query-core/build/modern/mutationObserver.js
-  function updateResult() {
-    var state = _class_private_field_get(this, _currentMutation)?.state ?? getDefaultState2();
-    _class_private_field_set(this, _currentResult2, {
-      ...state,
-      isPending: state.status === "pending",
-      isSuccess: state.status === "success",
-      isError: state.status === "error",
-      isIdle: state.status === "idle",
-      mutate: this.mutate,
-      reset: this.reset
-    });
-  }
-  function notify2(action) {
-    notifyManager.batch(() => {
-      if (_class_private_field_get(this, _mutateOptions) && this.hasListeners()) {
-        var variables = _class_private_field_get(this, _currentResult2).variables;
-        var context = _class_private_field_get(this, _currentResult2).context;
-        if (action?.type === "success") {
-          _class_private_field_get(this, _mutateOptions).onSuccess?.(action.data, variables, context);
-          _class_private_field_get(this, _mutateOptions).onSettled?.(action.data, null, variables, context);
-        } else if (action?.type === "error") {
-          _class_private_field_get(this, _mutateOptions).onError?.(action.error, variables, context);
-          _class_private_field_get(this, _mutateOptions).onSettled?.(void 0, action.error, variables, context);
-        }
-      }
-      this.listeners.forEach((listener) => {
-        listener(_class_private_field_get(this, _currentResult2));
-      });
-    });
-  }
-  var _client2, _currentResult2, _currentMutation, _mutateOptions, _updateResult, _notify2, _class4, MutationObserver;
-  var init_mutationObserver = __esm({
-    "node_modules/.pnpm/@tanstack+query-core@5.51.21/node_modules/@tanstack/query-core/build/modern/mutationObserver.js"() {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_assert_this_initialized();
-      init_class_call_check();
-      init_class_private_field_get();
-      init_class_private_field_init();
-      init_class_private_field_set();
-      init_class_private_method_get();
-      init_class_private_method_init();
-      init_create_class();
-      init_inherits();
-      init_create_super();
-      init_mutation();
-      init_notifyManager();
-      init_subscribable();
-      init_utils2();
-      MutationObserver = (_client2 = /* @__PURE__ */ new WeakMap(), _currentResult2 = /* @__PURE__ */ new WeakMap(), _currentMutation = /* @__PURE__ */ new WeakMap(), _mutateOptions = /* @__PURE__ */ new WeakMap(), _updateResult = /* @__PURE__ */ new WeakSet(), _notify2 = /* @__PURE__ */ new WeakSet(), _class4 = /* @__PURE__ */ function(Subscribable2) {
-        "use strict";
-        _inherits(_class5, Subscribable2);
-        var _super = _create_super(_class5);
-        function _class5(client, options) {
-          _class_call_check(this, _class5);
-          var _this;
-          _this = _super.call(this);
-          _class_private_method_init(_assert_this_initialized(_this), _updateResult);
-          _class_private_method_init(_assert_this_initialized(_this), _notify2);
-          _class_private_field_init(_assert_this_initialized(_this), _client2, {
-            writable: true,
-            value: void 0
-          });
-          _class_private_field_init(_assert_this_initialized(_this), _currentResult2, {
-            writable: true,
-            value: void 0
-          });
-          _class_private_field_init(_assert_this_initialized(_this), _currentMutation, {
-            writable: true,
-            value: void 0
-          });
-          _class_private_field_init(_assert_this_initialized(_this), _mutateOptions, {
-            writable: true,
-            value: void 0
-          });
-          _class_private_field_set(_assert_this_initialized(_this), _client2, client);
-          _this.setOptions(options);
-          _this.bindMethods();
-          _class_private_method_get(_this, _updateResult, updateResult).call(_assert_this_initialized(_this));
-          return _this;
-        }
-        _create_class(_class5, [
-          {
-            key: "bindMethods",
-            value: function bindMethods() {
-              this.mutate = this.mutate.bind(this);
-              this.reset = this.reset.bind(this);
-            }
-          },
-          {
-            key: "setOptions",
-            value: function setOptions(options) {
-              var prevOptions = this.options;
-              this.options = _class_private_field_get(this, _client2).defaultMutationOptions(options);
-              if (!shallowEqualObjects(this.options, prevOptions)) {
-                _class_private_field_get(this, _client2).getMutationCache().notify({
-                  type: "observerOptionsUpdated",
-                  mutation: _class_private_field_get(this, _currentMutation),
-                  observer: this
-                });
-              }
-              if (prevOptions?.mutationKey && this.options.mutationKey && hashKey(prevOptions.mutationKey) !== hashKey(this.options.mutationKey)) {
-                this.reset();
-              } else if (_class_private_field_get(this, _currentMutation)?.state.status === "pending") {
-                _class_private_field_get(this, _currentMutation).setOptions(this.options);
-              }
-            }
-          },
-          {
-            key: "onUnsubscribe",
-            value: function onUnsubscribe() {
-              if (!this.hasListeners()) {
-                _class_private_field_get(this, _currentMutation)?.removeObserver(this);
-              }
-            }
-          },
-          {
-            key: "onMutationUpdate",
-            value: function onMutationUpdate(action) {
-              _class_private_method_get(this, _updateResult, updateResult).call(this);
-              _class_private_method_get(this, _notify2, notify2).call(this, action);
-            }
-          },
-          {
-            key: "getCurrentResult",
-            value: function getCurrentResult() {
-              return _class_private_field_get(this, _currentResult2);
-            }
-          },
-          {
-            key: "reset",
-            value: function reset() {
-              _class_private_field_get(this, _currentMutation)?.removeObserver(this);
-              _class_private_field_set(this, _currentMutation, void 0);
-              _class_private_method_get(this, _updateResult, updateResult).call(this);
-              _class_private_method_get(this, _notify2, notify2).call(this);
-            }
-          },
-          {
-            key: "mutate",
-            value: function mutate(variables, options) {
-              _class_private_field_set(this, _mutateOptions, options);
-              _class_private_field_get(this, _currentMutation)?.removeObserver(this);
-              _class_private_field_set(this, _currentMutation, _class_private_field_get(this, _client2).getMutationCache().build(_class_private_field_get(this, _client2), this.options));
-              _class_private_field_get(this, _currentMutation).addObserver(this);
-              return _class_private_field_get(this, _currentMutation).execute(variables);
-            }
-          }
-        ]);
-        return _class5;
-      }(Subscribable), _class4);
-    }
-  });
-
-  // node_modules/.pnpm/@tanstack+query-core@5.51.21/node_modules/@tanstack/query-core/build/modern/types.js
-  var init_types3 = __esm({
-    "node_modules/.pnpm/@tanstack+query-core@5.51.21/node_modules/@tanstack/query-core/build/modern/types.js"() {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-    }
-  });
-
-  // node_modules/.pnpm/@tanstack+query-core@5.51.21/node_modules/@tanstack/query-core/build/modern/index.js
-  var init_modern = __esm({
-    "node_modules/.pnpm/@tanstack+query-core@5.51.21/node_modules/@tanstack/query-core/build/modern/index.js"() {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_queryClient();
-      init_queryObserver();
-      init_mutationObserver();
-      init_notifyManager();
-      init_types3();
-    }
-  });
-
-  // node_modules/.pnpm/@tanstack+react-query@5.51.23_react@18.3.1/node_modules/@tanstack/react-query/build/modern/types.js
-  var init_types4 = __esm({
-    "node_modules/.pnpm/@tanstack+react-query@5.51.23_react@18.3.1/node_modules/@tanstack/react-query/build/modern/types.js"() {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-    }
-  });
-
-  // node_modules/.pnpm/@tanstack+react-query@5.51.23_react@18.3.1/node_modules/@tanstack/react-query/build/modern/QueryClientProvider.js
-  var React3, QueryClientContext, useQueryClient, QueryClientProvider;
-  var init_QueryClientProvider = __esm({
-    "node_modules/.pnpm/@tanstack+react-query@5.51.23_react@18.3.1/node_modules/@tanstack/react-query/build/modern/QueryClientProvider.js"() {
-      "use client";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      React3 = __toESM(require_react(), 1);
-      init_jsxRuntime();
-      QueryClientContext = React3.createContext(void 0);
-      useQueryClient = (queryClient2) => {
-        var client = React3.useContext(QueryClientContext);
-        if (queryClient2) {
-          return queryClient2;
-        }
-        if (!client) {
-          throw new Error("No QueryClient set, use QueryClientProvider to set one");
-        }
-        return client;
-      };
-      QueryClientProvider = ({ client, children }) => {
-        React3.useEffect(() => {
-          client.mount();
-          return () => {
-            client.unmount();
-          };
-        }, [
-          client
-        ]);
-        return /* @__PURE__ */ jsx(QueryClientContext.Provider, {
-          value: client,
-          children
-        });
-      };
-    }
-  });
-
-  // node_modules/.pnpm/@tanstack+react-query@5.51.23_react@18.3.1/node_modules/@tanstack/react-query/build/modern/isRestoring.js
-  var React4, IsRestoringContext, useIsRestoring, IsRestoringProvider;
-  var init_isRestoring = __esm({
-    "node_modules/.pnpm/@tanstack+react-query@5.51.23_react@18.3.1/node_modules/@tanstack/react-query/build/modern/isRestoring.js"() {
-      "use client";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      React4 = __toESM(require_react(), 1);
-      IsRestoringContext = React4.createContext(false);
-      useIsRestoring = () => React4.useContext(IsRestoringContext);
-      IsRestoringProvider = IsRestoringContext.Provider;
-    }
-  });
-
-  // node_modules/.pnpm/@tanstack+react-query@5.51.23_react@18.3.1/node_modules/@tanstack/react-query/build/modern/QueryErrorResetBoundary.js
-  function createValue() {
-    var isReset = false;
-    return {
-      clearReset: () => {
-        isReset = false;
-      },
-      reset: () => {
-        isReset = true;
-      },
-      isReset: () => {
-        return isReset;
-      }
-    };
-  }
-  var React5, QueryErrorResetBoundaryContext, useQueryErrorResetBoundary;
-  var init_QueryErrorResetBoundary = __esm({
-    "node_modules/.pnpm/@tanstack+react-query@5.51.23_react@18.3.1/node_modules/@tanstack/react-query/build/modern/QueryErrorResetBoundary.js"() {
-      "use client";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      React5 = __toESM(require_react(), 1);
-      init_jsxRuntime();
-      QueryErrorResetBoundaryContext = React5.createContext(createValue());
-      useQueryErrorResetBoundary = () => React5.useContext(QueryErrorResetBoundaryContext);
-    }
-  });
-
-  // node_modules/.pnpm/@tanstack+react-query@5.51.23_react@18.3.1/node_modules/@tanstack/react-query/build/modern/utils.js
-  function shouldThrowError(throwError, params) {
-    if (typeof throwError === "function") {
-      return throwError(...params);
-    }
-    return !!throwError;
-  }
-  function noop2() {
-  }
-  var init_utils3 = __esm({
-    "node_modules/.pnpm/@tanstack+react-query@5.51.23_react@18.3.1/node_modules/@tanstack/react-query/build/modern/utils.js"() {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-    }
-  });
-
-  // node_modules/.pnpm/@tanstack+react-query@5.51.23_react@18.3.1/node_modules/@tanstack/react-query/build/modern/errorBoundaryUtils.js
-  var React6, ensurePreventErrorBoundaryRetry, useClearResetErrorBoundary, getHasError;
-  var init_errorBoundaryUtils = __esm({
-    "node_modules/.pnpm/@tanstack+react-query@5.51.23_react@18.3.1/node_modules/@tanstack/react-query/build/modern/errorBoundaryUtils.js"() {
-      "use client";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      React6 = __toESM(require_react(), 1);
-      init_utils3();
-      ensurePreventErrorBoundaryRetry = (options, errorResetBoundary) => {
-        if (options.suspense || options.throwOnError) {
-          if (!errorResetBoundary.isReset()) {
-            options.retryOnMount = false;
-          }
-        }
-      };
-      useClearResetErrorBoundary = (errorResetBoundary) => {
-        React6.useEffect(() => {
-          errorResetBoundary.clearReset();
-        }, [
-          errorResetBoundary
-        ]);
-      };
-      getHasError = ({ result, errorResetBoundary, throwOnError, query }) => {
-        return result.isError && !errorResetBoundary.isReset() && !result.isFetching && query && shouldThrowError(throwOnError, [
-          result.error,
-          query
-        ]);
-      };
-    }
-  });
-
-  // node_modules/.pnpm/@tanstack+react-query@5.51.23_react@18.3.1/node_modules/@tanstack/react-query/build/modern/suspense.js
-  var ensureSuspenseTimers, shouldSuspend, fetchOptimistic;
-  var init_suspense = __esm({
-    "node_modules/.pnpm/@tanstack+react-query@5.51.23_react@18.3.1/node_modules/@tanstack/react-query/build/modern/suspense.js"() {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      ensureSuspenseTimers = (defaultedOptions) => {
-        if (defaultedOptions.suspense) {
-          if (typeof defaultedOptions.staleTime !== "number") {
-            defaultedOptions.staleTime = 1e3;
-          }
-          if (typeof defaultedOptions.gcTime === "number") {
-            defaultedOptions.gcTime = Math.max(defaultedOptions.gcTime, 1e3);
-          }
-        }
-      };
-      shouldSuspend = (defaultedOptions, result) => defaultedOptions?.suspense && result.isPending;
-      fetchOptimistic = (defaultedOptions, observer, errorResetBoundary) => observer.fetchOptimistic(defaultedOptions).catch(() => {
-        errorResetBoundary.clearReset();
-      });
-    }
-  });
-
-  // node_modules/.pnpm/@tanstack+react-query@5.51.23_react@18.3.1/node_modules/@tanstack/react-query/build/modern/useBaseQuery.js
-  function useBaseQuery(options, Observer, queryClient2) {
-    if (true) {
-      if (typeof options !== "object" || Array.isArray(options)) {
-        throw new Error('Bad argument type. Starting with v5, only the "Object" form is allowed when calling query related functions. Please use the error stack to find the culprit call. More info here: https://tanstack.com/query/latest/docs/react/guides/migrating-to-v5#supports-a-single-signature-one-object');
-      }
-    }
-    var client = useQueryClient(queryClient2);
-    var isRestoring = useIsRestoring();
-    var errorResetBoundary = useQueryErrorResetBoundary();
-    var defaultedOptions = client.defaultQueryOptions(options);
-    client.getDefaultOptions().queries?._experimental_beforeQuery?.(defaultedOptions);
-    defaultedOptions._optimisticResults = isRestoring ? "isRestoring" : "optimistic";
-    ensureSuspenseTimers(defaultedOptions);
-    ensurePreventErrorBoundaryRetry(defaultedOptions, errorResetBoundary);
-    useClearResetErrorBoundary(errorResetBoundary);
-    var [observer] = React7.useState(() => new Observer(client, defaultedOptions));
-    var result = observer.getOptimisticResult(defaultedOptions);
-    React7.useSyncExternalStore(React7.useCallback((onStoreChange) => {
-      var unsubscribe = isRestoring ? () => void 0 : observer.subscribe(notifyManager.batchCalls(onStoreChange));
-      observer.updateResult();
-      return unsubscribe;
-    }, [
-      observer,
-      isRestoring
-    ]), () => observer.getCurrentResult(), () => observer.getCurrentResult());
-    React7.useEffect(() => {
-      observer.setOptions(defaultedOptions, {
-        listeners: false
-      });
-    }, [
-      defaultedOptions,
-      observer
-    ]);
-    if (shouldSuspend(defaultedOptions, result)) {
-      throw fetchOptimistic(defaultedOptions, observer, errorResetBoundary);
-    }
-    if (getHasError({
-      result,
-      errorResetBoundary,
-      throwOnError: defaultedOptions.throwOnError,
-      query: client.getQueryCache().get(defaultedOptions.queryHash)
-    })) {
-      throw result.error;
-    }
-    ;
-    client.getDefaultOptions().queries?._experimental_afterQuery?.(defaultedOptions, result);
-    return !defaultedOptions.notifyOnChangeProps ? observer.trackResult(result) : result;
-  }
-  var React7;
-  var init_useBaseQuery = __esm({
-    "node_modules/.pnpm/@tanstack+react-query@5.51.23_react@18.3.1/node_modules/@tanstack/react-query/build/modern/useBaseQuery.js"() {
-      "use client";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      React7 = __toESM(require_react(), 1);
-      init_modern();
-      init_QueryErrorResetBoundary();
-      init_QueryClientProvider();
-      init_isRestoring();
-      init_errorBoundaryUtils();
-      init_suspense();
-    }
-  });
-
-  // node_modules/.pnpm/@tanstack+react-query@5.51.23_react@18.3.1/node_modules/@tanstack/react-query/build/modern/useQuery.js
-  function useQuery(options, queryClient2) {
-    return useBaseQuery(options, QueryObserver, queryClient2);
-  }
-  var init_useQuery = __esm({
-    "node_modules/.pnpm/@tanstack+react-query@5.51.23_react@18.3.1/node_modules/@tanstack/react-query/build/modern/useQuery.js"() {
-      "use client";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_modern();
-      init_useBaseQuery();
-    }
-  });
-
-  // node_modules/.pnpm/@tanstack+react-query@5.51.23_react@18.3.1/node_modules/@tanstack/react-query/build/modern/useMutation.js
-  function useMutation(options, queryClient2) {
-    var client = useQueryClient(queryClient2);
-    var [observer] = React8.useState(() => new MutationObserver(client, options));
-    React8.useEffect(() => {
-      observer.setOptions(options);
-    }, [
-      observer,
-      options
-    ]);
-    var result = React8.useSyncExternalStore(React8.useCallback((onStoreChange) => observer.subscribe(notifyManager.batchCalls(onStoreChange)), [
-      observer
-    ]), () => observer.getCurrentResult(), () => observer.getCurrentResult());
-    var mutate = React8.useCallback((variables, mutateOptions) => {
-      observer.mutate(variables, mutateOptions).catch(noop2);
-    }, [
-      observer
-    ]);
-    if (result.error && shouldThrowError(observer.options.throwOnError, [
-      result.error
-    ])) {
-      throw result.error;
-    }
-    return {
-      ...result,
-      mutate,
-      mutateAsync: result.mutate
-    };
-  }
-  var React8;
-  var init_useMutation = __esm({
-    "node_modules/.pnpm/@tanstack+react-query@5.51.23_react@18.3.1/node_modules/@tanstack/react-query/build/modern/useMutation.js"() {
-      "use client";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      React8 = __toESM(require_react(), 1);
-      init_modern();
-      init_QueryClientProvider();
-      init_utils3();
-    }
-  });
-
-  // node_modules/.pnpm/@tanstack+react-query@5.51.23_react@18.3.1/node_modules/@tanstack/react-query/build/modern/index.js
-  var init_modern2 = __esm({
-    "node_modules/.pnpm/@tanstack+react-query@5.51.23_react@18.3.1/node_modules/@tanstack/react-query/build/modern/index.js"() {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_modern();
-      init_types4();
-      init_useQuery();
-      init_QueryClientProvider();
-      init_useMutation();
-    }
-  });
-
-  // src/core/ui/settings/pages/PluginBrowser/index.tsx
-  var PluginBrowser_exports = {};
-  __export(PluginBrowser_exports, {
-    default: () => PluginBrowser
-  });
-  function arrayFromAsync(iterableOrArrayLike) {
-    return _arrayFromAsync.apply(this, arguments);
-  }
-  function _arrayFromAsync() {
-    _arrayFromAsync = _async_to_generator(function* (iterableOrArrayLike) {
-      var arr = [];
-      {
-        var _iteratorAbruptCompletion = false, _didIteratorError = false, _iteratorError;
-        try {
-          for (var _iterator = _async_iterator(iterableOrArrayLike), _step; _iteratorAbruptCompletion = !(_step = yield _iterator.next()).done; _iteratorAbruptCompletion = false) {
-            var _value = _step.value;
-            var element = _value;
-            arr.push(element);
-          }
-        } catch (err) {
-          _didIteratorError = true;
-          _iteratorError = err;
-        } finally {
-          try {
-            if (_iteratorAbruptCompletion && _iterator.return != null) {
-              yield _iterator.return();
-            }
-          } finally {
-            if (_didIteratorError) {
-              throw _iteratorError;
-            }
-          }
-        }
-      }
-      return arr;
-    });
-    return _arrayFromAsync.apply(this, arguments);
-  }
-  function fetchManifest(repoURL, id) {
-    return _fetchManifest.apply(this, arguments);
-  }
-  function _fetchManifest() {
-    _fetchManifest = _async_to_generator(function* (repoURL, id) {
-      var url2 = new URL(`plugins/${id}/manifest.json`, repoURL);
-      var data = yield safeFetch(url2).then((d) => d.json());
-      queryClient.setQueryData([
-        "plugin-manifest-dist",
-        {
-          id
-        }
-      ], data);
-      return data;
-    });
-    return _fetchManifest.apply(this, arguments);
-  }
-  function getManifests(repoUrl) {
-    return _getManifests.apply(this, arguments);
-  }
-  function _getManifests() {
-    _getManifests = _wrap_async_generator(function* (repoUrl) {
-      var rawResponse = yield _await_async_generator(safeFetch(repoUrl));
-      var pluginIds = Object.keys(yield _await_async_generator(rawResponse.json()));
-      for (var idChunks of chunk(pluginIds, 5)) {
-        var manifests = idChunks.map((id) => fetchManifest(OFFICIAL_PLUGINS_REPO_URL, id));
-        for (var manifest of manifests) {
-          yield yield _await_async_generator(manifest);
-        }
-      }
-    });
-    return _getManifests.apply(this, arguments);
-  }
-  function InstallButton(props) {
-    var [installed, setInstalled] = (0, import_react3.useState)(isPluginInstalled(props.id));
-    var installationState = useMutation({
-      mutationFn: function() {
-        var _ref = _async_to_generator(function* ({ install }) {
-          yield (install ? installPlugin : uninstallPlugin)(props.id, true);
-        });
-        return function(_) {
-          return _ref.apply(this, arguments);
-        };
-      }(),
-      onSettled() {
-        setInstalled(isPluginInstalled(props.id));
-      },
-      onError(error) {
-        showToast(error instanceof Error ? error.message : String(error));
-      }
-    });
-    return /* @__PURE__ */ jsx(Button, {
-      size: "sm",
-      loading: installationState.isPending,
-      text: !installed ? "Install" : "Uninstall",
-      onPress: () => installationState.mutate({
-        install: !installed
-      }),
-      variant: !installed ? "primary" : "destructive",
-      icon: findAssetId(!installed ? "DownloadIcon" : "TrashIcon")
-    });
-  }
-  function TrailingButtons(props) {
-    return /* @__PURE__ */ jsxs(Stack, {
-      spacing: 8,
-      direction: "horizontal",
-      children: [
-        /* @__PURE__ */ jsx(IconButton, {
-          size: "sm",
-          onPress: () => {
-          },
-          variant: "secondary",
-          icon: findAssetId("CircleInformationIcon")
-        }),
-        /* @__PURE__ */ jsx(InstallButton, {
-          id: props.id
-        })
-      ]
-    });
-  }
-  function PluginCard2(props) {
-    var { isPending, error, data: plugin } = useQuery({
-      queryKey: [
-        "plugin-manifest-dist",
-        {
-          id: props.id
-        }
-      ],
-      queryFn: () => fetchManifest(props.repoUrl, props.id)
-    });
-    return /* @__PURE__ */ jsxs(Card, {
-      children: [
-        !plugin && /* @__PURE__ */ jsx(import_react_native15.View, {
-          style: {
-            justifyContent: "center",
-            alignItems: "center"
-          },
-          children: /* @__PURE__ */ jsxs(Text, {
-            color: "text-muted",
-            variant: "heading-lg/semibold",
-            children: [
-              isPending && "Loading...",
-              error && `An error has occured while fetching plugin: ${error.message}`
-            ]
-          })
-        }),
-        plugin && /* @__PURE__ */ jsxs(Stack, {
-          spacing: 16,
-          children: [
-            /* @__PURE__ */ jsxs(import_react_native15.View, {
-              style: {
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center"
-              },
-              children: [
-                /* @__PURE__ */ jsxs(import_react_native15.View, {
-                  style: {
-                    flexShrink: 1
-                  },
-                  children: [
-                    /* @__PURE__ */ jsx(Text, {
-                      numberOfLines: 1,
-                      variant: "heading-lg/semibold",
-                      children: plugin.name
-                    }),
-                    /* @__PURE__ */ jsxs(Text, {
-                      variant: "text-md/semibold",
-                      color: "text-muted",
-                      children: [
-                        "by ",
-                        plugin.authors.map((a) => typeof a === "string" ? a : a.name).join(", ")
-                      ]
-                    })
-                  ]
-                }),
-                /* @__PURE__ */ jsx(import_react_native15.View, {
-                  children: /* @__PURE__ */ jsx(TrailingButtons, {
-                    id: props.id
-                  })
-                })
-              ]
-            }),
-            /* @__PURE__ */ jsx(Text, {
-              variant: "text-md/medium",
-              children: plugin.description
-            })
-          ]
-        })
-      ]
-    });
-  }
-  function BrowserPage() {
-    var { data, error, isPending, refetch } = useQuery({
-      queryKey: [
-        "plugins-repo-fetch"
-      ],
-      queryFn: () => arrayFromAsync(getManifests(OFFICIAL_PLUGINS_REPO_URL))
-    });
-    if (error) {
-      return /* @__PURE__ */ jsx(import_react_native15.View, {
-        style: {
-          flex: 1,
-          paddingHorizontal: 8,
-          justifyContent: "center",
-          alignItems: "center"
-        },
-        children: /* @__PURE__ */ jsxs(Card, {
-          style: {
-            gap: 8
-          },
-          children: [
-            /* @__PURE__ */ jsx(Text, {
-              style: {
-                textAlign: "center"
-              },
-              variant: "heading-lg/bold",
-              children: "An error occured while fetching the repository!"
-            }),
-            /* @__PURE__ */ jsx(Text, {
-              style: {
-                textAlign: "center"
-              },
-              variant: "text-sm/medium",
-              color: "text-muted",
-              children: error instanceof Error ? error.message : String(error)
-            }),
-            /* @__PURE__ */ jsx(Button, {
-              size: "lg",
-              text: "Refetch",
-              onPress: refetch,
-              icon: findAssetId("RetryIcon")
-            })
-          ]
-        })
-      });
-    }
-    return /* @__PURE__ */ jsx(FlashList, {
-      data,
-      refreshing: isPending,
-      onRefresh: refetch,
-      estimatedItemSize: 136,
-      contentContainerStyle: {
-        paddingBottom: 90,
-        paddingHorizontal: 5
-      },
-      renderItem: ({ item: manifest }) => /* @__PURE__ */ jsx(import_react_native15.View, {
-        style: {
-          paddingVertical: 6,
-          paddingHorizontal: 8
-        },
-        children: /* @__PURE__ */ jsx(PluginCard2, {
-          repoUrl: OFFICIAL_PLUGINS_REPO_URL,
-          id: manifest.id,
-          manifest
-        })
-      })
-    });
-  }
-  function PluginBrowser() {
-    return /* @__PURE__ */ jsx(QueryClientProvider, {
-      client: queryClient,
-      children: /* @__PURE__ */ jsx(BrowserPage, {})
-    });
-  }
-  var import_react3, import_react_native15, queryClient;
-  var init_PluginBrowser = __esm({
-    "src/core/ui/settings/pages/PluginBrowser/index.tsx"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_async_iterator();
-      init_async_to_generator();
-      init_await_async_generator();
-      init_wrap_async_generator();
-      init_jsxRuntime();
-      init_assets();
-      init_plugins4();
-      init_toasts();
-      init_utils();
-      init_constants();
-      init_components();
-      init_modern2();
-      init_dist();
-      import_react3 = __toESM(require_react());
-      import_react_native15 = __toESM(require_react_native());
-      queryClient = new QueryClient();
-    }
-  });
-
-  // src/core/ui/settings/pages/Plugins/index.tsx
-  var Plugins_exports = {};
-  __export(Plugins_exports, {
-    default: () => Plugins
-  });
-  function navigateToPluginBrowser(navigation2) {
-    navigation2.push("BUNNY_CUSTOM_PAGE", {
-      title: "Plugin Browser",
-      render: React.lazy(() => Promise.resolve().then(() => (init_PluginBrowser(), PluginBrowser_exports)))
-    });
-  }
-  function PluginPage(props) {
-    var items = props.useItems();
-    return /* @__PURE__ */ jsx(AddonPage, {
-      card: PluginCard,
-      title: Strings.PLUGINS,
-      searchKeywords: [
-        "name",
-        "description",
-        (p) => p.authors?.map((a) => typeof a === "string" ? a : a.name).join()
-      ],
-      safeModeMessage: Strings.SAFE_MODE_NOTICE_PLUGINS,
-      items,
-      ...props
-    });
-  }
-  function Plugins() {
-    useProxy(settings);
-    var navigation2 = NavigationNative.useNavigation();
-    var { width: pageWidth } = (0, import_react_native16.useWindowDimensions)();
-    var state = useSegmentedControlState({
-      pageWidth,
-      items: [
-        {
-          label: "Vendetta",
-          id: "vendetta-plugins",
-          page: /* @__PURE__ */ jsx(PluginPage, {
-            useItems: () => useProxy(VdPluginManager.plugins) && Object.values(VdPluginManager.plugins),
-            resolveItem: unifyVdPlugin,
-            fetchFunction: (url2) => VdPluginManager.installPlugin(url2)
-          })
-        },
-        {
-          label: "Bunny",
-          id: "bunny-plugins",
-          page: /* @__PURE__ */ jsx(PluginPage, {
-            useItems: () => (useProxy2(pluginSettings), [
-              ...registeredPlugins.values()
-            ].filter((p) => isPluginInstalled(p.id))),
-            resolveItem: unifyBunnyPlugin,
-            ListHeaderComponent: () => /* @__PURE__ */ jsx(import_react_native16.View, {
-              style: {
-                marginBottom: 10
-              },
-              children: /* @__PURE__ */ jsx(HelpMessage, {
-                messageType: 0,
-                children: "Bunny plugin system is in no way ready, try not getting yourself burnt \u26A0\uFE0F"
-              })
-            }),
-            ListFooterComponent: () => /* @__PURE__ */ jsxs(import_react_native16.View, {
-              style: {
-                alignItems: "center",
-                justifyContent: "center",
-                paddingTop: 16,
-                gap: 12
-              },
-              children: [
-                /* @__PURE__ */ jsx(Text, {
-                  variant: "heading-lg/bold",
-                  children: "Looking for more?"
-                }),
-                /* @__PURE__ */ jsx(Button, {
-                  size: "lg",
-                  text: "Browse plugins",
-                  icon: findAssetId("discover"),
-                  onPress: () => navigateToPluginBrowser(navigation2)
-                })
-              ]
-            })
-          })
-        }
-      ]
-    });
-    return /* @__PURE__ */ jsxs(import_react_native16.View, {
-      style: {
-        alignItems: "center",
-        justifyContent: "center",
-        height: "100%"
-      },
-      children: [
-        /* @__PURE__ */ jsx(import_react_native16.View, {
-          style: {
-            padding: 8,
-            paddingBottom: 0
-          },
-          children: /* @__PURE__ */ jsx(SegmentedControl, {
-            state
-          })
-        }),
-        /* @__PURE__ */ jsx(SegmentedControlPages, {
-          state
-        })
-      ]
-    });
-  }
-  var import_react_native16;
-  var init_Plugins = __esm({
-    "src/core/ui/settings/pages/Plugins/index.tsx"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_jsxRuntime();
-      init_i18n();
-      init_AddonPage();
-      init_PluginCard();
-      init_plugins();
-      init_assets();
-      init_settings();
-      init_storage();
-      init_new();
-      init_plugins4();
-      init_common();
-      init_components();
-      import_react_native16 = __toESM(require_react_native());
-      init_bunny();
-      init_vendetta();
-    }
-  });
-
-  // src/core/ui/components/AddonCard.tsx
-  function AddonCard(props) {
-    var styles3 = useStyles2();
-    return /* @__PURE__ */ jsx(Card, {
-      children: /* @__PURE__ */ jsxs(Stack, {
-        spacing: 16,
-        children: [
-          /* @__PURE__ */ jsxs(import_react_native17.View, {
-            style: {
-              flexDirection: "row",
-              alignItems: "center"
-            },
-            children: [
-              /* @__PURE__ */ jsxs(import_react_native17.View, {
-                style: styles3.headerLeading,
-                children: [
-                  /* @__PURE__ */ jsx(Text, {
-                    style: styles3.headerLabel,
-                    children: props.headerLabel
-                  }),
-                  props.headerSublabel && /* @__PURE__ */ jsx(Text, {
-                    style: styles3.headerSubtitle,
-                    children: props.headerSublabel
-                  })
-                ]
-              }),
-              /* @__PURE__ */ jsxs(import_react_native17.View, {
-                style: [
-                  styles3.headerTrailing,
-                  {
-                    marginLeft: "auto"
-                  }
-                ],
-                children: [
-                  /* @__PURE__ */ jsxs(import_react_native17.View, {
-                    style: styles3.actions,
-                    children: [
-                      props.overflowActions && /* @__PURE__ */ jsx(IconButton, {
-                        onPress: () => showSimpleActionSheet2({
-                          key: "CardOverflow",
-                          header: {
-                            title: props.overflowTitle,
-                            icon: props.headerIcon && /* @__PURE__ */ jsx(LegacyFormRow.Icon, {
-                              style: {
-                                marginRight: 8
-                              },
-                              source: findAssetId(props.headerIcon)
-                            }),
-                            onClose: () => hideActionSheet()
-                          },
-                          options: props.overflowActions?.map((i) => ({
-                            ...i,
-                            icon: findAssetId(i.icon)
-                          }))
-                        }),
-                        size: "sm",
-                        variant: "secondary",
-                        icon: findAssetId("CircleInformationIcon-primary")
-                      }),
-                      props.actions?.map(({ icon, onPress, disabled }) => /* @__PURE__ */ jsx(IconButton, {
-                        onPress,
-                        disabled,
-                        size: "sm",
-                        variant: "secondary",
-                        icon: findAssetId(icon)
-                      }))
-                    ]
-                  }),
-                  props.toggleType && (props.toggleType === "switch" ? /* @__PURE__ */ jsx(FormSwitch, {
-                    value: props.toggleValue(),
-                    onValueChange: props.onToggleChange
-                  }) : /* @__PURE__ */ jsx(import_react_native17.TouchableOpacity, {
-                    onPress: () => {
-                      props.onToggleChange?.(!props.toggleValue());
-                    },
-                    children: /* @__PURE__ */ jsx(FormRadio, {
-                      selected: props.toggleValue()
-                    })
-                  }))
-                ]
-              })
-            ]
-          }),
-          props.descriptionLabel && /* @__PURE__ */ jsx(Text, {
-            variant: "text-md/medium",
-            children: props.descriptionLabel
-          })
-        ]
-      })
-    });
-  }
-  var import_react_native17, hideActionSheet, showSimpleActionSheet2, useStyles2;
-  var init_AddonCard = __esm({
-    "src/core/ui/components/AddonCard.tsx"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_jsxRuntime();
-      init_assets();
-      init_lazy();
-      init_components();
-      init_wrappers();
-      init_color();
-      init_styles();
-      import_react_native17 = __toESM(require_react_native());
-      ({ hideActionSheet } = lazyDestructure(() => findByProps("openLazy", "hideActionSheet")));
-      ({ showSimpleActionSheet: showSimpleActionSheet2 } = lazyDestructure(() => findByProps("showSimpleActionSheet")));
-      useStyles2 = createStyles({
-        card: {
-          backgroundColor: semanticColors?.CARD_SECONDARY_BG,
-          borderRadius: 12,
-          overflow: "hidden"
-        },
-        header: {
-          padding: 0
-        },
-        headerLeading: {
-          flexDirection: "column",
-          justifyContent: "center",
-          scale: 1.2
-        },
-        headerTrailing: {
-          display: "flex",
-          flexDirection: "row",
-          gap: 15,
-          alignItems: "center"
-        },
-        headerLabel: {
-          ...TextStyleSheet["heading-md/semibold"],
-          color: semanticColors.TEXT_NORMAL
-        },
-        headerSubtitle: {
-          ...TextStyleSheet["text-md/semibold"],
-          color: semanticColors.TEXT_MUTED
-        },
-        descriptionLabel: {
-          ...TextStyleSheet["text-md/semibold"],
-          color: semanticColors.TEXT_NORMAL
-        },
-        actions: {
-          flexDirection: "row-reverse",
-          alignItems: "center",
-          gap: 5
-        },
-        iconStyle: {
-          tintColor: semanticColors.LOGO_PRIMARY,
-          opacity: 0.2,
-          height: 64,
-          width: 64,
-          left: void 0,
-          right: "30%",
-          top: "-10%"
-        }
-      });
-    }
-  });
-
-  // src/core/ui/settings/pages/Themes/ThemeCard.tsx
-  function selectAndApply(value, theme) {
-    try {
-      selectTheme(value ? theme : null);
-      applyTheme(value ? theme : null);
-    } catch (e) {
-      console.error("Error while selectAndApply,", e);
-    }
-  }
-  function ThemeCard({ item: theme }) {
-    useProxy(theme);
-    var [removed, setRemoved] = React.useState(false);
-    if (removed)
-      return null;
-    var { authors } = theme.data;
-    return /* @__PURE__ */ jsx(AddonCard, {
-      headerLabel: theme.data.name,
-      headerSublabel: authors ? `by ${authors.map((i) => i.name).join(", ")}` : "",
-      descriptionLabel: theme.data.description ?? "No description.",
-      toggleType: !settings.safeMode?.enabled ? "radio" : void 0,
-      toggleValue: () => themes[theme.id].selected,
-      onToggleChange: (v) => {
-        selectAndApply(v, theme);
-      },
-      overflowTitle: theme.data.name,
-      overflowActions: [
-        {
-          icon: "ic_sync_24px",
-          label: Strings.REFETCH,
-          onPress: () => {
-            fetchTheme(theme.id, theme.selected).then(() => {
-              showToast(Strings.THEME_REFETCH_SUCCESSFUL, findAssetId("toast_image_saved"));
-            }).catch(() => {
-              showToast(Strings.THEME_REFETCH_FAILED, findAssetId("Small"));
-            });
-          }
-        },
-        {
-          icon: "copy",
-          label: Strings.COPY_URL,
-          onPress: () => {
-            clipboard.setString(theme.id);
-            showToast.showCopyToClipboard();
-          }
-        },
-        {
-          icon: "ic_message_delete",
-          label: Strings.DELETE,
-          isDestructive: true,
-          onPress: () => showConfirmationAlert({
-            title: Strings.HOLD_UP,
-            content: formatString("ARE_YOU_SURE_TO_DELETE_THEME", {
-              name: theme.data.name
-            }),
-            confirmText: Strings.DELETE,
-            cancelText: Strings.CANCEL,
-            confirmColor: ButtonColors.RED,
-            onConfirm: () => {
-              removeTheme(theme.id).then((wasSelected) => {
-                setRemoved(true);
-                if (wasSelected)
-                  selectAndApply(false, theme);
-              }).catch((e) => {
-                showToast(e.message, findAssetId("Small"));
-              });
-            }
-          })
-        }
-      ]
-    });
-  }
-  var init_ThemeCard = __esm({
-    "src/core/ui/settings/pages/Themes/ThemeCard.tsx"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_jsxRuntime();
-      init_i18n();
-      init_AddonCard();
-      init_assets();
-      init_settings();
-      init_storage();
-      init_themes();
-      init_types2();
-      init_common();
-      init_alerts();
-      init_toasts();
-    }
-  });
-
-  // src/core/ui/settings/pages/Themes/index.tsx
-  var Themes_exports = {};
-  __export(Themes_exports, {
-    default: () => Themes
-  });
-  function Themes() {
-    useProxy(settings);
-    useProxy(themes);
-    return /* @__PURE__ */ jsx(AddonPage, {
-      title: Strings.THEMES,
-      searchKeywords: [
-        "manifest.name",
-        "manifest.description",
-        (p) => p.manifest.authors?.map((a) => a.name).join()
-      ],
-      fetchFunction: installTheme,
-      items: Object.values(themes),
-      safeModeMessage: formatString("SAFE_MODE_NOTICE_THEMES", {
-        enabled: Boolean(settings.safeMode?.currentThemeId)
-      }),
-      safeModeExtras: settings.safeMode?.currentThemeId ? /* @__PURE__ */ jsx(Button, {
-        text: Strings.DISABLE_THEME,
-        size: "small",
-        onPress: () => delete settings.safeMode?.currentThemeId,
-        style: {
-          marginTop: 8
-        }
-      }) : void 0,
-      card: ThemeCard
-    });
-  }
-  var init_Themes = __esm({
-    "src/core/ui/settings/pages/Themes/index.tsx"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_jsxRuntime();
-      init_i18n();
-      init_AddonPage();
-      init_ThemeCard();
-      init_settings();
-      init_storage();
-      init_themes();
-      init_components();
-    }
-  });
-
-  // src/lib/fonts/index.ts
-  var fonts_exports = {};
-  __export(fonts_exports, {
-    fonts: () => fonts,
-    installFont: () => installFont,
-    removeFont: () => removeFont,
-    saveFont: () => saveFont,
-    selectFont: () => selectFont,
-    updateFonts: () => updateFonts,
-    validateFont: () => validateFont
-  });
-  function writeFont(font) {
-    return _writeFont.apply(this, arguments);
-  }
-  function _writeFont() {
-    _writeFont = _async_to_generator(function* (font) {
-      if (!font && font !== null)
-        throw new Error("Arg font must be a valid object or null");
-      if (font) {
-        yield writeFile("fonts.json", JSON.stringify(font));
-      } else {
-        yield removeFile("fonts.json");
-      }
-    });
-    return _writeFont.apply(this, arguments);
-  }
-  function validateFont(font) {
-    if (!font || typeof font !== "object")
-      throw new Error("URL returned a null/non-object JSON");
-    if (typeof font.spec !== "number")
-      throw new Error("Invalid font 'spec' number");
-    if (font.spec !== 1)
-      throw new Error("Only fonts which follows spec:1 are supported");
-    var requiredFields = [
-      "name",
-      "main"
-    ];
-    if (requiredFields.some((f) => !font[f]))
-      throw new Error(`Font is missing one of the fields: ${requiredFields}`);
-    if (font.name.startsWith("__"))
-      throw new Error("Font names cannot start with __");
-    if (font.name in fonts)
-      throw new Error(`There is already a font named '${font.name}' installed`);
-  }
-  function saveFont(data) {
-    return _saveFont.apply(this, arguments);
-  }
-  function _saveFont() {
-    _saveFont = _async_to_generator(function* (data, selected = false) {
-      var fontDefJson;
-      if (typeof data === "object" && data.__source)
-        data = data.__source;
-      if (typeof data === "string") {
-        try {
-          fontDefJson = yield (yield safeFetch(data)).json();
-          fontDefJson.__source = data;
-        } catch (e) {
-          throw new Error(`Failed to fetch fonts at ${data}`, {
-            cause: e
-          });
-        }
-      } else {
-        fontDefJson = data;
-      }
-      validateFont(fontDefJson);
-      try {
-        yield Promise.all(Object.entries(fontDefJson.main).map(function() {
-          var _ref = _async_to_generator(function* ([font, url2]) {
-            var ext = url2.split(".").pop();
-            if (ext !== "ttf" && ext !== "otf")
-              ext = "ttf";
-            var path = `downloads/fonts/${fontDefJson.name}/${font}.${ext}`;
-            if (!(yield fileExists(path)))
-              yield downloadFile(url2, path);
-          });
-          return function(_) {
-            return _ref.apply(this, arguments);
-          };
-        }()));
-      } catch (e) {
-        throw new Error("Failed to download font assets", {
-          cause: e
-        });
-      }
-      fonts[fontDefJson.name] = fontDefJson;
-      if (selected)
-        writeFont(fonts[fontDefJson.name]);
-      return fontDefJson;
-    });
-    return _saveFont.apply(this, arguments);
-  }
-  function installFont(url2) {
-    return _installFont.apply(this, arguments);
-  }
-  function _installFont() {
-    _installFont = _async_to_generator(function* (url2, selected = false) {
-      if (typeof url2 !== "string" || Object.values(fonts).some((f) => typeof f === "object" && f.__source === url2)) {
-        throw new Error("Invalid source or font was already installed");
-      }
-      var font = yield saveFont(url2);
-      if (selected)
-        yield selectFont(font.name);
-    });
-    return _installFont.apply(this, arguments);
-  }
-  function selectFont(name) {
-    return _selectFont.apply(this, arguments);
-  }
-  function _selectFont() {
-    _selectFont = _async_to_generator(function* (name) {
-      if (name && !(name in fonts))
-        throw new Error("Selected font does not exist!");
-      if (name) {
-        fonts.__selected = name;
-      } else {
-        delete fonts.__selected;
-      }
-      yield writeFont(name == null ? null : fonts[name]);
-    });
-    return _selectFont.apply(this, arguments);
-  }
-  function removeFont(name) {
-    return _removeFont.apply(this, arguments);
-  }
-  function _removeFont() {
-    _removeFont = _async_to_generator(function* (name) {
-      var selected = fonts.__selected === name;
-      if (selected)
-        yield selectFont(null);
-      delete fonts[name];
-      try {
-        yield clearFolder(`downloads/fonts/${name}`);
-      } catch (e) {
-      }
-    });
-    return _removeFont.apply(this, arguments);
-  }
-  function updateFonts() {
-    return _updateFonts.apply(this, arguments);
-  }
-  function _updateFonts() {
-    _updateFonts = _async_to_generator(function* () {
-      yield awaitStorage(fonts);
-      yield allSettled(Object.keys(fonts).map((name) => saveFont(fonts[name], fonts.__selected === name)));
-    });
-    return _updateFonts.apply(this, arguments);
-  }
-  var fonts;
-  var init_fonts = __esm({
-    "src/lib/fonts/index.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_async_to_generator();
-      init_fs();
-      init_storage();
-      init_utils();
-      fonts = wrapSync(createStorage(createMMKVBackend("BUNNY_FONTS")));
-    }
-  });
-
-  // src/core/ui/settings/pages/Fonts/FontEditor.tsx
-  function guessFontName(urls) {
-    var fileNames = urls.map((url2) => {
-      var { pathname } = new URL(url2);
-      var fileName = pathname.replace(/\.[^/.]+$/, "");
-      return fileName.split("/").pop();
-    }).filter(Boolean);
-    var shortest = fileNames.reduce((shortest2, name) => {
-      return name.length < shortest2.length ? name : shortest2;
-    }, fileNames[0] || "");
-    return shortest?.replace(/-[A-Za-z]*$/, "") || null;
-  }
-  function RevengeFontsExtractor({ fonts: fonts2, setName }) {
-    var currentTheme2 = getCurrentTheme().data;
-    var themeFonts = currentTheme2.fonts;
-    var [fontName, setFontName] = (0, import_react4.useState)(guessFontName(Object.values(themeFonts)));
-    var [error, setError] = (0, import_react4.useState)(void 0);
-    return /* @__PURE__ */ jsxs(import_react_native18.View, {
-      style: {
-        padding: 8,
-        paddingBottom: 16,
-        gap: 12
-      },
-      children: [
-        /* @__PURE__ */ jsx(TextInput, {
-          autoFocus: true,
-          size: "md",
-          label: Strings.FONT_NAME,
-          value: fontName,
-          placeholder: fontName || "Whitney",
-          onChange: setFontName,
-          errorMessage: error,
-          state: error ? "error" : void 0
-        }),
-        /* @__PURE__ */ jsx(Text, {
-          variant: "text-xs/normal",
-          color: "text-muted",
-          children: formatString("THEME_EXTRACTOR_DESC", {
-            fonts: Object.keys(themeFonts).join(Strings.SEPARATOR)
-          })
-        }),
-        /* @__PURE__ */ jsx(Button, {
-          size: "md",
-          variant: "primary",
-          text: Strings.EXTRACT,
-          disabled: !fontName,
-          onPress: () => {
-            if (!fontName)
-              return;
-            try {
-              validateFont({
-                spec: 1,
-                name: fontName,
-                main: themeFonts
-              });
-              setName(fontName);
-              Object.assign(fonts2, themeFonts);
-              actionSheet2.hideActionSheet();
-            } catch (e) {
-              setError(String(e));
-            }
-          }
-        })
-      ]
-    });
-  }
-  function JsonFontImporter({ fonts: fonts2, setName, setSource }) {
-    var [fontLink, setFontLink] = (0, import_react4.useState)("");
-    var [saving, setSaving] = (0, import_react4.useState)(false);
-    var [error, setError] = (0, import_react4.useState)(void 0);
-    return /* @__PURE__ */ jsxs(import_react_native18.View, {
-      style: {
-        padding: 8,
-        paddingBottom: 16,
-        gap: 12
-      },
-      children: [
-        /* @__PURE__ */ jsx(TextInput, {
-          autoFocus: true,
-          size: "md",
-          label: "Font Link",
-          value: fontLink,
-          placeholder: "https://link.to/font/pack.json",
-          onChange: setFontLink,
-          errorMessage: error,
-          state: error ? "error" : void 0
-        }),
-        /* @__PURE__ */ jsx(Button, {
-          size: "md",
-          variant: "primary",
-          text: "Import",
-          disabled: !fontLink || saving,
-          loading: saving,
-          onPress: () => {
-            setSaving(true);
-            _async_to_generator(function* () {
-              var res = yield safeFetch(fontLink, {
-                cache: "no-store"
-              });
-              var json = yield res.json();
-              validateFont(json);
-              setName(json.name);
-              setSource(fontLink);
-              Object.assign(fonts2, json.main);
-            })().then(() => actionSheet2.hideActionSheet()).catch((e) => setError(String(e))).finally(() => setSaving(false));
-          }
-        })
-      ]
-    });
-  }
-  function EntryEditorActionSheet(props) {
-    var [familyName, setFamilyName] = (0, import_react4.useState)(props.name);
-    var [fontUrl, setFontUrl] = (0, import_react4.useState)(props.fontEntries[props.name]);
-    return /* @__PURE__ */ jsxs(import_react_native18.View, {
-      style: {
-        padding: 8,
-        paddingBottom: 16,
-        gap: 12
-      },
-      children: [
-        /* @__PURE__ */ jsx(TextInput, {
-          autoFocus: true,
-          size: "md",
-          label: "Family Name (to override)",
-          value: familyName,
-          placeholder: "ggsans-Bold",
-          onChange: setFamilyName
-        }),
-        /* @__PURE__ */ jsx(TextInput, {
-          size: "md",
-          label: "Font URL",
-          value: fontUrl,
-          placeholder: "https://link.to/the/font.ttf",
-          onChange: setFontUrl
-        }),
-        /* @__PURE__ */ jsx(Button, {
-          size: "md",
-          variant: "primary",
-          text: "Apply",
-          onPress: () => {
-            delete props.fontEntries[props.name];
-            props.fontEntries[familyName] = fontUrl;
-          }
-        })
-      ]
-    });
-  }
-  function promptActionSheet(Component, fontEntries, props) {
-    actionSheet2.openLazy(Promise.resolve({
-      default: () => /* @__PURE__ */ jsx(ErrorBoundary, {
-        children: /* @__PURE__ */ jsxs(ActionSheet, {
-          children: [
-            /* @__PURE__ */ jsx(BottomSheetTitleHeader, {
-              title: "Import Font"
-            }),
-            /* @__PURE__ */ jsx(Component, {
-              fonts: fontEntries,
-              ...props
-            })
-          ]
-        })
-      })
-    }), "FontEditorActionSheet");
-  }
-  function NewEntryRow({ fontEntry }) {
-    var nameRef = (0, import_react4.useRef)();
-    var urlRef = (0, import_react4.useRef)();
-    var [nameSet, setNameSet] = (0, import_react4.useState)(false);
-    var [error, setError] = (0, import_react4.useState)();
-    return /* @__PURE__ */ jsxs(import_react_native18.View, {
-      style: {
-        flexDirection: "row",
-        gap: 8,
-        justifyContent: "flex-start"
-      },
-      children: [
-        /* @__PURE__ */ jsx(import_react_native18.View, {
-          style: {
-            flex: 1
-          },
-          children: /* @__PURE__ */ jsx(TextInput, {
-            isRound: true,
-            size: "md",
-            label: nameSet ? nameRef.current : void 0,
-            placeholder: nameSet ? "https://path.to/the/file.ttf" : "PostScript name (e.g. ggsans-Bold)",
-            leadingIcon: () => nameSet ? null : /* @__PURE__ */ jsx(TableRow.Icon, {
-              source: findAssetId("PlusSmallIcon")
-            }),
-            leadingText: nameSet ? nameRef.current : "",
-            onChange: (text) => (nameSet ? urlRef : nameRef).current = text,
-            errorMessage: error,
-            state: error ? "error" : void 0
-          })
-        }),
-        nameSet && /* @__PURE__ */ jsx(IconButton, {
-          size: "md",
-          variant: "secondary",
-          onPress: () => {
-            nameRef.current = "";
-            setNameSet(false);
-          },
-          icon: findAssetId("TrashIcon")
-        }),
-        /* @__PURE__ */ jsx(IconButton, {
-          size: "md",
-          variant: "primary",
-          onPress: () => {
-            if (!nameSet && nameRef.current) {
-              setNameSet(true);
-            } else if (nameSet && nameRef.current && urlRef.current) {
-              try {
-                var parsedUrl = new URL(urlRef.current);
-                if (!parsedUrl.protocol || !parsedUrl.host) {
-                  throw "Invalid URL";
-                }
-                fontEntry[nameRef.current] = urlRef.current;
-                nameRef.current = void 0;
-                urlRef.current = void 0;
-                setNameSet(false);
-              } catch (e) {
-                setError(String(e));
-              }
-            }
-          },
-          icon: findAssetId(nameSet ? "PlusSmallIcon" : "ArrowLargeRightIcon")
-        })
-      ]
-    });
-  }
-  function FontEditor(props) {
-    var [name, setName] = (0, import_react4.useState)(props.name);
-    var [source, setSource] = (0, import_react4.useState)();
-    var [importing, setIsImporting] = (0, import_react4.useState)(false);
-    var memoEntry = (0, import_react4.useMemo)(() => {
-      return createProxy(props.name ? {
-        ...fonts[props.name].main
-      } : {}).proxy;
-    }, [
-      props.name
-    ]);
-    var fontEntries = useProxy(memoEntry);
-    var navigation2 = NavigationNative.useNavigation();
-    return /* @__PURE__ */ jsx(import_react_native18.ScrollView, {
-      style: {
-        flex: 1
-      },
-      contentContainerStyle: {
-        paddingBottom: 38
-      },
-      children: /* @__PURE__ */ jsxs(Stack, {
-        style: {
-          paddingVertical: 24,
-          paddingHorizontal: 12
-        },
-        spacing: 12,
-        children: [
-          !props.name ? /* @__PURE__ */ jsxs(TableRowGroup, {
-            title: "Import",
-            children: [
-              getCurrentTheme()?.data?.fonts && /* @__PURE__ */ jsx(TableRow, {
-                label: Strings.LABEL_EXTRACT_FONTS_FROM_THEME,
-                subLabel: Strings.DESC_EXTRACT_FONTS_FROM_THEME,
-                icon: /* @__PURE__ */ jsx(TableRow.Icon, {
-                  source: findAssetId("HammerIcon")
-                }),
-                onPress: () => promptActionSheet(RevengeFontsExtractor, fontEntries, {
-                  setName
-                })
-              }),
-              /* @__PURE__ */ jsx(TableRow, {
-                label: "Import font entries from a link",
-                subLabel: "Directly import from a link with a pre-configured JSON file",
-                icon: /* @__PURE__ */ jsx(TableRow.Icon, {
-                  source: findAssetId("LinkIcon")
-                }),
-                onPress: () => promptActionSheet(JsonFontImporter, fontEntries, {
-                  setName,
-                  setSource
-                })
-              })
-            ]
-          }) : /* @__PURE__ */ jsxs(TableRowGroup, {
-            title: "Actions",
-            children: [
-              /* @__PURE__ */ jsx(TableRow, {
-                label: "Refetch fonts from source",
-                icon: /* @__PURE__ */ jsx(TableRow.Icon, {
-                  source: findAssetId("RetryIcon")
-                }),
-                onPress: /* @__PURE__ */ _async_to_generator(function* () {
-                  var ftCopy = {
-                    ...fonts[props.name]
-                  };
-                  yield removeFont(props.name);
-                  yield saveFont(ftCopy);
-                  navigation2.goBack();
-                })
-              }),
-              /* @__PURE__ */ jsx(TableRow, {
-                label: "Delete font pack",
-                icon: /* @__PURE__ */ jsx(TableRow.Icon, {
-                  source: findAssetId("TrashIcon")
-                }),
-                onPress: () => removeFont(props.name).then(() => navigation2.goBack())
-              })
-            ]
-          }),
-          /* @__PURE__ */ jsx(TextInput, {
-            size: "lg",
-            value: name,
-            label: Strings.FONT_NAME,
-            placeholder: "Whitney",
-            onChange: setName
-          }),
-          /* @__PURE__ */ jsxs(TableRowGroup, {
-            title: "Font Entries",
-            children: [
-              Object.entries(fontEntries).map(([name2, url2]) => {
-                return /* @__PURE__ */ jsx(TableRow, {
-                  label: name2,
-                  subLabel: url2,
-                  trailing: /* @__PURE__ */ jsxs(Stack, {
-                    spacing: 2,
-                    direction: "horizontal",
-                    children: [
-                      /* @__PURE__ */ jsx(IconButton, {
-                        size: "sm",
-                        variant: "secondary",
-                        icon: findAssetId("PencilIcon"),
-                        onPress: () => promptActionSheet(EntryEditorActionSheet, fontEntries, {
-                          name: name2,
-                          fontEntries
-                        })
-                      }),
-                      /* @__PURE__ */ jsx(IconButton, {
-                        size: "sm",
-                        variant: "secondary",
-                        icon: findAssetId("TrashIcon"),
-                        onPress: () => delete fontEntries[name2]
-                      })
-                    ]
-                  })
-                });
-              }),
-              /* @__PURE__ */ jsx(TableRow, {
-                label: /* @__PURE__ */ jsx(NewEntryRow, {
-                  fontEntry: fontEntries
-                })
-              })
-            ]
-          }),
-          /* @__PURE__ */ jsx(import_react_native18.View, {
-            style: {
-              flexDirection: "row",
-              justifyContent: "flex-end",
-              bottom: 0,
-              left: 0
-            },
-            children: /* @__PURE__ */ jsx(Button, {
-              size: "lg",
-              loading: importing,
-              disabled: importing || !name || Object.keys(fontEntries).length === 0,
-              variant: "primary",
-              text: props.name ? "Save" : "Import",
-              onPress: /* @__PURE__ */ _async_to_generator(function* () {
-                if (!name)
-                  return;
-                setIsImporting(true);
-                if (!props.name) {
-                  saveFont({
-                    spec: 1,
-                    name,
-                    main: fontEntries,
-                    __source: source
-                  }).then(() => navigation2.goBack()).finally(() => setIsImporting(false));
-                } else {
-                  Object.assign(fonts[props.name], {
-                    name,
-                    main: fontEntries,
-                    __edited: true
-                  });
-                  setIsImporting(false);
-                  navigation2.goBack();
-                }
-              }),
-              icon: findAssetId(props.name ? "toast_image_saved" : "DownloadIcon"),
-              style: {
-                marginLeft: 8
-              }
-            })
-          })
-        ]
-      })
-    });
-  }
-  var import_react4, import_react_native18, actionSheet2;
-  var init_FontEditor = __esm({
-    "src/core/ui/settings/pages/Fonts/FontEditor.tsx"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_async_to_generator();
-      init_jsxRuntime();
-      init_i18n();
-      init_assets();
-      init_storage();
-      init_fonts();
-      init_themes();
-      init_utils();
-      init_common();
-      init_components();
-      init_wrappers();
-      init_components2();
-      import_react4 = __toESM(require_react());
-      import_react_native18 = __toESM(require_react_native());
-      actionSheet2 = findByPropsLazy("hideActionSheet");
-    }
-  });
-
-  // src/metro/index.ts
-  var metro_exports = {};
-  __export(metro_exports, {
-    common: () => common_exports,
-    factories: () => factories_exports,
-    filters: () => filters_exports,
-    findAllExports: () => findAllExports,
-    findAllModule: () => findAllModule,
-    findAllModuleId: () => findAllModuleId,
-    findByDisplayName: () => findByDisplayName,
-    findByDisplayNameAll: () => findByDisplayNameAll,
-    findByDisplayNameLazy: () => findByDisplayNameLazy,
-    findByFilePath: () => findByFilePath,
-    findByFilePathLazy: () => findByFilePathLazy,
-    findByName: () => findByName,
-    findByNameAll: () => findByNameAll,
-    findByNameLazy: () => findByNameLazy,
-    findByProps: () => findByProps,
-    findByPropsAll: () => findByPropsAll,
-    findByPropsLazy: () => findByPropsLazy,
-    findByStoreName: () => findByStoreName,
-    findByStoreNameLazy: () => findByStoreNameLazy,
-    findByTypeName: () => findByTypeName,
-    findByTypeNameAll: () => findByTypeNameAll,
-    findByTypeNameLazy: () => findByTypeNameLazy,
-    findExports: () => findExports,
-    findModule: () => findModule,
-    findModuleId: () => findModuleId,
-    lazy: () => lazy_exports2
-  });
-  var init_metro = __esm({
-    "src/metro/index.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_common();
-      init_factories();
-      init_filters();
-      init_finders();
-      init_lazy2();
-      init_wrappers();
-    }
-  });
-
-  // globals:@shopify/react-native-skia
-  var require_react_native_skia = __commonJS({
-    "globals:@shopify/react-native-skia"(exports, module) {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      module.exports = require_depsModule()["@shopify/react-native-skia"];
-    }
-  });
-
-  // src/core/ui/settings/pages/Fonts/FontCard.tsx
-  function FontPreview({ font }) {
-    var TEXT_NORMAL = useToken(tokens.colors.TEXT_NORMAL);
-    var { fontFamily: fontFamilyList, fontSize } = TextStyleSheet["text-md/medium"];
-    var fontFamily = fontFamilyList.split(/,/g)[0];
-    var typeface = Skia.useFont(font.main[fontFamily])?.getTypeface();
-    var paragraph = (0, import_react5.useMemo)(() => {
-      if (!typeface)
-        return null;
-      var fMgr = SkiaApi.TypefaceFontProvider.Make();
-      fMgr.registerFont(typeface, fontFamily);
-      return SkiaApi.ParagraphBuilder.Make({}, fMgr).pushStyle({
-        color: SkiaApi.Color(TEXT_NORMAL),
-        fontFamilies: [
-          fontFamily
-        ],
-        fontSize
-      }).addText("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.").pop().build();
-    }, [
-      typeface
-    ]);
-    return (
-      // This does not work, actually :woeis:
-      /* @__PURE__ */ jsx(import_react_native19.View, {
-        style: {
-          height: 64
-        },
-        children: typeface ? /* @__PURE__ */ jsx(Skia.Canvas, {
-          style: {
-            height: 64
-          },
-          children: /* @__PURE__ */ jsx(Skia.Paragraph, {
-            paragraph,
-            x: 0,
-            y: 0,
-            width: 300
-          })
-        }) : /* @__PURE__ */ jsx(import_react_native19.View, {
-          style: {
-            justifyContent: "center",
-            alignItems: "center"
-          },
-          children: /* @__PURE__ */ jsx(Text, {
-            color: "text-muted",
-            variant: "heading-lg/semibold",
-            children: "Loading..."
-          })
-        })
-      })
-    );
-  }
-  function FontCard({ item: font }) {
-    useProxy(fonts);
-    var navigation2 = NavigationNative.useNavigation();
-    var selected = fonts.__selected === font.name;
-    return /* @__PURE__ */ jsx(Card, {
-      children: /* @__PURE__ */ jsxs(Stack, {
-        spacing: 16,
-        children: [
-          /* @__PURE__ */ jsxs(import_react_native19.View, {
-            style: {
-              flexDirection: "row",
-              alignItems: "center"
-            },
-            children: [
-              /* @__PURE__ */ jsx(import_react_native19.View, {
-                children: /* @__PURE__ */ jsx(Text, {
-                  variant: "heading-lg/semibold",
-                  children: font.name
-                })
-              }),
-              /* @__PURE__ */ jsx(import_react_native19.View, {
-                style: {
-                  marginLeft: "auto"
-                },
-                children: /* @__PURE__ */ jsxs(Stack, {
-                  spacing: 12,
-                  direction: "horizontal",
-                  children: [
-                    /* @__PURE__ */ jsx(IconButton, {
-                      onPress: () => {
-                        navigation2.push("BUNNY_CUSTOM_PAGE", {
-                          title: "Edit Font",
-                          render: () => /* @__PURE__ */ jsx(FontEditor, {
-                            name: font.name
-                          })
-                        });
-                      },
-                      size: "sm",
-                      variant: "secondary",
-                      disabled: selected,
-                      icon: findAssetId("PencilIcon")
-                    }),
-                    /* @__PURE__ */ jsx(Button, {
-                      size: "sm",
-                      variant: selected ? "secondary" : "primary",
-                      text: selected ? "Unapply" : "Apply",
-                      onPress: /* @__PURE__ */ _async_to_generator(function* () {
-                        yield selectFont(selected ? null : font.name);
-                        showConfirmationAlert({
-                          title: Strings.HOLD_UP,
-                          content: "Reload Discord to apply changes?",
-                          confirmText: Strings.RELOAD,
-                          cancelText: Strings.CANCEL,
-                          confirmColor: ButtonColors.RED,
-                          onConfirm: BundleUpdaterManager.reload
-                        });
-                      })
-                    })
-                  ]
-                })
-              })
-            ]
-          }),
-          /* @__PURE__ */ jsx(FontPreview, {
-            font
-          })
-        ]
-      })
-    });
-  }
-  var Skia, import_react5, import_react_native19, useToken;
-  var init_FontCard = __esm({
-    "src/core/ui/settings/pages/Fonts/FontCard.tsx"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_async_to_generator();
-      init_jsxRuntime();
-      init_i18n();
-      init_assets();
-      init_modules();
-      init_storage();
-      init_fonts();
-      init_lazy();
-      init_types2();
-      init_metro();
-      init_common();
-      init_components();
-      Skia = __toESM(require_react_native_skia());
-      init_alerts();
-      init_styles();
-      import_react5 = __toESM(require_react());
-      import_react_native19 = __toESM(require_react_native());
-      init_FontEditor();
-      ({ useToken } = lazyDestructure(() => findByProps("useToken")));
-    }
-  });
-
-  // src/core/ui/settings/pages/Fonts/index.tsx
-  var Fonts_exports = {};
-  __export(Fonts_exports, {
-    default: () => Fonts
-  });
-  function Fonts() {
-    useProxy(settings);
-    useProxy(fonts);
-    var navigation2 = NavigationNative.useNavigation();
-    return /* @__PURE__ */ jsx(AddonPage, {
-      title: Strings.FONTS,
-      searchKeywords: [
-        "name",
-        "description"
-      ],
-      fetchFunction: installFont,
-      items: Object.values(fonts),
-      safeModeMessage: Strings.SAFE_MODE_NOTICE_FONTS,
-      card: FontCard,
-      onFabPress: () => {
-        navigation2.push("BUNNY_CUSTOM_PAGE", {
-          title: "Import Font",
-          render: () => /* @__PURE__ */ jsx(FontEditor, {})
-        });
-      }
-    });
-  }
-  var init_Fonts = __esm({
-    "src/core/ui/settings/pages/Fonts/index.tsx"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_jsxRuntime();
-      init_i18n();
-      init_AddonPage();
-      init_FontEditor();
-      init_settings();
-      init_storage();
-      init_fonts();
-      init_common();
-      init_FontCard();
-    }
-  });
-
-  // src/core/ui/hooks/useFS.ts
-  function useFileExists(path, prefix) {
-    var [state, setState] = (0, import_react6.useState)(2);
-    var check = () => fileExists(path, prefix).then((exists) => setState(exists ? 1 : 0)).catch(() => setState(3));
-    var customFS = (0, import_react6.useMemo)(() => new Proxy(fs_exports, {
-      get(target, p, receiver) {
-        var val = Reflect.get(target, p, receiver);
-        if (typeof val !== "function")
-          return;
-        return (...args) => {
-          var promise = (check(), val(...args));
-          if (promise?.constructor?.name === "Promise") {
-            setState(2);
-            promise.finally(check);
-          }
-          return promise;
-        };
-      }
-    }), []);
-    (0, import_react6.useEffect)(() => void check(), []);
-    return [
-      state,
-      customFS
-    ];
-  }
-  var import_react6, CheckState;
-  var init_useFS = __esm({
-    "src/core/ui/hooks/useFS.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_fs();
-      import_react6 = __toESM(require_react());
-      (function(CheckState2) {
-        CheckState2[CheckState2["FALSE"] = 0] = "FALSE";
-        CheckState2[CheckState2["TRUE"] = 1] = "TRUE";
-        CheckState2[CheckState2["LOADING"] = 2] = "LOADING";
-        CheckState2[CheckState2["ERROR"] = 3] = "ERROR";
-      })(CheckState || (CheckState = {}));
-    }
-  });
-
-  // src/core/ui/settings/pages/Developer/AssetDisplay.tsx
-  function AssetDisplay({ asset }) {
-    return /* @__PURE__ */ jsx(LegacyFormRow, {
-      label: `${asset.name} - ${asset.id}`,
-      trailing: /* @__PURE__ */ jsx(import_react_native20.Image, {
-        source: asset.id,
-        style: {
-          width: 32,
-          height: 32
-        }
-      }),
-      onPress: () => {
-        clipboard.setString(asset.name);
-        showToast.showCopyToClipboard();
-      }
-    });
-  }
-  var import_react_native20;
-  var init_AssetDisplay = __esm({
-    "src/core/ui/settings/pages/Developer/AssetDisplay.tsx"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_jsxRuntime();
-      init_common();
-      init_components();
-      init_toasts();
-      import_react_native20 = __toESM(require_react_native());
-    }
-  });
-
-  // src/core/ui/settings/pages/Developer/AssetBrowser.tsx
-  function AssetBrowser() {
-    var [search, setSearch] = React.useState("");
-    return /* @__PURE__ */ jsx(ErrorBoundary, {
-      children: /* @__PURE__ */ jsxs(import_react_native21.View, {
-        style: {
-          flex: 1
-        },
-        children: [
-          /* @__PURE__ */ jsx(Search_default, {
-            style: {
-              margin: 10
-            },
-            onChangeText: (v) => setSearch(v)
-          }),
-          /* @__PURE__ */ jsx(import_react_native21.FlatList, {
-            data: Object.values(assetsMap).filter((a) => a.name.includes(search) || a.id.toString() === search),
-            renderItem: ({ item }) => /* @__PURE__ */ jsx(AssetDisplay, {
-              asset: item
-            }),
-            ItemSeparatorComponent: LegacyFormDivider,
-            keyExtractor: (item) => item.name
-          })
-        ]
-      })
-    });
-  }
-  var import_react_native21;
-  var init_AssetBrowser = __esm({
-    "src/core/ui/settings/pages/Developer/AssetBrowser.tsx"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_jsxRuntime();
-      init_AssetDisplay();
-      init_assets();
-      init_components();
-      init_components2();
-      import_react_native21 = __toESM(require_react_native());
-    }
-  });
-
-  // src/core/ui/settings/pages/Developer/index.tsx
-  var Developer_exports = {};
-  __export(Developer_exports, {
-    default: () => Developer
-  });
-  function Developer() {
-    var [rdtFileExists, fs] = useFileExists("preloads/reactDevtools.js");
-    var styles3 = useStyles3();
-    var navigation2 = NavigationNative.useNavigation();
-    useProxy(settings);
-    useProxy(loaderConfig);
-    return /* @__PURE__ */ jsx(ErrorBoundary, {
-      children: /* @__PURE__ */ jsx(import_react_native22.ScrollView, {
-        style: {
-          flex: 1
-        },
-        contentContainerStyle: {
-          paddingBottom: 38
-        },
-        children: /* @__PURE__ */ jsxs(Stack, {
-          style: {
-            paddingVertical: 24,
-            paddingHorizontal: 12
-          },
-          spacing: 24,
-          children: [
-            /* @__PURE__ */ jsx(TextInput, {
-              label: Strings.DEBUGGER_URL,
-              placeholder: "127.0.0.1:9090",
-              size: "md",
-              leadingIcon: () => /* @__PURE__ */ jsx(LegacyFormText, {
-                style: styles3.leadingText,
-                children: "ws://"
-              }),
-              defaultValue: settings.debuggerUrl,
-              onChange: (v) => settings.debuggerUrl = v
-            }),
-            /* @__PURE__ */ jsxs(TableRowGroup, {
-              title: Strings.DEBUG,
-              children: [
-                /* @__PURE__ */ jsx(TableRow, {
-                  label: Strings.CONNECT_TO_DEBUG_WEBSOCKET,
-                  icon: /* @__PURE__ */ jsx(TableRow.Icon, {
-                    source: findAssetId("copy")
-                  }),
-                  onPress: () => connectToDebugger(settings.debuggerUrl)
-                }),
-                isReactDevToolsPreloaded() && /* @__PURE__ */ jsx(Fragment, {
-                  children: /* @__PURE__ */ jsx(TableRow, {
-                    label: Strings.CONNECT_TO_REACT_DEVTOOLS,
-                    icon: /* @__PURE__ */ jsx(TableRow.Icon, {
-                      source: findAssetId("ic_badge_staff")
-                    }),
-                    onPress: () => window[getReactDevToolsProp() || "__vendetta_rdc"]?.connectToDevTools({
-                      host: settings.debuggerUrl.split(":")?.[0],
-                      resolveRNStyle: import_react_native22.StyleSheet.flatten
-                    })
-                  })
-                })
-              ]
-            }),
-            isLoaderConfigSupported() && /* @__PURE__ */ jsx(Fragment, {
-              children: /* @__PURE__ */ jsxs(TableRowGroup, {
-                title: "Loader config",
-                children: [
-                  /* @__PURE__ */ jsx(TableSwitchRow, {
-                    label: Strings.LOAD_FROM_CUSTOM_URL,
-                    subLabel: Strings.LOAD_FROM_CUSTOM_URL_DEC,
-                    icon: /* @__PURE__ */ jsx(TableRow.Icon, {
-                      source: findAssetId("copy")
-                    }),
-                    value: loaderConfig.customLoadUrl.enabled,
-                    onValueChange: (v) => {
-                      loaderConfig.customLoadUrl.enabled = v;
-                    }
-                  }),
-                  loaderConfig.customLoadUrl.enabled && /* @__PURE__ */ jsx(TableRow, {
-                    label: /* @__PURE__ */ jsx(TextInput, {
-                      defaultValue: loaderConfig.customLoadUrl.url,
-                      size: "md",
-                      onChange: (v) => loaderConfig.customLoadUrl.url = v,
-                      placeholder: "http://localhost:4040/vendetta.js",
-                      label: Strings.BUNNY_URL
-                    })
-                  }),
-                  isReactDevToolsPreloaded() && isVendettaLoader() && /* @__PURE__ */ jsx(TableSwitchRow, {
-                    label: Strings.LOAD_REACT_DEVTOOLS,
-                    subLabel: `${Strings.VERSION}: ${getReactDevToolsVersion()}`,
-                    icon: /* @__PURE__ */ jsx(TableRow.Icon, {
-                      source: findAssetId("ic_badge_staff")
-                    }),
-                    value: loaderConfig.loadReactDevTools,
-                    onValueChange: (v) => {
-                      loaderConfig.loadReactDevTools = v;
-                    }
-                  })
-                ]
-              })
-            }),
-            /* @__PURE__ */ jsxs(TableRowGroup, {
-              title: "Other",
-              children: [
-                /* @__PURE__ */ jsx(TableRow, {
-                  arrow: true,
-                  label: Strings.ASSET_BROWSER,
-                  icon: /* @__PURE__ */ jsx(TableRow.Icon, {
-                    source: findAssetId("ic_image")
-                  }),
-                  trailing: TableRow.Arrow,
-                  onPress: () => navigation2.push("BUNNY_CUSTOM_PAGE", {
-                    title: Strings.ASSET_BROWSER,
-                    render: AssetBrowser
-                  })
-                }),
-                /* @__PURE__ */ jsx(TableRow, {
-                  arrow: true,
-                  label: Strings.ERROR_BOUNDARY_TOOLS_LABEL,
-                  icon: /* @__PURE__ */ jsx(TableRow.Icon, {
-                    source: findAssetId("ic_warning_24px")
-                  }),
-                  onPress: () => showSimpleActionSheet3({
-                    key: "ErrorBoundaryTools",
-                    header: {
-                      title: "Which ErrorBoundary do you want to trip?",
-                      icon: /* @__PURE__ */ jsx(TableRow.Icon, {
-                        style: {
-                          marginRight: 8
-                        },
-                        source: findAssetId("ic_warning_24px")
-                      }),
-                      onClose: () => hideActionSheet2()
-                    },
-                    options: [
-                      // @ts-expect-error
-                      // Of course, to trigger an error, we need to do something incorrectly. The below will do!
-                      {
-                        label: Strings.BUNNY,
-                        onPress: () => navigation2.push("BUNNY_CUSTOM_PAGE", {
-                          render: () => /* @__PURE__ */ jsx("undefined", {})
-                        })
-                      },
-                      {
-                        label: "Discord",
-                        isDestructive: true,
-                        onPress: () => navigation2.push("BUNNY_CUSTOM_PAGE", {
-                          noErrorBoundary: true
-                        })
-                      }
-                    ]
-                  })
-                }),
-                /* @__PURE__ */ jsx(TableRow, {
-                  label: Strings.INSTALL_REACT_DEVTOOLS,
-                  subLabel: Strings.RESTART_REQUIRED_TO_TAKE_EFFECT,
-                  icon: /* @__PURE__ */ jsx(TableRow.Icon, {
-                    source: findAssetId("DownloadIcon")
-                  }),
-                  trailing: /* @__PURE__ */ jsx(Button, {
-                    size: "sm",
-                    loading: rdtFileExists === CheckState.LOADING,
-                    disabled: rdtFileExists === CheckState.LOADING,
-                    variant: rdtFileExists === CheckState.TRUE ? "secondary" : "primary",
-                    text: rdtFileExists === CheckState.TRUE ? Strings.UNINSTALL : Strings.INSTALL,
-                    onPress: /* @__PURE__ */ _async_to_generator(function* () {
-                      if (rdtFileExists === CheckState.FALSE) {
-                        fs.downloadFile(RDT_EMBED_LINK, "preloads/reactDevtools.js");
-                      } else if (rdtFileExists === CheckState.TRUE) {
-                        fs.removeFile("preloads/reactDevtools.js");
-                      }
-                    }),
-                    icon: findAssetId(rdtFileExists === CheckState.TRUE ? "ic_message_delete" : "DownloadIcon"),
-                    style: {
-                      marginLeft: 8
-                    }
-                  })
-                }),
-                /* @__PURE__ */ jsx(TableSwitchRow, {
-                  label: Strings.ENABLE_EVAL_COMMAND,
-                  subLabel: Strings.ENABLE_EVAL_COMMAND_DESC,
-                  icon: /* @__PURE__ */ jsx(TableRow.Icon, {
-                    source: findAssetId("PencilIcon")
-                  }),
-                  value: settings.enableEvalCommand,
-                  onValueChange: (v) => {
-                    settings.enableEvalCommand = v;
-                  }
-                })
-              ]
-            })
-          ]
-        })
-      })
-    });
-  }
-  var import_react_native22, hideActionSheet2, showSimpleActionSheet3, RDT_EMBED_LINK, useStyles3;
-  var init_Developer = __esm({
-    "src/core/ui/settings/pages/Developer/index.tsx"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_async_to_generator();
-      init_jsxRuntime();
-      init_i18n();
-      init_useFS();
-      init_AssetBrowser();
-      init_assets();
-      init_debug();
-      init_loader();
-      init_settings();
-      init_storage();
-      init_lazy();
-      init_common();
-      init_components();
-      init_wrappers();
-      init_color();
-      init_components2();
-      init_styles();
-      import_react_native22 = __toESM(require_react_native());
-      ({ hideActionSheet: hideActionSheet2 } = lazyDestructure(() => findByProps("openLazy", "hideActionSheet")));
-      ({ showSimpleActionSheet: showSimpleActionSheet3 } = lazyDestructure(() => findByProps("showSimpleActionSheet")));
-      RDT_EMBED_LINK = "https://raw.githubusercontent.com/amsyarasyiq/rdt-embedder/main/dist.js";
-      useStyles3 = createStyles({
-        leadingText: {
-          ...TextStyleSheet["heading-md/semibold"],
-          color: semanticColors.TEXT_MUTED,
-          marginRight: -4
-        }
-      });
-    }
-  });
-
-  // src/core/ui/settings/index.ts
-  function initSettings() {
-    registerSection({
-      name: "Bunny",
-      items: [
-        {
-          key: "BUNNY",
-          title: () => Strings.BUNNY,
-          icon: {
-            uri: pyoncord_default
-          },
-          render: () => Promise.resolve().then(() => (init_General(), General_exports)),
-          rawTabsConfig: {
-            useTrailing: () => `(${"5afcb7b-dev"})`
-          }
-        },
-        {
-          key: "BUNNY_PLUGINS",
-          title: () => Strings.PLUGINS,
-          icon: findAssetId("ActivitiesIcon"),
-          render: () => Promise.resolve().then(() => (init_Plugins(), Plugins_exports))
-        },
-        {
-          key: "BUNNY_THEMES",
-          title: () => Strings.THEMES,
-          icon: findAssetId("PaintPaletteIcon"),
-          render: () => Promise.resolve().then(() => (init_Themes(), Themes_exports)),
-          usePredicate: () => isThemeSupported()
-        },
-        {
-          key: "BUNNY_FONTS",
-          title: () => Strings.FONTS,
-          icon: findAssetId("ic_add_text"),
-          render: () => Promise.resolve().then(() => (init_Fonts(), Fonts_exports)),
-          usePredicate: () => isFontSupported()
-        },
-        {
-          key: "BUNNY_DEVELOPER",
-          title: () => Strings.DEVELOPER,
-          icon: findAssetId("WrenchIcon"),
-          render: () => Promise.resolve().then(() => (init_Developer(), Developer_exports)),
-          usePredicate: () => useProxy(settings).developerSettings ?? false
-        }
-      ]
-    });
-    registerSection({
-      name: "Vendetta",
-      items: []
-    });
-  }
-  var init_settings3 = __esm({
-    "src/core/ui/settings/index.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_pyoncord();
-      init_i18n();
-      init_assets();
-      init_loader();
-      init_settings();
-      init_storage();
-      init_settings2();
-    }
-  });
-
-  // globals:lodash
-  var require_lodash = __commonJS({
-    "globals:lodash"(exports, module) {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      module.exports = require_depsModule()["lodash"];
-    }
-  });
-
-  // globals:util
-  var require_util = __commonJS({
-    "globals:util"(exports, module) {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      module.exports = require_depsModule()["util"];
-    }
-  });
-
-  // src/core/vendetta/api.tsx
-  var import_react7, import_react_native23, initVendettaObject;
-  var init_api3 = __esm({
-    "src/core/vendetta/api.tsx"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_jsxRuntime();
-      init_assets();
-      init_commands();
-      init_debug();
-      init_loader();
-      init_patcher();
-      init_settings();
-      init_storage();
-      init_storage();
-      init_themes();
-      init_utils();
-      init_cyrb64();
-      init_logger();
-      init_metro();
-      init_common();
-      init_components();
-      init_components();
-      init_alerts();
-      init_color();
-      init_components2();
-      init_styles();
-      init_toasts();
-      init_dist();
-      import_react7 = __toESM(require_react());
-      import_react_native23 = __toESM(require_react_native());
-      init_plugins();
-      initVendettaObject = () => {
-        var createStackBasedFilter = (fn) => {
-          return (filter) => {
-            return fn(factories_exports.createSimpleFilter(filter, cyrb64Hash(new Error().stack)));
-          };
-        };
-        var api = window.vendetta = {
-          patcher: {
-            before: patcher_default.before,
-            after: patcher_default.after,
-            instead: patcher_default.instead
-          },
-          metro: {
-            modules: window.modules,
-            find: createStackBasedFilter(findExports),
-            findAll: createStackBasedFilter(findAllExports),
-            findByProps: (...props) => {
-              if (props.length === 1 && props[0] === "KeyboardAwareScrollView") {
-                props.push("listenToKeyboardEvents");
-              }
-              var ret = findByProps(...props);
-              if (ret == null) {
-                if (props.includes("ActionSheetTitleHeader")) {
-                  var module = findByProps("ActionSheetRow");
-                  return {
-                    ...module,
-                    ActionSheetTitleHeader: module.BottomSheetTitleHeader,
-                    ActionSheetContentContainer: ({ children }) => {
-                      (0, import_react7.useEffect)(() => console.warn("Discord has removed 'ActionSheetContentContainer', please move into something else. This has been temporarily replaced with View"), []);
-                      return /* @__PURE__ */ (0, import_react7.createElement)(import_react_native23.View, null, children);
-                    }
-                  };
-                }
-              }
-              return ret;
-            },
-            findByPropsAll: (...props) => findByPropsAll(...props),
-            findByName: (name, defaultExp) => {
-              if (name === "create" && typeof defaultExp === "undefined") {
-                return findByName("create", false).default;
-              }
-              return findByName(name, defaultExp ?? true);
-            },
-            findByNameAll: (name, defaultExp = true) => findByNameAll(name, defaultExp),
-            findByDisplayName: (displayName, defaultExp = true) => findByDisplayName(displayName, defaultExp),
-            findByDisplayNameAll: (displayName, defaultExp = true) => findByDisplayNameAll(displayName, defaultExp),
-            findByTypeName: (typeName, defaultExp = true) => findByTypeName(typeName, defaultExp),
-            findByTypeNameAll: (typeName, defaultExp = true) => findByTypeNameAll(typeName, defaultExp),
-            findByStoreName: (name) => findByStoreName(name),
-            common: {
-              constants,
-              channels,
-              i18n,
-              url,
-              toasts,
-              stylesheet: {
-                createThemedStyleSheet
-              },
-              clipboard,
-              assets,
-              invites,
-              commands,
-              navigation,
-              navigationStack,
-              NavigationNative,
-              Flux,
-              FluxDispatcher,
-              React: React2,
-              ReactNative,
-              moment: require_moment(),
-              chroma: require_chroma_js(),
-              lodash: require_lodash(),
-              util: require_util()
-            }
-          },
-          constants: {
-            DISCORD_SERVER: "https://discord.gg/n9QQ4XhhJP",
-            GITHUB: "https://github.com/vendetta-mod",
-            PROXY_PREFIX: "https://vd-plugins.github.io/proxy",
-            HTTP_REGEX: /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_+.~#?&/=]*)$/,
-            HTTP_REGEX_MULTI: /https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_+.~#?&//=]*)/g,
-            DISCORD_SERVER_ID: "1015931589865246730",
-            PLUGINS_CHANNEL_ID: "1091880384561684561",
-            THEMES_CHANNEL_ID: "1091880434939482202"
-          },
-          utils: {
-            findInReactTree: (tree, filter) => findInReactTree(tree, filter),
-            findInTree: (tree, filter, options) => findInTree(tree, filter, options),
-            safeFetch: (input, options, timeout) => safeFetch(input, options, timeout),
-            unfreeze: (obj) => Object.isFrozen(obj) ? {
-              ...obj
-            } : obj,
-            without: (object, ...keys) => omit(object, keys)
-          },
-          debug: {
-            connectToDebugger: (url2) => connectToDebugger(url2),
-            getDebugInfo: () => getDebugInfo()
-          },
-          ui: {
-            components: {
-              Forms,
-              General: ReactNative,
-              Alert: LegacyAlert,
-              Button: CompatButton,
-              HelpMessage: (...props) => /* @__PURE__ */ jsx(HelpMessage, {
-                ...props
-              }),
-              SafeAreaView: (...props) => /* @__PURE__ */ jsx(SafeAreaView, {
-                ...props
-              }),
-              Summary,
-              ErrorBoundary,
-              Codeblock,
-              Search: Search_default
-            },
-            toasts: {
-              showToast: (content, asset) => showToast(content, asset)
-            },
-            alerts: {
-              showConfirmationAlert: (options) => showConfirmationAlert(options),
-              showCustomAlert: (component, props) => showCustomAlert(component, props),
-              showInputAlert: (options) => showInputAlert(options)
-            },
-            assets: {
-              all: assetsMap,
-              find: (filter) => findAsset(filter),
-              getAssetByName: (name) => findAsset(name),
-              getAssetByID: (id) => findAsset(id),
-              getAssetIDByName: (name) => findAssetId(name)
-            },
-            semanticColors,
-            rawColors
-          },
-          plugins: {
-            plugins: VdPluginManager.plugins,
-            fetchPlugin: (source) => VdPluginManager.fetchPlugin(source),
-            installPlugin: (source, enabled2 = true) => VdPluginManager.installPlugin(source, enabled2),
-            startPlugin: (id) => VdPluginManager.startPlugin(id),
-            stopPlugin: (id, disable = true) => VdPluginManager.stopPlugin(id, disable),
-            removePlugin: (id) => VdPluginManager.removePlugin(id),
-            getSettings: (id) => VdPluginManager.getSettings(id)
-          },
-          themes: {
-            themes,
-            fetchTheme: (id, selected) => fetchTheme(id, selected),
-            installTheme: (id) => installTheme(id),
-            selectTheme: (id) => selectTheme(id === "default" ? null : themes[id]),
-            removeTheme: (id) => removeTheme(id),
-            getCurrentTheme: () => getThemeFromLoader(),
-            updateThemes: () => updateThemes()
-          },
-          commands: {
-            registerCommand
-          },
-          storage: {
-            createProxy: (target) => createProxy(target),
-            useProxy: (_storage) => useProxy(_storage),
-            createStorage: (backend) => createStorage(backend),
-            wrapSync: (store) => wrapSync(store),
-            awaitSyncWrapper: (store) => awaitStorage(store),
-            createMMKVBackend: (store) => createMMKVBackend(store),
-            createFileBackend: (file) => {
-              if (isPyonLoader() && file === "vendetta_theme.json") {
-                file = "pyoncord/current-theme.json";
-              }
-              return createFileBackend(file);
-            }
-          },
-          settings,
-          loader: {
-            identity: getVendettaLoaderIdentity() ?? void 0,
-            config: loaderConfig
-          },
-          logger: {
-            log: (...message) => console.log(...message),
-            info: (...message) => console.info(...message),
-            warn: (...message) => console.warn(...message),
-            error: (...message) => console.error(...message),
-            time: (...message) => console.time(...message),
-            trace: (...message) => console.trace(...message),
-            verbose: (...message) => console.log(...message)
-          },
-          version: versionHash,
-          unload: () => {
-            delete window.vendetta;
-          }
-        };
-        return () => api.unload();
-      };
-    }
-  });
-
   // src/lib/ui/safeMode.tsx
   function getErrorBoundaryContext() {
     var ctxt = findByNameLazy("ErrorBoundary")[_lazyContextSymbol];
@@ -13331,7 +9082,7 @@
       });
     });
   }
-  var import_react_native24, ErrorBoundary2, BadgableTabBar, styles2, tabs, safeMode_default;
+  var import_react_native21, ErrorBoundary2, BadgableTabBar, styles2, tabs, safeMode_default;
   var init_safeMode = __esm({
     "src/lib/ui/safeMode.tsx"() {
       "use strict";
@@ -13344,14 +9095,14 @@
       init_patcher();
       init_settings();
       init_lazy();
-      init_types2();
+      init_types();
       init_components();
       init_lazy2();
       init_wrappers();
       init_color();
       init_components2();
       init_styles();
-      import_react_native24 = __toESM(require_react_native());
+      import_react_native21 = __toESM(require_react_native());
       ErrorBoundary2 = findByNameLazy("ErrorBoundary");
       ({ BadgableTabBar } = lazyDestructure(() => findByProps("BadgableTabBar")));
       styles2 = createThemedStyleSheet({
@@ -13429,7 +9180,7 @@
           children: /* @__PURE__ */ jsxs(SafeAreaView, {
             style: styles2.container,
             children: [
-              /* @__PURE__ */ jsxs(import_react_native24.View, {
+              /* @__PURE__ */ jsxs(import_react_native21.View, {
                 style: styles2.header,
                 children: [
                   /* @__PURE__ */ jsx(ret.props.Illustration, {
@@ -13443,17 +9194,17 @@
                       marginRight: -80
                     }
                   }),
-                  /* @__PURE__ */ jsxs(import_react_native24.View, {
+                  /* @__PURE__ */ jsxs(import_react_native21.View, {
                     style: {
                       flex: 2,
                       paddingLeft: 24
                     },
                     children: [
-                      /* @__PURE__ */ jsx(import_react_native24.Text, {
+                      /* @__PURE__ */ jsx(import_react_native21.Text, {
                         style: styles2.headerTitle,
                         children: ret.props.title
                       }),
-                      /* @__PURE__ */ jsx(import_react_native24.Text, {
+                      /* @__PURE__ */ jsx(import_react_native21.Text, {
                         style: styles2.headerDescription,
                         children: ret.props.body
                       })
@@ -13461,12 +9212,12 @@
                   })
                 ]
               }),
-              /* @__PURE__ */ jsxs(import_react_native24.View, {
+              /* @__PURE__ */ jsxs(import_react_native21.View, {
                 style: {
                   flex: 6
                 },
                 children: [
-                  /* @__PURE__ */ jsx(import_react_native24.View, {
+                  /* @__PURE__ */ jsx(import_react_native21.View, {
                     style: {
                       paddingBottom: 8
                     },
@@ -13493,7 +9244,7 @@
                   })
                 ]
               }),
-              /* @__PURE__ */ jsx(import_react_native24.View, {
+              /* @__PURE__ */ jsx(import_react_native21.View, {
                 style: styles2.footer,
                 children: buttons.map((button) => {
                   var buttonIndex = buttons.indexOf(button) !== 0 ? 8 : 0;
@@ -13590,7 +9341,7 @@
       init_promiseAllSettled();
       init_global_d();
       init_modules_d();
-      init_api();
+      init_api2();
       init_fonts();
       init_plugins4();
       init_themes();
@@ -13639,7 +9390,7 @@
       init_fixes();
       init_i18n();
       init_settings3();
-      init_api3();
+      init_api();
       init_plugins();
       init_commands();
       init_debug();
@@ -13716,7 +9467,7 @@
         alert([
           "Failed to load Bunny!\n",
           `Build Number: ${ClientInfoManager2.Build}`,
-          `Bunny: ${"5afcb7b-dev"}`,
+          `Bunny: ${"b629261-dev"}`,
           stack || e?.toString?.()
         ].join("\n"));
       }
