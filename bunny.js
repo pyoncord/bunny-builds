@@ -2988,6 +2988,7 @@
         CONFIRMATION_LINK_IS_A_TYPE: "This link is a **{urlType, select, plugin {Plugin} theme {Theme} other {Add-on}}**, would you like to install it?",
         CONNECT_TO_DEBUG_WEBSOCKET: "Connect to debug websocket",
         CONNECT_TO_REACT_DEVTOOLS: "Connect to React DevTools",
+        CONTINUE: "Continue",
         COPIED_TO_CLIPBOARD: "Copied to clipboard",
         COPY_URL: "Copy URL",
         DEBUG: "Debug",
@@ -3471,7 +3472,7 @@
       init_components();
       init_ErrorBoundary();
       import_react_native6 = __toESM(require_react_native());
-      Search_default = ({ onChangeText, placeholder, style }) => {
+      Search_default = ({ onChangeText, placeholder, style, isRound }) => {
         var [query, setQuery] = React.useState("");
         var onChange = (value) => {
           setQuery(value);
@@ -3490,6 +3491,7 @@
               size: "md",
               autoCapitalize: "none",
               autoCorrect: false,
+              isRound,
               value: query
             })
           })
@@ -4004,7 +4006,7 @@
       init_logger();
       init_toasts();
       import_react_native8 = __toESM(require_react_native());
-      versionHash = "f542e8c-dev";
+      versionHash = "8dc0b82-dev";
     }
   });
 
@@ -4279,6 +4281,50 @@
       init_common();
       init_components();
       import_react_native10 = __toESM(require_react_native());
+    }
+  });
+
+  // src/metro/index.ts
+  var metro_exports = {};
+  __export(metro_exports, {
+    common: () => common_exports,
+    factories: () => factories_exports,
+    filters: () => filters_exports,
+    findAllExports: () => findAllExports,
+    findAllModule: () => findAllModule,
+    findAllModuleId: () => findAllModuleId,
+    findByDisplayName: () => findByDisplayName,
+    findByDisplayNameAll: () => findByDisplayNameAll,
+    findByDisplayNameLazy: () => findByDisplayNameLazy,
+    findByFilePath: () => findByFilePath,
+    findByFilePathLazy: () => findByFilePathLazy,
+    findByName: () => findByName,
+    findByNameAll: () => findByNameAll,
+    findByNameLazy: () => findByNameLazy,
+    findByProps: () => findByProps,
+    findByPropsAll: () => findByPropsAll,
+    findByPropsLazy: () => findByPropsLazy,
+    findByStoreName: () => findByStoreName,
+    findByStoreNameLazy: () => findByStoreNameLazy,
+    findByTypeName: () => findByTypeName,
+    findByTypeNameAll: () => findByTypeNameAll,
+    findByTypeNameLazy: () => findByTypeNameLazy,
+    findExports: () => findExports,
+    findModule: () => findModule,
+    findModuleId: () => findModuleId,
+    lazy: () => lazy_exports2
+  });
+  var init_metro = __esm({
+    "src/metro/index.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_common();
+      init_factories();
+      init_filters();
+      init_finders();
+      init_lazy2();
+      init_wrappers();
     }
   });
 
@@ -5190,22 +5236,78 @@
   });
 
   // src/core/ui/components/AddonPage.tsx
-  function AddonPage({ card: CardComponent, ...props }) {
+  function AddonPage({ CardComponent, ...props }) {
     useProxy(settings);
     var [search, setSearch] = React.useState("");
+    var [sortFn, setSortFn] = React.useState(() => null);
     var results = (0, import_react.useMemo)(() => {
       var values = props.items;
       if (props.resolveItem)
         values = values.map(props.resolveItem);
       var items = values.filter((i) => i && typeof i === "object");
+      if (!search && sortFn)
+        items.sort(sortFn);
       return import_fuzzysort.default.go(search, items, {
         keys: props.searchKeywords,
         all: true
       });
     }, [
       props.items,
+      sortFn,
       search
     ]);
+    var onInstallPress = (0, import_react.useCallback)(() => {
+      if (!props.installAction)
+        return () => {
+        };
+      var { onPress, fetchFn } = props.installAction;
+      if (fetchFn) {
+        clipboard.getString().then((content) => showInputAlert({
+          title: props.installAction?.label,
+          initialValue: content.match(HTTP_REGEX_MULTI)?.[0] ?? "",
+          placeholder: Strings.URL_PLACEHOLDER,
+          onConfirm: (input) => fetchFn(input),
+          confirmText: Strings.INSTALL,
+          cancelText: Strings.CANCEL
+        }));
+      } else {
+        onPress?.();
+      }
+    }, []);
+    if (results.length === 0 && !search) {
+      return /* @__PURE__ */ jsxs(import_react_native11.View, {
+        style: {
+          gap: 32,
+          flexGrow: 1,
+          justifyContent: "center",
+          alignItems: "center"
+        },
+        children: [
+          /* @__PURE__ */ jsxs(import_react_native11.View, {
+            style: {
+              gap: 8,
+              alignItems: "center"
+            },
+            children: [
+              /* @__PURE__ */ jsx(import_react_native11.Image, {
+                source: findAssetId("empty_quick_switcher")
+              }),
+              /* @__PURE__ */ jsx(Text, {
+                variant: "text-lg/semibold",
+                color: "text-normal",
+                children: "Oops! Nothing to see here\u2026 yet!"
+              })
+            ]
+          }),
+          /* @__PURE__ */ jsx(Button, {
+            size: "lg",
+            icon: findAssetId("DownloadIcon"),
+            text: props.installAction?.label ?? "Install",
+            onPress: onInstallPress
+          })
+        ]
+      });
+    }
     var headerElement = /* @__PURE__ */ jsxs(import_react_native11.View, {
       style: {
         paddingBottom: 8
@@ -5219,13 +5321,41 @@
           children: [
             /* @__PURE__ */ jsx(HelpMessage, {
               messageType: 0,
-              children: props.safeModeMessage
+              children: props.safeModeHint?.message
             }),
-            props.safeModeExtras
+            props.safeModeHint?.footer
           ]
         }),
-        /* @__PURE__ */ jsx(Search_default, {
-          onChangeText: (v) => setSearch(v)
+        /* @__PURE__ */ jsxs(import_react_native11.View, {
+          style: {
+            flexDirection: "row",
+            gap: 8
+          },
+          children: [
+            /* @__PURE__ */ jsx(Search_default, {
+              style: {
+                flexGrow: 1
+              },
+              isRound: !!props.sortOptions,
+              onChangeText: (v) => setSearch(v)
+            }),
+            props.sortOptions && /* @__PURE__ */ jsx(IconButton, {
+              icon: findAssetId("ic_forum_channel_sort_order_24px"),
+              variant: "secondary",
+              disabled: !!search,
+              onPress: () => showSimpleActionSheet({
+                key: "AddonListSortOptions",
+                header: {
+                  title: "Sort Options",
+                  onClose: () => hideActionSheet("AddonListSortOptions")
+                },
+                options: Object.entries(props.sortOptions).map(([name, fn]) => ({
+                  label: name,
+                  onPress: () => setSortFn(() => fn)
+                }))
+              })
+            })
+          ]
         })
       ]
     });
@@ -5236,6 +5366,23 @@
           extraData: search,
           estimatedItemSize: 136,
           ListHeaderComponent: headerElement,
+          ListEmptyComponent: () => /* @__PURE__ */ jsxs(import_react_native11.View, {
+            style: {
+              gap: 12,
+              padding: 12,
+              alignItems: "center"
+            },
+            children: [
+              /* @__PURE__ */ jsx(import_react_native11.Image, {
+                source: findAssetId("devices_not_found")
+              }),
+              /* @__PURE__ */ jsx(Text, {
+                variant: "text-lg/semibold",
+                color: "text-normal",
+                children: "Hmmm... could not find that!"
+              })
+            ]
+          }),
           contentContainerStyle: {
             padding: 8,
             paddingHorizontal: 12
@@ -5251,22 +5398,14 @@
             result: item
           })
         }),
-        (props.fetchFunction ?? props.onFabPress) && /* @__PURE__ */ jsx(FloatingActionButton, {
+        props.installAction && /* @__PURE__ */ jsx(FloatingActionButton, {
           icon: findAssetId("PlusLargeIcon"),
-          onPress: props.onFabPress ?? (() => {
-            clipboard.getString().then((content) => showInputAlert({
-              initialValue: content.match(HTTP_REGEX_MULTI)?.[0] ?? "",
-              placeholder: Strings.URL_PLACEHOLDER,
-              onConfirm: (input) => props.fetchFunction(input),
-              confirmText: Strings.INSTALL,
-              cancelText: Strings.CANCEL
-            }));
-          })
+          onPress: onInstallPress
         })
       ]
     });
   }
-  var import_fuzzysort, import_react, import_react_native11;
+  var import_fuzzysort, import_react, import_react_native11, showSimpleActionSheet, hideActionSheet;
   var init_AddonPage = __esm({
     "src/core/ui/components/AddonPage.tsx"() {
       "use strict";
@@ -5278,6 +5417,8 @@
       init_settings();
       init_storage();
       init_constants();
+      init_lazy();
+      init_metro();
       init_common();
       init_components();
       init_alerts();
@@ -5285,6 +5426,7 @@
       import_fuzzysort = __toESM(require_fuzzysort());
       import_react = __toESM(require_react());
       import_react_native11 = __toESM(require_react_native());
+      ({ showSimpleActionSheet, hideActionSheet } = lazyDestructure(() => findByProps("showSimpleActionSheet")));
     }
   });
 
@@ -5927,14 +6069,20 @@
   function PluginPage(props) {
     var items = props.useItems();
     return /* @__PURE__ */ jsx(AddonPage, {
-      card: PluginCard,
+      CardComponent: PluginCard,
       title: Strings.PLUGINS,
       searchKeywords: [
         "name",
         "description",
         (p) => p.authors?.map((a) => typeof a === "string" ? a : a.name).join()
       ],
-      safeModeMessage: Strings.SAFE_MODE_NOTICE_PLUGINS,
+      sortOptions: {
+        "Name (A-Z)": (a, b) => a.name.localeCompare(b.name),
+        "Name (Z-A)": (a, b) => b.name.localeCompare(a.name)
+      },
+      safeModeHint: {
+        message: Strings.SAFE_MODE_NOTICE_PLUGINS
+      },
       items,
       ...props
     });
@@ -5944,7 +6092,28 @@
     return /* @__PURE__ */ jsx(PluginPage, {
       useItems: () => useProxy(VdPluginManager.plugins) && Object.values(VdPluginManager.plugins),
       resolveItem: unifyVdPlugin,
-      fetchFunction: (url2) => VdPluginManager.installPlugin(url2)
+      installAction: {
+        label: "Install a plugin",
+        fetchFn: function() {
+          var _ref = _async_to_generator(function* (url2) {
+            var install = () => VdPluginManager.installPlugin(url2).then(() => showToast(Strings.TOASTS_INSTALLED_PLUGIN, findAssetId("Check"))).catch((x) => showToast(x?.message ?? `${x}`, findAssetId("Small")));
+            if (!url2.startsWith(VD_PROXY_PREFIX) && !url2.startsWith(BUNNY_PROXY_PREFIX) && !settings.developerSettings)
+              setImmediate(() => showConfirmationAlert({
+                title: Strings.MODAL_UNPROXIED_PLUGIN_HEADER,
+                content: Strings.MODAL_UNPROXIED_PLUGIN_DESC,
+                confirmText: Strings.CONTINUE,
+                onConfirm: install,
+                cancelText: Strings.CANCEL
+              }));
+            else {
+              return yield install();
+            }
+          });
+          return function(url2) {
+            return _ref.apply(this, arguments);
+          };
+        }()
+      }
     });
   }
   var init_Plugins = __esm({
@@ -5952,13 +6121,18 @@
       "use strict";
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
+      init_async_to_generator();
       init_jsxRuntime();
       init_i18n();
       init_AddonPage();
       init_PluginCard();
       init_plugins();
+      init_assets();
       init_settings();
       init_storage();
+      init_alerts();
+      init_toasts();
+      init_constants();
       init_vendetta();
     }
   });
@@ -6001,7 +6175,7 @@
                     style: styles3.actions,
                     children: [
                       props.overflowActions && /* @__PURE__ */ jsx(IconButton, {
-                        onPress: () => showSimpleActionSheet({
+                        onPress: () => showSimpleActionSheet2({
                           key: "CardOverflow",
                           header: {
                             title: props.overflowTitle,
@@ -6011,7 +6185,7 @@
                               },
                               source: findAssetId(props.headerIcon)
                             }),
-                            onClose: () => hideActionSheet()
+                            onClose: () => hideActionSheet2()
                           },
                           options: props.overflowActions?.map((i) => ({
                             ...i,
@@ -6054,7 +6228,7 @@
       })
     });
   }
-  var import_react_native14, hideActionSheet, showSimpleActionSheet, useStyles2;
+  var import_react_native14, hideActionSheet2, showSimpleActionSheet2, useStyles2;
   var init_AddonCard = __esm({
     "src/core/ui/components/AddonCard.tsx"() {
       "use strict";
@@ -6068,8 +6242,8 @@
       init_color();
       init_styles();
       import_react_native14 = __toESM(require_react_native());
-      ({ hideActionSheet } = lazyDestructure(() => findByProps("openLazy", "hideActionSheet")));
-      ({ showSimpleActionSheet } = lazyDestructure(() => findByProps("showSimpleActionSheet")));
+      ({ hideActionSheet: hideActionSheet2 } = lazyDestructure(() => findByProps("openLazy", "hideActionSheet")));
+      ({ showSimpleActionSheet: showSimpleActionSheet2 } = lazyDestructure(() => findByProps("showSimpleActionSheet")));
       useStyles2 = createStyles({
         card: {
           backgroundColor: semanticColors?.CARD_SECONDARY_BG,
@@ -6225,20 +6399,29 @@
         "data.description",
         (p) => p.data.authors?.map((a) => a.name).join(", ")
       ],
-      fetchFunction: installTheme,
+      sortOptions: {
+        "Name (A-Z)": (a, b) => a.name.localeCompare(b.name),
+        "Name (Z-A)": (a, b) => b.name.localeCompare(a.name)
+      },
+      installAction: {
+        label: "Install a theme",
+        fetchFn: installTheme
+      },
       items: Object.values(themes),
-      safeModeMessage: formatString("SAFE_MODE_NOTICE_THEMES", {
-        enabled: Boolean(settings.safeMode?.currentThemeId)
-      }),
-      safeModeExtras: settings.safeMode?.currentThemeId ? /* @__PURE__ */ jsx(Button, {
-        text: Strings.DISABLE_THEME,
-        size: "small",
-        onPress: () => delete settings.safeMode?.currentThemeId,
-        style: {
-          marginTop: 8
-        }
-      }) : void 0,
-      card: ThemeCard
+      safeModeHint: {
+        message: formatString("SAFE_MODE_NOTICE_THEMES", {
+          enabled: Boolean(settings.safeMode?.currentThemeId)
+        }),
+        footer: settings.safeMode?.currentThemeId && /* @__PURE__ */ jsx(Button, {
+          size: "small",
+          text: Strings.DISABLE_THEME,
+          onPress: () => delete settings.safeMode?.currentThemeId,
+          style: {
+            marginTop: 8
+          }
+        })
+      },
+      CardComponent: ThemeCard
     });
   }
   var init_Themes = __esm({
@@ -6938,50 +7121,6 @@
     }
   });
 
-  // src/metro/index.ts
-  var metro_exports = {};
-  __export(metro_exports, {
-    common: () => common_exports,
-    factories: () => factories_exports,
-    filters: () => filters_exports,
-    findAllExports: () => findAllExports,
-    findAllModule: () => findAllModule,
-    findAllModuleId: () => findAllModuleId,
-    findByDisplayName: () => findByDisplayName,
-    findByDisplayNameAll: () => findByDisplayNameAll,
-    findByDisplayNameLazy: () => findByDisplayNameLazy,
-    findByFilePath: () => findByFilePath,
-    findByFilePathLazy: () => findByFilePathLazy,
-    findByName: () => findByName,
-    findByNameAll: () => findByNameAll,
-    findByNameLazy: () => findByNameLazy,
-    findByProps: () => findByProps,
-    findByPropsAll: () => findByPropsAll,
-    findByPropsLazy: () => findByPropsLazy,
-    findByStoreName: () => findByStoreName,
-    findByStoreNameLazy: () => findByStoreNameLazy,
-    findByTypeName: () => findByTypeName,
-    findByTypeNameAll: () => findByTypeNameAll,
-    findByTypeNameLazy: () => findByTypeNameLazy,
-    findExports: () => findExports,
-    findModule: () => findModule,
-    findModuleId: () => findModuleId,
-    lazy: () => lazy_exports2
-  });
-  var init_metro = __esm({
-    "src/metro/index.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_common();
-      init_factories();
-      init_filters();
-      init_finders();
-      init_lazy2();
-      init_wrappers();
-    }
-  });
-
   // globals:@shopify/react-native-skia
   var require_react_native_skia = __commonJS({
     "globals:@shopify/react-native-skia"(exports, module) {
@@ -7155,15 +7294,23 @@
         "name",
         "description"
       ],
-      fetchFunction: installFont,
+      sortOptions: {
+        "Name (A-Z)": (a, b) => a.name.localeCompare(b.name),
+        "Name (Z-A)": (a, b) => b.name.localeCompare(a.name)
+      },
       items: Object.values(fonts),
-      safeModeMessage: Strings.SAFE_MODE_NOTICE_FONTS,
-      card: FontCard,
-      onFabPress: () => {
-        navigation2.push("BUNNY_CUSTOM_PAGE", {
-          title: "Import Font",
-          render: () => /* @__PURE__ */ jsx(FontEditor, {})
-        });
+      safeModeHint: {
+        message: Strings.SAFE_MODE_NOTICE_FONTS
+      },
+      CardComponent: FontCard,
+      installAction: {
+        label: "Install a font",
+        onPress: () => {
+          navigation2.push("BUNNY_CUSTOM_PAGE", {
+            title: "Import Font",
+            render: () => /* @__PURE__ */ jsx(FontEditor, {})
+          });
+        }
       }
     });
   }
@@ -7419,7 +7566,7 @@
                   icon: /* @__PURE__ */ jsx(TableRow.Icon, {
                     source: findAssetId("ic_warning_24px")
                   }),
-                  onPress: () => showSimpleActionSheet2({
+                  onPress: () => showSimpleActionSheet3({
                     key: "ErrorBoundaryTools",
                     header: {
                       title: "Which ErrorBoundary do you want to trip?",
@@ -7429,7 +7576,7 @@
                         },
                         source: findAssetId("ic_warning_24px")
                       }),
-                      onClose: () => hideActionSheet2()
+                      onClose: () => hideActionSheet3()
                     },
                     options: [
                       // @ts-expect-error
@@ -7493,7 +7640,7 @@
       })
     });
   }
-  var import_react_native19, hideActionSheet2, showSimpleActionSheet2, RDT_EMBED_LINK, useStyles3;
+  var import_react_native19, hideActionSheet3, showSimpleActionSheet3, RDT_EMBED_LINK, useStyles3;
   var init_Developer = __esm({
     "src/core/ui/settings/pages/Developer/index.tsx"() {
       "use strict";
@@ -7517,8 +7664,8 @@
       init_components2();
       init_styles();
       import_react_native19 = __toESM(require_react_native());
-      ({ hideActionSheet: hideActionSheet2 } = lazyDestructure(() => findByProps("openLazy", "hideActionSheet")));
-      ({ showSimpleActionSheet: showSimpleActionSheet2 } = lazyDestructure(() => findByProps("showSimpleActionSheet")));
+      ({ hideActionSheet: hideActionSheet3 } = lazyDestructure(() => findByProps("openLazy", "hideActionSheet")));
+      ({ showSimpleActionSheet: showSimpleActionSheet3 } = lazyDestructure(() => findByProps("showSimpleActionSheet")));
       RDT_EMBED_LINK = "https://raw.githubusercontent.com/amsyarasyiq/rdt-embedder/main/dist.js";
       useStyles3 = createStyles({
         leadingText: {
@@ -7543,7 +7690,7 @@
           },
           render: () => Promise.resolve().then(() => (init_General(), General_exports)),
           rawTabsConfig: {
-            useTrailing: () => `(${"f542e8c-dev"})`
+            useTrailing: () => `(${"8dc0b82-dev"})`
           }
         },
         {
@@ -8297,7 +8444,7 @@
       showToast(e.message, findAssetId("Small"));
     });
   }
-  var showSimpleActionSheet3, handleClick, openURL, getChannelId, getChannel, url_default;
+  var showSimpleActionSheet4, handleClick, openURL, getChannelId, getChannel, url_default;
   var init_url = __esm({
     "src/core/plugins/quickinstall/url.tsx"() {
       "use strict";
@@ -8318,14 +8465,14 @@
       init_wrappers();
       init_alerts();
       init_toasts();
-      showSimpleActionSheet3 = findExports(byMutableProp("showSimpleActionSheet"));
+      showSimpleActionSheet4 = findExports(byMutableProp("showSimpleActionSheet"));
       handleClick = findByPropsLazy("handleClick");
       ({ openURL } = lazyDestructure(() => url));
       ({ getChannelId } = lazyDestructure(() => channels));
       ({ getChannel } = lazyDestructure(() => findByProps("getChannel")));
       url_default = () => {
         var patches2 = new Array();
-        patches2.push(after("showSimpleActionSheet", showSimpleActionSheet3, (args) => {
+        patches2.push(after("showSimpleActionSheet", showSimpleActionSheet4, (args) => {
           if (args[0].key !== "LongPressUrl")
             return;
           var { header: { title: url2 }, options } = args[0];
@@ -9467,7 +9614,7 @@
         alert([
           "Failed to load Bunny!\n",
           `Build Number: ${ClientInfoManager2.Build}`,
-          `Bunny: ${"f542e8c-dev"}`,
+          `Bunny: ${"8dc0b82-dev"}`,
           stack || e?.toString?.()
         ].join("\n"));
       }
