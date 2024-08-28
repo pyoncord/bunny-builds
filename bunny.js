@@ -1325,6 +1325,7 @@
     var emitter = new Emitter();
     var parentTarget = target;
     var childrens = /* @__PURE__ */ new WeakMap();
+    var proxiedChildrenSet = /* @__PURE__ */ new WeakSet();
     function createProxy1(target2, path) {
       return new Proxy(target2, {
         get(target3, prop) {
@@ -1342,6 +1343,8 @@
               value
             });
             if (typeof value === "object") {
+              if (proxiedChildrenSet.has(value))
+                return value;
               if (childrens.has(value))
                 return childrens.get(value);
               var childrenProxy = createProxy1(value, newPath);
@@ -1354,14 +1357,17 @@
         },
         set(target3, prop, value) {
           if (typeof value === "object") {
-            if (childrens.has(value))
-              return childrens.get(value);
-            var childrenProxy = createProxy1(value, [
-              ...path,
-              prop
-            ]);
-            childrens.set(value, childrenProxy);
-            target3[prop] = childrenProxy;
+            if (childrens.has(value)) {
+              target3[prop] = childrens.get(value);
+            } else {
+              var childrenProxy = createProxy1(value, [
+                ...path,
+                prop
+              ]);
+              childrens.set(value, childrenProxy);
+              proxiedChildrenSet.add(value);
+              target3[prop] = childrenProxy;
+            }
           } else {
             target3[prop] = value;
           }
@@ -1371,7 +1377,7 @@
               ...path,
               prop
             ],
-            value
+            value: target3[prop]
           });
           return true;
         },
@@ -1405,10 +1411,6 @@
       var listener = (event, data) => {
         if (event === "DEL" && data.value === storage)
           return;
-        console.log({
-          event,
-          data
-        });
         forceUpdate();
       };
       emitter.on("SET", listener);
@@ -1417,9 +1419,7 @@
         emitter.off("SET", listener);
         emitter.off("DEL", listener);
       };
-    }, [
-      storage
-    ]);
+    }, []);
     return storage;
   }
   function createStorage(backend) {
@@ -4006,7 +4006,7 @@
       init_logger();
       init_toasts();
       import_react_native8 = __toESM(require_react_native());
-      versionHash = "fed8887-dev";
+      versionHash = "392b2b4-dev";
     }
   });
 
@@ -5186,6 +5186,7 @@
         children: [
           /* @__PURE__ */ jsx(TextInput, {
             autoFocus: true,
+            isClearable: true,
             value,
             onChange: (v) => {
               setValue(v);
@@ -5304,7 +5305,6 @@
         paddingBottom: 8
       },
       children: [
-        props.ListHeaderComponent && /* @__PURE__ */ jsx(props.ListHeaderComponent, {}),
         settings.safeMode?.enabled && /* @__PURE__ */ jsxs(import_react_native11.View, {
           style: {
             marginBottom: 10
@@ -5332,7 +5332,7 @@
             }),
             props.sortOptions && /* @__PURE__ */ jsx(IconButton, {
               icon: findAssetId("ic_forum_channel_sort_order_24px"),
-              variant: "secondary",
+              variant: "tertiary",
               disabled: !!search,
               onPress: () => showSimpleActionSheet({
                 key: "AddonListSortOptions",
@@ -5347,7 +5347,8 @@
               })
             })
           ]
-        })
+        }),
+        props.ListHeaderComponent && /* @__PURE__ */ jsx(props.ListHeaderComponent, {})
       ]
     });
     return /* @__PURE__ */ jsxs(ErrorBoundary, {
@@ -5540,6 +5541,7 @@
   }
   function PluginCard({ result, item: plugin }) {
     plugin.usePluginState();
+    var [, forceUpdate] = React.useReducer(() => ({}), 0);
     var cardContextValue = (0, import_react2.useMemo)(() => ({
       plugin,
       result
@@ -5578,6 +5580,7 @@
                         value: plugin.isEnabled(),
                         onValueChange: (v) => {
                           plugin.toggle(v);
+                          forceUpdate();
                         }
                       })
                     ]
@@ -5772,7 +5775,8 @@
             }
             delete pluginInstance[id];
           }
-          disable && (plugin.enabled = false);
+          if (disable)
+            plugin.enabled = false;
         },
         removePlugin(id) {
           return _async_to_generator(function* () {
@@ -6166,9 +6170,69 @@
   }
   function Plugins() {
     useProxy(settings);
+    var navigation2 = NavigationNative.useNavigation();
     return /* @__PURE__ */ jsx(PluginPage, {
       useItems: () => useProxy(VdPluginManager.plugins) && Object.values(VdPluginManager.plugins),
       resolveItem: unifyVdPlugin,
+      ListHeaderComponent: () => {
+        var unproxiedPlugins = Object.values(VdPluginManager.plugins).filter((p) => !p.id.startsWith(VD_PROXY_PREFIX) && !p.id.startsWith(BUNNY_PROXY_PREFIX));
+        if (!unproxiedPlugins.length)
+          return null;
+        return /* @__PURE__ */ jsxs(Card, {
+          style: {
+            marginVertical: 8,
+            gap: 4
+          },
+          children: [
+            /* @__PURE__ */ jsx(Text, {
+              variant: "heading-lg/bold",
+              children: "Unproxied Plugins Detected"
+            }),
+            /* @__PURE__ */ jsx(Text, {
+              variant: "text-md/medium",
+              children: "Installed plugins from unproxied sources may execute unreviewed code in this app without your knowledge."
+            }),
+            /* @__PURE__ */ jsx(import_react_native14.View, {
+              style: {
+                marginTop: 8,
+                flexDirection: "row"
+              },
+              children: /* @__PURE__ */ jsx(Button, {
+                style: {
+                  flexShrink: 1
+                },
+                size: "sm",
+                text: "Review",
+                variant: "secondary",
+                onPress: () => {
+                  navigation2.push("BUNNY_CUSTOM_PAGE", {
+                    title: "Unproxied Plugins",
+                    render: () => {
+                      return /* @__PURE__ */ jsx(FlashList, {
+                        data: unproxiedPlugins,
+                        contentContainerStyle: {
+                          padding: 8
+                        },
+                        ItemSeparatorComponent: () => /* @__PURE__ */ jsx(import_react_native14.View, {
+                          style: {
+                            height: 8
+                          }
+                        }),
+                        renderItem: ({ item: p }) => /* @__PURE__ */ jsx(Card, {
+                          children: /* @__PURE__ */ jsx(Text, {
+                            variant: "heading-md/semibold",
+                            children: p.id
+                          })
+                        })
+                      });
+                    }
+                  });
+                }
+              })
+            })
+          ]
+        });
+      },
       installAction: {
         label: "Install a plugin",
         fetchFn: function() {
@@ -6176,7 +6240,7 @@
             if (!url2.startsWith(VD_PROXY_PREFIX) && !url2.startsWith(BUNNY_PROXY_PREFIX) && !settings.developerSettings) {
               openAlert2("bunny-plugin-unproxied-confirmation", /* @__PURE__ */ jsx(AlertModal2, {
                 title: "Hold On!",
-                content: "You're trying to install a plugin from an external source. This means you're trusting the creator to run their code in this app. Are you sure you want to continue?",
+                content: "You're trying to install a plugin from an unproxied external source. This means you're trusting the creator to run their code in this app without your knowledge. Are you sure you want to continue?",
                 extraContent: /* @__PURE__ */ jsx(Card, {
                   children: /* @__PURE__ */ jsx(Text, {
                     variant: "text-md/bold",
@@ -6223,7 +6287,7 @@
       }
     });
   }
-  var openAlert2, AlertModal2, AlertActions, AlertActionButton2;
+  var import_react_native14, openAlert2, AlertModal2, AlertActions, AlertActionButton2;
   var init_Plugins = __esm({
     "src/core/ui/settings/pages/Plugins/index.tsx"() {
       "use strict";
@@ -6242,7 +6306,9 @@
       init_constants();
       init_lazy();
       init_metro();
+      init_common();
       init_components();
+      import_react_native14 = __toESM(require_react_native());
       init_vendetta();
       ({ openAlert: openAlert2 } = lazyDestructure(() => findByProps("openAlert", "dismissAlert")));
       ({ AlertModal: AlertModal2, AlertActions, AlertActionButton: AlertActionButton2 } = lazyDestructure(() => findByProps("AlertModal", "AlertActions")));
@@ -6256,13 +6322,13 @@
       children: /* @__PURE__ */ jsxs(Stack, {
         spacing: 16,
         children: [
-          /* @__PURE__ */ jsxs(import_react_native14.View, {
+          /* @__PURE__ */ jsxs(import_react_native15.View, {
             style: {
               flexDirection: "row",
               alignItems: "center"
             },
             children: [
-              /* @__PURE__ */ jsxs(import_react_native14.View, {
+              /* @__PURE__ */ jsxs(import_react_native15.View, {
                 style: styles3.headerLeading,
                 children: [
                   /* @__PURE__ */ jsx(Text, {
@@ -6275,7 +6341,7 @@
                   })
                 ]
               }),
-              /* @__PURE__ */ jsxs(import_react_native14.View, {
+              /* @__PURE__ */ jsxs(import_react_native15.View, {
                 style: [
                   styles3.headerTrailing,
                   {
@@ -6283,7 +6349,7 @@
                   }
                 ],
                 children: [
-                  /* @__PURE__ */ jsxs(import_react_native14.View, {
+                  /* @__PURE__ */ jsxs(import_react_native15.View, {
                     style: styles3.actions,
                     children: [
                       props.overflowActions && /* @__PURE__ */ jsx(IconButton, {
@@ -6320,7 +6386,7 @@
                   props.toggleType && (props.toggleType === "switch" ? /* @__PURE__ */ jsx(FormSwitch, {
                     value: props.toggleValue(),
                     onValueChange: props.onToggleChange
-                  }) : /* @__PURE__ */ jsx(import_react_native14.TouchableOpacity, {
+                  }) : /* @__PURE__ */ jsx(import_react_native15.TouchableOpacity, {
                     onPress: () => {
                       props.onToggleChange?.(!props.toggleValue());
                     },
@@ -6340,7 +6406,7 @@
       })
     });
   }
-  var import_react_native14, hideActionSheet2, showSimpleActionSheet2, useStyles2;
+  var import_react_native15, hideActionSheet2, showSimpleActionSheet2, useStyles2;
   var init_AddonCard = __esm({
     "src/core/ui/components/AddonCard.tsx"() {
       "use strict";
@@ -6353,7 +6419,7 @@
       init_wrappers();
       init_color();
       init_styles();
-      import_react_native14 = __toESM(require_react_native());
+      import_react_native15 = __toESM(require_react_native());
       ({ hideActionSheet: hideActionSheet2 } = lazyDestructure(() => findByProps("openLazy", "hideActionSheet")));
       ({ showSimpleActionSheet: showSimpleActionSheet2 } = lazyDestructure(() => findByProps("showSimpleActionSheet")));
       useStyles2 = createStyles({
@@ -6831,7 +6897,7 @@
     var themeFonts = currentTheme2.fonts;
     var [fontName, setFontName] = (0, import_react3.useState)(guessFontName(Object.values(themeFonts)));
     var [error, setError] = (0, import_react3.useState)(void 0);
-    return /* @__PURE__ */ jsxs(import_react_native15.View, {
+    return /* @__PURE__ */ jsxs(import_react_native16.View, {
       style: {
         padding: 8,
         paddingBottom: 16,
@@ -6884,7 +6950,7 @@
     var [fontLink, setFontLink] = (0, import_react3.useState)("");
     var [saving, setSaving] = (0, import_react3.useState)(false);
     var [error, setError] = (0, import_react3.useState)(void 0);
-    return /* @__PURE__ */ jsxs(import_react_native15.View, {
+    return /* @__PURE__ */ jsxs(import_react_native16.View, {
       style: {
         padding: 8,
         paddingBottom: 16,
@@ -6927,7 +6993,7 @@
   function EntryEditorActionSheet(props) {
     var [familyName, setFamilyName] = (0, import_react3.useState)(props.name);
     var [fontUrl, setFontUrl] = (0, import_react3.useState)(props.fontEntries[props.name]);
-    return /* @__PURE__ */ jsxs(import_react_native15.View, {
+    return /* @__PURE__ */ jsxs(import_react_native16.View, {
       style: {
         padding: 8,
         paddingBottom: 16,
@@ -6983,14 +7049,14 @@
     var urlRef = (0, import_react3.useRef)();
     var [nameSet, setNameSet] = (0, import_react3.useState)(false);
     var [error, setError] = (0, import_react3.useState)();
-    return /* @__PURE__ */ jsxs(import_react_native15.View, {
+    return /* @__PURE__ */ jsxs(import_react_native16.View, {
       style: {
         flexDirection: "row",
         gap: 8,
         justifyContent: "flex-start"
       },
       children: [
-        /* @__PURE__ */ jsx(import_react_native15.View, {
+        /* @__PURE__ */ jsx(import_react_native16.View, {
           style: {
             flex: 1
           },
@@ -7056,7 +7122,7 @@
     ]);
     var fontEntries = useProxy(memoEntry);
     var navigation2 = NavigationNative.useNavigation();
-    return /* @__PURE__ */ jsx(import_react_native15.ScrollView, {
+    return /* @__PURE__ */ jsx(import_react_native16.ScrollView, {
       style: {
         flex: 1
       },
@@ -7165,7 +7231,7 @@
               })
             ]
           }),
-          /* @__PURE__ */ jsx(import_react_native15.View, {
+          /* @__PURE__ */ jsx(import_react_native16.View, {
             style: {
               flexDirection: "row",
               justifyContent: "flex-end",
@@ -7209,7 +7275,7 @@
       })
     });
   }
-  var import_react3, import_react_native15, actionSheet2;
+  var import_react3, import_react_native16, actionSheet2;
   var init_FontEditor = __esm({
     "src/core/ui/settings/pages/Fonts/FontEditor.tsx"() {
       "use strict";
@@ -7228,7 +7294,7 @@
       init_wrappers();
       init_components2();
       import_react3 = __toESM(require_react());
-      import_react_native15 = __toESM(require_react_native());
+      import_react_native16 = __toESM(require_react_native());
       actionSheet2 = findByPropsLazy("hideActionSheet");
     }
   });
@@ -7265,7 +7331,7 @@
     ]);
     return (
       // This does not work, actually :woeis:
-      /* @__PURE__ */ jsx(import_react_native16.View, {
+      /* @__PURE__ */ jsx(import_react_native17.View, {
         style: {
           height: 64
         },
@@ -7279,7 +7345,7 @@
             y: 0,
             width: 300
           })
-        }) : /* @__PURE__ */ jsx(import_react_native16.View, {
+        }) : /* @__PURE__ */ jsx(import_react_native17.View, {
           style: {
             justifyContent: "center",
             alignItems: "center"
@@ -7301,19 +7367,19 @@
       children: /* @__PURE__ */ jsxs(Stack, {
         spacing: 16,
         children: [
-          /* @__PURE__ */ jsxs(import_react_native16.View, {
+          /* @__PURE__ */ jsxs(import_react_native17.View, {
             style: {
               flexDirection: "row",
               alignItems: "center"
             },
             children: [
-              /* @__PURE__ */ jsx(import_react_native16.View, {
+              /* @__PURE__ */ jsx(import_react_native17.View, {
                 children: /* @__PURE__ */ jsx(Text, {
                   variant: "heading-lg/semibold",
                   children: font.name
                 })
               }),
-              /* @__PURE__ */ jsx(import_react_native16.View, {
+              /* @__PURE__ */ jsx(import_react_native17.View, {
                 style: {
                   marginLeft: "auto"
                 },
@@ -7363,7 +7429,7 @@
       })
     });
   }
-  var Skia, import_react4, import_react_native16, useToken;
+  var Skia, import_react4, import_react_native17, useToken;
   var init_FontCard = __esm({
     "src/core/ui/settings/pages/Fonts/FontCard.tsx"() {
       "use strict";
@@ -7385,7 +7451,7 @@
       init_alerts();
       init_styles();
       import_react4 = __toESM(require_react());
-      import_react_native16 = __toESM(require_react_native());
+      import_react_native17 = __toESM(require_react_native());
       init_FontEditor();
       ({ useToken } = lazyDestructure(() => findByProps("useToken")));
     }
@@ -7489,7 +7555,7 @@
   function AssetDisplay({ asset }) {
     return /* @__PURE__ */ jsx(LegacyFormRow, {
       label: `${asset.name} - ${asset.id}`,
-      trailing: /* @__PURE__ */ jsx(import_react_native17.Image, {
+      trailing: /* @__PURE__ */ jsx(import_react_native18.Image, {
         source: asset.id,
         style: {
           width: 32,
@@ -7502,7 +7568,7 @@
       }
     });
   }
-  var import_react_native17;
+  var import_react_native18;
   var init_AssetDisplay = __esm({
     "src/core/ui/settings/pages/Developer/AssetDisplay.tsx"() {
       "use strict";
@@ -7512,7 +7578,7 @@
       init_common();
       init_components();
       init_toasts();
-      import_react_native17 = __toESM(require_react_native());
+      import_react_native18 = __toESM(require_react_native());
     }
   });
 
@@ -7520,7 +7586,7 @@
   function AssetBrowser() {
     var [search, setSearch] = React.useState("");
     return /* @__PURE__ */ jsx(ErrorBoundary, {
-      children: /* @__PURE__ */ jsxs(import_react_native18.View, {
+      children: /* @__PURE__ */ jsxs(import_react_native19.View, {
         style: {
           flex: 1
         },
@@ -7531,7 +7597,7 @@
             },
             onChangeText: (v) => setSearch(v)
           }),
-          /* @__PURE__ */ jsx(import_react_native18.FlatList, {
+          /* @__PURE__ */ jsx(import_react_native19.FlatList, {
             data: Object.values(assetsMap).filter((a) => a.name.includes(search) || a.id.toString() === search),
             renderItem: ({ item }) => /* @__PURE__ */ jsx(AssetDisplay, {
               asset: item
@@ -7543,7 +7609,7 @@
       })
     });
   }
-  var import_react_native18;
+  var import_react_native19;
   var init_AssetBrowser = __esm({
     "src/core/ui/settings/pages/Developer/AssetBrowser.tsx"() {
       "use strict";
@@ -7554,7 +7620,7 @@
       init_assets();
       init_components();
       init_components2();
-      import_react_native18 = __toESM(require_react_native());
+      import_react_native19 = __toESM(require_react_native());
     }
   });
 
@@ -7570,7 +7636,7 @@
     useProxy(settings);
     useProxy(loaderConfig);
     return /* @__PURE__ */ jsx(ErrorBoundary, {
-      children: /* @__PURE__ */ jsx(import_react_native19.ScrollView, {
+      children: /* @__PURE__ */ jsx(import_react_native20.ScrollView, {
         style: {
           flex: 1
         },
@@ -7613,7 +7679,7 @@
                     }),
                     onPress: () => window[getReactDevToolsProp() || "__vendetta_rdc"]?.connectToDevTools({
                       host: settings.debuggerUrl.split(":")?.[0],
-                      resolveRNStyle: import_react_native19.StyleSheet.flatten
+                      resolveRNStyle: import_react_native20.StyleSheet.flatten
                     })
                   })
                 })
@@ -7752,7 +7818,7 @@
       })
     });
   }
-  var import_react_native19, hideActionSheet3, showSimpleActionSheet3, RDT_EMBED_LINK, useStyles3;
+  var import_react_native20, hideActionSheet3, showSimpleActionSheet3, RDT_EMBED_LINK, useStyles3;
   var init_Developer = __esm({
     "src/core/ui/settings/pages/Developer/index.tsx"() {
       "use strict";
@@ -7775,7 +7841,7 @@
       init_color();
       init_components2();
       init_styles();
-      import_react_native19 = __toESM(require_react_native());
+      import_react_native20 = __toESM(require_react_native());
       ({ hideActionSheet: hideActionSheet3 } = lazyDestructure(() => findByProps("openLazy", "hideActionSheet")));
       ({ showSimpleActionSheet: showSimpleActionSheet3 } = lazyDestructure(() => findByProps("showSimpleActionSheet")));
       RDT_EMBED_LINK = "https://raw.githubusercontent.com/amsyarasyiq/rdt-embedder/main/dist.js";
@@ -7802,7 +7868,7 @@
           },
           render: () => Promise.resolve().then(() => (init_General(), General_exports)),
           rawTabsConfig: {
-            useTrailing: () => `(${"fed8887-dev"})`
+            useTrailing: () => `(${"392b2b4-dev"})`
           }
         },
         {
@@ -8139,7 +8205,7 @@
   });
 
   // src/core/vendetta/api.tsx
-  var import_react6, import_react_native20, initVendettaObject;
+  var import_react6, import_react_native21, initVendettaObject;
   var init_api = __esm({
     "src/core/vendetta/api.tsx"() {
       "use strict";
@@ -8169,7 +8235,7 @@
       init_toasts();
       init_dist();
       import_react6 = __toESM(require_react());
-      import_react_native20 = __toESM(require_react_native());
+      import_react_native21 = __toESM(require_react_native());
       init_plugins();
       initVendettaObject = () => {
         var createStackBasedFilter = (fn) => {
@@ -8200,7 +8266,7 @@
                     ActionSheetTitleHeader: module.BottomSheetTitleHeader,
                     ActionSheetContentContainer: ({ children }) => {
                       (0, import_react6.useEffect)(() => console.warn("Discord has removed 'ActionSheetContentContainer', please move into something else. This has been temporarily replaced with View"), []);
-                      return /* @__PURE__ */ (0, import_react6.createElement)(import_react_native20.View, null, children);
+                      return /* @__PURE__ */ (0, import_react6.createElement)(import_react_native21.View, null, children);
                     }
                   };
                 }
@@ -9341,7 +9407,7 @@
       });
     });
   }
-  var import_react_native21, ErrorBoundary2, BadgableTabBar, styles2, tabs, safeMode_default;
+  var import_react_native22, ErrorBoundary2, BadgableTabBar, styles2, tabs, safeMode_default;
   var init_safeMode = __esm({
     "src/lib/ui/safeMode.tsx"() {
       "use strict";
@@ -9361,7 +9427,7 @@
       init_color();
       init_components2();
       init_styles();
-      import_react_native21 = __toESM(require_react_native());
+      import_react_native22 = __toESM(require_react_native());
       ErrorBoundary2 = findByNameLazy("ErrorBoundary");
       ({ BadgableTabBar } = lazyDestructure(() => findByProps("BadgableTabBar")));
       styles2 = createThemedStyleSheet({
@@ -9439,7 +9505,7 @@
           children: /* @__PURE__ */ jsxs(SafeAreaView, {
             style: styles2.container,
             children: [
-              /* @__PURE__ */ jsxs(import_react_native21.View, {
+              /* @__PURE__ */ jsxs(import_react_native22.View, {
                 style: styles2.header,
                 children: [
                   /* @__PURE__ */ jsx(ret.props.Illustration, {
@@ -9453,17 +9519,17 @@
                       marginRight: -80
                     }
                   }),
-                  /* @__PURE__ */ jsxs(import_react_native21.View, {
+                  /* @__PURE__ */ jsxs(import_react_native22.View, {
                     style: {
                       flex: 2,
                       paddingLeft: 24
                     },
                     children: [
-                      /* @__PURE__ */ jsx(import_react_native21.Text, {
+                      /* @__PURE__ */ jsx(import_react_native22.Text, {
                         style: styles2.headerTitle,
                         children: ret.props.title
                       }),
-                      /* @__PURE__ */ jsx(import_react_native21.Text, {
+                      /* @__PURE__ */ jsx(import_react_native22.Text, {
                         style: styles2.headerDescription,
                         children: ret.props.body
                       })
@@ -9471,12 +9537,12 @@
                   })
                 ]
               }),
-              /* @__PURE__ */ jsxs(import_react_native21.View, {
+              /* @__PURE__ */ jsxs(import_react_native22.View, {
                 style: {
                   flex: 6
                 },
                 children: [
-                  /* @__PURE__ */ jsx(import_react_native21.View, {
+                  /* @__PURE__ */ jsx(import_react_native22.View, {
                     style: {
                       paddingBottom: 8
                     },
@@ -9503,7 +9569,7 @@
                   })
                 ]
               }),
-              /* @__PURE__ */ jsx(import_react_native21.View, {
+              /* @__PURE__ */ jsx(import_react_native22.View, {
                 style: styles2.footer,
                 children: buttons.map((button) => {
                   var buttonIndex = buttons.indexOf(button) !== 0 ? 8 : 0;
@@ -9726,7 +9792,7 @@
         alert([
           "Failed to load Bunny!\n",
           `Build Number: ${ClientInfoManager2.Build}`,
-          `Bunny: ${"fed8887-dev"}`,
+          `Bunny: ${"392b2b4-dev"}`,
           stack || e?.toString?.()
         ].join("\n"));
       }
