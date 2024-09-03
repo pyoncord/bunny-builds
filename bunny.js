@@ -64,7 +64,7 @@
     }
   });
 
-  // node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_async_to_generator.js
+  // node_modules/.pnpm/@swc+helpers@0.5.13/node_modules/@swc/helpers/esm/_async_to_generator.js
   function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
     try {
       var info = gen[key](arg);
@@ -94,7 +94,7 @@
     };
   }
   var init_async_to_generator = __esm({
-    "node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_async_to_generator.js"() {
+    "node_modules/.pnpm/@swc+helpers@0.5.13/node_modules/@swc/helpers/esm/_async_to_generator.js"() {
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
     }
@@ -264,19 +264,106 @@
     }
   });
 
-  // node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_class_call_check.js
-  function _class_call_check(instance, Constructor) {
-    if (!(instance instanceof Constructor))
-      throw new TypeError("Cannot call a class as a function");
+  // node_modules/.pnpm/@swc+helpers@0.5.13/node_modules/@swc/helpers/esm/_get_prototype_of.js
+  function _get_prototype_of(o) {
+    _get_prototype_of = Object.setPrototypeOf ? Object.getPrototypeOf : function getPrototypeOf(o2) {
+      return o2.__proto__ || Object.getPrototypeOf(o2);
+    };
+    return _get_prototype_of(o);
   }
-  var init_class_call_check = __esm({
-    "node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_class_call_check.js"() {
+  var init_get_prototype_of = __esm({
+    "node_modules/.pnpm/@swc+helpers@0.5.13/node_modules/@swc/helpers/esm/_get_prototype_of.js"() {
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
     }
   });
 
-  // node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_set_prototype_of.js
+  // node_modules/.pnpm/@swc+helpers@0.5.13/node_modules/@swc/helpers/esm/_is_native_reflect_construct.js
+  function _is_native_reflect_construct() {
+    try {
+      var result = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function() {
+      }));
+    } catch (_) {
+    }
+    return (_is_native_reflect_construct = function _is_native_reflect_construct2() {
+      return !!result;
+    })();
+  }
+  var init_is_native_reflect_construct = __esm({
+    "node_modules/.pnpm/@swc+helpers@0.5.13/node_modules/@swc/helpers/esm/_is_native_reflect_construct.js"() {
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+    }
+  });
+
+  // node_modules/.pnpm/@swc+helpers@0.5.13/node_modules/@swc/helpers/esm/_assert_this_initialized.js
+  function _assert_this_initialized(self) {
+    if (self === void 0)
+      throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+    return self;
+  }
+  var init_assert_this_initialized = __esm({
+    "node_modules/.pnpm/@swc+helpers@0.5.13/node_modules/@swc/helpers/esm/_assert_this_initialized.js"() {
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+    }
+  });
+
+  // node_modules/.pnpm/@swc+helpers@0.5.13/node_modules/@swc/helpers/esm/_type_of.js
+  function _type_of(obj) {
+    "@swc/helpers - typeof";
+    return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj;
+  }
+  var init_type_of = __esm({
+    "node_modules/.pnpm/@swc+helpers@0.5.13/node_modules/@swc/helpers/esm/_type_of.js"() {
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+    }
+  });
+
+  // node_modules/.pnpm/@swc+helpers@0.5.13/node_modules/@swc/helpers/esm/_possible_constructor_return.js
+  function _possible_constructor_return(self, call) {
+    if (call && (_type_of(call) === "object" || typeof call === "function"))
+      return call;
+    return _assert_this_initialized(self);
+  }
+  var init_possible_constructor_return = __esm({
+    "node_modules/.pnpm/@swc+helpers@0.5.13/node_modules/@swc/helpers/esm/_possible_constructor_return.js"() {
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_assert_this_initialized();
+      init_type_of();
+    }
+  });
+
+  // node_modules/.pnpm/@swc+helpers@0.5.13/node_modules/@swc/helpers/esm/_call_super.js
+  function _call_super(_this, derived, args) {
+    derived = _get_prototype_of(derived);
+    return _possible_constructor_return(_this, _is_native_reflect_construct() ? Reflect.construct(derived, args || [], _get_prototype_of(_this).constructor) : derived.apply(_this, args));
+  }
+  var init_call_super = __esm({
+    "node_modules/.pnpm/@swc+helpers@0.5.13/node_modules/@swc/helpers/esm/_call_super.js"() {
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_get_prototype_of();
+      init_is_native_reflect_construct();
+      init_possible_constructor_return();
+    }
+  });
+
+  // node_modules/.pnpm/@swc+helpers@0.5.13/node_modules/@swc/helpers/esm/_class_call_check.js
+  function _class_call_check(instance, Constructor) {
+    if (!(instance instanceof Constructor))
+      throw new TypeError("Cannot call a class as a function");
+  }
+  var init_class_call_check = __esm({
+    "node_modules/.pnpm/@swc+helpers@0.5.13/node_modules/@swc/helpers/esm/_class_call_check.js"() {
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+    }
+  });
+
+  // node_modules/.pnpm/@swc+helpers@0.5.13/node_modules/@swc/helpers/esm/_set_prototype_of.js
   function _set_prototype_of(o, p) {
     _set_prototype_of = Object.setPrototypeOf || function setPrototypeOf(o2, p2) {
       o2.__proto__ = p2;
@@ -285,13 +372,13 @@
     return _set_prototype_of(o, p);
   }
   var init_set_prototype_of = __esm({
-    "node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_set_prototype_of.js"() {
+    "node_modules/.pnpm/@swc+helpers@0.5.13/node_modules/@swc/helpers/esm/_set_prototype_of.js"() {
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
     }
   });
 
-  // node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_inherits.js
+  // node_modules/.pnpm/@swc+helpers@0.5.13/node_modules/@swc/helpers/esm/_inherits.js
   function _inherits(subClass, superClass) {
     if (typeof superClass !== "function" && superClass !== null) {
       throw new TypeError("Super expression must either be null or a function");
@@ -307,37 +394,14 @@
       _set_prototype_of(subClass, superClass);
   }
   var init_inherits = __esm({
-    "node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_inherits.js"() {
+    "node_modules/.pnpm/@swc+helpers@0.5.13/node_modules/@swc/helpers/esm/_inherits.js"() {
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
       init_set_prototype_of();
     }
   });
 
-  // node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_is_native_reflect_construct.js
-  function _is_native_reflect_construct() {
-    if (typeof Reflect === "undefined" || !Reflect.construct)
-      return false;
-    if (Reflect.construct.sham)
-      return false;
-    if (typeof Proxy === "function")
-      return true;
-    try {
-      Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function() {
-      }));
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
-  var init_is_native_reflect_construct = __esm({
-    "node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_is_native_reflect_construct.js"() {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-    }
-  });
-
-  // node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_construct.js
+  // node_modules/.pnpm/@swc+helpers@0.5.13/node_modules/@swc/helpers/esm/_construct.js
   function _construct(Parent, args, Class) {
     if (_is_native_reflect_construct())
       _construct = Reflect.construct;
@@ -357,7 +421,7 @@
     return _construct.apply(null, arguments);
   }
   var init_construct = __esm({
-    "node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_construct.js"() {
+    "node_modules/.pnpm/@swc+helpers@0.5.13/node_modules/@swc/helpers/esm/_construct.js"() {
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
       init_is_native_reflect_construct();
@@ -365,32 +429,18 @@
     }
   });
 
-  // node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_get_prototype_of.js
-  function _get_prototype_of(o) {
-    _get_prototype_of = Object.setPrototypeOf ? Object.getPrototypeOf : function getPrototypeOf(o2) {
-      return o2.__proto__ || Object.getPrototypeOf(o2);
-    };
-    return _get_prototype_of(o);
-  }
-  var init_get_prototype_of = __esm({
-    "node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_get_prototype_of.js"() {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-    }
-  });
-
-  // node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_is_native_function.js
+  // node_modules/.pnpm/@swc+helpers@0.5.13/node_modules/@swc/helpers/esm/_is_native_function.js
   function _is_native_function(fn) {
     return Function.toString.call(fn).indexOf("[native code]") !== -1;
   }
   var init_is_native_function = __esm({
-    "node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_is_native_function.js"() {
+    "node_modules/.pnpm/@swc+helpers@0.5.13/node_modules/@swc/helpers/esm/_is_native_function.js"() {
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
     }
   });
 
-  // node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_wrap_native_super.js
+  // node_modules/.pnpm/@swc+helpers@0.5.13/node_modules/@swc/helpers/esm/_wrap_native_super.js
   function _wrap_native_super(Class) {
     var _cache = typeof Map === "function" ? /* @__PURE__ */ new Map() : void 0;
     _wrap_native_super = function _wrap_native_super2(Class2) {
@@ -419,77 +469,13 @@
     return _wrap_native_super(Class);
   }
   var init_wrap_native_super = __esm({
-    "node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_wrap_native_super.js"() {
+    "node_modules/.pnpm/@swc+helpers@0.5.13/node_modules/@swc/helpers/esm/_wrap_native_super.js"() {
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
       init_construct();
       init_get_prototype_of();
       init_is_native_function();
       init_set_prototype_of();
-    }
-  });
-
-  // node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_assert_this_initialized.js
-  function _assert_this_initialized(self) {
-    if (self === void 0)
-      throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-    return self;
-  }
-  var init_assert_this_initialized = __esm({
-    "node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_assert_this_initialized.js"() {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-    }
-  });
-
-  // node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_type_of.js
-  function _type_of(obj) {
-    "@swc/helpers - typeof";
-    return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj;
-  }
-  var init_type_of = __esm({
-    "node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_type_of.js"() {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-    }
-  });
-
-  // node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_possible_constructor_return.js
-  function _possible_constructor_return(self, call) {
-    if (call && (_type_of(call) === "object" || typeof call === "function"))
-      return call;
-    return _assert_this_initialized(self);
-  }
-  var init_possible_constructor_return = __esm({
-    "node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_possible_constructor_return.js"() {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_assert_this_initialized();
-      init_type_of();
-    }
-  });
-
-  // node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_create_super.js
-  function _create_super(Derived) {
-    var hasNativeReflectConstruct = _is_native_reflect_construct();
-    return function _createSuperInternal() {
-      var Super = _get_prototype_of(Derived), result;
-      if (hasNativeReflectConstruct) {
-        var NewTarget = _get_prototype_of(this).constructor;
-        result = Reflect.construct(Super, arguments, NewTarget);
-      } else {
-        result = Super.apply(this, arguments);
-      }
-      return _possible_constructor_return(this, result);
-    };
-  }
-  var init_create_super = __esm({
-    "node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_create_super.js"() {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_get_prototype_of();
-      init_is_native_reflect_construct();
-      init_possible_constructor_return();
     }
   });
 
@@ -709,7 +695,7 @@
     }
   });
 
-  // node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_create_class.js
+  // node_modules/.pnpm/@swc+helpers@0.5.13/node_modules/@swc/helpers/esm/_create_class.js
   function _defineProperties(target, props) {
     for (var i = 0; i < props.length; i++) {
       var descriptor = props[i];
@@ -728,13 +714,13 @@
     return Constructor;
   }
   var init_create_class = __esm({
-    "node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_create_class.js"() {
+    "node_modules/.pnpm/@swc+helpers@0.5.13/node_modules/@swc/helpers/esm/_create_class.js"() {
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
     }
   });
 
-  // node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_define_property.js
+  // node_modules/.pnpm/@swc+helpers@0.5.13/node_modules/@swc/helpers/esm/_define_property.js
   function _define_property(obj, key, value) {
     if (key in obj) {
       Object.defineProperty(obj, key, {
@@ -748,7 +734,7 @@
     return obj;
   }
   var init_define_property = __esm({
-    "node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_define_property.js"() {
+    "node_modules/.pnpm/@swc+helpers@0.5.13/node_modules/@swc/helpers/esm/_define_property.js"() {
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
     }
@@ -3354,11 +3340,11 @@
       "use strict";
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
+      init_call_super();
       init_class_call_check();
       init_create_class();
       init_define_property();
       init_inherits();
-      init_create_super();
       init_jsxRuntime();
       init_i18n();
       init_common();
@@ -3381,11 +3367,12 @@
       ErrorBoundary = /* @__PURE__ */ function(_superClass) {
         "use strict";
         _inherits(ErrorBoundary3, _superClass);
-        var _super = _create_super(ErrorBoundary3);
         function ErrorBoundary3(props) {
           _class_call_check(this, ErrorBoundary3);
           var _this;
-          _this = _super.call(this, props);
+          _this = _call_super(this, ErrorBoundary3, [
+            props
+          ]);
           _this.state = {
             hasErr: false
           };
@@ -4006,7 +3993,7 @@
       init_logger();
       init_toasts();
       import_react_native8 = __toESM(require_react_native());
-      versionHash = "f5bc353-main";
+      versionHash = "87913ce-main";
     }
   });
 
@@ -4351,11 +4338,11 @@
     "node_modules/.pnpm/fuzzysort@3.0.2/node_modules/fuzzysort/fuzzysort.js"(exports, module) {
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
+      init_call_super();
       init_class_call_check();
       init_create_class();
       init_inherits();
       init_wrap_native_super();
-      init_create_super();
       ((root, UMD) => {
         if (typeof define === "function" && define.amd)
           define([], UMD);
@@ -4655,10 +4642,9 @@
         }();
         var KeysResult = /* @__PURE__ */ function(Array1) {
           _inherits(KeysResult2, Array1);
-          var _super = _create_super(KeysResult2);
           function KeysResult2() {
             _class_call_check(this, KeysResult2);
-            return _super.apply(this, arguments);
+            return _call_super(this, KeysResult2, arguments);
           }
           _create_class(KeysResult2, [
             {
@@ -7868,7 +7854,7 @@
           },
           render: () => Promise.resolve().then(() => (init_General(), General_exports)),
           rawTabsConfig: {
-            useTrailing: () => `(${"f5bc353-main"})`
+            useTrailing: () => `(${"87913ce-main"})`
           }
         },
         {
@@ -9334,17 +9320,6 @@
         manifestToId.set(instance.manifest, id);
         corePluginInstances.set(id, instance);
       }
-      yield updateRepository(OFFICIAL_PLUGINS_REPO_URL);
-      yield allSettled(Object.keys(pluginRepositories).map(function() {
-        var _ref = _async_to_generator(function* (repo) {
-          if (repo !== OFFICIAL_PLUGINS_REPO_URL) {
-            yield updateRepository(repo);
-          }
-        });
-        return function(repo) {
-          return _ref.apply(this, arguments);
-        };
-      }()));
     });
     return _checkAndRegisterUpdates.apply(this, arguments);
   }
@@ -9755,8 +9730,7 @@
           initFetchI18nStrings(),
           initSettings(),
           fixes_default(),
-          safeMode_default(),
-          checkAndRegisterUpdates()
+          safeMode_default()
         ]).then(
           // Push them all to unloader
           (u) => u.forEach((f) => f && unload.push(f))
@@ -9784,6 +9758,7 @@
       try {
         Object.freeze = Object.seal = Object;
         yield (init_caches(), __toCommonJS(caches_exports)).initMetroCache();
+        init_modules2();
         yield (init_src(), __toCommonJS(src_exports)).default();
       } catch (e) {
         var { ClientInfoManager: ClientInfoManager2 } = (init_modules(), __toCommonJS(modules_exports));
@@ -9792,7 +9767,7 @@
         alert([
           "Failed to load Bunny!\n",
           `Build Number: ${ClientInfoManager2.Build}`,
-          `Bunny: ${"f5bc353-main"}`,
+          `Bunny: ${"87913ce-main"}`,
           stack || e?.toString?.()
         ].join("\n"));
       }
