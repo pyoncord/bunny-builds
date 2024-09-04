@@ -2522,14 +2522,19 @@
     if (moduleExports.registerAsset) {
       (init_assets(), __toCommonJS(assets_exports)).patchAssets(moduleExports);
     }
-    if (moduleExports?.default?.name === "requireNativeComponent") {
-      instead2("default", moduleExports, (args, origFunc) => {
+    if (!patchedNativeComponentRegistry && [
+      "customBubblingEventTypes",
+      "customDirectEventTypes",
+      "register",
+      "get"
+    ].every((x) => moduleExports[x])) {
+      instead2("register", moduleExports, (args, origFunc) => {
         try {
           return origFunc(...args);
         } catch (e) {
-          return args[0];
         }
       });
+      patchedNativeComponentRegistry = true;
     }
     if (moduleExports?.default?.constructor?.displayName === "DeveloperExperimentStore") {
       moduleExports.default = new Proxy(moduleExports.default, {
@@ -2660,7 +2665,7 @@
       }
     }
   }
-  var _loop, before2, instead2, metroModules, metroRequire, moduleSubscriptions, blacklistedIds, noopHandler, functionToString, patchedInspectSource, patchedImportTracker, _importingModuleId, key;
+  var _loop, before2, instead2, metroModules, metroRequire, moduleSubscriptions, blacklistedIds, noopHandler, functionToString, patchedInspectSource, patchedImportTracker, patchedNativeComponentRegistry, _importingModuleId, key;
   var init_modules2 = __esm({
     "src/metro/internals/modules.ts"() {
       "use strict";
@@ -2720,6 +2725,7 @@
       functionToString = Function.prototype.toString;
       patchedInspectSource = false;
       patchedImportTracker = false;
+      patchedNativeComponentRegistry = false;
       _importingModuleId = -1;
       for (key in metroModules)
         _loop(key);
@@ -3993,7 +3999,7 @@
       init_logger();
       init_toasts();
       import_react_native8 = __toESM(require_react_native());
-      versionHash = "87913ce-main";
+      versionHash = "4b94b7f-main";
     }
   });
 
@@ -7854,7 +7860,7 @@
           },
           render: () => Promise.resolve().then(() => (init_General(), General_exports)),
           rawTabsConfig: {
-            useTrailing: () => `(${"87913ce-main"})`
+            useTrailing: () => `(${"4b94b7f-main"})`
           }
         },
         {
@@ -9758,7 +9764,6 @@
       try {
         Object.freeze = Object.seal = Object;
         yield (init_caches(), __toCommonJS(caches_exports)).initMetroCache();
-        init_modules2();
         yield (init_src(), __toCommonJS(src_exports)).default();
       } catch (e) {
         var { ClientInfoManager: ClientInfoManager2 } = (init_modules(), __toCommonJS(modules_exports));
@@ -9767,7 +9772,7 @@
         alert([
           "Failed to load Bunny!\n",
           `Build Number: ${ClientInfoManager2.Build}`,
-          `Bunny: ${"87913ce-main"}`,
+          `Bunny: ${"4b94b7f-main"}`,
           stack || e?.toString?.()
         ].join("\n"));
       }
