@@ -3999,7 +3999,7 @@
       init_logger();
       init_toasts();
       import_react_native8 = __toESM(require_react_native());
-      versionHash = "4b94b7f-main";
+      versionHash = "32afc78-main";
     }
   });
 
@@ -7860,7 +7860,7 @@
           },
           render: () => Promise.resolve().then(() => (init_General(), General_exports)),
           rawTabsConfig: {
-            useTrailing: () => `(${"4b94b7f-main"})`
+            useTrailing: () => `(${"32afc78-main"})`
           }
         },
         {
@@ -8146,7 +8146,9 @@
     command.type ??= ApplicationCommandType.CHAT;
     command.inputType = ApplicationCommandInputType.BUILT_IN;
     command.displayName ??= command.name;
+    command.untranslatedName ??= command.name;
     command.displayDescription ??= command.description;
+    command.untranslatedDescription ??= command.description;
     if (command.options)
       for (var opt of command.options) {
         opt.displayName ??= opt.name;
@@ -9772,7 +9774,7 @@
         alert([
           "Failed to load Bunny!\n",
           `Build Number: ${ClientInfoManager2.Build}`,
-          `Bunny: ${"4b94b7f-main"}`,
+          `Bunny: ${"32afc78-main"}`,
           stack || e?.toString?.()
         ].join("\n"));
       }
