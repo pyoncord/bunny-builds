@@ -3981,11 +3981,11 @@
        * @deprecated use `bunny` field
        * */
       vendetta: {
-        version: "5449969-dev".split("-")[0],
+        version: "98cf23e-dev".split("-")[0],
         loader: LOADER_IDENTITY.name
       },
       bunny: {
-        version: "5449969-dev",
+        version: "98cf23e-dev",
         loader: {
           name: LOADER_IDENTITY.name,
           version: LOADER_IDENTITY.version
@@ -7941,8 +7941,8 @@
                 var ret = typeof raw === "function" ? raw() : raw;
                 var rawInstance = ret?.default ?? ret ?? {};
                 pluginInstance = {
-                  start: () => rawInstance.onLoad(),
-                  stop: () => rawInstance.onUnload(),
+                  start: rawInstance.onLoad && (() => rawInstance.onLoad()),
+                  stop: rawInstance.onUnload && (() => rawInstance.onUnload()),
                   SettingsComponent: rawInstance.settings
                 };
                 instances[id] = pluginInstance;
@@ -10424,7 +10424,7 @@
           },
           render: () => Promise.resolve().then(() => (init_General(), General_exports)),
           rawTabsConfig: {
-            useTrailing: () => `(${"5449969-dev"})`
+            useTrailing: () => `(${"98cf23e-dev"})`
           }
         },
         {
@@ -11263,7 +11263,7 @@
         alert([
           "Failed to load Bunny!\n",
           `Build Number: ${ClientInfoManager.Build}`,
-          `Bunny: ${"5449969-dev"}`,
+          `Bunny: ${"98cf23e-dev"}`,
           stack || e?.toString?.()
         ].join("\n"));
       }
