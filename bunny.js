@@ -3981,11 +3981,11 @@
        * @deprecated use `bunny` field
        * */
       vendetta: {
-        version: "98cf23e-dev".split("-")[0],
+        version: "c48fc16-dev".split("-")[0],
         loader: LOADER_IDENTITY.name
       },
       bunny: {
-        version: "98cf23e-dev",
+        version: "c48fc16-dev",
         loader: {
           name: LOADER_IDENTITY.name,
           version: LOADER_IDENTITY.version
@@ -7659,7 +7659,7 @@
     if (!condition)
       throw new Error(`[${id}] Attempted to ${attempt}`);
   }
-  var import_lodash2, _fetch, fetchJS, fetchJSON, instances, bunnyApiObjects, updateAllPromise, PluginManager_default;
+  var import_lodash2, _fetch, fetchJS, fetchJSON, instances, bunnyApiObjects, updatePromiseMap, PluginManager_default;
   var init_PluginManager = __esm({
     "src/lib/addons/plugins/PluginManager.ts"() {
       "use strict";
@@ -7684,27 +7684,39 @@
       fetchJSON = (repoUrl, path) => _fetch(repoUrl, path).then((r) => r.json());
       instances = v.from({});
       bunnyApiObjects = /* @__PURE__ */ new Map();
+      updatePromiseMap = /* @__PURE__ */ new Map();
       PluginManager_default = {
         settings: createStorage("plugins/settings.json"),
         traces: createStorage("plugins/infos.json"),
         initialize() {
           return _async_to_generator(function* () {
-            yield updateAllPromise;
-            for (var id of this.getAllIds()) {
-              if (this.settings[id].enabled) {
-                this.start(id, {
-                  throwOnPluginError: true
-                });
-              }
-            }
+            var _this = this;
+            this.getAllIds().map(function() {
+              var _ref = _async_to_generator(function* (id) {
+                if (_this.settings[id].enabled) {
+                  yield updatePromiseMap.get(id);
+                  _this.start(id, {
+                    throwOnPluginError: true
+                  });
+                }
+              });
+              return function(id) {
+                return _ref.apply(this, arguments);
+              };
+            }());
           }).apply(this);
         },
         prepare() {
           return _async_to_generator(function* () {
             yield awaitStorage(this.settings, this.traces);
             yield this.migrate("VENDETTA_PLUGINS");
-            yield Promise.all(this.getAllIds().map((id) => preloadStorageIfExists(`plugins/manifests/${id}.json`)));
-            updateAllPromise = this.updateAll();
+            var pluginIds = this.getAllIds();
+            yield Promise.all(pluginIds.map((id2) => preloadStorageIfExists(`plugins/manifests/${id2}.json`)));
+            for (var id of pluginIds) {
+              updatePromiseMap.set(id, this.fetch(this.traces[id].sourceUrl, {
+                id
+              }));
+            }
           }).apply(this);
         },
         migrate(oldKey) {
@@ -8064,15 +8076,6 @@
             yield purgeStorage(`plugins/manifests/${id}.json`);
             if (!keepData)
               yield purgeStorage(`plugins/storage/${id}.json`);
-          }).apply(this);
-        },
-        updateAll() {
-          return _async_to_generator(function* () {
-            var pluginIds = this.getAllIds();
-            var update = (id) => this.fetch(this.traces[id].sourceUrl, {
-              id
-            });
-            yield allSettled(pluginIds.map(update));
           }).apply(this);
         }
       };
@@ -9479,7 +9482,7 @@
               }, null);
               setName(fontName);
               Object.assign(fonts, themeFonts);
-              actionSheet2.hideActionSheet();
+              hideSheet("FontEditorActionSheet");
             } catch (e) {
               setError(String(e));
             }
@@ -9527,7 +9530,7 @@
               setName(json.spec === 3 ? json.display.name : json.name);
               setSource(fontLink);
               Object.assign(fonts, json.main);
-            })().then(() => actionSheet2.hideActionSheet()).catch((e) => setError(String(e))).finally(() => setSaving(false));
+            })().then(() => hideSheet("FontEditorActionSheet")).catch((e) => setError(String(e))).finally(() => setSaving(false));
           }
         })
       ]
@@ -9571,7 +9574,7 @@
     });
   }
   function promptActionSheet(Component, fontEntries, props) {
-    actionSheet2.openLazy(() => /* @__PURE__ */ jsx(ErrorBoundary, {
+    showSheet("FontEditorActionSheet", () => /* @__PURE__ */ jsx(ErrorBoundary, {
       children: /* @__PURE__ */ jsxs(ActionSheet, {
         children: [
           /* @__PURE__ */ jsx(BottomSheetTitleHeader, {
@@ -9583,7 +9586,7 @@
           })
         ]
       })
-    }), "FontEditorActionSheet");
+    }));
   }
   function NewEntryRow({ fontEntry }) {
     var nameRef = (0, import_react7.useRef)();
@@ -9837,7 +9840,7 @@
       })
     });
   }
-  var import_react7, import_react_native21, actionSheet2;
+  var import_react7, import_react_native21;
   var init_FontEditor = __esm({
     "src/core/ui/settings/pages/Fonts/FontEditor.tsx"() {
       "use strict";
@@ -9851,14 +9854,13 @@
       init_ColorManager();
       init_assets();
       init_storage();
+      init_sheets();
       init_utils();
       init_common();
       init_components();
-      init_wrappers();
       init_components2();
       import_react7 = __toESM(require_react());
       import_react_native21 = __toESM(require_react_native());
-      actionSheet2 = findByPropsLazy("hideActionSheet");
     }
   });
 
@@ -10424,7 +10426,7 @@
           },
           render: () => Promise.resolve().then(() => (init_General(), General_exports)),
           rawTabsConfig: {
-            useTrailing: () => `(${"98cf23e-dev"})`
+            useTrailing: () => `(${"c48fc16-dev"})`
           }
         },
         {
@@ -11232,9 +11234,7 @@
         );
         window.bunny = lib_exports;
         if (!BunnySettings_default.isSafeMode()) {
-          yield ColorManager_default.initialize();
-          yield PluginManager_default.initialize();
-          yield FontManager_default.initialize();
+          ColorManager_default.initialize(), PluginManager_default.initialize(), FontManager_default.initialize();
         }
         logger.log("Bunny is ready!");
       });
@@ -11263,7 +11263,7 @@
         alert([
           "Failed to load Bunny!\n",
           `Build Number: ${ClientInfoManager.Build}`,
-          `Bunny: ${"98cf23e-dev"}`,
+          `Bunny: ${"c48fc16-dev"}`,
           stack || e?.toString?.()
         ].join("\n"));
       }
