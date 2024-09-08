@@ -3726,16 +3726,16 @@
   });
 
   // src/core/debug/safeMode.ts
-  function toggleSafeMode(_2) {
+  function toggleSafeMode() {
     return _toggleSafeMode.apply(this, arguments);
   }
   function _toggleSafeMode() {
-    _toggleSafeMode = _async_to_generator(function* ({ to = !BunnySettings_default.general.safeModeEnabled, reload = true }) {
+    _toggleSafeMode = _async_to_generator(function* ({ to = !BunnySettings_default.general.safeModeEnabled, reload = true } = {}) {
       var enabled = BunnySettings_default.general.safeModeEnabled = to;
       var currentColor = ColorManager_default.getCurrentManifest();
       yield ColorManager_default.writeForNative(enabled ? null : currentColor);
       if (reload)
-        RTNBundleUpdaterManager.reload();
+        setTimeout(() => RTNBundleUpdaterManager.reload(), 500);
     });
     return _toggleSafeMode.apply(this, arguments);
   }
@@ -3981,11 +3981,11 @@
        * @deprecated use `bunny` field
        * */
       vendetta: {
-        version: "2259abf-dev".split("-")[0],
+        version: "5449969-dev".split("-")[0],
         loader: LOADER_IDENTITY.name
       },
       bunny: {
-        version: "2259abf-dev",
+        version: "5449969-dev",
         loader: {
           name: LOADER_IDENTITY.name,
           version: LOADER_IDENTITY.version
@@ -5003,11 +5003,9 @@
                 text: "Reload Discord",
                 onPress: () => RTNBundleUpdaterManager.reload()
               }),
-              /* @__PURE__ */ jsx(Button, {
+              !BunnySettings_default.isSafeMode() && /* @__PURE__ */ jsx(Button, {
                 text: "Reload in Safe Mode",
-                onPress: () => toggleSafeMode({
-                  to: true
-                })
+                onPress: () => toggleSafeMode()
               }),
               /* @__PURE__ */ jsx(Button, {
                 variant: "destructive",
@@ -5028,6 +5026,7 @@
       init_promiseAllSettled();
       init_jsxRuntime();
       init_safeMode();
+      init_BunnySettings();
       init_isStack();
       init_debug();
       init_rn_modules();
@@ -7942,8 +7941,8 @@
                 var ret = typeof raw === "function" ? raw() : raw;
                 var rawInstance = ret?.default ?? ret ?? {};
                 pluginInstance = {
-                  start: rawInstance.onLoad,
-                  stop: rawInstance.onUnload,
+                  start: () => rawInstance.onLoad(),
+                  stop: () => rawInstance.onUnload(),
                   SettingsComponent: rawInstance.settings
                 };
                 instances[id] = pluginInstance;
@@ -10425,7 +10424,7 @@
           },
           render: () => Promise.resolve().then(() => (init_General(), General_exports)),
           rawTabsConfig: {
-            useTrailing: () => `(${"2259abf-dev"})`
+            useTrailing: () => `(${"5449969-dev"})`
           }
         },
         {
@@ -11264,7 +11263,7 @@
         alert([
           "Failed to load Bunny!\n",
           `Build Number: ${ClientInfoManager.Build}`,
-          `Bunny: ${"2259abf-dev"}`,
+          `Bunny: ${"5449969-dev"}`,
           stack || e?.toString?.()
         ].join("\n"));
       }
