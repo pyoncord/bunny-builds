@@ -3981,11 +3981,11 @@
        * @deprecated use `bunny` field
        * */
       vendetta: {
-        version: "c48fc16-dev".split("-")[0],
+        version: "0ab65bb-dev".split("-")[0],
         loader: LOADER_IDENTITY.name
       },
       bunny: {
-        version: "c48fc16-dev",
+        version: "0ab65bb-dev",
         loader: {
           name: LOADER_IDENTITY.name,
           version: LOADER_IDENTITY.version
@@ -4959,7 +4959,7 @@
               }),
               /* @__PURE__ */ jsx(Text2, {
                 variant: "text-md/normal",
-                children: "A crash occured while rendering a component. This could be caused by a plugin, Bunny or Discord itself"
+                children: "A crash occured while rendering a component. This could be caused by a plugin, Bunny or Discord itself."
               }),
               /* @__PURE__ */ jsxs(Text2, {
                 variant: "text-sm/normal",
@@ -5843,7 +5843,7 @@
                 icon: /* @__PURE__ */ jsx(TableRow.Icon, {
                   source: findAssetId("ic_progress_wrench_24px")
                 }),
-                value: BunnySettings_default.developer.enabled = true,
+                value: BunnySettings_default.developer.enabled,
                 onValueChange: (v2) => {
                   BunnySettings_default.developer.enabled = v2;
                 }
@@ -10426,7 +10426,7 @@
           },
           render: () => Promise.resolve().then(() => (init_General(), General_exports)),
           rawTabsConfig: {
-            useTrailing: () => `(${"c48fc16-dev"})`
+            useTrailing: () => `(${"0ab65bb-dev"})`
           }
         },
         {
@@ -11234,7 +11234,9 @@
         );
         window.bunny = lib_exports;
         if (!BunnySettings_default.isSafeMode()) {
-          ColorManager_default.initialize(), PluginManager_default.initialize(), FontManager_default.initialize();
+          ColorManager_default.initialize();
+          PluginManager_default.initialize();
+          FontManager_default.initialize();
         }
         logger.log("Bunny is ready!");
       });
@@ -11263,7 +11265,7 @@
         alert([
           "Failed to load Bunny!\n",
           `Build Number: ${ClientInfoManager.Build}`,
-          `Bunny: ${"c48fc16-dev"}`,
+          `Bunny: ${"0ab65bb-dev"}`,
           stack || e?.toString?.()
         ].join("\n"));
       }
