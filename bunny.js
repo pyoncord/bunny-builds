@@ -479,43 +479,78 @@
     }
   });
 
-  // node_modules/.pnpm/es-toolkit@1.17.0/node_modules/es-toolkit/dist/function/debounce.mjs
-  function debounce(func, debounceMs, { signal } = {}) {
+  // node_modules/.pnpm/es-toolkit@1.20.0/node_modules/es-toolkit/dist/function/debounce.mjs
+  function debounce(func, debounceMs, { signal, edges } = {}) {
+    var pendingThis = void 0;
+    var pendingArgs = null;
+    var leading = edges != null && edges.includes("leading");
+    var trailing = edges == null || edges.includes("trailing");
+    var invoke = () => {
+      if (pendingArgs !== null) {
+        func.apply(pendingThis, pendingArgs);
+        pendingThis = void 0;
+        pendingArgs = null;
+      }
+    };
+    var onTimerEnd = () => {
+      if (trailing) {
+        invoke();
+      }
+      cancel();
+    };
     var timeoutId = null;
-    var debounced = function debounced2(...args) {
-      if (timeoutId !== null) {
+    var schedule = () => {
+      if (timeoutId != null) {
         clearTimeout(timeoutId);
       }
+      timeoutId = setTimeout(() => {
+        timeoutId = null;
+        onTimerEnd();
+      }, debounceMs);
+    };
+    var cancelTimer = () => {
+      if (timeoutId !== null) {
+        clearTimeout(timeoutId);
+        timeoutId = null;
+      }
+    };
+    var cancel = () => {
+      cancelTimer();
+      pendingThis = void 0;
+      pendingArgs = null;
+    };
+    var flush = () => {
+      cancelTimer();
+      invoke();
+    };
+    var debounced = function debounced2(...args) {
       if (signal?.aborted) {
         return;
       }
-      timeoutId = setTimeout(() => {
-        func(...args);
-        timeoutId = null;
-      }, debounceMs);
-    };
-    var onAbort = function onAbort2() {
-      debounced.cancel();
-    };
-    debounced.cancel = function() {
-      if (timeoutId !== null) {
-        clearTimeout(timeoutId);
-        timeoutId = null;
+      pendingThis = this;
+      pendingArgs = args;
+      var isFirstCall = timeoutId == null;
+      schedule();
+      if (leading && isFirstCall) {
+        invoke();
       }
     };
-    signal?.addEventListener("abort", onAbort, {
+    debounced.schedule = schedule;
+    debounced.cancel = cancel;
+    debounced.flush = flush;
+    signal?.addEventListener("abort", cancel, {
       once: true
     });
     return debounced;
   }
   var init_debounce = __esm({
-    "node_modules/.pnpm/es-toolkit@1.17.0/node_modules/es-toolkit/dist/function/debounce.mjs"() {
+    "node_modules/.pnpm/es-toolkit@1.20.0/node_modules/es-toolkit/dist/function/debounce.mjs"() {
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
     }
   });
 
-  // node_modules/.pnpm/es-toolkit@1.17.0/node_modules/es-toolkit/dist/object/omit.mjs
+  // node_modules/.pnpm/es-toolkit@1.20.0/node_modules/es-toolkit/dist/object/omit.mjs
   function omit(obj, keys) {
     var result = {
       ...obj
@@ -526,15 +561,15 @@
     return result;
   }
   var init_omit = __esm({
-    "node_modules/.pnpm/es-toolkit@1.17.0/node_modules/es-toolkit/dist/object/omit.mjs"() {
+    "node_modules/.pnpm/es-toolkit@1.20.0/node_modules/es-toolkit/dist/object/omit.mjs"() {
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
     }
   });
 
-  // node_modules/.pnpm/es-toolkit@1.17.0/node_modules/es-toolkit/dist/index.mjs
+  // node_modules/.pnpm/es-toolkit@1.20.0/node_modules/es-toolkit/dist/index.mjs
   var init_dist = __esm({
-    "node_modules/.pnpm/es-toolkit@1.17.0/node_modules/es-toolkit/dist/index.mjs"() {
+    "node_modules/.pnpm/es-toolkit@1.20.0/node_modules/es-toolkit/dist/index.mjs"() {
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
       init_debounce();
@@ -1222,7 +1257,7 @@
         }
         return `vd_mmkv/${name}`;
       };
-      purgeStorage = function() {
+      purgeStorage = /* @__PURE__ */ function() {
         var _ref = _async_to_generator(function* (store) {
           if (yield MMKVManager.getItem(store)) {
             MMKVManager.removeItem(store);
@@ -1281,7 +1316,7 @@
             yield FileManager.writeFile("documents", filePathFixer(file), JSON.stringify(defaultData), "utf8");
             return JSON.parse(yield FileManager.readFile(path, "utf8"));
           }),
-          set: function() {
+          set: /* @__PURE__ */ function() {
             var _ref = _async_to_generator(function* (data) {
               yield migratePromise;
               yield FileManager.writeFile("documents", filePathFixer(file), JSON.stringify(data), "utf8");
@@ -3612,15 +3647,22 @@
   function SettingsSection() {
     var navigation2 = NavigationNative.useNavigation();
     return /* @__PURE__ */ jsx(Fragment, {
-      children: Object.keys(registeredSections).map((sect) => /* @__PURE__ */ jsx(LegacyFormSection, {
+      children: Object.keys(registeredSections).map((sect) => registeredSections[sect].length > 0 && /* @__PURE__ */ jsx(LegacyFormSection, {
         title: sect,
-        children: registeredSections[sect].filter((r) => r.usePredicate?.() ?? true).map((row) => /* @__PURE__ */ jsx(LegacyFormRow, {
-          label: row.title(),
-          leading: /* @__PURE__ */ jsx(LegacyFormIcon, {
-            source: row.icon
-          }),
-          trailing: LegacyFormRow.Arrow,
-          onPress: wrapOnPress(row.onPress, navigation2, row.render, row.title())
+        children: registeredSections[sect].filter((r) => r.usePredicate?.() ?? true).map((row, i, arr) => /* @__PURE__ */ jsxs(Fragment, {
+          children: [
+            /* @__PURE__ */ jsx(LegacyFormRow, {
+              label: row.title(),
+              leading: /* @__PURE__ */ jsx(LegacyFormIcon, {
+                source: row.icon
+              }),
+              trailing: /* @__PURE__ */ jsx(LegacyFormRow.Arrow, {
+                label: row.rawTabsConfig?.useTrailing?.() || void 0
+              }),
+              onPress: wrapOnPress(row.onPress, navigation2, row.render, row.title())
+            }),
+            i !== arr.length - 1 && /* @__PURE__ */ jsx(LegacyFormDivider, {})
+          ]
         }))
       }, sect))
     });
@@ -3649,7 +3691,7 @@
           i18n.Messages.BILLING_SETTINGS,
           i18n.Messages.PREMIUM_SETTINGS
         ];
-        var sections = findInReactTree(res.props.children, (n) => n?.children?.[1]?.type === LegacyFormSection)?.children;
+        var sections = findInReactTree(res.props.children, (n) => n?.children?.[1]?.type === LegacyFormSection)?.children || res.props.children;
         if (sections) {
           var index = sections.findIndex((c) => titles.includes(c?.props.label));
           sections.splice(-~index || 4, 0, /* @__PURE__ */ jsx(SettingsSection, {}));
@@ -3999,7 +4041,7 @@
       init_logger();
       init_toasts();
       import_react_native8 = __toESM(require_react_native());
-      versionHash = "32afc78-main";
+      versionHash = "e240509-main";
     }
   });
 
@@ -5790,7 +5832,7 @@
             var allIds = Object.keys(plugins);
             if (!settings.safeMode?.enabled) {
               var _this = this;
-              yield allSettled(allIds.filter((pl) => plugins[pl].enabled).map(function() {
+              yield allSettled(allIds.filter((pl) => plugins[pl].enabled).map(/* @__PURE__ */ function() {
                 var _ref = _async_to_generator(function* (pl) {
                   return plugins[pl].update && (yield _this.fetchPlugin(pl).catch((e) => logger.error(e.message))), yield _this.startPlugin(pl);
                 });
@@ -6227,7 +6269,7 @@
       },
       installAction: {
         label: "Install a plugin",
-        fetchFn: function() {
+        fetchFn: /* @__PURE__ */ function() {
           var _ref = _async_to_generator(function* (url2) {
             if (!url2.startsWith(VD_PROXY_PREFIX) && !url2.startsWith(BUNNY_PROXY_PREFIX) && !settings.developerSettings) {
               openAlert2("bunny-plugin-unproxied-confirmation", /* @__PURE__ */ jsx(AlertModal2, {
@@ -6777,7 +6819,7 @@
       }
       validateFont(fontDefJson);
       try {
-        yield Promise.all(Object.entries(fontDefJson.main).map(function() {
+        yield Promise.all(Object.entries(fontDefJson.main).map(/* @__PURE__ */ function() {
           var _ref = _async_to_generator(function* ([font, url2]) {
             var ext = url2.split(".").pop();
             if (ext !== "ttf" && ext !== "otf")
@@ -7860,7 +7902,7 @@
           },
           render: () => Promise.resolve().then(() => (init_General(), General_exports)),
           rawTabsConfig: {
-            useTrailing: () => `(${"32afc78-main"})`
+            useTrailing: () => `(${"e240509-main"})`
           }
         },
         {
@@ -8502,7 +8544,7 @@
         true
       ];
     var isInstalled = Boolean(postMap[postType].storage[url2]);
-    var installOrRemove = function() {
+    var installOrRemove = /* @__PURE__ */ function() {
       var _ref = _async_to_generator(function* () {
         setIsInstalling(true);
         try {
@@ -8656,7 +8698,7 @@
             onPress: () => installWithToast(urlType, url2)
           });
         }));
-        patches2.push(instead("handleClick", handleClick, function() {
+        patches2.push(instead("handleClick", handleClick, /* @__PURE__ */ function() {
           var _ref = _async_to_generator(function* (args, orig) {
             var { href: url2 } = args[0];
             var urlType = typeFromUrl(url2);
@@ -8752,7 +8794,7 @@
           });
         }
       }),
-      set: function() {
+      set: /* @__PURE__ */ function() {
         var _ref = _async_to_generator(function* (data) {
           if (!data || typeof data !== "object")
             throw new Error("data needs to be an object");
@@ -8847,7 +8889,7 @@
     if (_loadedPath[path])
       callback(_loadedPath[path]);
     else {
-      backend.exists().then(function() {
+      backend.exists().then(/* @__PURE__ */ function() {
         var _ref = _async_to_generator(function* (exists) {
           if (!exists) {
             yield backend.set(dflt);
@@ -9149,7 +9191,7 @@
             delete storedRepo[plugin];
           }
       }
-      yield Promise.all(Object.keys(repo).map(function() {
+      yield Promise.all(Object.keys(repo).map(/* @__PURE__ */ function() {
         var _ref = _async_to_generator(function* (pluginId) {
           if (!storedRepo || !storedRepo[pluginId] || repo[pluginId].alwaysFetch || newerThan(repo[pluginId].version, storedRepo[pluginId].version)) {
             updated = true;
@@ -9339,7 +9381,7 @@
       yield awaitStorage2(pluginRepositories, pluginSettings);
       yield allSettled([
         ...registeredPlugins.keys()
-      ].map(function() {
+      ].map(/* @__PURE__ */ function() {
         var _ref = _async_to_generator(function* (id) {
           if (isPluginEnabled(id)) {
             yield startPlugin(id);
@@ -9774,7 +9816,7 @@
         alert([
           "Failed to load Bunny!\n",
           `Build Number: ${ClientInfoManager2.Build}`,
-          `Bunny: ${"32afc78-main"}`,
+          `Bunny: ${"e240509-main"}`,
           stack || e?.toString?.()
         ].join("\n"));
       }
@@ -9794,7 +9836,7 @@
         }
         return orig.apply(batchedBridge, args);
       });
-      var startDiscord = function() {
+      var startDiscord = /* @__PURE__ */ function() {
         var _ref = _async_to_generator(function* () {
           yield initializeBunny();
           unpatchHook();
