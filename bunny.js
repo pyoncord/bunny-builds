@@ -4042,7 +4042,7 @@
       init_logger();
       init_toasts();
       import_react_native8 = __toESM(require_react_native());
-      versionHash = "ad65247-main";
+      versionHash = "e3df56d-main";
     }
   });
 
@@ -7947,7 +7947,7 @@
           },
           render: () => Promise.resolve().then(() => (init_General(), General_exports)),
           rawTabsConfig: {
-            useTrailing: () => `(${"ad65247-main"})`
+            useTrailing: () => `(${"e3df56d-main"})`
           }
         },
         {
@@ -8555,6 +8555,40 @@
     }
   });
 
+  // src/lib/api/jsx/index.ts
+  function addJSXCallback(Component, callback) {
+    if (!callbacks.has(Component))
+      callbacks.set(Component, []);
+    callbacks.get(Component).push(callback);
+  }
+  function patchJSX() {
+    var callback = ([Component, props], ret) => {
+      if (typeof Component === "function" && callbacks.has(Component.name)) {
+        var cbs = callbacks.get(Component.name);
+        for (var cb of cbs)
+          ret = cb(Component, ret);
+        return ret;
+      }
+    };
+    var patches2 = [
+      after("jsx", jsxRuntime2, callback),
+      after("jsxs", jsxRuntime2, callback)
+    ];
+    return () => patches2.forEach((unpatch) => unpatch());
+  }
+  var callbacks, jsxRuntime2;
+  var init_jsx = __esm({
+    "src/lib/api/jsx/index.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_patcher();
+      init_metro();
+      callbacks = /* @__PURE__ */ new Map();
+      jsxRuntime2 = findByPropsLazy("jsx", "jsxs");
+    }
+  });
+
   // src/core/plugins/quickinstall/forumPost.tsx
   function useExtractThreadContent(thread, _firstMessage = null, actionSheet3 = false) {
     if (thread.guild_id !== DISCORD_SERVER_ID)
@@ -8794,7 +8828,9 @@
           version: "1.0.0",
           description: "Quickly install Vendetta plugins and themes",
           authors: [
-            "pyoncord"
+            {
+              name: "Vendetta Team"
+            }
           ]
         },
         start() {
@@ -8805,6 +8841,72 @@
         },
         stop() {
           patches.forEach((p) => p());
+        }
+      });
+    }
+  });
+
+  // src/core/plugins/badges/index.tsx
+  var badges_exports = {};
+  __export(badges_exports, {
+    default: () => badges_default
+  });
+  var import_react7, useBadgesModule, badges_default;
+  var init_badges = __esm({
+    "src/core/plugins/badges/index.tsx"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_jsx();
+      init_patcher();
+      init_metro();
+      import_react7 = __toESM(require_react());
+      init_plugins3();
+      useBadgesModule = findByName("useBadges", false);
+      badges_default = defineCorePlugin({
+        manifest: {
+          id: "bunny.badges",
+          name: "Badges",
+          version: "1.0.0",
+          description: "Adds badges to user's profile",
+          authors: [
+            {
+              name: "pylixonly"
+            }
+          ]
+        },
+        start() {
+          var propHolder = {};
+          var badgeCache = {};
+          addJSXCallback("RenderedBadge", (_, ret) => {
+            if (ret.props.id.match(/bunny-\d+-\d+/)) {
+              Object.assign(ret.props, propHolder[ret.props.id]);
+            }
+          });
+          after("default", useBadgesModule, ([user], r) => {
+            var [badges, setBadges] = (0, import_react7.useState)(user ? badgeCache[user.userId] ??= [] : []);
+            (0, import_react7.useEffect)(() => {
+              if (user) {
+                fetch(`https://raw.githubusercontent.com/pyoncord/badges/refs/heads/main/${user.userId}.json`).then((r2) => r2.json()).then((badges2) => setBadges(badgeCache[user.userId] = badges2));
+              }
+            }, [
+              user
+            ]);
+            badges.forEach((badges2, i) => {
+              propHolder[`bunny-${user.userId}-${i}`] = {
+                source: {
+                  uri: badges2.url
+                },
+                id: `bunny-${i}`,
+                label: badges2.label
+              };
+              r.push({
+                id: `bunny-${user.userId}-${i}`,
+                description: badges2.label,
+                icon: "2ba85e8026a8614b640c2837bcdfe21b"
+              });
+            });
+          });
         }
       });
     }
@@ -8822,7 +8924,8 @@
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
       getCorePlugins = () => ({
-        "bunny.quickinstall": (init_quickinstall(), __toCommonJS(quickinstall_exports))
+        "bunny.quickinstall": (init_quickinstall(), __toCommonJS(quickinstall_exports)),
+        "bunny.badges": (init_badges(), __toCommonJS(badges_exports))
       });
     }
   });
@@ -9118,7 +9221,6 @@
   var plugins_exports2 = {};
   __export(plugins_exports2, {
     apiObjects: () => apiObjects,
-    checkAndRegisterUpdates: () => checkAndRegisterUpdates,
     corePluginInstances: () => corePluginInstances,
     deleteRepository: () => deleteRepository,
     disablePlugin: () => disablePlugin,
@@ -9133,6 +9235,7 @@
     pluginRepositories: () => pluginRepositories,
     pluginSettings: () => pluginSettings,
     refreshPlugin: () => refreshPlugin,
+    registerCorePlugins: () => registerCorePlugins,
     registeredPlugins: () => registeredPlugins,
     startPlugin: () => startPlugin,
     stopPlugin: () => stopPlugin,
@@ -9399,11 +9502,11 @@
     obj?.disposers.forEach((d) => d());
     pluginInstances.delete(id);
   }
-  function checkAndRegisterUpdates() {
-    return _checkAndRegisterUpdates.apply(this, arguments);
+  function registerCorePlugins() {
+    return _registerCorePlugins.apply(this, arguments);
   }
-  function _checkAndRegisterUpdates() {
-    _checkAndRegisterUpdates = _async_to_generator(function* () {
+  function _registerCorePlugins() {
+    _registerCorePlugins = _async_to_generator(function* () {
       yield awaitStorage2(pluginRepositories, pluginSettings);
       var corePlugins = getCorePlugins();
       for (var id in corePlugins) {
@@ -9416,7 +9519,7 @@
         corePluginInstances.set(id, instance);
       }
     });
-    return _checkAndRegisterUpdates.apply(this, arguments);
+    return _registerCorePlugins.apply(this, arguments);
   }
   function initPlugins() {
     return _initPlugins.apply(this, arguments);
@@ -9790,6 +9893,7 @@
       init_commands();
       init_debug();
       init_flux();
+      init_jsx();
       init_fs();
       init_loader();
       init_modules();
@@ -9821,11 +9925,13 @@
           patchLogHook(),
           patchCommands(),
           patchChatBackground(),
+          patchJSX(),
           initVendettaObject(),
           initFetchI18nStrings(),
           initSettings(),
           fixes_default(),
-          safeMode_default()
+          safeMode_default(),
+          registerCorePlugins()
         ]).then(
           // Push them all to unloader
           (u) => u.forEach((f) => f && unload.push(f))
@@ -9861,7 +9967,7 @@
         alert([
           "Failed to load Bunny!\n",
           `Build Number: ${ClientInfoManager2.Build}`,
-          `Bunny: ${"ad65247-main"}`,
+          `Bunny: ${"e3df56d-main"}`,
           stack || e?.toString?.()
         ].join("\n"));
       }
