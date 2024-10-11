@@ -4042,7 +4042,7 @@
       init_logger();
       init_toasts();
       import_react_native8 = __toESM(require_react_native());
-      versionHash = "e3df56d-main";
+      versionHash = "a0c2ca7-main";
     }
   });
 
@@ -5427,7 +5427,7 @@
             })
           ]
         }),
-        props.ListHeaderComponent && /* @__PURE__ */ jsx(props.ListHeaderComponent, {})
+        props.ListHeaderComponent && !search && /* @__PURE__ */ jsx(props.ListHeaderComponent, {})
       ]
     });
     return /* @__PURE__ */ jsxs(ErrorBoundary, {
@@ -5690,7 +5690,7 @@
       import_react_native13 = __toESM(require_react_native());
       CardContext = /* @__PURE__ */ (0, import_react2.createContext)(null);
       useCardContext = () => (0, import_react2.useContext)(CardContext);
-      Actions = /* @__PURE__ */ (0, import_react2.memo)(() => {
+      Actions = () => {
         var { plugin } = useCardContext();
         var navigation2 = NavigationNative.useNavigation();
         return /* @__PURE__ */ jsxs(import_react_native13.View, {
@@ -5720,7 +5720,7 @@
             })
           ]
         });
-      });
+      };
     }
   });
 
@@ -5894,6 +5894,314 @@
           return Object.keys(pluginInstance).forEach((p) => this.stopPlugin(p, false));
         },
         getSettings: (id) => pluginInstance[id]?.settings
+      };
+    }
+  });
+
+  // src/lib/api/native/fs.ts
+  var fs_exports = {};
+  __export(fs_exports, {
+    clearFolder: () => clearFolder,
+    downloadFile: () => downloadFile,
+    fileExists: () => fileExists,
+    readFile: () => readFile,
+    removeFile: () => removeFile,
+    writeFile: () => writeFile
+  });
+  function clearFolder(path) {
+    return _clearFolder.apply(this, arguments);
+  }
+  function _clearFolder() {
+    _clearFolder = _async_to_generator(function* (path, prefix = "pyoncord/") {
+      if (typeof FileManager.clearFolder !== "function")
+        throw new Error("'fs.clearFolder' is not supported");
+      return void (yield FileManager.clearFolder("documents", `${prefix}${path}`));
+    });
+    return _clearFolder.apply(this, arguments);
+  }
+  function removeFile(path) {
+    return _removeFile.apply(this, arguments);
+  }
+  function _removeFile() {
+    _removeFile = _async_to_generator(function* (path, prefix = "pyoncord/") {
+      if (typeof FileManager.removeFile !== "function")
+        throw new Error("'fs.removeFile' is not supported");
+      return void (yield FileManager.removeFile("documents", `${prefix}${path}`));
+    });
+    return _removeFile.apply(this, arguments);
+  }
+  function fileExists(path) {
+    return _fileExists.apply(this, arguments);
+  }
+  function _fileExists() {
+    _fileExists = _async_to_generator(function* (path, prefix = "pyoncord/") {
+      return yield FileManager.fileExists(`${FileManager.getConstants().DocumentsDirPath}/${prefix}${path}`);
+    });
+    return _fileExists.apply(this, arguments);
+  }
+  function writeFile(path, data) {
+    return _writeFile.apply(this, arguments);
+  }
+  function _writeFile() {
+    _writeFile = _async_to_generator(function* (path, data, prefix = "pyoncord/") {
+      if (typeof data !== "string")
+        throw new Error("Argument 'data' must be a string");
+      return void (yield FileManager.writeFile("documents", `${prefix}${path}`, data, "utf8"));
+    });
+    return _writeFile.apply(this, arguments);
+  }
+  function readFile(path) {
+    return _readFile.apply(this, arguments);
+  }
+  function _readFile() {
+    _readFile = _async_to_generator(function* (path, prefix = "pyoncord/") {
+      try {
+        return yield FileManager.readFile(`${FileManager.getConstants().DocumentsDirPath}/${prefix}${path}`, "utf8");
+      } catch (err) {
+        throw new Error(`An error occured while writing to '${path}'`, {
+          cause: err
+        });
+      }
+    });
+    return _readFile.apply(this, arguments);
+  }
+  function downloadFile(url2, path) {
+    return _downloadFile.apply(this, arguments);
+  }
+  function _downloadFile() {
+    _downloadFile = _async_to_generator(function* (url2, path, prefix = "pyoncord/") {
+      var blob = yield fetch(url2).then((r) => r.blob());
+      var dataURL = yield new Promise((r) => {
+        var reader = new FileReader();
+        reader.onload = () => r(reader.result);
+        reader.readAsDataURL(blob);
+      });
+      var data;
+      if (dataURL == null) {
+        throw new Error("Failed to convert blob to data URL");
+      } else {
+        var index = dataURL.indexOf("base64,");
+        if (index === -1)
+          throw new Error("dataURL does not contain base64");
+        data = dataURL.slice(index + 7);
+      }
+      return void (yield FileManager.writeFile("documents", `${prefix}${path}`, data, "base64"));
+    });
+    return _downloadFile.apply(this, arguments);
+  }
+  var init_fs = __esm({
+    "src/lib/api/native/fs.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_async_to_generator();
+      init_modules();
+    }
+  });
+
+  // src/lib/api/storage/new.ts
+  function createFileBackend2(filePath) {
+    return {
+      get: /* @__PURE__ */ _async_to_generator(function* () {
+        try {
+          return JSON.parse(yield readFile(filePath));
+        } catch (e) {
+          throw new Error(`Failed to parse storage from '${filePath}'`, {
+            cause: e
+          });
+        }
+      }),
+      set: /* @__PURE__ */ function() {
+        var _ref = _async_to_generator(function* (data) {
+          if (!data || typeof data !== "object")
+            throw new Error("data needs to be an object");
+          yield writeFile(filePath, JSON.stringify(data));
+        });
+        return function(data) {
+          return _ref.apply(this, arguments);
+        };
+      }(),
+      exists: /* @__PURE__ */ _async_to_generator(function* () {
+        return yield fileExists(filePath);
+      })
+    };
+  }
+  function _createProxy(target, path, emitter) {
+    var objChildrens = /* @__PURE__ */ new WeakMap();
+    return new Proxy(target, {
+      get(target2, prop) {
+        if (prop === emitterSymbol2)
+          return emitter;
+        var newPath = [
+          ...path,
+          prop
+        ];
+        var value = target2[prop];
+        if (value && typeof value === "object") {
+          var origValue = value;
+          value = objChildrens.get(origValue);
+          if (!value) {
+            value = _createProxy(origValue, newPath, emitter);
+            objChildrens.set(origValue, value);
+          }
+        }
+        if (value != null) {
+          emitter.emit("GET", {
+            path: newPath,
+            value
+          });
+        }
+        return value;
+      },
+      set(target2, prop, value) {
+        target2[prop] = value;
+        emitter.emit("SET", {
+          path: [
+            ...path,
+            prop
+          ],
+          value
+        });
+        return true;
+      },
+      deleteProperty(target2, prop) {
+        var success = delete target2[prop];
+        if (success)
+          emitter.emit("DEL", {
+            path: [
+              ...path,
+              prop
+            ]
+          });
+        return success;
+      }
+    });
+  }
+  function createProxy2(target = {}) {
+    var emitter = new Emitter();
+    return {
+      proxy: _createProxy(target, [], emitter),
+      emitter
+    };
+  }
+  function useProxy2(storage) {
+    if (storage[storageInitErrorSymbol])
+      throw new Error("An error occured while initializing the storage", {
+        cause: storage[storageInitErrorSymbol]
+      });
+    var emitter = storage[emitterSymbol2];
+    if (emitter == null) {
+      throw new Error(`InvalidArgumentException - storage[emitterSymbol] is ${typeof emitter}`);
+    }
+    var [, forceUpdate] = React.useReducer((n) => ~n, 0);
+    React.useEffect(() => {
+      var listener = () => forceUpdate();
+      emitter.on("SET", listener);
+      emitter.on("DEL", listener);
+      return () => {
+        emitter.off("SET", listener);
+        emitter.off("DEL", listener);
+      };
+    }, []);
+  }
+  function updateStorageAsync(path, value) {
+    return _updateStorageAsync.apply(this, arguments);
+  }
+  function _updateStorageAsync() {
+    _updateStorageAsync = _async_to_generator(function* (path, value) {
+      _loadedPath[path] = value;
+      yield createFileBackend2(path).set(value);
+    });
+    return _updateStorageAsync.apply(this, arguments);
+  }
+  function createStorageAndCallback(path, dflt = {}, cb) {
+    var callback = (data) => {
+      var { proxy, emitter } = createProxy2(data);
+      var handler = () => backend.set(proxy);
+      emitter.on("SET", handler);
+      emitter.on("DEL", handler);
+      cb(proxy);
+    };
+    var backend = createFileBackend2(path);
+    if (_loadedPath[path])
+      callback(_loadedPath[path]);
+    else {
+      backend.exists().then(/* @__PURE__ */ function() {
+        var _ref = _async_to_generator(function* (exists) {
+          if (!exists) {
+            yield backend.set(dflt);
+            callback(dflt);
+          } else {
+            callback(yield backend.get());
+          }
+        });
+        return function(exists) {
+          return _ref.apply(this, arguments);
+        };
+      }());
+    }
+  }
+  function preloadStorageIfExists(path) {
+    return _preloadStorageIfExists.apply(this, arguments);
+  }
+  function _preloadStorageIfExists() {
+    _preloadStorageIfExists = _async_to_generator(function* (path) {
+      if (_loadedPath[path])
+        return _loadedPath[path];
+      var backend = createFileBackend2(path);
+      if (yield backend.exists()) {
+        return _loadedPath[path] = yield backend.get();
+      }
+    });
+    return _preloadStorageIfExists.apply(this, arguments);
+  }
+  function getPreloadedStorage(path) {
+    return _loadedPath[path];
+  }
+  function awaitStorage2(...proxies) {
+    return Promise.all(proxies.map((proxy) => proxy[storagePromiseSymbol]));
+  }
+  var emitterSymbol2, storageInitErrorSymbol, storagePromiseSymbol, _loadedPath, createStorage2;
+  var init_new = __esm({
+    "src/lib/api/storage/new.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_async_to_generator();
+      init_fs();
+      init_Emitter();
+      emitterSymbol2 = Symbol.for("bunny.storage.emitter");
+      storageInitErrorSymbol = Symbol.for("bunny.storage.initError");
+      storagePromiseSymbol = Symbol.for("bunny.storage.promise");
+      _loadedPath = {};
+      createStorage2 = (path, dflt = {}) => {
+        var promise = new Promise((r) => resolvePromise = r);
+        var awaited, resolved, error, resolvePromise;
+        createStorageAndCallback(path, dflt, (proxy) => {
+          awaited = proxy;
+          resolved = true;
+          resolvePromise();
+        });
+        var check = () => {
+          if (resolved)
+            return true;
+          throw new Error("Attempted to access storage without initializing");
+        };
+        return new Proxy({}, {
+          ...Object.fromEntries(Object.getOwnPropertyNames(Reflect).map((k) => [
+            k,
+            (t, ...a) => {
+              return check() && Reflect[k](awaited, ...a);
+            }
+          ])),
+          get(target, prop, recv) {
+            if (prop === storageInitErrorSymbol)
+              return error;
+            if (prop === storagePromiseSymbol)
+              return promise;
+            return check() && Reflect.get(awaited ?? target, prop, recv);
+          }
+        });
       };
     }
   });
@@ -6221,1781 +6529,380 @@
     }
   });
 
-  // src/core/ui/settings/pages/Plugins/index.tsx
-  var Plugins_exports = {};
-  __export(Plugins_exports, {
-    default: () => Plugins
-  });
-  function PluginPage(props) {
-    var items = props.useItems();
-    return /* @__PURE__ */ jsx(AddonPage, {
-      CardComponent: PluginCard,
-      title: Strings.PLUGINS,
-      searchKeywords: [
-        "name",
-        "description",
-        (p) => p.authors?.map((a) => typeof a === "string" ? a : a.name).join()
-      ],
-      sortOptions: {
-        "Name (A-Z)": (a, b) => a.name.localeCompare(b.name),
-        "Name (Z-A)": (a, b) => b.name.localeCompare(a.name)
-      },
-      safeModeHint: {
-        message: Strings.SAFE_MODE_NOTICE_PLUGINS
-      },
-      items,
-      ...props
-    });
+  // src/core/plugins/quickinstall/forumPost.tsx
+  function useExtractThreadContent(thread, _firstMessage = null, actionSheet3 = false) {
+    if (thread.guild_id !== DISCORD_SERVER_ID)
+      return;
+    var postType;
+    if (thread.parent_id === PLUGINS_CHANNEL_ID) {
+      postType = "Plugin";
+    } else if (thread.parent_id === THEMES_CHANNEL_ID && isThemeSupported()) {
+      postType = "Theme";
+    } else
+      return;
+    var { firstMessage } = actionSheet3 ? useFirstForumPostMessage(thread) : {
+      firstMessage: _firstMessage
+    };
+    var urls = firstMessage?.content?.match(HTTP_REGEX_MULTI)?.filter(postMap[postType].urlsFilter);
+    if (!urls || !urls[0])
+      return;
+    if (postType === "Plugin" && !urls[0].endsWith("/"))
+      urls[0] += "/";
+    return [
+      postType,
+      urls[0]
+    ];
   }
-  function Plugins() {
-    useProxy(settings);
-    var navigation2 = NavigationNative.useNavigation();
-    return /* @__PURE__ */ jsx(PluginPage, {
-      useItems: () => useProxy(VdPluginManager.plugins) && Object.values(VdPluginManager.plugins),
-      resolveItem: unifyVdPlugin,
-      ListHeaderComponent: () => {
-        var unproxiedPlugins = Object.values(VdPluginManager.plugins).filter((p) => !p.id.startsWith(VD_PROXY_PREFIX) && !p.id.startsWith(BUNNY_PROXY_PREFIX));
-        if (!unproxiedPlugins.length)
-          return null;
-        return /* @__PURE__ */ jsxs(Card, {
-          style: {
-            marginVertical: 8,
-            gap: 4
-          },
+  function useInstaller(thread, firstMessage = null, actionSheet3 = false) {
+    var [postType, url2] = useExtractThreadContent(thread, firstMessage, actionSheet3) ?? [];
+    useProxy(VdPluginManager.plugins);
+    useProxy(themes);
+    var [isInstalling, setIsInstalling] = React.useState(false);
+    if (!postType || !url2)
+      return [
+        true
+      ];
+    var isInstalled = Boolean(postMap[postType].storage[url2]);
+    var installOrRemove = /* @__PURE__ */ function() {
+      var _ref = _async_to_generator(function* () {
+        setIsInstalling(true);
+        try {
+          yield postMap[postType].installOrRemove(url2);
+        } catch (e) {
+          showToast(e.message, findAssetId("Small"));
+        } finally {
+          setIsInstalling(false);
+        }
+      });
+      return function installOrRemove2() {
+        return _ref.apply(this, arguments);
+      };
+    }();
+    return [
+      false,
+      postType,
+      isInstalled,
+      isInstalling,
+      installOrRemove
+    ];
+  }
+  var useFirstForumPostMessage, forumReactions, postMap, installButtonPatch, forumPost_default;
+  var init_forumPost = __esm({
+    "src/core/plugins/quickinstall/forumPost.tsx"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_async_to_generator();
+      init_jsxRuntime();
+      init_i18n();
+      init_plugins();
+      init_assets();
+      init_loader();
+      init_patcher();
+      init_storage();
+      init_themes();
+      init_constants();
+      init_lazy();
+      init_components();
+      init_wrappers();
+      init_components2();
+      init_toasts();
+      ({ useFirstForumPostMessage } = lazyDestructure(() => findByProps("useFirstForumPostMessage")));
+      forumReactions = findByPropsLazy("MostCommonForumPostReaction");
+      postMap = {
+        Plugin: {
+          storage: VdPluginManager.plugins,
+          urlsFilter: (url2) => url2.startsWith(VD_PROXY_PREFIX),
+          installOrRemove: (url2) => {
+            var isInstalled = postMap.Plugin.storage[url2];
+            return isInstalled ? VdPluginManager.removePlugin(url2) : VdPluginManager.installPlugin(url2);
+          }
+        },
+        Theme: {
+          storage: themes,
+          urlsFilter: (url2) => url2.endsWith(".json"),
+          installOrRemove: (url2) => {
+            var isInstalled = postMap.Theme.storage[url2];
+            return isInstalled ? removeTheme(url2) : installTheme(url2);
+          }
+        }
+      };
+      installButtonPatch = () => after("MostCommonForumPostReaction", forumReactions, ([{ thread, firstMessage }], res) => {
+        var [shouldReturn, _, installed, loading, installOrRemove] = useInstaller(thread, firstMessage, true);
+        if (shouldReturn)
+          return;
+        return /* @__PURE__ */ jsxs(Fragment, {
           children: [
-            /* @__PURE__ */ jsx(Text, {
-              variant: "heading-lg/bold",
-              children: "Unproxied Plugins Detected"
-            }),
-            /* @__PURE__ */ jsx(Text, {
-              variant: "text-md/medium",
-              children: "Installed plugins from unproxied sources may execute unreviewed code in this app without your knowledge."
-            }),
-            /* @__PURE__ */ jsx(import_react_native15.View, {
-              style: {
-                marginTop: 8,
-                flexDirection: "row"
-              },
+            res,
+            /* @__PURE__ */ jsx(ErrorBoundary, {
               children: /* @__PURE__ */ jsx(Button, {
-                style: {
-                  flexShrink: 1
-                },
                 size: "sm",
-                text: "Review",
-                variant: "secondary",
-                onPress: () => {
-                  navigation2.push("BUNNY_CUSTOM_PAGE", {
-                    title: "Unproxied Plugins",
-                    render: () => {
-                      return /* @__PURE__ */ jsx(FlashList, {
-                        data: unproxiedPlugins,
-                        contentContainerStyle: {
-                          padding: 8
-                        },
-                        ItemSeparatorComponent: () => /* @__PURE__ */ jsx(import_react_native15.View, {
-                          style: {
-                            height: 8
-                          }
-                        }),
-                        renderItem: ({ item: p }) => /* @__PURE__ */ jsx(Card, {
-                          children: /* @__PURE__ */ jsx(Text, {
-                            variant: "heading-md/semibold",
-                            children: p.id
-                          })
-                        })
-                      });
-                    }
-                  });
+                loading,
+                disabled: loading,
+                // variant={installed ? "destructive" : "primary"} crashes older version because "destructive" was renamed from "danger" and there's no sane way for compat check horror
+                variant: installed ? "secondary" : "primary",
+                text: installed ? Strings.UNINSTALL : Strings.INSTALL,
+                onPress: installOrRemove,
+                icon: findAssetId(installed ? "ic_message_delete" : "DownloadIcon"),
+                style: {
+                  marginLeft: 8
                 }
               })
             })
           ]
         });
-      },
-      installAction: {
-        label: "Install a plugin",
-        fetchFn: /* @__PURE__ */ function() {
-          var _ref = _async_to_generator(function* (url2) {
-            if (!url2.startsWith(VD_PROXY_PREFIX) && !url2.startsWith(BUNNY_PROXY_PREFIX) && !settings.developerSettings) {
-              openAlert2("bunny-plugin-unproxied-confirmation", /* @__PURE__ */ jsx(AlertModal2, {
-                title: "Hold On!",
-                content: "You're trying to install a plugin from an unproxied external source. This means you're trusting the creator to run their code in this app without your knowledge. Are you sure you want to continue?",
-                extraContent: /* @__PURE__ */ jsx(Card, {
-                  children: /* @__PURE__ */ jsx(Text, {
-                    variant: "text-md/bold",
-                    children: url2
-                  })
-                }),
-                actions: /* @__PURE__ */ jsxs(AlertActions, {
-                  children: [
-                    /* @__PURE__ */ jsx(AlertActionButton2, {
-                      text: "Continue",
-                      variant: "primary",
-                      onPress: () => {
-                        VdPluginManager.installPlugin(url2).then(() => showToast(Strings.TOASTS_INSTALLED_PLUGIN, findAssetId("Check"))).catch((e) => openAlert2("bunny-plugin-install-failed", /* @__PURE__ */ jsx(AlertModal2, {
-                          title: "Install Failed",
-                          content: `Unable to install plugin from '${url2}':`,
-                          extraContent: /* @__PURE__ */ jsx(Card, {
-                            children: /* @__PURE__ */ jsx(Text, {
-                              variant: "text-md/normal",
-                              children: e instanceof Error ? e.message : String(e)
-                            })
-                          }),
-                          actions: /* @__PURE__ */ jsx(AlertActionButton2, {
-                            text: "Okay",
-                            variant: "primary"
-                          })
-                        })));
-                      }
-                    }),
-                    /* @__PURE__ */ jsx(AlertActionButton2, {
-                      text: "Cancel",
-                      variant: "secondary"
-                    })
-                  ]
-                })
-              }));
-            } else {
-              return yield VdPluginManager.installPlugin(url2);
-            }
-          });
-          return function(url2) {
-            return _ref.apply(this, arguments);
-          };
-        }()
-      }
+      });
+      forumPost_default = () => {
+        var patches2 = [
+          // actionSheetPatch(),
+          installButtonPatch()
+        ];
+        return () => patches2.map((p) => p());
+      };
+    }
+  });
+
+  // src/core/plugins/quickinstall/url.tsx
+  function typeFromUrl(url2) {
+    if (url2.startsWith(VD_PROXY_PREFIX)) {
+      return "plugin";
+    } else if (url2.endsWith(".json") && isThemeSupported()) {
+      return "theme";
+    }
+  }
+  function installWithToast(type, url2) {
+    (type === "plugin" ? VdPluginManager.installPlugin.bind(VdPluginManager) : installTheme)(url2).then(() => {
+      showToast(Strings.SUCCESSFULLY_INSTALLED, findAssetId("Check"));
+    }).catch((e) => {
+      showToast(e.message, findAssetId("Small"));
     });
   }
-  var import_react_native15, openAlert2, AlertModal2, AlertActions, AlertActionButton2;
-  var init_Plugins = __esm({
-    "src/core/ui/settings/pages/Plugins/index.tsx"() {
+  var showSimpleActionSheet2, handleClick, openURL, getChannelId, getChannel, url_default;
+  var init_url = __esm({
+    "src/core/plugins/quickinstall/url.tsx"() {
       "use strict";
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
       init_async_to_generator();
-      init_jsxRuntime();
       init_i18n();
-      init_AddonPage();
-      init_PluginCard();
       init_plugins();
       init_assets();
-      init_settings();
-      init_storage();
-      init_toasts();
+      init_loader();
+      init_patcher();
+      init_themes();
       init_constants();
       init_lazy();
-      init_metro();
       init_common();
-      init_components();
-      import_react_native15 = __toESM(require_react_native());
-      init_vendetta();
-      ({ openAlert: openAlert2 } = lazyDestructure(() => findByProps("openAlert", "dismissAlert")));
-      ({ AlertModal: AlertModal2, AlertActions, AlertActionButton: AlertActionButton2 } = lazyDestructure(() => findByProps("AlertModal", "AlertActions")));
-    }
-  });
-
-  // src/core/ui/components/AddonCard.tsx
-  function AddonCard(props) {
-    var styles3 = useStyles2();
-    return /* @__PURE__ */ jsx(Card, {
-      children: /* @__PURE__ */ jsxs(Stack, {
-        spacing: 16,
-        children: [
-          /* @__PURE__ */ jsxs(import_react_native16.View, {
-            style: {
-              flexDirection: "row",
-              alignItems: "center"
-            },
-            children: [
-              /* @__PURE__ */ jsxs(import_react_native16.View, {
-                style: styles3.headerLeading,
-                children: [
-                  /* @__PURE__ */ jsx(Text, {
-                    style: styles3.headerLabel,
-                    children: props.headerLabel
-                  }),
-                  props.headerSublabel && /* @__PURE__ */ jsx(Text, {
-                    style: styles3.headerSubtitle,
-                    children: props.headerSublabel
-                  })
-                ]
-              }),
-              /* @__PURE__ */ jsxs(import_react_native16.View, {
-                style: [
-                  styles3.headerTrailing,
-                  {
-                    marginLeft: "auto"
-                  }
-                ],
-                children: [
-                  /* @__PURE__ */ jsxs(import_react_native16.View, {
-                    style: styles3.actions,
-                    children: [
-                      props.overflowActions && /* @__PURE__ */ jsx(IconButton, {
-                        onPress: () => showSimpleActionSheet2({
-                          key: "CardOverflow",
-                          header: {
-                            title: props.overflowTitle,
-                            icon: props.headerIcon && /* @__PURE__ */ jsx(LegacyFormRow.Icon, {
-                              style: {
-                                marginRight: 8
-                              },
-                              source: findAssetId(props.headerIcon)
-                            }),
-                            onClose: () => hideActionSheet2()
-                          },
-                          options: props.overflowActions?.map((i) => ({
-                            ...i,
-                            icon: findAssetId(i.icon)
-                          }))
-                        }),
-                        size: "sm",
-                        variant: "secondary",
-                        icon: findAssetId("CircleInformationIcon-primary")
-                      }),
-                      props.actions?.map(({ icon, onPress, disabled }) => /* @__PURE__ */ jsx(IconButton, {
-                        onPress,
-                        disabled,
-                        size: "sm",
-                        variant: "secondary",
-                        icon: findAssetId(icon)
-                      }))
-                    ]
-                  }),
-                  props.toggleType && (props.toggleType === "switch" ? /* @__PURE__ */ jsx(FormSwitch, {
-                    value: props.toggleValue(),
-                    onValueChange: props.onToggleChange
-                  }) : /* @__PURE__ */ jsx(import_react_native16.TouchableOpacity, {
-                    onPress: () => {
-                      props.onToggleChange?.(!props.toggleValue());
-                    },
-                    children: /* @__PURE__ */ jsx(FormRadio, {
-                      selected: props.toggleValue()
-                    })
-                  }))
-                ]
-              })
-            ]
-          }),
-          props.descriptionLabel && /* @__PURE__ */ jsx(Text, {
-            variant: "text-md/medium",
-            children: props.descriptionLabel
-          })
-        ]
-      })
-    });
-  }
-  var import_react_native16, hideActionSheet2, showSimpleActionSheet2, useStyles2;
-  var init_AddonCard = __esm({
-    "src/core/ui/components/AddonCard.tsx"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_jsxRuntime();
-      init_assets();
-      init_lazy();
-      init_components();
+      init_filters();
+      init_finders();
       init_wrappers();
-      init_color();
-      init_styles();
-      import_react_native16 = __toESM(require_react_native());
-      ({ hideActionSheet: hideActionSheet2 } = lazyDestructure(() => findByProps("openLazy", "hideActionSheet")));
-      ({ showSimpleActionSheet: showSimpleActionSheet2 } = lazyDestructure(() => findByProps("showSimpleActionSheet")));
-      useStyles2 = createStyles({
-        card: {
-          backgroundColor: semanticColors?.CARD_SECONDARY_BG,
-          borderRadius: 12,
-          overflow: "hidden"
-        },
-        header: {
-          padding: 0
-        },
-        headerLeading: {
-          flexDirection: "column",
-          justifyContent: "center",
-          scale: 1.2
-        },
-        headerTrailing: {
-          display: "flex",
-          flexDirection: "row",
-          gap: 15,
-          alignItems: "center"
-        },
-        headerLabel: {
-          ...TextStyleSheet["heading-md/semibold"],
-          color: semanticColors.TEXT_NORMAL
-        },
-        headerSubtitle: {
-          ...TextStyleSheet["text-md/semibold"],
-          color: semanticColors.TEXT_MUTED
-        },
-        descriptionLabel: {
-          ...TextStyleSheet["text-md/semibold"],
-          color: semanticColors.TEXT_NORMAL
-        },
-        actions: {
-          flexDirection: "row-reverse",
-          alignItems: "center",
-          gap: 5
-        },
-        iconStyle: {
-          tintColor: semanticColors.LOGO_PRIMARY,
-          opacity: 0.2,
-          height: 64,
-          width: 64,
-          left: void 0,
-          right: "30%",
-          top: "-10%"
-        }
-      });
-    }
-  });
-
-  // src/core/ui/settings/pages/Themes/ThemeCard.tsx
-  function selectAndApply(value, theme) {
-    try {
-      selectTheme(value ? theme : null);
-      applyTheme(value ? theme : null);
-    } catch (e) {
-      console.error("Error while selectAndApply,", e);
-    }
-  }
-  function ThemeCard({ item: theme }) {
-    useProxy(theme);
-    var [removed, setRemoved] = React.useState(false);
-    if (removed)
-      return null;
-    var { authors } = theme.data;
-    return /* @__PURE__ */ jsx(AddonCard, {
-      headerLabel: theme.data.name,
-      headerSublabel: authors ? `by ${authors.map((i) => i.name).join(", ")}` : "",
-      descriptionLabel: theme.data.description ?? "No description.",
-      toggleType: !settings.safeMode?.enabled ? "radio" : void 0,
-      toggleValue: () => themes[theme.id].selected,
-      onToggleChange: (v) => {
-        selectAndApply(v, theme);
-      },
-      overflowTitle: theme.data.name,
-      overflowActions: [
-        {
-          icon: "ic_sync_24px",
-          label: Strings.REFETCH,
-          onPress: () => {
-            fetchTheme(theme.id, theme.selected).then(() => {
-              showToast(Strings.THEME_REFETCH_SUCCESSFUL, findAssetId("toast_image_saved"));
-            }).catch(() => {
-              showToast(Strings.THEME_REFETCH_FAILED, findAssetId("Small"));
-            });
-          }
-        },
-        {
-          icon: "copy",
-          label: Strings.COPY_URL,
-          onPress: () => {
-            clipboard.setString(theme.id);
-            showToast.showCopyToClipboard();
-          }
-        },
-        {
-          icon: "ic_message_delete",
-          label: Strings.DELETE,
-          isDestructive: true,
-          onPress: () => showConfirmationAlert({
-            title: Strings.HOLD_UP,
-            content: formatString("ARE_YOU_SURE_TO_DELETE_THEME", {
-              name: theme.data.name
-            }),
-            confirmText: Strings.DELETE,
-            cancelText: Strings.CANCEL,
-            confirmColor: ButtonColors.RED,
-            onConfirm: () => {
-              removeTheme(theme.id).then((wasSelected) => {
-                setRemoved(true);
-                if (wasSelected)
-                  selectAndApply(false, theme);
-              }).catch((e) => {
-                showToast(e.message, findAssetId("Small"));
-              });
-            }
-          })
-        }
-      ]
-    });
-  }
-  var init_ThemeCard = __esm({
-    "src/core/ui/settings/pages/Themes/ThemeCard.tsx"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_jsxRuntime();
-      init_i18n();
-      init_AddonCard();
-      init_assets();
-      init_settings();
-      init_storage();
-      init_themes();
-      init_types();
-      init_common();
       init_alerts();
       init_toasts();
-    }
-  });
-
-  // src/core/ui/settings/pages/Themes/index.tsx
-  var Themes_exports = {};
-  __export(Themes_exports, {
-    default: () => Themes
-  });
-  function Themes() {
-    useProxy(settings);
-    useProxy(themes);
-    return /* @__PURE__ */ jsx(AddonPage, {
-      title: Strings.THEMES,
-      searchKeywords: [
-        "data.name",
-        "data.description",
-        (p) => p.data.authors?.map((a) => a.name).join(", ")
-      ],
-      sortOptions: {
-        "Name (A-Z)": (a, b) => a.name.localeCompare(b.name),
-        "Name (Z-A)": (a, b) => b.name.localeCompare(a.name)
-      },
-      installAction: {
-        label: "Install a theme",
-        fetchFn: installTheme
-      },
-      items: Object.values(themes),
-      safeModeHint: {
-        message: formatString("SAFE_MODE_NOTICE_THEMES", {
-          enabled: Boolean(settings.safeMode?.currentThemeId)
-        }),
-        footer: settings.safeMode?.currentThemeId && /* @__PURE__ */ jsx(Button, {
-          size: "small",
-          text: Strings.DISABLE_THEME,
-          onPress: () => delete settings.safeMode?.currentThemeId,
-          style: {
-            marginTop: 8
-          }
-        })
-      },
-      CardComponent: ThemeCard
-    });
-  }
-  var init_Themes = __esm({
-    "src/core/ui/settings/pages/Themes/index.tsx"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_jsxRuntime();
-      init_i18n();
-      init_AddonPage();
-      init_ThemeCard();
-      init_settings();
-      init_storage();
-      init_themes();
-      init_components();
-    }
-  });
-
-  // src/lib/api/native/fs.ts
-  var fs_exports = {};
-  __export(fs_exports, {
-    clearFolder: () => clearFolder,
-    downloadFile: () => downloadFile,
-    fileExists: () => fileExists,
-    readFile: () => readFile,
-    removeFile: () => removeFile,
-    writeFile: () => writeFile
-  });
-  function clearFolder(path) {
-    return _clearFolder.apply(this, arguments);
-  }
-  function _clearFolder() {
-    _clearFolder = _async_to_generator(function* (path, prefix = "pyoncord/") {
-      if (typeof FileManager.clearFolder !== "function")
-        throw new Error("'fs.clearFolder' is not supported");
-      return void (yield FileManager.clearFolder("documents", `${prefix}${path}`));
-    });
-    return _clearFolder.apply(this, arguments);
-  }
-  function removeFile(path) {
-    return _removeFile.apply(this, arguments);
-  }
-  function _removeFile() {
-    _removeFile = _async_to_generator(function* (path, prefix = "pyoncord/") {
-      if (typeof FileManager.removeFile !== "function")
-        throw new Error("'fs.removeFile' is not supported");
-      return void (yield FileManager.removeFile("documents", `${prefix}${path}`));
-    });
-    return _removeFile.apply(this, arguments);
-  }
-  function fileExists(path) {
-    return _fileExists.apply(this, arguments);
-  }
-  function _fileExists() {
-    _fileExists = _async_to_generator(function* (path, prefix = "pyoncord/") {
-      return yield FileManager.fileExists(`${FileManager.getConstants().DocumentsDirPath}/${prefix}${path}`);
-    });
-    return _fileExists.apply(this, arguments);
-  }
-  function writeFile(path, data) {
-    return _writeFile.apply(this, arguments);
-  }
-  function _writeFile() {
-    _writeFile = _async_to_generator(function* (path, data, prefix = "pyoncord/") {
-      if (typeof data !== "string")
-        throw new Error("Argument 'data' must be a string");
-      return void (yield FileManager.writeFile("documents", `${prefix}${path}`, data, "utf8"));
-    });
-    return _writeFile.apply(this, arguments);
-  }
-  function readFile(path) {
-    return _readFile.apply(this, arguments);
-  }
-  function _readFile() {
-    _readFile = _async_to_generator(function* (path, prefix = "pyoncord/") {
-      try {
-        return yield FileManager.readFile(`${FileManager.getConstants().DocumentsDirPath}/${prefix}${path}`, "utf8");
-      } catch (err) {
-        throw new Error(`An error occured while writing to '${path}'`, {
-          cause: err
-        });
-      }
-    });
-    return _readFile.apply(this, arguments);
-  }
-  function downloadFile(url2, path) {
-    return _downloadFile.apply(this, arguments);
-  }
-  function _downloadFile() {
-    _downloadFile = _async_to_generator(function* (url2, path, prefix = "pyoncord/") {
-      var blob = yield fetch(url2).then((r) => r.blob());
-      var dataURL = yield new Promise((r) => {
-        var reader = new FileReader();
-        reader.onload = () => r(reader.result);
-        reader.readAsDataURL(blob);
-      });
-      var data;
-      if (dataURL == null) {
-        throw new Error("Failed to convert blob to data URL");
-      } else {
-        var index = dataURL.indexOf("base64,");
-        if (index === -1)
-          throw new Error("dataURL does not contain base64");
-        data = dataURL.slice(index + 7);
-      }
-      return void (yield FileManager.writeFile("documents", `${prefix}${path}`, data, "base64"));
-    });
-    return _downloadFile.apply(this, arguments);
-  }
-  var init_fs = __esm({
-    "src/lib/api/native/fs.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_async_to_generator();
-      init_modules();
-    }
-  });
-
-  // src/lib/fonts/index.ts
-  var fonts_exports = {};
-  __export(fonts_exports, {
-    fonts: () => fonts,
-    installFont: () => installFont,
-    removeFont: () => removeFont,
-    saveFont: () => saveFont,
-    selectFont: () => selectFont,
-    updateFonts: () => updateFonts,
-    validateFont: () => validateFont
-  });
-  function writeFont(font) {
-    return _writeFont.apply(this, arguments);
-  }
-  function _writeFont() {
-    _writeFont = _async_to_generator(function* (font) {
-      if (!font && font !== null)
-        throw new Error("Arg font must be a valid object or null");
-      if (font) {
-        yield writeFile("fonts.json", JSON.stringify(font));
-      } else {
-        yield removeFile("fonts.json");
-      }
-    });
-    return _writeFont.apply(this, arguments);
-  }
-  function validateFont(font) {
-    if (!font || typeof font !== "object")
-      throw new Error("URL returned a null/non-object JSON");
-    if (typeof font.spec !== "number")
-      throw new Error("Invalid font 'spec' number");
-    if (font.spec !== 1)
-      throw new Error("Only fonts which follows spec:1 are supported");
-    var requiredFields = [
-      "name",
-      "main"
-    ];
-    if (requiredFields.some((f) => !font[f]))
-      throw new Error(`Font is missing one of the fields: ${requiredFields}`);
-    if (font.name.startsWith("__"))
-      throw new Error("Font names cannot start with __");
-    if (font.name in fonts)
-      throw new Error(`There is already a font named '${font.name}' installed`);
-  }
-  function saveFont(data) {
-    return _saveFont.apply(this, arguments);
-  }
-  function _saveFont() {
-    _saveFont = _async_to_generator(function* (data, selected = false) {
-      var fontDefJson;
-      if (typeof data === "object" && data.__source)
-        data = data.__source;
-      if (typeof data === "string") {
-        try {
-          fontDefJson = yield (yield safeFetch(data)).json();
-          fontDefJson.__source = data;
-        } catch (e) {
-          throw new Error(`Failed to fetch fonts at ${data}`, {
-            cause: e
+      showSimpleActionSheet2 = findExports(byMutableProp("showSimpleActionSheet"));
+      handleClick = findByPropsLazy("handleClick");
+      ({ openURL } = lazyDestructure(() => url));
+      ({ getChannelId } = lazyDestructure(() => channels));
+      ({ getChannel } = lazyDestructure(() => findByProps("getChannel")));
+      url_default = () => {
+        var patches2 = new Array();
+        patches2.push(after("showSimpleActionSheet", showSimpleActionSheet2, (args) => {
+          if (args[0].key !== "LongPressUrl")
+            return;
+          var { header: { title: url2 }, options } = args[0];
+          var urlType = typeFromUrl(url2);
+          if (!urlType)
+            return;
+          options.push({
+            label: Strings.INSTALL_ADDON,
+            onPress: () => installWithToast(urlType, url2)
           });
-        }
-      } else {
-        fontDefJson = data;
-      }
-      validateFont(fontDefJson);
-      try {
-        yield Promise.all(Object.entries(fontDefJson.main).map(/* @__PURE__ */ function() {
-          var _ref = _async_to_generator(function* ([font, url2]) {
-            var ext = url2.split(".").pop();
-            if (ext !== "ttf" && ext !== "otf")
-              ext = "ttf";
-            var path = `downloads/fonts/${fontDefJson.name}/${font}.${ext}`;
-            if (!(yield fileExists(path)))
-              yield downloadFile(url2, path);
+        }));
+        patches2.push(instead("handleClick", handleClick, /* @__PURE__ */ function() {
+          var _ref = _async_to_generator(function* (args, orig) {
+            var { href: url2 } = args[0];
+            var urlType = typeFromUrl(url2);
+            if (!urlType)
+              return orig.apply(this, args);
+            if (urlType === "theme" && getChannel(getChannelId())?.parent_id !== THEMES_CHANNEL_ID)
+              return orig.apply(this, args);
+            showConfirmationAlert({
+              title: Strings.HOLD_UP,
+              content: formatString("CONFIRMATION_LINK_IS_A_TYPE", {
+                urlType
+              }),
+              onConfirm: () => installWithToast(urlType, url2),
+              confirmText: Strings.INSTALL,
+              cancelText: Strings.CANCEL,
+              secondaryConfirmText: Strings.OPEN_IN_BROWSER,
+              onConfirmSecondary: () => openURL(url2)
+            });
           });
-          return function(_) {
+          return function(args, orig) {
             return _ref.apply(this, arguments);
           };
         }()));
-      } catch (e) {
-        throw new Error("Failed to download font assets", {
-          cause: e
-        });
-      }
-      fonts[fontDefJson.name] = fontDefJson;
-      if (selected)
-        writeFont(fonts[fontDefJson.name]);
-      return fontDefJson;
-    });
-    return _saveFont.apply(this, arguments);
-  }
-  function installFont(url2) {
-    return _installFont.apply(this, arguments);
-  }
-  function _installFont() {
-    _installFont = _async_to_generator(function* (url2, selected = false) {
-      if (typeof url2 !== "string" || Object.values(fonts).some((f) => typeof f === "object" && f.__source === url2)) {
-        throw new Error("Invalid source or font was already installed");
-      }
-      var font = yield saveFont(url2);
-      if (selected)
-        yield selectFont(font.name);
-    });
-    return _installFont.apply(this, arguments);
-  }
-  function selectFont(name) {
-    return _selectFont.apply(this, arguments);
-  }
-  function _selectFont() {
-    _selectFont = _async_to_generator(function* (name) {
-      if (name && !(name in fonts))
-        throw new Error("Selected font does not exist!");
-      if (name) {
-        fonts.__selected = name;
-      } else {
-        delete fonts.__selected;
-      }
-      yield writeFont(name == null ? null : fonts[name]);
-    });
-    return _selectFont.apply(this, arguments);
-  }
-  function removeFont(name) {
-    return _removeFont.apply(this, arguments);
-  }
-  function _removeFont() {
-    _removeFont = _async_to_generator(function* (name) {
-      var selected = fonts.__selected === name;
-      if (selected)
-        yield selectFont(null);
-      delete fonts[name];
-      try {
-        yield clearFolder(`downloads/fonts/${name}`);
-      } catch (e) {
-      }
-    });
-    return _removeFont.apply(this, arguments);
-  }
-  function updateFonts() {
-    return _updateFonts.apply(this, arguments);
-  }
-  function _updateFonts() {
-    _updateFonts = _async_to_generator(function* () {
-      yield awaitStorage(fonts);
-      yield allSettled(Object.keys(fonts).map((name) => saveFont(fonts[name], fonts.__selected === name)));
-    });
-    return _updateFonts.apply(this, arguments);
-  }
-  var fonts;
-  var init_fonts = __esm({
-    "src/lib/fonts/index.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_async_to_generator();
-      init_fs();
-      init_storage();
-      init_utils();
-      fonts = wrapSync(createStorage(createMMKVBackend("BUNNY_FONTS")));
+        return () => patches2.forEach((p) => p());
+      };
     }
   });
 
-  // src/core/ui/settings/pages/Fonts/FontEditor.tsx
-  function guessFontName(urls) {
-    var fileNames = urls.map((url2) => {
-      var { pathname } = new URL(url2);
-      var fileName = pathname.replace(/\.[^/.]+$/, "");
-      return fileName.split("/").pop();
-    }).filter(Boolean);
-    var shortest = fileNames.reduce((shortest2, name) => {
-      return name.length < shortest2.length ? name : shortest2;
-    }, fileNames[0] || "");
-    return shortest?.replace(/-[A-Za-z]*$/, "") || null;
-  }
-  function RevengeFontsExtractor({ fonts: fonts2, setName }) {
-    var currentTheme2 = getCurrentTheme().data;
-    var themeFonts = currentTheme2.fonts;
-    var [fontName, setFontName] = (0, import_react3.useState)(guessFontName(Object.values(themeFonts)));
-    var [error, setError] = (0, import_react3.useState)(void 0);
-    return /* @__PURE__ */ jsxs(import_react_native17.View, {
-      style: {
-        padding: 8,
-        paddingBottom: 16,
-        gap: 12
-      },
-      children: [
-        /* @__PURE__ */ jsx(TextInput, {
-          autoFocus: true,
-          size: "md",
-          label: Strings.FONT_NAME,
-          value: fontName,
-          placeholder: fontName || "Whitney",
-          onChange: setFontName,
-          errorMessage: error,
-          state: error ? "error" : void 0
-        }),
-        /* @__PURE__ */ jsx(Text, {
-          variant: "text-xs/normal",
-          color: "text-muted",
-          children: formatString("THEME_EXTRACTOR_DESC", {
-            fonts: Object.keys(themeFonts).join(Strings.SEPARATOR)
-          })
-        }),
-        /* @__PURE__ */ jsx(Button, {
-          size: "md",
-          variant: "primary",
-          text: Strings.EXTRACT,
-          disabled: !fontName,
-          onPress: () => {
-            if (!fontName)
-              return;
-            try {
-              validateFont({
-                spec: 1,
-                name: fontName,
-                main: themeFonts
-              });
-              setName(fontName);
-              Object.assign(fonts2, themeFonts);
-              actionSheet2.hideActionSheet();
-            } catch (e) {
-              setError(String(e));
+  // src/core/plugins/quickinstall/index.ts
+  var quickinstall_exports = {};
+  __export(quickinstall_exports, {
+    default: () => quickinstall_default
+  });
+  var patches, quickinstall_default;
+  var init_quickinstall = __esm({
+    "src/core/plugins/quickinstall/index.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_plugins2();
+      init_forumPost();
+      init_url();
+      patches = [];
+      quickinstall_default = defineCorePlugin({
+        manifest: {
+          id: "bunny.quickinstall",
+          name: "QuickInstall",
+          version: "1.0.0",
+          description: "Quickly install Vendetta plugins and themes",
+          authors: [
+            {
+              name: "Vendetta Team"
             }
-          }
-        })
-      ]
-    });
-  }
-  function JsonFontImporter({ fonts: fonts2, setName, setSource }) {
-    var [fontLink, setFontLink] = (0, import_react3.useState)("");
-    var [saving, setSaving] = (0, import_react3.useState)(false);
-    var [error, setError] = (0, import_react3.useState)(void 0);
-    return /* @__PURE__ */ jsxs(import_react_native17.View, {
-      style: {
-        padding: 8,
-        paddingBottom: 16,
-        gap: 12
-      },
-      children: [
-        /* @__PURE__ */ jsx(TextInput, {
-          autoFocus: true,
-          size: "md",
-          label: "Font Link",
-          value: fontLink,
-          placeholder: "https://link.to/font/pack.json",
-          onChange: setFontLink,
-          errorMessage: error,
-          state: error ? "error" : void 0
-        }),
-        /* @__PURE__ */ jsx(Button, {
-          size: "md",
-          variant: "primary",
-          text: "Import",
-          disabled: !fontLink || saving,
-          loading: saving,
-          onPress: () => {
-            setSaving(true);
-            _async_to_generator(function* () {
-              var res = yield safeFetch(fontLink, {
-                cache: "no-store"
-              });
-              var json = yield res.json();
-              validateFont(json);
-              setName(json.name);
-              setSource(fontLink);
-              Object.assign(fonts2, json.main);
-            })().then(() => actionSheet2.hideActionSheet()).catch((e) => setError(String(e))).finally(() => setSaving(false));
-          }
-        })
-      ]
-    });
-  }
-  function EntryEditorActionSheet(props) {
-    var [familyName, setFamilyName] = (0, import_react3.useState)(props.name);
-    var [fontUrl, setFontUrl] = (0, import_react3.useState)(props.fontEntries[props.name]);
-    return /* @__PURE__ */ jsxs(import_react_native17.View, {
-      style: {
-        padding: 8,
-        paddingBottom: 16,
-        gap: 12
-      },
-      children: [
-        /* @__PURE__ */ jsx(TextInput, {
-          autoFocus: true,
-          size: "md",
-          label: "Family Name (to override)",
-          value: familyName,
-          placeholder: "ggsans-Bold",
-          onChange: setFamilyName
-        }),
-        /* @__PURE__ */ jsx(TextInput, {
-          size: "md",
-          label: "Font URL",
-          value: fontUrl,
-          placeholder: "https://link.to/the/font.ttf",
-          onChange: setFontUrl
-        }),
-        /* @__PURE__ */ jsx(Button, {
-          size: "md",
-          variant: "primary",
-          text: "Apply",
-          onPress: () => {
-            delete props.fontEntries[props.name];
-            props.fontEntries[familyName] = fontUrl;
-          }
-        })
-      ]
-    });
-  }
-  function promptActionSheet(Component, fontEntries, props) {
-    actionSheet2.openLazy(Promise.resolve({
-      default: () => /* @__PURE__ */ jsx(ErrorBoundary, {
-        children: /* @__PURE__ */ jsxs(ActionSheet, {
-          children: [
-            /* @__PURE__ */ jsx(BottomSheetTitleHeader, {
-              title: "Import Font"
-            }),
-            /* @__PURE__ */ jsx(Component, {
-              fonts: fontEntries,
-              ...props
-            })
           ]
-        })
-      })
-    }), "FontEditorActionSheet");
-  }
-  function NewEntryRow({ fontEntry }) {
-    var nameRef = (0, import_react3.useRef)();
-    var urlRef = (0, import_react3.useRef)();
-    var [nameSet, setNameSet] = (0, import_react3.useState)(false);
-    var [error, setError] = (0, import_react3.useState)();
-    return /* @__PURE__ */ jsxs(import_react_native17.View, {
-      style: {
-        flexDirection: "row",
-        gap: 8,
-        justifyContent: "flex-start"
-      },
-      children: [
-        /* @__PURE__ */ jsx(import_react_native17.View, {
-          style: {
-            flex: 1
-          },
-          children: /* @__PURE__ */ jsx(TextInput, {
-            isRound: true,
-            size: "md",
-            label: nameSet ? nameRef.current : void 0,
-            placeholder: nameSet ? "https://path.to/the/file.ttf" : "PostScript name (e.g. ggsans-Bold)",
-            leadingIcon: () => nameSet ? null : /* @__PURE__ */ jsx(TableRow.Icon, {
-              source: findAssetId("PlusSmallIcon")
-            }),
-            leadingText: nameSet ? nameRef.current : "",
-            onChange: (text) => (nameSet ? urlRef : nameRef).current = text,
-            errorMessage: error,
-            state: error ? "error" : void 0
-          })
-        }),
-        nameSet && /* @__PURE__ */ jsx(IconButton, {
-          size: "md",
-          variant: "secondary",
-          onPress: () => {
-            nameRef.current = "";
-            setNameSet(false);
-          },
-          icon: findAssetId("TrashIcon")
-        }),
-        /* @__PURE__ */ jsx(IconButton, {
-          size: "md",
-          variant: "primary",
-          onPress: () => {
-            if (!nameSet && nameRef.current) {
-              setNameSet(true);
-            } else if (nameSet && nameRef.current && urlRef.current) {
-              try {
-                var parsedUrl = new URL(urlRef.current);
-                if (!parsedUrl.protocol || !parsedUrl.host) {
-                  throw "Invalid URL";
-                }
-                fontEntry[nameRef.current] = urlRef.current;
-                nameRef.current = void 0;
-                urlRef.current = void 0;
-                setNameSet(false);
-              } catch (e) {
-                setError(String(e));
-              }
-            }
-          },
-          icon: findAssetId(nameSet ? "PlusSmallIcon" : "ArrowLargeRightIcon")
-        })
-      ]
-    });
-  }
-  function FontEditor(props) {
-    var [name, setName] = (0, import_react3.useState)(props.name);
-    var [source, setSource] = (0, import_react3.useState)();
-    var [importing, setIsImporting] = (0, import_react3.useState)(false);
-    var memoEntry = (0, import_react3.useMemo)(() => {
-      return createProxy(props.name ? {
-        ...fonts[props.name].main
-      } : {}).proxy;
-    }, [
-      props.name
-    ]);
-    var fontEntries = useProxy(memoEntry);
-    var navigation2 = NavigationNative.useNavigation();
-    return /* @__PURE__ */ jsx(import_react_native17.ScrollView, {
-      style: {
-        flex: 1
-      },
-      contentContainerStyle: {
-        paddingBottom: 38
-      },
-      children: /* @__PURE__ */ jsxs(Stack, {
-        style: {
-          paddingVertical: 24,
-          paddingHorizontal: 12
         },
-        spacing: 12,
-        children: [
-          !props.name ? /* @__PURE__ */ jsxs(TableRowGroup, {
-            title: "Import",
-            children: [
-              getCurrentTheme()?.data?.fonts && /* @__PURE__ */ jsx(TableRow, {
-                label: Strings.LABEL_EXTRACT_FONTS_FROM_THEME,
-                subLabel: Strings.DESC_EXTRACT_FONTS_FROM_THEME,
-                icon: /* @__PURE__ */ jsx(TableRow.Icon, {
-                  source: findAssetId("HammerIcon")
-                }),
-                onPress: () => promptActionSheet(RevengeFontsExtractor, fontEntries, {
-                  setName
-                })
-              }),
-              /* @__PURE__ */ jsx(TableRow, {
-                label: "Import font entries from a link",
-                subLabel: "Directly import from a link with a pre-configured JSON file",
-                icon: /* @__PURE__ */ jsx(TableRow.Icon, {
-                  source: findAssetId("LinkIcon")
-                }),
-                onPress: () => promptActionSheet(JsonFontImporter, fontEntries, {
-                  setName,
-                  setSource
-                })
-              })
-            ]
-          }) : /* @__PURE__ */ jsxs(TableRowGroup, {
-            title: "Actions",
-            children: [
-              /* @__PURE__ */ jsx(TableRow, {
-                label: "Refetch fonts from source",
-                icon: /* @__PURE__ */ jsx(TableRow.Icon, {
-                  source: findAssetId("RetryIcon")
-                }),
-                onPress: /* @__PURE__ */ _async_to_generator(function* () {
-                  var ftCopy = {
-                    ...fonts[props.name]
-                  };
-                  yield removeFont(props.name);
-                  yield saveFont(ftCopy);
-                  navigation2.goBack();
-                })
-              }),
-              /* @__PURE__ */ jsx(TableRow, {
-                label: "Delete font pack",
-                icon: /* @__PURE__ */ jsx(TableRow.Icon, {
-                  source: findAssetId("TrashIcon")
-                }),
-                onPress: () => removeFont(props.name).then(() => navigation2.goBack())
-              })
-            ]
-          }),
-          /* @__PURE__ */ jsx(TextInput, {
-            size: "lg",
-            value: name,
-            label: Strings.FONT_NAME,
-            placeholder: "Whitney",
-            onChange: setName
-          }),
-          /* @__PURE__ */ jsxs(TableRowGroup, {
-            title: "Font Entries",
-            children: [
-              Object.entries(fontEntries).map(([name2, url2]) => {
-                return /* @__PURE__ */ jsx(TableRow, {
-                  label: name2,
-                  subLabel: url2,
-                  trailing: /* @__PURE__ */ jsxs(Stack, {
-                    spacing: 2,
-                    direction: "horizontal",
-                    children: [
-                      /* @__PURE__ */ jsx(IconButton, {
-                        size: "sm",
-                        variant: "secondary",
-                        icon: findAssetId("PencilIcon"),
-                        onPress: () => promptActionSheet(EntryEditorActionSheet, fontEntries, {
-                          name: name2,
-                          fontEntries
-                        })
-                      }),
-                      /* @__PURE__ */ jsx(IconButton, {
-                        size: "sm",
-                        variant: "secondary",
-                        icon: findAssetId("TrashIcon"),
-                        onPress: () => delete fontEntries[name2]
-                      })
-                    ]
-                  })
-                });
-              }),
-              /* @__PURE__ */ jsx(TableRow, {
-                label: /* @__PURE__ */ jsx(NewEntryRow, {
-                  fontEntry: fontEntries
-                })
-              })
-            ]
-          }),
-          /* @__PURE__ */ jsx(import_react_native17.View, {
-            style: {
-              flexDirection: "row",
-              justifyContent: "flex-end",
-              bottom: 0,
-              left: 0
-            },
-            children: /* @__PURE__ */ jsx(Button, {
-              size: "lg",
-              loading: importing,
-              disabled: importing || !name || Object.keys(fontEntries).length === 0,
-              variant: "primary",
-              text: props.name ? "Save" : "Import",
-              onPress: /* @__PURE__ */ _async_to_generator(function* () {
-                if (!name)
-                  return;
-                setIsImporting(true);
-                if (!props.name) {
-                  saveFont({
-                    spec: 1,
-                    name,
-                    main: fontEntries,
-                    __source: source
-                  }).then(() => navigation2.goBack()).finally(() => setIsImporting(false));
-                } else {
-                  Object.assign(fonts[props.name], {
-                    name,
-                    main: fontEntries,
-                    __edited: true
-                  });
-                  setIsImporting(false);
-                  navigation2.goBack();
-                }
-              }),
-              icon: findAssetId(props.name ? "toast_image_saved" : "DownloadIcon"),
-              style: {
-                marginLeft: 8
-              }
-            })
-          })
-        ]
-      })
-    });
-  }
-  var import_react3, import_react_native17, actionSheet2;
-  var init_FontEditor = __esm({
-    "src/core/ui/settings/pages/Fonts/FontEditor.tsx"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_async_to_generator();
-      init_jsxRuntime();
-      init_i18n();
-      init_assets();
-      init_storage();
-      init_fonts();
-      init_themes();
-      init_utils();
-      init_common();
-      init_components();
-      init_wrappers();
-      init_components2();
-      import_react3 = __toESM(require_react());
-      import_react_native17 = __toESM(require_react_native());
-      actionSheet2 = findByPropsLazy("hideActionSheet");
-    }
-  });
-
-  // globals:@shopify/react-native-skia
-  var require_react_native_skia = __commonJS({
-    "globals:@shopify/react-native-skia"(exports, module) {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      module.exports = require_depsModule()["@shopify/react-native-skia"];
-    }
-  });
-
-  // src/core/ui/settings/pages/Fonts/FontCard.tsx
-  function FontPreview({ font }) {
-    var TEXT_NORMAL = useToken(tokens.colors.TEXT_NORMAL);
-    var { fontFamily: fontFamilyList, fontSize } = TextStyleSheet["text-md/medium"];
-    var fontFamily = fontFamilyList.split(/,/g)[0];
-    var typeface = Skia.useFont(font.main[fontFamily])?.getTypeface();
-    var paragraph = (0, import_react4.useMemo)(() => {
-      if (!typeface)
-        return null;
-      var fMgr = SkiaApi.TypefaceFontProvider.Make();
-      fMgr.registerFont(typeface, fontFamily);
-      return SkiaApi.ParagraphBuilder.Make({}, fMgr).pushStyle({
-        color: SkiaApi.Color(TEXT_NORMAL),
-        fontFamilies: [
-          fontFamily
-        ],
-        fontSize
-      }).addText("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.").pop().build();
-    }, [
-      typeface
-    ]);
-    return (
-      // This does not work, actually :woeis:
-      /* @__PURE__ */ jsx(import_react_native18.View, {
-        style: {
-          height: 64
+        start() {
+          patches = [
+            forumPost_default(),
+            url_default()
+          ];
         },
-        children: typeface ? /* @__PURE__ */ jsx(Skia.Canvas, {
-          style: {
-            height: 64
-          },
-          children: /* @__PURE__ */ jsx(Skia.Paragraph, {
-            paragraph,
-            x: 0,
-            y: 0,
-            width: 300
-          })
-        }) : /* @__PURE__ */ jsx(import_react_native18.View, {
-          style: {
-            justifyContent: "center",
-            alignItems: "center"
-          },
-          children: /* @__PURE__ */ jsx(Text, {
-            color: "text-muted",
-            variant: "heading-lg/semibold",
-            children: "Loading..."
-          })
-        })
-      })
-    );
-  }
-  function FontCard({ item: font }) {
-    useProxy(fonts);
-    var navigation2 = NavigationNative.useNavigation();
-    var selected = fonts.__selected === font.name;
-    return /* @__PURE__ */ jsx(Card, {
-      children: /* @__PURE__ */ jsxs(Stack, {
-        spacing: 16,
-        children: [
-          /* @__PURE__ */ jsxs(import_react_native18.View, {
-            style: {
-              flexDirection: "row",
-              alignItems: "center"
-            },
-            children: [
-              /* @__PURE__ */ jsx(import_react_native18.View, {
-                children: /* @__PURE__ */ jsx(Text, {
-                  variant: "heading-lg/semibold",
-                  children: font.name
-                })
-              }),
-              /* @__PURE__ */ jsx(import_react_native18.View, {
-                style: {
-                  marginLeft: "auto"
-                },
-                children: /* @__PURE__ */ jsxs(Stack, {
-                  spacing: 12,
-                  direction: "horizontal",
-                  children: [
-                    /* @__PURE__ */ jsx(IconButton, {
-                      onPress: () => {
-                        navigation2.push("BUNNY_CUSTOM_PAGE", {
-                          title: "Edit Font",
-                          render: () => /* @__PURE__ */ jsx(FontEditor, {
-                            name: font.name
-                          })
-                        });
-                      },
-                      size: "sm",
-                      variant: "secondary",
-                      disabled: selected,
-                      icon: findAssetId("PencilIcon")
-                    }),
-                    /* @__PURE__ */ jsx(Button, {
-                      size: "sm",
-                      variant: selected ? "secondary" : "primary",
-                      text: selected ? "Unapply" : "Apply",
-                      onPress: /* @__PURE__ */ _async_to_generator(function* () {
-                        yield selectFont(selected ? null : font.name);
-                        showConfirmationAlert({
-                          title: Strings.HOLD_UP,
-                          content: "Reload Discord to apply changes?",
-                          confirmText: Strings.RELOAD,
-                          cancelText: Strings.CANCEL,
-                          confirmColor: ButtonColors.RED,
-                          onConfirm: BundleUpdaterManager.reload
-                        });
-                      })
-                    })
-                  ]
-                })
-              })
-            ]
-          }),
-          /* @__PURE__ */ jsx(FontPreview, {
-            font
-          })
-        ]
-      })
-    });
-  }
-  var Skia, import_react4, import_react_native18, useToken;
-  var init_FontCard = __esm({
-    "src/core/ui/settings/pages/Fonts/FontCard.tsx"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_async_to_generator();
-      init_jsxRuntime();
-      init_i18n();
-      init_assets();
-      init_modules();
-      init_storage();
-      init_fonts();
-      init_lazy();
-      init_types();
-      init_metro();
-      init_common();
-      init_components();
-      Skia = __toESM(require_react_native_skia());
-      init_alerts();
-      init_styles();
-      import_react4 = __toESM(require_react());
-      import_react_native18 = __toESM(require_react_native());
-      init_FontEditor();
-      ({ useToken } = lazyDestructure(() => findByProps("useToken")));
-    }
-  });
-
-  // src/core/ui/settings/pages/Fonts/index.tsx
-  var Fonts_exports = {};
-  __export(Fonts_exports, {
-    default: () => Fonts
-  });
-  function Fonts() {
-    useProxy(settings);
-    useProxy(fonts);
-    var navigation2 = NavigationNative.useNavigation();
-    return /* @__PURE__ */ jsx(AddonPage, {
-      title: Strings.FONTS,
-      searchKeywords: [
-        "name",
-        "description"
-      ],
-      sortOptions: {
-        "Name (A-Z)": (a, b) => a.name.localeCompare(b.name),
-        "Name (Z-A)": (a, b) => b.name.localeCompare(a.name)
-      },
-      items: Object.values(fonts),
-      safeModeHint: {
-        message: Strings.SAFE_MODE_NOTICE_FONTS
-      },
-      CardComponent: FontCard,
-      installAction: {
-        label: "Install a font",
-        onPress: () => {
-          navigation2.push("BUNNY_CUSTOM_PAGE", {
-            title: "Import Font",
-            render: () => /* @__PURE__ */ jsx(FontEditor, {})
-          });
-        }
-      }
-    });
-  }
-  var init_Fonts = __esm({
-    "src/core/ui/settings/pages/Fonts/index.tsx"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_jsxRuntime();
-      init_i18n();
-      init_AddonPage();
-      init_FontEditor();
-      init_settings();
-      init_storage();
-      init_fonts();
-      init_common();
-      init_FontCard();
-    }
-  });
-
-  // src/core/ui/hooks/useFS.ts
-  function useFileExists(path, prefix) {
-    var [state, setState] = (0, import_react5.useState)(2);
-    var check = () => fileExists(path, prefix).then((exists) => setState(exists ? 1 : 0)).catch(() => setState(3));
-    var customFS = (0, import_react5.useMemo)(() => new Proxy(fs_exports, {
-      get(target, p, receiver) {
-        var val = Reflect.get(target, p, receiver);
-        if (typeof val !== "function")
-          return;
-        return (...args) => {
-          var promise = (check(), val(...args));
-          if (promise?.constructor?.name === "Promise") {
-            setState(2);
-            promise.finally(check);
-          }
-          return promise;
-        };
-      }
-    }), []);
-    (0, import_react5.useEffect)(() => void check(), []);
-    return [
-      state,
-      customFS
-    ];
-  }
-  var import_react5, CheckState;
-  var init_useFS = __esm({
-    "src/core/ui/hooks/useFS.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_fs();
-      import_react5 = __toESM(require_react());
-      (function(CheckState2) {
-        CheckState2[CheckState2["FALSE"] = 0] = "FALSE";
-        CheckState2[CheckState2["TRUE"] = 1] = "TRUE";
-        CheckState2[CheckState2["LOADING"] = 2] = "LOADING";
-        CheckState2[CheckState2["ERROR"] = 3] = "ERROR";
-      })(CheckState || (CheckState = {}));
-    }
-  });
-
-  // src/core/ui/settings/pages/Developer/AssetDisplay.tsx
-  function AssetDisplay({ asset }) {
-    return /* @__PURE__ */ jsx(LegacyFormRow, {
-      label: `${asset.name} - ${asset.id}`,
-      trailing: /* @__PURE__ */ jsx(import_react_native19.Image, {
-        source: asset.id,
-        style: {
-          width: 32,
-          height: 32
-        }
-      }),
-      onPress: () => {
-        clipboard.setString(asset.name);
-        showToast.showCopyToClipboard();
-      }
-    });
-  }
-  var import_react_native19;
-  var init_AssetDisplay = __esm({
-    "src/core/ui/settings/pages/Developer/AssetDisplay.tsx"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_jsxRuntime();
-      init_common();
-      init_components();
-      init_toasts();
-      import_react_native19 = __toESM(require_react_native());
-    }
-  });
-
-  // src/core/ui/settings/pages/Developer/AssetBrowser.tsx
-  function AssetBrowser() {
-    var [search, setSearch] = React.useState("");
-    return /* @__PURE__ */ jsx(ErrorBoundary, {
-      children: /* @__PURE__ */ jsxs(import_react_native20.View, {
-        style: {
-          flex: 1
-        },
-        children: [
-          /* @__PURE__ */ jsx(Search_default, {
-            style: {
-              margin: 10
-            },
-            onChangeText: (v) => setSearch(v)
-          }),
-          /* @__PURE__ */ jsx(import_react_native20.FlatList, {
-            data: Object.values(assetsMap).filter((a) => a.name.includes(search) || a.id.toString() === search),
-            renderItem: ({ item }) => /* @__PURE__ */ jsx(AssetDisplay, {
-              asset: item
-            }),
-            ItemSeparatorComponent: LegacyFormDivider,
-            keyExtractor: (item) => item.name
-          })
-        ]
-      })
-    });
-  }
-  var import_react_native20;
-  var init_AssetBrowser = __esm({
-    "src/core/ui/settings/pages/Developer/AssetBrowser.tsx"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_jsxRuntime();
-      init_AssetDisplay();
-      init_assets();
-      init_components();
-      init_components2();
-      import_react_native20 = __toESM(require_react_native());
-    }
-  });
-
-  // src/core/ui/settings/pages/Developer/index.tsx
-  var Developer_exports = {};
-  __export(Developer_exports, {
-    default: () => Developer
-  });
-  function Developer() {
-    var [rdtFileExists, fs] = useFileExists("preloads/reactDevtools.js");
-    var styles3 = useStyles3();
-    var navigation2 = NavigationNative.useNavigation();
-    useProxy(settings);
-    useProxy(loaderConfig);
-    return /* @__PURE__ */ jsx(ErrorBoundary, {
-      children: /* @__PURE__ */ jsx(import_react_native21.ScrollView, {
-        style: {
-          flex: 1
-        },
-        contentContainerStyle: {
-          paddingBottom: 38
-        },
-        children: /* @__PURE__ */ jsxs(Stack, {
-          style: {
-            paddingVertical: 24,
-            paddingHorizontal: 12
-          },
-          spacing: 24,
-          children: [
-            /* @__PURE__ */ jsx(TextInput, {
-              label: Strings.DEBUGGER_URL,
-              placeholder: "127.0.0.1:9090",
-              size: "md",
-              leadingIcon: () => /* @__PURE__ */ jsx(LegacyFormText, {
-                style: styles3.leadingText,
-                children: "ws://"
-              }),
-              defaultValue: settings.debuggerUrl,
-              onChange: (v) => settings.debuggerUrl = v
-            }),
-            /* @__PURE__ */ jsxs(TableRowGroup, {
-              title: Strings.DEBUG,
-              children: [
-                /* @__PURE__ */ jsx(TableRow, {
-                  label: Strings.CONNECT_TO_DEBUG_WEBSOCKET,
-                  icon: /* @__PURE__ */ jsx(TableRow.Icon, {
-                    source: findAssetId("copy")
-                  }),
-                  onPress: () => connectToDebugger(settings.debuggerUrl)
-                }),
-                isReactDevToolsPreloaded() && /* @__PURE__ */ jsx(Fragment, {
-                  children: /* @__PURE__ */ jsx(TableRow, {
-                    label: Strings.CONNECT_TO_REACT_DEVTOOLS,
-                    icon: /* @__PURE__ */ jsx(TableRow.Icon, {
-                      source: findAssetId("ic_badge_staff")
-                    }),
-                    onPress: () => window[getReactDevToolsProp() || "__vendetta_rdc"]?.connectToDevTools({
-                      host: settings.debuggerUrl.split(":")?.[0],
-                      resolveRNStyle: import_react_native21.StyleSheet.flatten
-                    })
-                  })
-                })
-              ]
-            }),
-            isLoaderConfigSupported() && /* @__PURE__ */ jsx(Fragment, {
-              children: /* @__PURE__ */ jsxs(TableRowGroup, {
-                title: "Loader config",
-                children: [
-                  /* @__PURE__ */ jsx(TableSwitchRow, {
-                    label: Strings.LOAD_FROM_CUSTOM_URL,
-                    subLabel: Strings.LOAD_FROM_CUSTOM_URL_DEC,
-                    icon: /* @__PURE__ */ jsx(TableRow.Icon, {
-                      source: findAssetId("copy")
-                    }),
-                    value: loaderConfig.customLoadUrl.enabled,
-                    onValueChange: (v) => {
-                      loaderConfig.customLoadUrl.enabled = v;
-                    }
-                  }),
-                  loaderConfig.customLoadUrl.enabled && /* @__PURE__ */ jsx(TableRow, {
-                    label: /* @__PURE__ */ jsx(TextInput, {
-                      defaultValue: loaderConfig.customLoadUrl.url,
-                      size: "md",
-                      onChange: (v) => loaderConfig.customLoadUrl.url = v,
-                      placeholder: "http://localhost:4040/vendetta.js",
-                      label: Strings.BUNNY_URL
-                    })
-                  }),
-                  isReactDevToolsPreloaded() && isVendettaLoader() && /* @__PURE__ */ jsx(TableSwitchRow, {
-                    label: Strings.LOAD_REACT_DEVTOOLS,
-                    subLabel: `${Strings.VERSION}: ${getReactDevToolsVersion()}`,
-                    icon: /* @__PURE__ */ jsx(TableRow.Icon, {
-                      source: findAssetId("ic_badge_staff")
-                    }),
-                    value: loaderConfig.loadReactDevTools,
-                    onValueChange: (v) => {
-                      loaderConfig.loadReactDevTools = v;
-                    }
-                  })
-                ]
-              })
-            }),
-            /* @__PURE__ */ jsxs(TableRowGroup, {
-              title: "Other",
-              children: [
-                /* @__PURE__ */ jsx(TableRow, {
-                  arrow: true,
-                  label: Strings.ASSET_BROWSER,
-                  icon: /* @__PURE__ */ jsx(TableRow.Icon, {
-                    source: findAssetId("ic_image")
-                  }),
-                  trailing: TableRow.Arrow,
-                  onPress: () => navigation2.push("BUNNY_CUSTOM_PAGE", {
-                    title: Strings.ASSET_BROWSER,
-                    render: AssetBrowser
-                  })
-                }),
-                /* @__PURE__ */ jsx(TableRow, {
-                  arrow: true,
-                  label: Strings.ERROR_BOUNDARY_TOOLS_LABEL,
-                  icon: /* @__PURE__ */ jsx(TableRow.Icon, {
-                    source: findAssetId("ic_warning_24px")
-                  }),
-                  onPress: () => showSimpleActionSheet3({
-                    key: "ErrorBoundaryTools",
-                    header: {
-                      title: "Which ErrorBoundary do you want to trip?",
-                      icon: /* @__PURE__ */ jsx(TableRow.Icon, {
-                        style: {
-                          marginRight: 8
-                        },
-                        source: findAssetId("ic_warning_24px")
-                      }),
-                      onClose: () => hideActionSheet3()
-                    },
-                    options: [
-                      // @ts-expect-error
-                      // Of course, to trigger an error, we need to do something incorrectly. The below will do!
-                      {
-                        label: Strings.BUNNY,
-                        onPress: () => navigation2.push("BUNNY_CUSTOM_PAGE", {
-                          render: () => /* @__PURE__ */ jsx("undefined", {})
-                        })
-                      },
-                      {
-                        label: "Discord",
-                        isDestructive: true,
-                        onPress: () => navigation2.push("BUNNY_CUSTOM_PAGE", {
-                          noErrorBoundary: true
-                        })
-                      }
-                    ]
-                  })
-                }),
-                /* @__PURE__ */ jsx(TableRow, {
-                  label: Strings.INSTALL_REACT_DEVTOOLS,
-                  subLabel: Strings.RESTART_REQUIRED_TO_TAKE_EFFECT,
-                  icon: /* @__PURE__ */ jsx(TableRow.Icon, {
-                    source: findAssetId("DownloadIcon")
-                  }),
-                  trailing: /* @__PURE__ */ jsx(Button, {
-                    size: "sm",
-                    loading: rdtFileExists === CheckState.LOADING,
-                    disabled: rdtFileExists === CheckState.LOADING,
-                    variant: rdtFileExists === CheckState.TRUE ? "secondary" : "primary",
-                    text: rdtFileExists === CheckState.TRUE ? Strings.UNINSTALL : Strings.INSTALL,
-                    onPress: /* @__PURE__ */ _async_to_generator(function* () {
-                      if (rdtFileExists === CheckState.FALSE) {
-                        fs.downloadFile(RDT_EMBED_LINK, "preloads/reactDevtools.js");
-                      } else if (rdtFileExists === CheckState.TRUE) {
-                        fs.removeFile("preloads/reactDevtools.js");
-                      }
-                    }),
-                    icon: findAssetId(rdtFileExists === CheckState.TRUE ? "ic_message_delete" : "DownloadIcon"),
-                    style: {
-                      marginLeft: 8
-                    }
-                  })
-                }),
-                /* @__PURE__ */ jsx(TableSwitchRow, {
-                  label: Strings.ENABLE_EVAL_COMMAND,
-                  subLabel: Strings.ENABLE_EVAL_COMMAND_DESC,
-                  icon: /* @__PURE__ */ jsx(TableRow.Icon, {
-                    source: findAssetId("PencilIcon")
-                  }),
-                  value: settings.enableEvalCommand,
-                  onValueChange: (v) => {
-                    settings.enableEvalCommand = v;
-                  }
-                })
-              ]
-            })
-          ]
-        })
-      })
-    });
-  }
-  var import_react_native21, hideActionSheet3, showSimpleActionSheet3, RDT_EMBED_LINK, useStyles3;
-  var init_Developer = __esm({
-    "src/core/ui/settings/pages/Developer/index.tsx"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_async_to_generator();
-      init_jsxRuntime();
-      init_i18n();
-      init_useFS();
-      init_AssetBrowser();
-      init_assets();
-      init_debug();
-      init_loader();
-      init_settings();
-      init_storage();
-      init_lazy();
-      init_common();
-      init_components();
-      init_wrappers();
-      init_color();
-      init_components2();
-      init_styles();
-      import_react_native21 = __toESM(require_react_native());
-      ({ hideActionSheet: hideActionSheet3 } = lazyDestructure(() => findByProps("openLazy", "hideActionSheet")));
-      ({ showSimpleActionSheet: showSimpleActionSheet3 } = lazyDestructure(() => findByProps("showSimpleActionSheet")));
-      RDT_EMBED_LINK = "https://raw.githubusercontent.com/amsyarasyiq/rdt-embedder/main/dist.js";
-      useStyles3 = createStyles({
-        leadingText: {
-          ...TextStyleSheet["heading-md/semibold"],
-          color: semanticColors.TEXT_MUTED,
-          marginRight: -4
+        stop() {
+          patches.forEach((p) => p());
         }
       });
     }
   });
 
-  // src/core/ui/settings/index.ts
-  function initSettings() {
-    registerSection({
-      name: "Bunny",
-      items: [
-        {
-          key: "BUNNY",
-          title: () => Strings.BUNNY,
-          icon: {
-            uri: pyoncord_default
-          },
-          render: () => Promise.resolve().then(() => (init_General(), General_exports)),
-          rawTabsConfig: {
-            useTrailing: () => `(${"e3df56d-main"})`
-          }
-        },
-        {
-          key: "BUNNY_PLUGINS",
-          title: () => Strings.PLUGINS,
-          icon: findAssetId("ActivitiesIcon"),
-          render: () => Promise.resolve().then(() => (init_Plugins(), Plugins_exports))
-        },
-        {
-          key: "BUNNY_THEMES",
-          title: () => Strings.THEMES,
-          icon: findAssetId("PaintPaletteIcon"),
-          render: () => Promise.resolve().then(() => (init_Themes(), Themes_exports)),
-          usePredicate: () => isThemeSupported()
-        },
-        {
-          key: "BUNNY_FONTS",
-          title: () => Strings.FONTS,
-          icon: findAssetId("ic_add_text"),
-          render: () => Promise.resolve().then(() => (init_Fonts(), Fonts_exports)),
-          usePredicate: () => isFontSupported()
-        },
-        {
-          key: "BUNNY_DEVELOPER",
-          title: () => Strings.DEVELOPER,
-          icon: findAssetId("WrenchIcon"),
-          render: () => Promise.resolve().then(() => (init_Developer(), Developer_exports)),
-          usePredicate: () => useProxy(settings).developerSettings ?? false
-        }
-      ]
-    });
-    registerSection({
-      name: "Vendetta",
-      items: []
-    });
+  // src/lib/api/jsx/index.ts
+  function addJSXCallback(Component, callback) {
+    if (!callbacks.has(Component))
+      callbacks.set(Component, []);
+    callbacks.get(Component).push(callback);
   }
-  var init_settings3 = __esm({
-    "src/core/ui/settings/index.ts"() {
+  function patchJSX() {
+    var callback = ([Component, props], ret) => {
+      if (typeof Component === "function" && callbacks.has(Component.name)) {
+        var cbs = callbacks.get(Component.name);
+        for (var cb of cbs)
+          ret = cb(Component, ret);
+        return ret;
+      }
+    };
+    var patches2 = [
+      after("jsx", jsxRuntime2, callback),
+      after("jsxs", jsxRuntime2, callback)
+    ];
+    return () => patches2.forEach((unpatch) => unpatch());
+  }
+  var callbacks, jsxRuntime2;
+  var init_jsx = __esm({
+    "src/lib/api/jsx/index.ts"() {
       "use strict";
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
-      init_pyoncord();
-      init_i18n();
-      init_assets();
-      init_loader();
-      init_settings();
-      init_storage();
-      init_settings2();
+      init_patcher();
+      init_metro();
+      callbacks = /* @__PURE__ */ new Map();
+      jsxRuntime2 = findByPropsLazy("jsx", "jsxs");
+    }
+  });
+
+  // src/core/plugins/badges/index.tsx
+  var badges_exports = {};
+  __export(badges_exports, {
+    default: () => badges_default
+  });
+  var import_react3, useBadgesModule, badges_default;
+  var init_badges = __esm({
+    "src/core/plugins/badges/index.tsx"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_jsx();
+      init_patcher();
+      init_metro();
+      import_react3 = __toESM(require_react());
+      init_plugins2();
+      useBadgesModule = findByName("useBadges", false);
+      badges_default = defineCorePlugin({
+        manifest: {
+          id: "bunny.badges",
+          name: "Badges",
+          version: "1.0.0",
+          description: "Adds badges to user's profile",
+          authors: [
+            {
+              name: "pylixonly"
+            }
+          ]
+        },
+        start() {
+          var propHolder = {};
+          var badgeCache = {};
+          addJSXCallback("RenderedBadge", (_, ret) => {
+            if (ret.props.id.match(/bunny-\d+-\d+/)) {
+              Object.assign(ret.props, propHolder[ret.props.id]);
+            }
+          });
+          after("default", useBadgesModule, ([user], r) => {
+            var [badges, setBadges] = (0, import_react3.useState)(user ? badgeCache[user.userId] ??= [] : []);
+            (0, import_react3.useEffect)(() => {
+              if (user) {
+                fetch(`https://raw.githubusercontent.com/pyoncord/badges/refs/heads/main/${user.userId}.json`).then((r2) => r2.json()).then((badges2) => setBadges(badgeCache[user.userId] = badges2));
+              }
+            }, [
+              user
+            ]);
+            if (user) {
+              badges.forEach((badges2, i) => {
+                propHolder[`bunny-${user.userId}-${i}`] = {
+                  source: {
+                    uri: badges2.url
+                  },
+                  id: `bunny-${i}`,
+                  label: badges2.label
+                };
+                r.push({
+                  id: `bunny-${user.userId}-${i}`,
+                  description: badges2.label,
+                  icon: "_"
+                });
+              });
+            }
+          });
+        }
+      });
+    }
+  });
+
+  // src/core/plugins/index.ts
+  function defineCorePlugin(instance) {
+    instance[Symbol.for("bunny.core.plugin")] = true;
+    return instance;
+  }
+  var getCorePlugins;
+  var init_plugins2 = __esm({
+    "src/core/plugins/index.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      getCorePlugins = () => ({
+        "bunny.quickinstall": (init_quickinstall(), __toCommonJS(quickinstall_exports)),
+        "bunny.badges": (init_badges(), __toCommonJS(badges_exports))
+      });
     }
   });
 
@@ -8145,7 +7052,7 @@
     default: () => plugins_default
   });
   var plugins_default;
-  var init_plugins2 = __esm({
+  var init_plugins3 = __esm({
     "src/core/commands/plugins.ts"() {
       "use strict";
       init_asyncIteratorSymbol();
@@ -8209,7 +7116,7 @@
     [
       (init_eval(), __toCommonJS(eval_exports)),
       (init_debug2(), __toCommonJS(debug_exports2)),
-      (init_plugins2(), __toCommonJS(plugins_exports))
+      (init_plugins3(), __toCommonJS(plugins_exports))
     ].forEach((r) => registerCommand(r.default()));
     return () => {
       commands2 = [];
@@ -8267,249 +7174,6 @@
     }
   });
 
-  // globals:lodash
-  var require_lodash = __commonJS({
-    "globals:lodash"(exports, module) {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      module.exports = require_depsModule()["lodash"];
-    }
-  });
-
-  // globals:util
-  var require_util = __commonJS({
-    "globals:util"(exports, module) {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      module.exports = require_depsModule()["util"];
-    }
-  });
-
-  // src/core/vendetta/api.tsx
-  var import_react6, import_react_native22, initVendettaObject;
-  var init_api = __esm({
-    "src/core/vendetta/api.tsx"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_jsxRuntime();
-      init_assets();
-      init_commands();
-      init_debug();
-      init_loader();
-      init_patcher();
-      init_settings();
-      init_storage();
-      init_storage();
-      init_themes();
-      init_utils();
-      init_cyrb64();
-      init_logger();
-      init_metro();
-      init_common();
-      init_components();
-      init_components();
-      init_alerts();
-      init_color();
-      init_components2();
-      init_styles();
-      init_toasts();
-      init_dist();
-      import_react6 = __toESM(require_react());
-      import_react_native22 = __toESM(require_react_native());
-      init_plugins();
-      initVendettaObject = () => {
-        var createStackBasedFilter = (fn) => {
-          return (filter) => {
-            return fn(factories_exports.createSimpleFilter(filter, cyrb64Hash(new Error().stack)));
-          };
-        };
-        var api = window.vendetta = {
-          patcher: {
-            before: patcher_default.before,
-            after: patcher_default.after,
-            instead: patcher_default.instead
-          },
-          metro: {
-            modules: window.modules,
-            find: createStackBasedFilter(findExports),
-            findAll: createStackBasedFilter(findAllExports),
-            findByProps: (...props) => {
-              if (props.length === 1 && props[0] === "KeyboardAwareScrollView") {
-                props.push("listenToKeyboardEvents");
-              }
-              var ret = findByProps(...props);
-              if (ret == null) {
-                if (props.includes("ActionSheetTitleHeader")) {
-                  var module = findByProps("ActionSheetRow");
-                  return {
-                    ...module,
-                    ActionSheetTitleHeader: module.BottomSheetTitleHeader,
-                    ActionSheetContentContainer: ({ children }) => {
-                      (0, import_react6.useEffect)(() => console.warn("Discord has removed 'ActionSheetContentContainer', please move into something else. This has been temporarily replaced with View"), []);
-                      return /* @__PURE__ */ (0, import_react6.createElement)(import_react_native22.View, null, children);
-                    }
-                  };
-                }
-              }
-              return ret;
-            },
-            findByPropsAll: (...props) => findByPropsAll(...props),
-            findByName: (name, defaultExp) => {
-              if (name === "create" && typeof defaultExp === "undefined") {
-                return findByName("create", false).default;
-              }
-              return findByName(name, defaultExp ?? true);
-            },
-            findByNameAll: (name, defaultExp = true) => findByNameAll(name, defaultExp),
-            findByDisplayName: (displayName, defaultExp = true) => findByDisplayName(displayName, defaultExp),
-            findByDisplayNameAll: (displayName, defaultExp = true) => findByDisplayNameAll(displayName, defaultExp),
-            findByTypeName: (typeName, defaultExp = true) => findByTypeName(typeName, defaultExp),
-            findByTypeNameAll: (typeName, defaultExp = true) => findByTypeNameAll(typeName, defaultExp),
-            findByStoreName: (name) => findByStoreName(name),
-            common: {
-              constants,
-              channels,
-              i18n,
-              url,
-              toasts,
-              stylesheet: {
-                createThemedStyleSheet
-              },
-              clipboard,
-              assets,
-              invites,
-              commands,
-              navigation,
-              navigationStack,
-              NavigationNative,
-              Flux,
-              FluxDispatcher,
-              React: React2,
-              ReactNative,
-              moment: require_moment(),
-              chroma: require_chroma_js(),
-              lodash: require_lodash(),
-              util: require_util()
-            }
-          },
-          constants: {
-            DISCORD_SERVER: "https://discord.gg/n9QQ4XhhJP",
-            GITHUB: "https://github.com/vendetta-mod",
-            PROXY_PREFIX: "https://vd-plugins.github.io/proxy",
-            HTTP_REGEX: /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_+.~#?&/=]*)$/,
-            HTTP_REGEX_MULTI: /https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_+.~#?&//=]*)/g,
-            DISCORD_SERVER_ID: "1015931589865246730",
-            PLUGINS_CHANNEL_ID: "1091880384561684561",
-            THEMES_CHANNEL_ID: "1091880434939482202"
-          },
-          utils: {
-            findInReactTree: (tree, filter) => findInReactTree(tree, filter),
-            findInTree: (tree, filter, options) => findInTree(tree, filter, options),
-            safeFetch: (input, options, timeout) => safeFetch(input, options, timeout),
-            unfreeze: (obj) => Object.isFrozen(obj) ? {
-              ...obj
-            } : obj,
-            without: (object, ...keys) => omit(object, keys)
-          },
-          debug: {
-            connectToDebugger: (url2) => connectToDebugger(url2),
-            getDebugInfo: () => getDebugInfo()
-          },
-          ui: {
-            components: {
-              Forms,
-              General: ReactNative,
-              Alert: LegacyAlert,
-              Button: CompatButton,
-              HelpMessage: (...props) => /* @__PURE__ */ jsx(HelpMessage, {
-                ...props
-              }),
-              SafeAreaView: (...props) => /* @__PURE__ */ jsx(SafeAreaView, {
-                ...props
-              }),
-              Summary,
-              ErrorBoundary,
-              Codeblock,
-              Search: Search_default
-            },
-            toasts: {
-              showToast: (content, asset) => showToast(content, asset)
-            },
-            alerts: {
-              showConfirmationAlert: (options) => showConfirmationAlert(options),
-              showCustomAlert: (component, props) => showCustomAlert(component, props),
-              showInputAlert: (options) => showInputAlert(options)
-            },
-            assets: {
-              all: assetsMap,
-              find: (filter) => findAsset(filter),
-              getAssetByName: (name) => findAsset(name),
-              getAssetByID: (id) => findAsset(id),
-              getAssetIDByName: (name) => findAssetId(name)
-            },
-            semanticColors,
-            rawColors
-          },
-          plugins: {
-            plugins: VdPluginManager.plugins,
-            fetchPlugin: (source) => VdPluginManager.fetchPlugin(source),
-            installPlugin: (source, enabled2 = true) => VdPluginManager.installPlugin(source, enabled2),
-            startPlugin: (id) => VdPluginManager.startPlugin(id),
-            stopPlugin: (id, disable = true) => VdPluginManager.stopPlugin(id, disable),
-            removePlugin: (id) => VdPluginManager.removePlugin(id),
-            getSettings: (id) => VdPluginManager.getSettings(id)
-          },
-          themes: {
-            themes,
-            fetchTheme: (id, selected) => fetchTheme(id, selected),
-            installTheme: (id) => installTheme(id),
-            selectTheme: (id) => selectTheme(id === "default" ? null : themes[id]),
-            removeTheme: (id) => removeTheme(id),
-            getCurrentTheme: () => getThemeFromLoader(),
-            updateThemes: () => updateThemes()
-          },
-          commands: {
-            registerCommand
-          },
-          storage: {
-            createProxy: (target) => createProxy(target),
-            useProxy: (_storage) => useProxy(_storage),
-            createStorage: (backend) => createStorage(backend),
-            wrapSync: (store) => wrapSync(store),
-            awaitSyncWrapper: (store) => awaitStorage(store),
-            createMMKVBackend: (store) => createMMKVBackend(store),
-            createFileBackend: (file) => {
-              if (isPyonLoader() && file === "vendetta_theme.json") {
-                file = "pyoncord/current-theme.json";
-              }
-              return createFileBackend(file);
-            }
-          },
-          settings,
-          loader: {
-            identity: getVendettaLoaderIdentity() ?? void 0,
-            config: loaderConfig
-          },
-          logger: {
-            log: (...message) => console.log(...message),
-            info: (...message) => console.info(...message),
-            warn: (...message) => console.warn(...message),
-            error: (...message) => console.error(...message),
-            time: (...message) => console.time(...message),
-            trace: (...message) => console.trace(...message),
-            verbose: (...message) => console.log(...message)
-          },
-          version: versionHash,
-          unload: () => {
-            delete window.vendetta;
-          }
-        };
-        return () => api.unload();
-      };
-    }
-  });
-
   // src/lib/api/flux/index.ts
   var flux_exports = {};
   __export(flux_exports, {
@@ -8555,569 +7219,6 @@
     }
   });
 
-  // src/lib/api/jsx/index.ts
-  function addJSXCallback(Component, callback) {
-    if (!callbacks.has(Component))
-      callbacks.set(Component, []);
-    callbacks.get(Component).push(callback);
-  }
-  function patchJSX() {
-    var callback = ([Component, props], ret) => {
-      if (typeof Component === "function" && callbacks.has(Component.name)) {
-        var cbs = callbacks.get(Component.name);
-        for (var cb of cbs)
-          ret = cb(Component, ret);
-        return ret;
-      }
-    };
-    var patches2 = [
-      after("jsx", jsxRuntime2, callback),
-      after("jsxs", jsxRuntime2, callback)
-    ];
-    return () => patches2.forEach((unpatch) => unpatch());
-  }
-  var callbacks, jsxRuntime2;
-  var init_jsx = __esm({
-    "src/lib/api/jsx/index.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_patcher();
-      init_metro();
-      callbacks = /* @__PURE__ */ new Map();
-      jsxRuntime2 = findByPropsLazy("jsx", "jsxs");
-    }
-  });
-
-  // src/core/plugins/quickinstall/forumPost.tsx
-  function useExtractThreadContent(thread, _firstMessage = null, actionSheet3 = false) {
-    if (thread.guild_id !== DISCORD_SERVER_ID)
-      return;
-    var postType;
-    if (thread.parent_id === PLUGINS_CHANNEL_ID) {
-      postType = "Plugin";
-    } else if (thread.parent_id === THEMES_CHANNEL_ID && isThemeSupported()) {
-      postType = "Theme";
-    } else
-      return;
-    var { firstMessage } = actionSheet3 ? useFirstForumPostMessage(thread) : {
-      firstMessage: _firstMessage
-    };
-    var urls = firstMessage?.content?.match(HTTP_REGEX_MULTI)?.filter(postMap[postType].urlsFilter);
-    if (!urls || !urls[0])
-      return;
-    if (postType === "Plugin" && !urls[0].endsWith("/"))
-      urls[0] += "/";
-    return [
-      postType,
-      urls[0]
-    ];
-  }
-  function useInstaller(thread, firstMessage = null, actionSheet3 = false) {
-    var [postType, url2] = useExtractThreadContent(thread, firstMessage, actionSheet3) ?? [];
-    useProxy(VdPluginManager.plugins);
-    useProxy(themes);
-    var [isInstalling, setIsInstalling] = React.useState(false);
-    if (!postType || !url2)
-      return [
-        true
-      ];
-    var isInstalled = Boolean(postMap[postType].storage[url2]);
-    var installOrRemove = /* @__PURE__ */ function() {
-      var _ref = _async_to_generator(function* () {
-        setIsInstalling(true);
-        try {
-          yield postMap[postType].installOrRemove(url2);
-        } catch (e) {
-          showToast(e.message, findAssetId("Small"));
-        } finally {
-          setIsInstalling(false);
-        }
-      });
-      return function installOrRemove2() {
-        return _ref.apply(this, arguments);
-      };
-    }();
-    return [
-      false,
-      postType,
-      isInstalled,
-      isInstalling,
-      installOrRemove
-    ];
-  }
-  var useFirstForumPostMessage, forumReactions, postMap, installButtonPatch, forumPost_default;
-  var init_forumPost = __esm({
-    "src/core/plugins/quickinstall/forumPost.tsx"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_async_to_generator();
-      init_jsxRuntime();
-      init_i18n();
-      init_plugins();
-      init_assets();
-      init_loader();
-      init_patcher();
-      init_storage();
-      init_themes();
-      init_constants();
-      init_lazy();
-      init_components();
-      init_wrappers();
-      init_components2();
-      init_toasts();
-      ({ useFirstForumPostMessage } = lazyDestructure(() => findByProps("useFirstForumPostMessage")));
-      forumReactions = findByPropsLazy("MostCommonForumPostReaction");
-      postMap = {
-        Plugin: {
-          storage: VdPluginManager.plugins,
-          urlsFilter: (url2) => url2.startsWith(VD_PROXY_PREFIX),
-          installOrRemove: (url2) => {
-            var isInstalled = postMap.Plugin.storage[url2];
-            return isInstalled ? VdPluginManager.removePlugin(url2) : VdPluginManager.installPlugin(url2);
-          }
-        },
-        Theme: {
-          storage: themes,
-          urlsFilter: (url2) => url2.endsWith(".json"),
-          installOrRemove: (url2) => {
-            var isInstalled = postMap.Theme.storage[url2];
-            return isInstalled ? removeTheme(url2) : installTheme(url2);
-          }
-        }
-      };
-      installButtonPatch = () => after("MostCommonForumPostReaction", forumReactions, ([{ thread, firstMessage }], res) => {
-        var [shouldReturn, _, installed, loading, installOrRemove] = useInstaller(thread, firstMessage, true);
-        if (shouldReturn)
-          return;
-        return /* @__PURE__ */ jsxs(Fragment, {
-          children: [
-            res,
-            /* @__PURE__ */ jsx(ErrorBoundary, {
-              children: /* @__PURE__ */ jsx(Button, {
-                size: "sm",
-                loading,
-                disabled: loading,
-                // variant={installed ? "destructive" : "primary"} crashes older version because "destructive" was renamed from "danger" and there's no sane way for compat check horror
-                variant: installed ? "secondary" : "primary",
-                text: installed ? Strings.UNINSTALL : Strings.INSTALL,
-                onPress: installOrRemove,
-                icon: findAssetId(installed ? "ic_message_delete" : "DownloadIcon"),
-                style: {
-                  marginLeft: 8
-                }
-              })
-            })
-          ]
-        });
-      });
-      forumPost_default = () => {
-        var patches2 = [
-          // actionSheetPatch(),
-          installButtonPatch()
-        ];
-        return () => patches2.map((p) => p());
-      };
-    }
-  });
-
-  // src/core/plugins/quickinstall/url.tsx
-  function typeFromUrl(url2) {
-    if (url2.startsWith(VD_PROXY_PREFIX)) {
-      return "plugin";
-    } else if (url2.endsWith(".json") && isThemeSupported()) {
-      return "theme";
-    }
-  }
-  function installWithToast(type, url2) {
-    (type === "plugin" ? VdPluginManager.installPlugin.bind(VdPluginManager) : installTheme)(url2).then(() => {
-      showToast(Strings.SUCCESSFULLY_INSTALLED, findAssetId("Check"));
-    }).catch((e) => {
-      showToast(e.message, findAssetId("Small"));
-    });
-  }
-  var showSimpleActionSheet4, handleClick, openURL, getChannelId, getChannel, url_default;
-  var init_url = __esm({
-    "src/core/plugins/quickinstall/url.tsx"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_async_to_generator();
-      init_i18n();
-      init_plugins();
-      init_assets();
-      init_loader();
-      init_patcher();
-      init_themes();
-      init_constants();
-      init_lazy();
-      init_common();
-      init_filters();
-      init_finders();
-      init_wrappers();
-      init_alerts();
-      init_toasts();
-      showSimpleActionSheet4 = findExports(byMutableProp("showSimpleActionSheet"));
-      handleClick = findByPropsLazy("handleClick");
-      ({ openURL } = lazyDestructure(() => url));
-      ({ getChannelId } = lazyDestructure(() => channels));
-      ({ getChannel } = lazyDestructure(() => findByProps("getChannel")));
-      url_default = () => {
-        var patches2 = new Array();
-        patches2.push(after("showSimpleActionSheet", showSimpleActionSheet4, (args) => {
-          if (args[0].key !== "LongPressUrl")
-            return;
-          var { header: { title: url2 }, options } = args[0];
-          var urlType = typeFromUrl(url2);
-          if (!urlType)
-            return;
-          options.push({
-            label: Strings.INSTALL_ADDON,
-            onPress: () => installWithToast(urlType, url2)
-          });
-        }));
-        patches2.push(instead("handleClick", handleClick, /* @__PURE__ */ function() {
-          var _ref = _async_to_generator(function* (args, orig) {
-            var { href: url2 } = args[0];
-            var urlType = typeFromUrl(url2);
-            if (!urlType)
-              return orig.apply(this, args);
-            if (urlType === "theme" && getChannel(getChannelId())?.parent_id !== THEMES_CHANNEL_ID)
-              return orig.apply(this, args);
-            showConfirmationAlert({
-              title: Strings.HOLD_UP,
-              content: formatString("CONFIRMATION_LINK_IS_A_TYPE", {
-                urlType
-              }),
-              onConfirm: () => installWithToast(urlType, url2),
-              confirmText: Strings.INSTALL,
-              cancelText: Strings.CANCEL,
-              secondaryConfirmText: Strings.OPEN_IN_BROWSER,
-              onConfirmSecondary: () => openURL(url2)
-            });
-          });
-          return function(args, orig) {
-            return _ref.apply(this, arguments);
-          };
-        }()));
-        return () => patches2.forEach((p) => p());
-      };
-    }
-  });
-
-  // src/core/plugins/quickinstall/index.ts
-  var quickinstall_exports = {};
-  __export(quickinstall_exports, {
-    default: () => quickinstall_default
-  });
-  var patches, quickinstall_default;
-  var init_quickinstall = __esm({
-    "src/core/plugins/quickinstall/index.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_plugins3();
-      init_forumPost();
-      init_url();
-      patches = [];
-      quickinstall_default = defineCorePlugin({
-        manifest: {
-          id: "bunny.quickinstall",
-          name: "QuickInstall",
-          version: "1.0.0",
-          description: "Quickly install Vendetta plugins and themes",
-          authors: [
-            {
-              name: "Vendetta Team"
-            }
-          ]
-        },
-        start() {
-          patches = [
-            forumPost_default(),
-            url_default()
-          ];
-        },
-        stop() {
-          patches.forEach((p) => p());
-        }
-      });
-    }
-  });
-
-  // src/core/plugins/badges/index.tsx
-  var badges_exports = {};
-  __export(badges_exports, {
-    default: () => badges_default
-  });
-  var import_react7, useBadgesModule, badges_default;
-  var init_badges = __esm({
-    "src/core/plugins/badges/index.tsx"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_jsx();
-      init_patcher();
-      init_metro();
-      import_react7 = __toESM(require_react());
-      init_plugins3();
-      useBadgesModule = findByName("useBadges", false);
-      badges_default = defineCorePlugin({
-        manifest: {
-          id: "bunny.badges",
-          name: "Badges",
-          version: "1.0.0",
-          description: "Adds badges to user's profile",
-          authors: [
-            {
-              name: "pylixonly"
-            }
-          ]
-        },
-        start() {
-          var propHolder = {};
-          var badgeCache = {};
-          addJSXCallback("RenderedBadge", (_, ret) => {
-            if (ret.props.id.match(/bunny-\d+-\d+/)) {
-              Object.assign(ret.props, propHolder[ret.props.id]);
-            }
-          });
-          after("default", useBadgesModule, ([user], r) => {
-            var [badges, setBadges] = (0, import_react7.useState)(user ? badgeCache[user.userId] ??= [] : []);
-            (0, import_react7.useEffect)(() => {
-              if (user) {
-                fetch(`https://raw.githubusercontent.com/pyoncord/badges/refs/heads/main/${user.userId}.json`).then((r2) => r2.json()).then((badges2) => setBadges(badgeCache[user.userId] = badges2));
-              }
-            }, [
-              user
-            ]);
-            badges.forEach((badges2, i) => {
-              propHolder[`bunny-${user.userId}-${i}`] = {
-                source: {
-                  uri: badges2.url
-                },
-                id: `bunny-${i}`,
-                label: badges2.label
-              };
-              r.push({
-                id: `bunny-${user.userId}-${i}`,
-                description: badges2.label,
-                icon: "2ba85e8026a8614b640c2837bcdfe21b"
-              });
-            });
-          });
-        }
-      });
-    }
-  });
-
-  // src/core/plugins/index.ts
-  function defineCorePlugin(instance) {
-    instance[Symbol.for("bunny.core.plugin")] = true;
-    return instance;
-  }
-  var getCorePlugins;
-  var init_plugins3 = __esm({
-    "src/core/plugins/index.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      getCorePlugins = () => ({
-        "bunny.quickinstall": (init_quickinstall(), __toCommonJS(quickinstall_exports)),
-        "bunny.badges": (init_badges(), __toCommonJS(badges_exports))
-      });
-    }
-  });
-
-  // src/lib/api/storage/new.ts
-  function createFileBackend2(filePath) {
-    return {
-      get: /* @__PURE__ */ _async_to_generator(function* () {
-        try {
-          return JSON.parse(yield readFile(filePath));
-        } catch (e) {
-          throw new Error(`Failed to parse storage from '${filePath}'`, {
-            cause: e
-          });
-        }
-      }),
-      set: /* @__PURE__ */ function() {
-        var _ref = _async_to_generator(function* (data) {
-          if (!data || typeof data !== "object")
-            throw new Error("data needs to be an object");
-          yield writeFile(filePath, JSON.stringify(data));
-        });
-        return function(data) {
-          return _ref.apply(this, arguments);
-        };
-      }(),
-      exists: /* @__PURE__ */ _async_to_generator(function* () {
-        return yield fileExists(filePath);
-      })
-    };
-  }
-  function _createProxy(target, path, emitter) {
-    var objChildrens = /* @__PURE__ */ new WeakMap();
-    return new Proxy(target, {
-      get(target2, prop) {
-        if (prop === emitterSymbol2)
-          return emitter;
-        var newPath = [
-          ...path,
-          prop
-        ];
-        var value = target2[prop];
-        if (value && typeof value === "object") {
-          var origValue = value;
-          value = objChildrens.get(origValue);
-          if (!value) {
-            value = _createProxy(origValue, newPath, emitter);
-            objChildrens.set(origValue, value);
-          }
-        }
-        if (value != null) {
-          emitter.emit("GET", {
-            path: newPath,
-            value
-          });
-        }
-        return value;
-      },
-      set(target2, prop, value) {
-        target2[prop] = value;
-        emitter.emit("SET", {
-          path: [
-            ...path,
-            prop
-          ],
-          value
-        });
-        return true;
-      },
-      deleteProperty(target2, prop) {
-        var success = delete target2[prop];
-        if (success)
-          emitter.emit("DEL", {
-            path: [
-              ...path,
-              prop
-            ]
-          });
-        return success;
-      }
-    });
-  }
-  function createProxy2(target = {}) {
-    var emitter = new Emitter();
-    return {
-      proxy: _createProxy(target, [], emitter),
-      emitter
-    };
-  }
-  function updateStorageAsync(path, value) {
-    return _updateStorageAsync.apply(this, arguments);
-  }
-  function _updateStorageAsync() {
-    _updateStorageAsync = _async_to_generator(function* (path, value) {
-      _loadedPath[path] = value;
-      yield createFileBackend2(path).set(value);
-    });
-    return _updateStorageAsync.apply(this, arguments);
-  }
-  function createStorageAndCallback(path, dflt = {}, cb) {
-    var callback = (data) => {
-      var { proxy, emitter } = createProxy2(data);
-      var handler = () => backend.set(proxy);
-      emitter.on("SET", handler);
-      emitter.on("DEL", handler);
-      cb(proxy);
-    };
-    var backend = createFileBackend2(path);
-    if (_loadedPath[path])
-      callback(_loadedPath[path]);
-    else {
-      backend.exists().then(/* @__PURE__ */ function() {
-        var _ref = _async_to_generator(function* (exists) {
-          if (!exists) {
-            yield backend.set(dflt);
-            callback(dflt);
-          } else {
-            callback(yield backend.get());
-          }
-        });
-        return function(exists) {
-          return _ref.apply(this, arguments);
-        };
-      }());
-    }
-  }
-  function preloadStorageIfExists(path) {
-    return _preloadStorageIfExists.apply(this, arguments);
-  }
-  function _preloadStorageIfExists() {
-    _preloadStorageIfExists = _async_to_generator(function* (path) {
-      if (_loadedPath[path])
-        return _loadedPath[path];
-      var backend = createFileBackend2(path);
-      if (yield backend.exists()) {
-        return _loadedPath[path] = yield backend.get();
-      }
-      console.log("no " + path);
-    });
-    return _preloadStorageIfExists.apply(this, arguments);
-  }
-  function getPreloadedStorage(path) {
-    return _loadedPath[path];
-  }
-  function awaitStorage2(...proxies) {
-    return Promise.all(proxies.map((proxy) => proxy[storagePromiseSymbol]));
-  }
-  var emitterSymbol2, storageInitErrorSymbol, storagePromiseSymbol, _loadedPath, createStorage2;
-  var init_new = __esm({
-    "src/lib/api/storage/new.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_async_to_generator();
-      init_fs();
-      init_Emitter();
-      emitterSymbol2 = Symbol.for("bunny.storage.emitter");
-      storageInitErrorSymbol = Symbol.for("bunny.storage.initError");
-      storagePromiseSymbol = Symbol.for("bunny.storage.promise");
-      _loadedPath = {};
-      createStorage2 = (path, dflt = {}) => {
-        var promise = new Promise((r) => resolvePromise = r);
-        var awaited, resolved, error, resolvePromise;
-        createStorageAndCallback(path, dflt, (proxy) => {
-          awaited = proxy;
-          resolved = true;
-          resolvePromise();
-        });
-        var check = () => {
-          if (resolved)
-            return true;
-          throw new Error("Attempted to access storage without initializing");
-        };
-        return new Proxy({}, {
-          ...Object.fromEntries(Object.getOwnPropertyNames(Reflect).map((k) => [
-            k,
-            (t, ...a) => {
-              return check() && Reflect[k](awaited, ...a);
-            }
-          ])),
-          get(target, prop, recv) {
-            if (prop === storageInitErrorSymbol)
-              return error;
-            if (prop === storagePromiseSymbol)
-              return promise;
-            return check() && Reflect.get(awaited ?? target, prop, recv);
-          }
-        });
-      };
-    }
-  });
-
   // src/lib/api/native/index.ts
   var native_exports = {};
   __export(native_exports, {
@@ -9148,7 +7249,7 @@
     settings: () => settings_exports,
     storage: () => storage_exports
   });
-  var init_api2 = __esm({
+  var init_api = __esm({
     "src/lib/api/index.ts"() {
       "use strict";
       init_asyncIteratorSymbol();
@@ -9204,12 +7305,12 @@
       disposers
     };
   }
-  var init_api3 = __esm({
+  var init_api2 = __esm({
     "src/lib/plugins/api.ts"() {
       "use strict";
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
-      init_api2();
+      init_api();
       init_commands();
       init_new();
       init_logger();
@@ -9229,6 +7330,7 @@
     getPluginSettingsComponent: () => getPluginSettingsComponent,
     initPlugins: () => initPlugins,
     installPlugin: () => installPlugin,
+    isCorePlugin: () => isCorePlugin,
     isPluginEnabled: () => isPluginEnabled,
     isPluginInstalled: () => isPluginInstalled,
     pluginInstances: () => pluginInstances,
@@ -9257,6 +7359,9 @@
   }
   function isExternalPlugin(manifest) {
     return "parentRepository" in manifest;
+  }
+  function isCorePlugin(id) {
+    return corePluginInstances.has(id);
   }
   function getId(manifest) {
     var id = manifestToId.get(manifest);
@@ -9549,13 +7654,13 @@
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
       init_async_to_generator();
-      init_plugins3();
+      init_plugins2();
       init_fs();
       init_new();
       init_utils();
       init_constants();
       init_common();
-      init_api3();
+      init_api2();
       corePluginInstances = /* @__PURE__ */ new Map();
       registeredPlugins = /* @__PURE__ */ new Map();
       pluginInstances = /* @__PURE__ */ new Map();
@@ -9571,6 +7676,2087 @@
     }
   });
 
+  // src/core/ui/settings/pages/Plugins/sheets/PluginInfoActionSheet.tsx
+  var PluginInfoActionSheet_exports = {};
+  __export(PluginInfoActionSheet_exports, {
+    default: () => PluginInfoActionSheet2
+  });
+  function PluginInfoActionSheet2({ plugin, navigation: navigation2 }) {
+    plugin.usePluginState();
+    return /* @__PURE__ */ jsx(ActionSheet, {
+      children: /* @__PURE__ */ jsxs(import_react_native15.ScrollView, {
+        contentContainerStyle: {
+          gap: 8,
+          marginBottom: 12
+        },
+        children: [
+          /* @__PURE__ */ jsxs(import_react_native15.View, {
+            style: {
+              flexDirection: "row",
+              alignItems: "center",
+              paddingVertical: 24
+            },
+            children: [
+              /* @__PURE__ */ jsxs(import_react_native15.View, {
+                style: {
+                  gap: 4
+                },
+                children: [
+                  /* @__PURE__ */ jsx(Text, {
+                    variant: "heading-xl/semibold",
+                    children: plugin.name
+                  }),
+                  /* @__PURE__ */ jsx(Text, {
+                    variant: "text-md/medium",
+                    color: "text-muted",
+                    children: plugin.description
+                  })
+                ]
+              }),
+              /* @__PURE__ */ jsx(import_react_native15.View, {
+                style: {
+                  marginLeft: "auto"
+                },
+                children: plugin.getPluginSettingsComponent() && /* @__PURE__ */ jsx(Button, {
+                  size: "md",
+                  text: "Configure",
+                  variant: "secondary",
+                  icon: findAssetId("WrenchIcon"),
+                  onPress: () => {
+                    hideSheet("PluginInfoActionSheet");
+                    navigation2.push("BUNNY_CUSTOM_PAGE", {
+                      title: plugin.name,
+                      render: plugin.getPluginSettingsComponent()
+                    });
+                  }
+                })
+              })
+            ]
+          }),
+          /* @__PURE__ */ jsx(import_react_native15.View, {
+            style: {
+              flexDirection: "row",
+              justifyContent: "center",
+              alignContent: "center"
+            },
+            children: /* @__PURE__ */ jsx(Text, {
+              variant: "text-lg/medium",
+              children: "Oops, you shouldn't see this!"
+            })
+          })
+        ]
+      })
+    });
+  }
+  var import_react_native15;
+  var init_PluginInfoActionSheet = __esm({
+    "src/core/ui/settings/pages/Plugins/sheets/PluginInfoActionSheet.tsx"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_jsxRuntime();
+      init_assets();
+      init_sheets();
+      init_components();
+      import_react_native15 = __toESM(require_react_native());
+    }
+  });
+
+  // src/core/ui/settings/pages/Plugins/models/bunny.ts
+  function unifyBunnyPlugin(manifest) {
+    return {
+      id: manifest.id,
+      name: manifest.name,
+      description: manifest.description,
+      authors: manifest.authors,
+      isEnabled: () => isPluginEnabled(getId(manifest)),
+      isInstalled: () => manifest.id in pluginSettings,
+      usePluginState() {
+        useProxy2(pluginSettings);
+      },
+      toggle(start) {
+        start ? enablePlugin(getId(manifest), true) : disablePlugin(getId(manifest));
+      },
+      resolveSheetComponent() {
+        return Promise.resolve().then(() => (init_PluginInfoActionSheet(), PluginInfoActionSheet_exports));
+      },
+      getPluginSettingsComponent() {
+        return getPluginSettingsComponent(getId(manifest));
+      }
+    };
+  }
+  var init_bunny = __esm({
+    "src/core/ui/settings/pages/Plugins/models/bunny.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_new();
+      init_plugins4();
+    }
+  });
+
+  // src/core/ui/settings/pages/Plugins/index.tsx
+  var Plugins_exports = {};
+  __export(Plugins_exports, {
+    default: () => Plugins
+  });
+  function PluginPage(props) {
+    var items = props.useItems();
+    return /* @__PURE__ */ jsx(AddonPage, {
+      CardComponent: PluginCard,
+      title: Strings.PLUGINS,
+      searchKeywords: [
+        "name",
+        "description",
+        (p) => p.authors?.map((a) => typeof a === "string" ? a : a.name).join()
+      ],
+      sortOptions: {
+        "Name (A-Z)": (a, b) => a.name.localeCompare(b.name),
+        "Name (Z-A)": (a, b) => b.name.localeCompare(a.name)
+      },
+      safeModeHint: {
+        message: Strings.SAFE_MODE_NOTICE_PLUGINS
+      },
+      items,
+      ...props
+    });
+  }
+  function Plugins() {
+    useProxy(settings);
+    var navigation2 = NavigationNative.useNavigation();
+    return /* @__PURE__ */ jsx(PluginPage, {
+      useItems: () => {
+        useProxy(VdPluginManager.plugins);
+        useProxy2(pluginSettings);
+        var vdPlugins = Object.values(VdPluginManager.plugins).map(unifyVdPlugin);
+        var bnPlugins = [
+          ...registeredPlugins.values()
+        ].filter((p) => isPluginInstalled(p.id) && !isCorePlugin(p.id)).map(unifyBunnyPlugin);
+        return [
+          ...vdPlugins,
+          ...bnPlugins
+        ];
+      },
+      ListHeaderComponent: () => {
+        var styles3 = useStyles2();
+        var unproxiedPlugins = Object.values(VdPluginManager.plugins).filter((p) => !p.id.startsWith(VD_PROXY_PREFIX) && !p.id.startsWith(BUNNY_PROXY_PREFIX));
+        if (!unproxiedPlugins.length)
+          return null;
+        return /* @__PURE__ */ jsx(import_react_native16.View, {
+          style: {
+            marginVertical: 12,
+            marginHorizontal: 10
+          },
+          children: /* @__PURE__ */ jsx(Card, {
+            border: "strong",
+            children: /* @__PURE__ */ jsxs(import_react_native16.View, {
+              style: {
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+                flexDirection: "row"
+              },
+              children: [
+                /* @__PURE__ */ jsxs(import_react_native16.View, {
+                  style: {
+                    gap: 6,
+                    flexShrink: 1
+                  },
+                  children: [
+                    /* @__PURE__ */ jsx(Text, {
+                      variant: "heading-md/bold",
+                      children: "Unproxied Plugins Found"
+                    }),
+                    /* @__PURE__ */ jsx(Text, {
+                      variant: "text-sm/medium",
+                      color: "text-muted",
+                      children: "Plugins installed from unproxied sources may run unverified code in this app without your awareness."
+                    })
+                  ]
+                }),
+                /* @__PURE__ */ jsx(import_react_native16.View, {
+                  style: {
+                    marginLeft: "auto"
+                  },
+                  children: /* @__PURE__ */ jsx(IconButton, {
+                    size: "sm",
+                    variant: "secondary",
+                    icon: findAssetId("CircleInformationIcon-primary"),
+                    style: {
+                      marginLeft: 8
+                    },
+                    onPress: () => {
+                      navigation2.push("BUNNY_CUSTOM_PAGE", {
+                        title: "Unproxied Plugins",
+                        render: () => {
+                          return /* @__PURE__ */ jsx(FlashList, {
+                            data: unproxiedPlugins,
+                            contentContainerStyle: {
+                              padding: 8
+                            },
+                            ItemSeparatorComponent: () => /* @__PURE__ */ jsx(import_react_native16.View, {
+                              style: {
+                                height: 8
+                              }
+                            }),
+                            renderItem: ({ item: p }) => /* @__PURE__ */ jsx(Card, {
+                              children: /* @__PURE__ */ jsx(Text, {
+                                variant: "heading-md/semibold",
+                                children: p.id
+                              })
+                            })
+                          });
+                        }
+                      });
+                    }
+                  })
+                })
+              ]
+            })
+          })
+        });
+      },
+      installAction: {
+        label: "Install a plugin",
+        fetchFn: /* @__PURE__ */ function() {
+          var _ref = _async_to_generator(function* (url2) {
+            if (!url2.startsWith(VD_PROXY_PREFIX) && !url2.startsWith(BUNNY_PROXY_PREFIX) && !settings.developerSettings) {
+              openAlert2("bunny-plugin-unproxied-confirmation", /* @__PURE__ */ jsx(AlertModal2, {
+                title: "Hold On!",
+                content: "You're trying to install a plugin from an unproxied external source. This means you're trusting the creator to run their code in this app without your knowledge. Are you sure you want to continue?",
+                extraContent: /* @__PURE__ */ jsx(Card, {
+                  children: /* @__PURE__ */ jsx(Text, {
+                    variant: "text-md/bold",
+                    children: url2
+                  })
+                }),
+                actions: /* @__PURE__ */ jsxs(AlertActions, {
+                  children: [
+                    /* @__PURE__ */ jsx(AlertActionButton2, {
+                      text: "Continue",
+                      variant: "primary",
+                      onPress: () => {
+                        VdPluginManager.installPlugin(url2).then(() => showToast(Strings.TOASTS_INSTALLED_PLUGIN, findAssetId("Check"))).catch((e) => openAlert2("bunny-plugin-install-failed", /* @__PURE__ */ jsx(AlertModal2, {
+                          title: "Install Failed",
+                          content: `Unable to install plugin from '${url2}':`,
+                          extraContent: /* @__PURE__ */ jsx(Card, {
+                            children: /* @__PURE__ */ jsx(Text, {
+                              variant: "text-md/normal",
+                              children: e instanceof Error ? e.message : String(e)
+                            })
+                          }),
+                          actions: /* @__PURE__ */ jsx(AlertActionButton2, {
+                            text: "Okay",
+                            variant: "primary"
+                          })
+                        })));
+                      }
+                    }),
+                    /* @__PURE__ */ jsx(AlertActionButton2, {
+                      text: "Cancel",
+                      variant: "secondary"
+                    })
+                  ]
+                })
+              }));
+            } else {
+              return yield VdPluginManager.installPlugin(url2);
+            }
+          });
+          return function(url2) {
+            return _ref.apply(this, arguments);
+          };
+        }()
+      }
+    });
+  }
+  var import_react_native16, useStyles2, openAlert2, AlertModal2, AlertActions, AlertActionButton2;
+  var init_Plugins = __esm({
+    "src/core/ui/settings/pages/Plugins/index.tsx"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_async_to_generator();
+      init_jsxRuntime();
+      init_i18n();
+      init_AddonPage();
+      init_PluginCard();
+      init_plugins();
+      init_assets();
+      init_settings();
+      init_storage();
+      init_new();
+      init_toasts();
+      init_constants();
+      init_lazy();
+      init_metro();
+      init_common();
+      init_components();
+      import_react_native16 = __toESM(require_react_native());
+      init_vendetta();
+      init_plugins4();
+      init_bunny();
+      init_styles();
+      useStyles2 = createStyles({
+        xButton: {
+          position: "absolute",
+          right: 8,
+          top: 8,
+          tintColor: tokens.colors.INTERACTIVE_NORMAL
+        }
+      });
+      ({ openAlert: openAlert2 } = lazyDestructure(() => findByProps("openAlert", "dismissAlert")));
+      ({ AlertModal: AlertModal2, AlertActions, AlertActionButton: AlertActionButton2 } = lazyDestructure(() => findByProps("AlertModal", "AlertActions")));
+    }
+  });
+
+  // src/core/ui/components/AddonCard.tsx
+  function AddonCard(props) {
+    var styles3 = useStyles3();
+    return /* @__PURE__ */ jsx(Card, {
+      children: /* @__PURE__ */ jsxs(Stack, {
+        spacing: 16,
+        children: [
+          /* @__PURE__ */ jsxs(import_react_native17.View, {
+            style: {
+              flexDirection: "row",
+              alignItems: "center"
+            },
+            children: [
+              /* @__PURE__ */ jsxs(import_react_native17.View, {
+                style: styles3.headerLeading,
+                children: [
+                  /* @__PURE__ */ jsx(Text, {
+                    style: styles3.headerLabel,
+                    children: props.headerLabel
+                  }),
+                  props.headerSublabel && /* @__PURE__ */ jsx(Text, {
+                    style: styles3.headerSubtitle,
+                    children: props.headerSublabel
+                  })
+                ]
+              }),
+              /* @__PURE__ */ jsxs(import_react_native17.View, {
+                style: [
+                  styles3.headerTrailing,
+                  {
+                    marginLeft: "auto"
+                  }
+                ],
+                children: [
+                  /* @__PURE__ */ jsxs(import_react_native17.View, {
+                    style: styles3.actions,
+                    children: [
+                      props.overflowActions && /* @__PURE__ */ jsx(IconButton, {
+                        onPress: () => showSimpleActionSheet3({
+                          key: "CardOverflow",
+                          header: {
+                            title: props.overflowTitle,
+                            icon: props.headerIcon && /* @__PURE__ */ jsx(LegacyFormRow.Icon, {
+                              style: {
+                                marginRight: 8
+                              },
+                              source: findAssetId(props.headerIcon)
+                            }),
+                            onClose: () => hideActionSheet2()
+                          },
+                          options: props.overflowActions?.map((i) => ({
+                            ...i,
+                            icon: findAssetId(i.icon)
+                          }))
+                        }),
+                        size: "sm",
+                        variant: "secondary",
+                        icon: findAssetId("CircleInformationIcon-primary")
+                      }),
+                      props.actions?.map(({ icon, onPress, disabled }) => /* @__PURE__ */ jsx(IconButton, {
+                        onPress,
+                        disabled,
+                        size: "sm",
+                        variant: "secondary",
+                        icon: findAssetId(icon)
+                      }))
+                    ]
+                  }),
+                  props.toggleType && (props.toggleType === "switch" ? /* @__PURE__ */ jsx(FormSwitch, {
+                    value: props.toggleValue(),
+                    onValueChange: props.onToggleChange
+                  }) : /* @__PURE__ */ jsx(import_react_native17.TouchableOpacity, {
+                    onPress: () => {
+                      props.onToggleChange?.(!props.toggleValue());
+                    },
+                    children: /* @__PURE__ */ jsx(FormRadio, {
+                      selected: props.toggleValue()
+                    })
+                  }))
+                ]
+              })
+            ]
+          }),
+          props.descriptionLabel && /* @__PURE__ */ jsx(Text, {
+            variant: "text-md/medium",
+            children: props.descriptionLabel
+          })
+        ]
+      })
+    });
+  }
+  var import_react_native17, hideActionSheet2, showSimpleActionSheet3, useStyles3;
+  var init_AddonCard = __esm({
+    "src/core/ui/components/AddonCard.tsx"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_jsxRuntime();
+      init_assets();
+      init_lazy();
+      init_components();
+      init_wrappers();
+      init_color();
+      init_styles();
+      import_react_native17 = __toESM(require_react_native());
+      ({ hideActionSheet: hideActionSheet2 } = lazyDestructure(() => findByProps("openLazy", "hideActionSheet")));
+      ({ showSimpleActionSheet: showSimpleActionSheet3 } = lazyDestructure(() => findByProps("showSimpleActionSheet")));
+      useStyles3 = createStyles({
+        card: {
+          backgroundColor: semanticColors?.CARD_SECONDARY_BG,
+          borderRadius: 12,
+          overflow: "hidden"
+        },
+        header: {
+          padding: 0
+        },
+        headerLeading: {
+          flexDirection: "column",
+          justifyContent: "center",
+          scale: 1.2
+        },
+        headerTrailing: {
+          display: "flex",
+          flexDirection: "row",
+          gap: 15,
+          alignItems: "center"
+        },
+        headerLabel: {
+          ...TextStyleSheet["heading-md/semibold"],
+          color: semanticColors.TEXT_NORMAL
+        },
+        headerSubtitle: {
+          ...TextStyleSheet["text-md/semibold"],
+          color: semanticColors.TEXT_MUTED
+        },
+        descriptionLabel: {
+          ...TextStyleSheet["text-md/semibold"],
+          color: semanticColors.TEXT_NORMAL
+        },
+        actions: {
+          flexDirection: "row-reverse",
+          alignItems: "center",
+          gap: 5
+        },
+        iconStyle: {
+          tintColor: semanticColors.LOGO_PRIMARY,
+          opacity: 0.2,
+          height: 64,
+          width: 64,
+          left: void 0,
+          right: "30%",
+          top: "-10%"
+        }
+      });
+    }
+  });
+
+  // src/core/ui/settings/pages/Themes/ThemeCard.tsx
+  function selectAndApply(value, theme) {
+    try {
+      selectTheme(value ? theme : null);
+      applyTheme(value ? theme : null);
+    } catch (e) {
+      console.error("Error while selectAndApply,", e);
+    }
+  }
+  function ThemeCard({ item: theme }) {
+    useProxy(theme);
+    var [removed, setRemoved] = React.useState(false);
+    if (removed)
+      return null;
+    var { authors } = theme.data;
+    return /* @__PURE__ */ jsx(AddonCard, {
+      headerLabel: theme.data.name,
+      headerSublabel: authors ? `by ${authors.map((i) => i.name).join(", ")}` : "",
+      descriptionLabel: theme.data.description ?? "No description.",
+      toggleType: !settings.safeMode?.enabled ? "radio" : void 0,
+      toggleValue: () => themes[theme.id].selected,
+      onToggleChange: (v) => {
+        selectAndApply(v, theme);
+      },
+      overflowTitle: theme.data.name,
+      overflowActions: [
+        {
+          icon: "ic_sync_24px",
+          label: Strings.REFETCH,
+          onPress: () => {
+            fetchTheme(theme.id, theme.selected).then(() => {
+              showToast(Strings.THEME_REFETCH_SUCCESSFUL, findAssetId("toast_image_saved"));
+            }).catch(() => {
+              showToast(Strings.THEME_REFETCH_FAILED, findAssetId("Small"));
+            });
+          }
+        },
+        {
+          icon: "copy",
+          label: Strings.COPY_URL,
+          onPress: () => {
+            clipboard.setString(theme.id);
+            showToast.showCopyToClipboard();
+          }
+        },
+        {
+          icon: "ic_message_delete",
+          label: Strings.DELETE,
+          isDestructive: true,
+          onPress: () => showConfirmationAlert({
+            title: Strings.HOLD_UP,
+            content: formatString("ARE_YOU_SURE_TO_DELETE_THEME", {
+              name: theme.data.name
+            }),
+            confirmText: Strings.DELETE,
+            cancelText: Strings.CANCEL,
+            confirmColor: ButtonColors.RED,
+            onConfirm: () => {
+              removeTheme(theme.id).then((wasSelected) => {
+                setRemoved(true);
+                if (wasSelected)
+                  selectAndApply(false, theme);
+              }).catch((e) => {
+                showToast(e.message, findAssetId("Small"));
+              });
+            }
+          })
+        }
+      ]
+    });
+  }
+  var init_ThemeCard = __esm({
+    "src/core/ui/settings/pages/Themes/ThemeCard.tsx"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_jsxRuntime();
+      init_i18n();
+      init_AddonCard();
+      init_assets();
+      init_settings();
+      init_storage();
+      init_themes();
+      init_types();
+      init_common();
+      init_alerts();
+      init_toasts();
+    }
+  });
+
+  // src/core/ui/settings/pages/Themes/index.tsx
+  var Themes_exports = {};
+  __export(Themes_exports, {
+    default: () => Themes
+  });
+  function Themes() {
+    useProxy(settings);
+    useProxy(themes);
+    return /* @__PURE__ */ jsx(AddonPage, {
+      title: Strings.THEMES,
+      searchKeywords: [
+        "data.name",
+        "data.description",
+        (p) => p.data.authors?.map((a) => a.name).join(", ")
+      ],
+      sortOptions: {
+        "Name (A-Z)": (a, b) => a.name.localeCompare(b.name),
+        "Name (Z-A)": (a, b) => b.name.localeCompare(a.name)
+      },
+      installAction: {
+        label: "Install a theme",
+        fetchFn: installTheme
+      },
+      items: Object.values(themes),
+      safeModeHint: {
+        message: formatString("SAFE_MODE_NOTICE_THEMES", {
+          enabled: Boolean(settings.safeMode?.currentThemeId)
+        }),
+        footer: settings.safeMode?.currentThemeId && /* @__PURE__ */ jsx(Button, {
+          size: "small",
+          text: Strings.DISABLE_THEME,
+          onPress: () => delete settings.safeMode?.currentThemeId,
+          style: {
+            marginTop: 8
+          }
+        })
+      },
+      CardComponent: ThemeCard
+    });
+  }
+  var init_Themes = __esm({
+    "src/core/ui/settings/pages/Themes/index.tsx"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_jsxRuntime();
+      init_i18n();
+      init_AddonPage();
+      init_ThemeCard();
+      init_settings();
+      init_storage();
+      init_themes();
+      init_components();
+    }
+  });
+
+  // src/lib/fonts/index.ts
+  var fonts_exports = {};
+  __export(fonts_exports, {
+    fonts: () => fonts,
+    installFont: () => installFont,
+    removeFont: () => removeFont,
+    saveFont: () => saveFont,
+    selectFont: () => selectFont,
+    updateFonts: () => updateFonts,
+    validateFont: () => validateFont
+  });
+  function writeFont(font) {
+    return _writeFont.apply(this, arguments);
+  }
+  function _writeFont() {
+    _writeFont = _async_to_generator(function* (font) {
+      if (!font && font !== null)
+        throw new Error("Arg font must be a valid object or null");
+      if (font) {
+        yield writeFile("fonts.json", JSON.stringify(font));
+      } else {
+        yield removeFile("fonts.json");
+      }
+    });
+    return _writeFont.apply(this, arguments);
+  }
+  function validateFont(font) {
+    if (!font || typeof font !== "object")
+      throw new Error("URL returned a null/non-object JSON");
+    if (typeof font.spec !== "number")
+      throw new Error("Invalid font 'spec' number");
+    if (font.spec !== 1)
+      throw new Error("Only fonts which follows spec:1 are supported");
+    var requiredFields = [
+      "name",
+      "main"
+    ];
+    if (requiredFields.some((f) => !font[f]))
+      throw new Error(`Font is missing one of the fields: ${requiredFields}`);
+    if (font.name.startsWith("__"))
+      throw new Error("Font names cannot start with __");
+    if (font.name in fonts)
+      throw new Error(`There is already a font named '${font.name}' installed`);
+  }
+  function saveFont(data) {
+    return _saveFont.apply(this, arguments);
+  }
+  function _saveFont() {
+    _saveFont = _async_to_generator(function* (data, selected = false) {
+      var fontDefJson;
+      if (typeof data === "object" && data.__source)
+        data = data.__source;
+      if (typeof data === "string") {
+        try {
+          fontDefJson = yield (yield safeFetch(data)).json();
+          fontDefJson.__source = data;
+        } catch (e) {
+          throw new Error(`Failed to fetch fonts at ${data}`, {
+            cause: e
+          });
+        }
+      } else {
+        fontDefJson = data;
+      }
+      validateFont(fontDefJson);
+      try {
+        yield Promise.all(Object.entries(fontDefJson.main).map(/* @__PURE__ */ function() {
+          var _ref = _async_to_generator(function* ([font, url2]) {
+            var ext = url2.split(".").pop();
+            if (ext !== "ttf" && ext !== "otf")
+              ext = "ttf";
+            var path = `downloads/fonts/${fontDefJson.name}/${font}.${ext}`;
+            if (!(yield fileExists(path)))
+              yield downloadFile(url2, path);
+          });
+          return function(_) {
+            return _ref.apply(this, arguments);
+          };
+        }()));
+      } catch (e) {
+        throw new Error("Failed to download font assets", {
+          cause: e
+        });
+      }
+      fonts[fontDefJson.name] = fontDefJson;
+      if (selected)
+        writeFont(fonts[fontDefJson.name]);
+      return fontDefJson;
+    });
+    return _saveFont.apply(this, arguments);
+  }
+  function installFont(url2) {
+    return _installFont.apply(this, arguments);
+  }
+  function _installFont() {
+    _installFont = _async_to_generator(function* (url2, selected = false) {
+      if (typeof url2 !== "string" || Object.values(fonts).some((f) => typeof f === "object" && f.__source === url2)) {
+        throw new Error("Invalid source or font was already installed");
+      }
+      var font = yield saveFont(url2);
+      if (selected)
+        yield selectFont(font.name);
+    });
+    return _installFont.apply(this, arguments);
+  }
+  function selectFont(name) {
+    return _selectFont.apply(this, arguments);
+  }
+  function _selectFont() {
+    _selectFont = _async_to_generator(function* (name) {
+      if (name && !(name in fonts))
+        throw new Error("Selected font does not exist!");
+      if (name) {
+        fonts.__selected = name;
+      } else {
+        delete fonts.__selected;
+      }
+      yield writeFont(name == null ? null : fonts[name]);
+    });
+    return _selectFont.apply(this, arguments);
+  }
+  function removeFont(name) {
+    return _removeFont.apply(this, arguments);
+  }
+  function _removeFont() {
+    _removeFont = _async_to_generator(function* (name) {
+      var selected = fonts.__selected === name;
+      if (selected)
+        yield selectFont(null);
+      delete fonts[name];
+      try {
+        yield clearFolder(`downloads/fonts/${name}`);
+      } catch (e) {
+      }
+    });
+    return _removeFont.apply(this, arguments);
+  }
+  function updateFonts() {
+    return _updateFonts.apply(this, arguments);
+  }
+  function _updateFonts() {
+    _updateFonts = _async_to_generator(function* () {
+      yield awaitStorage(fonts);
+      yield allSettled(Object.keys(fonts).map((name) => saveFont(fonts[name], fonts.__selected === name)));
+    });
+    return _updateFonts.apply(this, arguments);
+  }
+  var fonts;
+  var init_fonts = __esm({
+    "src/lib/fonts/index.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_async_to_generator();
+      init_fs();
+      init_storage();
+      init_utils();
+      fonts = wrapSync(createStorage(createMMKVBackend("BUNNY_FONTS")));
+    }
+  });
+
+  // src/core/ui/settings/pages/Fonts/FontEditor.tsx
+  function guessFontName(urls) {
+    var fileNames = urls.map((url2) => {
+      var { pathname } = new URL(url2);
+      var fileName = pathname.replace(/\.[^/.]+$/, "");
+      return fileName.split("/").pop();
+    }).filter(Boolean);
+    var shortest = fileNames.reduce((shortest2, name) => {
+      return name.length < shortest2.length ? name : shortest2;
+    }, fileNames[0] || "");
+    return shortest?.replace(/-[A-Za-z]*$/, "") || null;
+  }
+  function RevengeFontsExtractor({ fonts: fonts2, setName }) {
+    var currentTheme2 = getCurrentTheme().data;
+    var themeFonts = currentTheme2.fonts;
+    var [fontName, setFontName] = (0, import_react4.useState)(guessFontName(Object.values(themeFonts)));
+    var [error, setError] = (0, import_react4.useState)(void 0);
+    return /* @__PURE__ */ jsxs(import_react_native18.View, {
+      style: {
+        padding: 8,
+        paddingBottom: 16,
+        gap: 12
+      },
+      children: [
+        /* @__PURE__ */ jsx(TextInput, {
+          autoFocus: true,
+          size: "md",
+          label: Strings.FONT_NAME,
+          value: fontName,
+          placeholder: fontName || "Whitney",
+          onChange: setFontName,
+          errorMessage: error,
+          state: error ? "error" : void 0
+        }),
+        /* @__PURE__ */ jsx(Text, {
+          variant: "text-xs/normal",
+          color: "text-muted",
+          children: formatString("THEME_EXTRACTOR_DESC", {
+            fonts: Object.keys(themeFonts).join(Strings.SEPARATOR)
+          })
+        }),
+        /* @__PURE__ */ jsx(Button, {
+          size: "md",
+          variant: "primary",
+          text: Strings.EXTRACT,
+          disabled: !fontName,
+          onPress: () => {
+            if (!fontName)
+              return;
+            try {
+              validateFont({
+                spec: 1,
+                name: fontName,
+                main: themeFonts
+              });
+              setName(fontName);
+              Object.assign(fonts2, themeFonts);
+              actionSheet2.hideActionSheet();
+            } catch (e) {
+              setError(String(e));
+            }
+          }
+        })
+      ]
+    });
+  }
+  function JsonFontImporter({ fonts: fonts2, setName, setSource }) {
+    var [fontLink, setFontLink] = (0, import_react4.useState)("");
+    var [saving, setSaving] = (0, import_react4.useState)(false);
+    var [error, setError] = (0, import_react4.useState)(void 0);
+    return /* @__PURE__ */ jsxs(import_react_native18.View, {
+      style: {
+        padding: 8,
+        paddingBottom: 16,
+        gap: 12
+      },
+      children: [
+        /* @__PURE__ */ jsx(TextInput, {
+          autoFocus: true,
+          size: "md",
+          label: "Font Link",
+          value: fontLink,
+          placeholder: "https://link.to/font/pack.json",
+          onChange: setFontLink,
+          errorMessage: error,
+          state: error ? "error" : void 0
+        }),
+        /* @__PURE__ */ jsx(Button, {
+          size: "md",
+          variant: "primary",
+          text: "Import",
+          disabled: !fontLink || saving,
+          loading: saving,
+          onPress: () => {
+            setSaving(true);
+            _async_to_generator(function* () {
+              var res = yield safeFetch(fontLink, {
+                cache: "no-store"
+              });
+              var json = yield res.json();
+              validateFont(json);
+              setName(json.name);
+              setSource(fontLink);
+              Object.assign(fonts2, json.main);
+            })().then(() => actionSheet2.hideActionSheet()).catch((e) => setError(String(e))).finally(() => setSaving(false));
+          }
+        })
+      ]
+    });
+  }
+  function EntryEditorActionSheet(props) {
+    var [familyName, setFamilyName] = (0, import_react4.useState)(props.name);
+    var [fontUrl, setFontUrl] = (0, import_react4.useState)(props.fontEntries[props.name]);
+    return /* @__PURE__ */ jsxs(import_react_native18.View, {
+      style: {
+        padding: 8,
+        paddingBottom: 16,
+        gap: 12
+      },
+      children: [
+        /* @__PURE__ */ jsx(TextInput, {
+          autoFocus: true,
+          size: "md",
+          label: "Family Name (to override)",
+          value: familyName,
+          placeholder: "ggsans-Bold",
+          onChange: setFamilyName
+        }),
+        /* @__PURE__ */ jsx(TextInput, {
+          size: "md",
+          label: "Font URL",
+          value: fontUrl,
+          placeholder: "https://link.to/the/font.ttf",
+          onChange: setFontUrl
+        }),
+        /* @__PURE__ */ jsx(Button, {
+          size: "md",
+          variant: "primary",
+          text: "Apply",
+          onPress: () => {
+            delete props.fontEntries[props.name];
+            props.fontEntries[familyName] = fontUrl;
+          }
+        })
+      ]
+    });
+  }
+  function promptActionSheet(Component, fontEntries, props) {
+    actionSheet2.openLazy(Promise.resolve({
+      default: () => /* @__PURE__ */ jsx(ErrorBoundary, {
+        children: /* @__PURE__ */ jsxs(ActionSheet, {
+          children: [
+            /* @__PURE__ */ jsx(BottomSheetTitleHeader, {
+              title: "Import Font"
+            }),
+            /* @__PURE__ */ jsx(Component, {
+              fonts: fontEntries,
+              ...props
+            })
+          ]
+        })
+      })
+    }), "FontEditorActionSheet");
+  }
+  function NewEntryRow({ fontEntry }) {
+    var nameRef = (0, import_react4.useRef)();
+    var urlRef = (0, import_react4.useRef)();
+    var [nameSet, setNameSet] = (0, import_react4.useState)(false);
+    var [error, setError] = (0, import_react4.useState)();
+    return /* @__PURE__ */ jsxs(import_react_native18.View, {
+      style: {
+        flexDirection: "row",
+        gap: 8,
+        justifyContent: "flex-start"
+      },
+      children: [
+        /* @__PURE__ */ jsx(import_react_native18.View, {
+          style: {
+            flex: 1
+          },
+          children: /* @__PURE__ */ jsx(TextInput, {
+            isRound: true,
+            size: "md",
+            label: nameSet ? nameRef.current : void 0,
+            placeholder: nameSet ? "https://path.to/the/file.ttf" : "PostScript name (e.g. ggsans-Bold)",
+            leadingIcon: () => nameSet ? null : /* @__PURE__ */ jsx(TableRow.Icon, {
+              source: findAssetId("PlusSmallIcon")
+            }),
+            leadingText: nameSet ? nameRef.current : "",
+            onChange: (text) => (nameSet ? urlRef : nameRef).current = text,
+            errorMessage: error,
+            state: error ? "error" : void 0
+          })
+        }),
+        nameSet && /* @__PURE__ */ jsx(IconButton, {
+          size: "md",
+          variant: "secondary",
+          onPress: () => {
+            nameRef.current = "";
+            setNameSet(false);
+          },
+          icon: findAssetId("TrashIcon")
+        }),
+        /* @__PURE__ */ jsx(IconButton, {
+          size: "md",
+          variant: "primary",
+          onPress: () => {
+            if (!nameSet && nameRef.current) {
+              setNameSet(true);
+            } else if (nameSet && nameRef.current && urlRef.current) {
+              try {
+                var parsedUrl = new URL(urlRef.current);
+                if (!parsedUrl.protocol || !parsedUrl.host) {
+                  throw "Invalid URL";
+                }
+                fontEntry[nameRef.current] = urlRef.current;
+                nameRef.current = void 0;
+                urlRef.current = void 0;
+                setNameSet(false);
+              } catch (e) {
+                setError(String(e));
+              }
+            }
+          },
+          icon: findAssetId(nameSet ? "PlusSmallIcon" : "ArrowLargeRightIcon")
+        })
+      ]
+    });
+  }
+  function FontEditor(props) {
+    var [name, setName] = (0, import_react4.useState)(props.name);
+    var [source, setSource] = (0, import_react4.useState)();
+    var [importing, setIsImporting] = (0, import_react4.useState)(false);
+    var memoEntry = (0, import_react4.useMemo)(() => {
+      return createProxy(props.name ? {
+        ...fonts[props.name].main
+      } : {}).proxy;
+    }, [
+      props.name
+    ]);
+    var fontEntries = useProxy(memoEntry);
+    var navigation2 = NavigationNative.useNavigation();
+    return /* @__PURE__ */ jsx(import_react_native18.ScrollView, {
+      style: {
+        flex: 1
+      },
+      contentContainerStyle: {
+        paddingBottom: 38
+      },
+      children: /* @__PURE__ */ jsxs(Stack, {
+        style: {
+          paddingVertical: 24,
+          paddingHorizontal: 12
+        },
+        spacing: 12,
+        children: [
+          !props.name ? /* @__PURE__ */ jsxs(TableRowGroup, {
+            title: "Import",
+            children: [
+              getCurrentTheme()?.data?.fonts && /* @__PURE__ */ jsx(TableRow, {
+                label: Strings.LABEL_EXTRACT_FONTS_FROM_THEME,
+                subLabel: Strings.DESC_EXTRACT_FONTS_FROM_THEME,
+                icon: /* @__PURE__ */ jsx(TableRow.Icon, {
+                  source: findAssetId("HammerIcon")
+                }),
+                onPress: () => promptActionSheet(RevengeFontsExtractor, fontEntries, {
+                  setName
+                })
+              }),
+              /* @__PURE__ */ jsx(TableRow, {
+                label: "Import font entries from a link",
+                subLabel: "Directly import from a link with a pre-configured JSON file",
+                icon: /* @__PURE__ */ jsx(TableRow.Icon, {
+                  source: findAssetId("LinkIcon")
+                }),
+                onPress: () => promptActionSheet(JsonFontImporter, fontEntries, {
+                  setName,
+                  setSource
+                })
+              })
+            ]
+          }) : /* @__PURE__ */ jsxs(TableRowGroup, {
+            title: "Actions",
+            children: [
+              /* @__PURE__ */ jsx(TableRow, {
+                label: "Refetch fonts from source",
+                icon: /* @__PURE__ */ jsx(TableRow.Icon, {
+                  source: findAssetId("RetryIcon")
+                }),
+                onPress: /* @__PURE__ */ _async_to_generator(function* () {
+                  var ftCopy = {
+                    ...fonts[props.name]
+                  };
+                  yield removeFont(props.name);
+                  yield saveFont(ftCopy);
+                  navigation2.goBack();
+                })
+              }),
+              /* @__PURE__ */ jsx(TableRow, {
+                label: "Delete font pack",
+                icon: /* @__PURE__ */ jsx(TableRow.Icon, {
+                  source: findAssetId("TrashIcon")
+                }),
+                onPress: () => removeFont(props.name).then(() => navigation2.goBack())
+              })
+            ]
+          }),
+          /* @__PURE__ */ jsx(TextInput, {
+            size: "lg",
+            value: name,
+            label: Strings.FONT_NAME,
+            placeholder: "Whitney",
+            onChange: setName
+          }),
+          /* @__PURE__ */ jsxs(TableRowGroup, {
+            title: "Font Entries",
+            children: [
+              Object.entries(fontEntries).map(([name2, url2]) => {
+                return /* @__PURE__ */ jsx(TableRow, {
+                  label: name2,
+                  subLabel: url2,
+                  trailing: /* @__PURE__ */ jsxs(Stack, {
+                    spacing: 2,
+                    direction: "horizontal",
+                    children: [
+                      /* @__PURE__ */ jsx(IconButton, {
+                        size: "sm",
+                        variant: "secondary",
+                        icon: findAssetId("PencilIcon"),
+                        onPress: () => promptActionSheet(EntryEditorActionSheet, fontEntries, {
+                          name: name2,
+                          fontEntries
+                        })
+                      }),
+                      /* @__PURE__ */ jsx(IconButton, {
+                        size: "sm",
+                        variant: "secondary",
+                        icon: findAssetId("TrashIcon"),
+                        onPress: () => delete fontEntries[name2]
+                      })
+                    ]
+                  })
+                });
+              }),
+              /* @__PURE__ */ jsx(TableRow, {
+                label: /* @__PURE__ */ jsx(NewEntryRow, {
+                  fontEntry: fontEntries
+                })
+              })
+            ]
+          }),
+          /* @__PURE__ */ jsx(import_react_native18.View, {
+            style: {
+              flexDirection: "row",
+              justifyContent: "flex-end",
+              bottom: 0,
+              left: 0
+            },
+            children: /* @__PURE__ */ jsx(Button, {
+              size: "lg",
+              loading: importing,
+              disabled: importing || !name || Object.keys(fontEntries).length === 0,
+              variant: "primary",
+              text: props.name ? "Save" : "Import",
+              onPress: /* @__PURE__ */ _async_to_generator(function* () {
+                if (!name)
+                  return;
+                setIsImporting(true);
+                if (!props.name) {
+                  saveFont({
+                    spec: 1,
+                    name,
+                    main: fontEntries,
+                    __source: source
+                  }).then(() => navigation2.goBack()).finally(() => setIsImporting(false));
+                } else {
+                  Object.assign(fonts[props.name], {
+                    name,
+                    main: fontEntries,
+                    __edited: true
+                  });
+                  setIsImporting(false);
+                  navigation2.goBack();
+                }
+              }),
+              icon: findAssetId(props.name ? "toast_image_saved" : "DownloadIcon"),
+              style: {
+                marginLeft: 8
+              }
+            })
+          })
+        ]
+      })
+    });
+  }
+  var import_react4, import_react_native18, actionSheet2;
+  var init_FontEditor = __esm({
+    "src/core/ui/settings/pages/Fonts/FontEditor.tsx"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_async_to_generator();
+      init_jsxRuntime();
+      init_i18n();
+      init_assets();
+      init_storage();
+      init_fonts();
+      init_themes();
+      init_utils();
+      init_common();
+      init_components();
+      init_wrappers();
+      init_components2();
+      import_react4 = __toESM(require_react());
+      import_react_native18 = __toESM(require_react_native());
+      actionSheet2 = findByPropsLazy("hideActionSheet");
+    }
+  });
+
+  // globals:@shopify/react-native-skia
+  var require_react_native_skia = __commonJS({
+    "globals:@shopify/react-native-skia"(exports, module) {
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      module.exports = require_depsModule()["@shopify/react-native-skia"];
+    }
+  });
+
+  // src/core/ui/settings/pages/Fonts/FontCard.tsx
+  function FontPreview({ font }) {
+    var TEXT_NORMAL = useToken(tokens.colors.TEXT_NORMAL);
+    var { fontFamily: fontFamilyList, fontSize } = TextStyleSheet["text-md/medium"];
+    var fontFamily = fontFamilyList.split(/,/g)[0];
+    var typeface = Skia.useFont(font.main[fontFamily])?.getTypeface();
+    var paragraph = (0, import_react5.useMemo)(() => {
+      if (!typeface)
+        return null;
+      var fMgr = SkiaApi.TypefaceFontProvider.Make();
+      fMgr.registerFont(typeface, fontFamily);
+      return SkiaApi.ParagraphBuilder.Make({}, fMgr).pushStyle({
+        color: SkiaApi.Color(TEXT_NORMAL),
+        fontFamilies: [
+          fontFamily
+        ],
+        fontSize
+      }).addText("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.").pop().build();
+    }, [
+      typeface
+    ]);
+    return (
+      // This does not work, actually :woeis:
+      /* @__PURE__ */ jsx(import_react_native19.View, {
+        style: {
+          height: 64
+        },
+        children: typeface ? /* @__PURE__ */ jsx(Skia.Canvas, {
+          style: {
+            height: 64
+          },
+          children: /* @__PURE__ */ jsx(Skia.Paragraph, {
+            paragraph,
+            x: 0,
+            y: 0,
+            width: 300
+          })
+        }) : /* @__PURE__ */ jsx(import_react_native19.View, {
+          style: {
+            justifyContent: "center",
+            alignItems: "center"
+          },
+          children: /* @__PURE__ */ jsx(Text, {
+            color: "text-muted",
+            variant: "heading-lg/semibold",
+            children: "Loading..."
+          })
+        })
+      })
+    );
+  }
+  function FontCard({ item: font }) {
+    useProxy(fonts);
+    var navigation2 = NavigationNative.useNavigation();
+    var selected = fonts.__selected === font.name;
+    return /* @__PURE__ */ jsx(Card, {
+      children: /* @__PURE__ */ jsxs(Stack, {
+        spacing: 16,
+        children: [
+          /* @__PURE__ */ jsxs(import_react_native19.View, {
+            style: {
+              flexDirection: "row",
+              alignItems: "center"
+            },
+            children: [
+              /* @__PURE__ */ jsx(import_react_native19.View, {
+                children: /* @__PURE__ */ jsx(Text, {
+                  variant: "heading-lg/semibold",
+                  children: font.name
+                })
+              }),
+              /* @__PURE__ */ jsx(import_react_native19.View, {
+                style: {
+                  marginLeft: "auto"
+                },
+                children: /* @__PURE__ */ jsxs(Stack, {
+                  spacing: 12,
+                  direction: "horizontal",
+                  children: [
+                    /* @__PURE__ */ jsx(IconButton, {
+                      onPress: () => {
+                        navigation2.push("BUNNY_CUSTOM_PAGE", {
+                          title: "Edit Font",
+                          render: () => /* @__PURE__ */ jsx(FontEditor, {
+                            name: font.name
+                          })
+                        });
+                      },
+                      size: "sm",
+                      variant: "secondary",
+                      disabled: selected,
+                      icon: findAssetId("PencilIcon")
+                    }),
+                    /* @__PURE__ */ jsx(Button, {
+                      size: "sm",
+                      variant: selected ? "secondary" : "primary",
+                      text: selected ? "Unapply" : "Apply",
+                      onPress: /* @__PURE__ */ _async_to_generator(function* () {
+                        yield selectFont(selected ? null : font.name);
+                        showConfirmationAlert({
+                          title: Strings.HOLD_UP,
+                          content: "Reload Discord to apply changes?",
+                          confirmText: Strings.RELOAD,
+                          cancelText: Strings.CANCEL,
+                          confirmColor: ButtonColors.RED,
+                          onConfirm: BundleUpdaterManager.reload
+                        });
+                      })
+                    })
+                  ]
+                })
+              })
+            ]
+          }),
+          /* @__PURE__ */ jsx(FontPreview, {
+            font
+          })
+        ]
+      })
+    });
+  }
+  var Skia, import_react5, import_react_native19, useToken;
+  var init_FontCard = __esm({
+    "src/core/ui/settings/pages/Fonts/FontCard.tsx"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_async_to_generator();
+      init_jsxRuntime();
+      init_i18n();
+      init_assets();
+      init_modules();
+      init_storage();
+      init_fonts();
+      init_lazy();
+      init_types();
+      init_metro();
+      init_common();
+      init_components();
+      Skia = __toESM(require_react_native_skia());
+      init_alerts();
+      init_styles();
+      import_react5 = __toESM(require_react());
+      import_react_native19 = __toESM(require_react_native());
+      init_FontEditor();
+      ({ useToken } = lazyDestructure(() => findByProps("useToken")));
+    }
+  });
+
+  // src/core/ui/settings/pages/Fonts/index.tsx
+  var Fonts_exports = {};
+  __export(Fonts_exports, {
+    default: () => Fonts
+  });
+  function Fonts() {
+    useProxy(settings);
+    useProxy(fonts);
+    var navigation2 = NavigationNative.useNavigation();
+    return /* @__PURE__ */ jsx(AddonPage, {
+      title: Strings.FONTS,
+      searchKeywords: [
+        "name",
+        "description"
+      ],
+      sortOptions: {
+        "Name (A-Z)": (a, b) => a.name.localeCompare(b.name),
+        "Name (Z-A)": (a, b) => b.name.localeCompare(a.name)
+      },
+      items: Object.values(fonts),
+      safeModeHint: {
+        message: Strings.SAFE_MODE_NOTICE_FONTS
+      },
+      CardComponent: FontCard,
+      installAction: {
+        label: "Install a font",
+        onPress: () => {
+          navigation2.push("BUNNY_CUSTOM_PAGE", {
+            title: "Import Font",
+            render: () => /* @__PURE__ */ jsx(FontEditor, {})
+          });
+        }
+      }
+    });
+  }
+  var init_Fonts = __esm({
+    "src/core/ui/settings/pages/Fonts/index.tsx"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_jsxRuntime();
+      init_i18n();
+      init_AddonPage();
+      init_FontEditor();
+      init_settings();
+      init_storage();
+      init_fonts();
+      init_common();
+      init_FontCard();
+    }
+  });
+
+  // src/core/ui/hooks/useFS.ts
+  function useFileExists(path, prefix) {
+    var [state, setState] = (0, import_react6.useState)(2);
+    var check = () => fileExists(path, prefix).then((exists) => setState(exists ? 1 : 0)).catch(() => setState(3));
+    var customFS = (0, import_react6.useMemo)(() => new Proxy(fs_exports, {
+      get(target, p, receiver) {
+        var val = Reflect.get(target, p, receiver);
+        if (typeof val !== "function")
+          return;
+        return (...args) => {
+          var promise = (check(), val(...args));
+          if (promise?.constructor?.name === "Promise") {
+            setState(2);
+            promise.finally(check);
+          }
+          return promise;
+        };
+      }
+    }), []);
+    (0, import_react6.useEffect)(() => void check(), []);
+    return [
+      state,
+      customFS
+    ];
+  }
+  var import_react6, CheckState;
+  var init_useFS = __esm({
+    "src/core/ui/hooks/useFS.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_fs();
+      import_react6 = __toESM(require_react());
+      (function(CheckState2) {
+        CheckState2[CheckState2["FALSE"] = 0] = "FALSE";
+        CheckState2[CheckState2["TRUE"] = 1] = "TRUE";
+        CheckState2[CheckState2["LOADING"] = 2] = "LOADING";
+        CheckState2[CheckState2["ERROR"] = 3] = "ERROR";
+      })(CheckState || (CheckState = {}));
+    }
+  });
+
+  // src/core/ui/settings/pages/Developer/AssetDisplay.tsx
+  function AssetDisplay({ asset }) {
+    return /* @__PURE__ */ jsx(LegacyFormRow, {
+      label: `${asset.name} - ${asset.id}`,
+      trailing: /* @__PURE__ */ jsx(import_react_native20.Image, {
+        source: asset.id,
+        style: {
+          width: 32,
+          height: 32
+        }
+      }),
+      onPress: () => {
+        clipboard.setString(asset.name);
+        showToast.showCopyToClipboard();
+      }
+    });
+  }
+  var import_react_native20;
+  var init_AssetDisplay = __esm({
+    "src/core/ui/settings/pages/Developer/AssetDisplay.tsx"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_jsxRuntime();
+      init_common();
+      init_components();
+      init_toasts();
+      import_react_native20 = __toESM(require_react_native());
+    }
+  });
+
+  // src/core/ui/settings/pages/Developer/AssetBrowser.tsx
+  function AssetBrowser() {
+    var [search, setSearch] = React.useState("");
+    return /* @__PURE__ */ jsx(ErrorBoundary, {
+      children: /* @__PURE__ */ jsxs(import_react_native21.View, {
+        style: {
+          flex: 1
+        },
+        children: [
+          /* @__PURE__ */ jsx(Search_default, {
+            style: {
+              margin: 10
+            },
+            onChangeText: (v) => setSearch(v)
+          }),
+          /* @__PURE__ */ jsx(import_react_native21.FlatList, {
+            data: Object.values(assetsMap).filter((a) => a.name.includes(search) || a.id.toString() === search),
+            renderItem: ({ item }) => /* @__PURE__ */ jsx(AssetDisplay, {
+              asset: item
+            }),
+            ItemSeparatorComponent: LegacyFormDivider,
+            keyExtractor: (item) => item.name
+          })
+        ]
+      })
+    });
+  }
+  var import_react_native21;
+  var init_AssetBrowser = __esm({
+    "src/core/ui/settings/pages/Developer/AssetBrowser.tsx"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_jsxRuntime();
+      init_AssetDisplay();
+      init_assets();
+      init_components();
+      init_components2();
+      import_react_native21 = __toESM(require_react_native());
+    }
+  });
+
+  // src/core/ui/settings/pages/Developer/index.tsx
+  var Developer_exports = {};
+  __export(Developer_exports, {
+    default: () => Developer
+  });
+  function Developer() {
+    var [rdtFileExists, fs] = useFileExists("preloads/reactDevtools.js");
+    var styles3 = useStyles4();
+    var navigation2 = NavigationNative.useNavigation();
+    useProxy(settings);
+    useProxy(loaderConfig);
+    return /* @__PURE__ */ jsx(ErrorBoundary, {
+      children: /* @__PURE__ */ jsx(import_react_native22.ScrollView, {
+        style: {
+          flex: 1
+        },
+        contentContainerStyle: {
+          paddingBottom: 38
+        },
+        children: /* @__PURE__ */ jsxs(Stack, {
+          style: {
+            paddingVertical: 24,
+            paddingHorizontal: 12
+          },
+          spacing: 24,
+          children: [
+            /* @__PURE__ */ jsx(TextInput, {
+              label: Strings.DEBUGGER_URL,
+              placeholder: "127.0.0.1:9090",
+              size: "md",
+              leadingIcon: () => /* @__PURE__ */ jsx(LegacyFormText, {
+                style: styles3.leadingText,
+                children: "ws://"
+              }),
+              defaultValue: settings.debuggerUrl,
+              onChange: (v) => settings.debuggerUrl = v
+            }),
+            /* @__PURE__ */ jsxs(TableRowGroup, {
+              title: Strings.DEBUG,
+              children: [
+                /* @__PURE__ */ jsx(TableRow, {
+                  label: Strings.CONNECT_TO_DEBUG_WEBSOCKET,
+                  icon: /* @__PURE__ */ jsx(TableRow.Icon, {
+                    source: findAssetId("copy")
+                  }),
+                  onPress: () => connectToDebugger(settings.debuggerUrl)
+                }),
+                isReactDevToolsPreloaded() && /* @__PURE__ */ jsx(Fragment, {
+                  children: /* @__PURE__ */ jsx(TableRow, {
+                    label: Strings.CONNECT_TO_REACT_DEVTOOLS,
+                    icon: /* @__PURE__ */ jsx(TableRow.Icon, {
+                      source: findAssetId("ic_badge_staff")
+                    }),
+                    onPress: () => window[getReactDevToolsProp() || "__vendetta_rdc"]?.connectToDevTools({
+                      host: settings.debuggerUrl.split(":")?.[0],
+                      resolveRNStyle: import_react_native22.StyleSheet.flatten
+                    })
+                  })
+                })
+              ]
+            }),
+            isLoaderConfigSupported() && /* @__PURE__ */ jsx(Fragment, {
+              children: /* @__PURE__ */ jsxs(TableRowGroup, {
+                title: "Loader config",
+                children: [
+                  /* @__PURE__ */ jsx(TableSwitchRow, {
+                    label: Strings.LOAD_FROM_CUSTOM_URL,
+                    subLabel: Strings.LOAD_FROM_CUSTOM_URL_DEC,
+                    icon: /* @__PURE__ */ jsx(TableRow.Icon, {
+                      source: findAssetId("copy")
+                    }),
+                    value: loaderConfig.customLoadUrl.enabled,
+                    onValueChange: (v) => {
+                      loaderConfig.customLoadUrl.enabled = v;
+                    }
+                  }),
+                  loaderConfig.customLoadUrl.enabled && /* @__PURE__ */ jsx(TableRow, {
+                    label: /* @__PURE__ */ jsx(TextInput, {
+                      defaultValue: loaderConfig.customLoadUrl.url,
+                      size: "md",
+                      onChange: (v) => loaderConfig.customLoadUrl.url = v,
+                      placeholder: "http://localhost:4040/vendetta.js",
+                      label: Strings.BUNNY_URL
+                    })
+                  }),
+                  isReactDevToolsPreloaded() && isVendettaLoader() && /* @__PURE__ */ jsx(TableSwitchRow, {
+                    label: Strings.LOAD_REACT_DEVTOOLS,
+                    subLabel: `${Strings.VERSION}: ${getReactDevToolsVersion()}`,
+                    icon: /* @__PURE__ */ jsx(TableRow.Icon, {
+                      source: findAssetId("ic_badge_staff")
+                    }),
+                    value: loaderConfig.loadReactDevTools,
+                    onValueChange: (v) => {
+                      loaderConfig.loadReactDevTools = v;
+                    }
+                  })
+                ]
+              })
+            }),
+            /* @__PURE__ */ jsxs(TableRowGroup, {
+              title: "Other",
+              children: [
+                /* @__PURE__ */ jsx(TableRow, {
+                  arrow: true,
+                  label: Strings.ASSET_BROWSER,
+                  icon: /* @__PURE__ */ jsx(TableRow.Icon, {
+                    source: findAssetId("ic_image")
+                  }),
+                  trailing: TableRow.Arrow,
+                  onPress: () => navigation2.push("BUNNY_CUSTOM_PAGE", {
+                    title: Strings.ASSET_BROWSER,
+                    render: AssetBrowser
+                  })
+                }),
+                /* @__PURE__ */ jsx(TableRow, {
+                  arrow: true,
+                  label: Strings.ERROR_BOUNDARY_TOOLS_LABEL,
+                  icon: /* @__PURE__ */ jsx(TableRow.Icon, {
+                    source: findAssetId("ic_warning_24px")
+                  }),
+                  onPress: () => showSimpleActionSheet4({
+                    key: "ErrorBoundaryTools",
+                    header: {
+                      title: "Which ErrorBoundary do you want to trip?",
+                      icon: /* @__PURE__ */ jsx(TableRow.Icon, {
+                        style: {
+                          marginRight: 8
+                        },
+                        source: findAssetId("ic_warning_24px")
+                      }),
+                      onClose: () => hideActionSheet3()
+                    },
+                    options: [
+                      // @ts-expect-error
+                      // Of course, to trigger an error, we need to do something incorrectly. The below will do!
+                      {
+                        label: Strings.BUNNY,
+                        onPress: () => navigation2.push("BUNNY_CUSTOM_PAGE", {
+                          render: () => /* @__PURE__ */ jsx("undefined", {})
+                        })
+                      },
+                      {
+                        label: "Discord",
+                        isDestructive: true,
+                        onPress: () => navigation2.push("BUNNY_CUSTOM_PAGE", {
+                          noErrorBoundary: true
+                        })
+                      }
+                    ]
+                  })
+                }),
+                /* @__PURE__ */ jsx(TableRow, {
+                  label: Strings.INSTALL_REACT_DEVTOOLS,
+                  subLabel: Strings.RESTART_REQUIRED_TO_TAKE_EFFECT,
+                  icon: /* @__PURE__ */ jsx(TableRow.Icon, {
+                    source: findAssetId("DownloadIcon")
+                  }),
+                  trailing: /* @__PURE__ */ jsx(Button, {
+                    size: "sm",
+                    loading: rdtFileExists === CheckState.LOADING,
+                    disabled: rdtFileExists === CheckState.LOADING,
+                    variant: rdtFileExists === CheckState.TRUE ? "secondary" : "primary",
+                    text: rdtFileExists === CheckState.TRUE ? Strings.UNINSTALL : Strings.INSTALL,
+                    onPress: /* @__PURE__ */ _async_to_generator(function* () {
+                      if (rdtFileExists === CheckState.FALSE) {
+                        fs.downloadFile(RDT_EMBED_LINK, "preloads/reactDevtools.js");
+                      } else if (rdtFileExists === CheckState.TRUE) {
+                        fs.removeFile("preloads/reactDevtools.js");
+                      }
+                    }),
+                    icon: findAssetId(rdtFileExists === CheckState.TRUE ? "ic_message_delete" : "DownloadIcon"),
+                    style: {
+                      marginLeft: 8
+                    }
+                  })
+                }),
+                /* @__PURE__ */ jsx(TableSwitchRow, {
+                  label: Strings.ENABLE_EVAL_COMMAND,
+                  subLabel: Strings.ENABLE_EVAL_COMMAND_DESC,
+                  icon: /* @__PURE__ */ jsx(TableRow.Icon, {
+                    source: findAssetId("PencilIcon")
+                  }),
+                  value: settings.enableEvalCommand,
+                  onValueChange: (v) => {
+                    settings.enableEvalCommand = v;
+                  }
+                })
+              ]
+            })
+          ]
+        })
+      })
+    });
+  }
+  var import_react_native22, hideActionSheet3, showSimpleActionSheet4, RDT_EMBED_LINK, useStyles4;
+  var init_Developer = __esm({
+    "src/core/ui/settings/pages/Developer/index.tsx"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_async_to_generator();
+      init_jsxRuntime();
+      init_i18n();
+      init_useFS();
+      init_AssetBrowser();
+      init_assets();
+      init_debug();
+      init_loader();
+      init_settings();
+      init_storage();
+      init_lazy();
+      init_common();
+      init_components();
+      init_wrappers();
+      init_color();
+      init_components2();
+      init_styles();
+      import_react_native22 = __toESM(require_react_native());
+      ({ hideActionSheet: hideActionSheet3 } = lazyDestructure(() => findByProps("openLazy", "hideActionSheet")));
+      ({ showSimpleActionSheet: showSimpleActionSheet4 } = lazyDestructure(() => findByProps("showSimpleActionSheet")));
+      RDT_EMBED_LINK = "https://raw.githubusercontent.com/amsyarasyiq/rdt-embedder/main/dist.js";
+      useStyles4 = createStyles({
+        leadingText: {
+          ...TextStyleSheet["heading-md/semibold"],
+          color: semanticColors.TEXT_MUTED,
+          marginRight: -4
+        }
+      });
+    }
+  });
+
+  // src/core/ui/settings/index.ts
+  function initSettings() {
+    registerSection({
+      name: "Bunny",
+      items: [
+        {
+          key: "BUNNY",
+          title: () => Strings.BUNNY,
+          icon: {
+            uri: pyoncord_default
+          },
+          render: () => Promise.resolve().then(() => (init_General(), General_exports)),
+          rawTabsConfig: {
+            useTrailing: () => `(${"a0c2ca7-main"})`
+          }
+        },
+        {
+          key: "BUNNY_PLUGINS",
+          title: () => Strings.PLUGINS,
+          icon: findAssetId("ActivitiesIcon"),
+          render: () => Promise.resolve().then(() => (init_Plugins(), Plugins_exports))
+        },
+        {
+          key: "BUNNY_THEMES",
+          title: () => Strings.THEMES,
+          icon: findAssetId("PaintPaletteIcon"),
+          render: () => Promise.resolve().then(() => (init_Themes(), Themes_exports)),
+          usePredicate: () => isThemeSupported()
+        },
+        {
+          key: "BUNNY_FONTS",
+          title: () => Strings.FONTS,
+          icon: findAssetId("ic_add_text"),
+          render: () => Promise.resolve().then(() => (init_Fonts(), Fonts_exports)),
+          usePredicate: () => isFontSupported()
+        },
+        {
+          key: "BUNNY_DEVELOPER",
+          title: () => Strings.DEVELOPER,
+          icon: findAssetId("WrenchIcon"),
+          render: () => Promise.resolve().then(() => (init_Developer(), Developer_exports)),
+          usePredicate: () => useProxy(settings).developerSettings ?? false
+        }
+      ]
+    });
+    registerSection({
+      name: "Vendetta",
+      items: []
+    });
+  }
+  var init_settings3 = __esm({
+    "src/core/ui/settings/index.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_pyoncord();
+      init_i18n();
+      init_assets();
+      init_loader();
+      init_settings();
+      init_storage();
+      init_settings2();
+    }
+  });
+
+  // globals:lodash
+  var require_lodash = __commonJS({
+    "globals:lodash"(exports, module) {
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      module.exports = require_depsModule()["lodash"];
+    }
+  });
+
+  // globals:util
+  var require_util = __commonJS({
+    "globals:util"(exports, module) {
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      module.exports = require_depsModule()["util"];
+    }
+  });
+
+  // src/core/vendetta/api.tsx
+  var import_react7, import_react_native23, initVendettaObject;
+  var init_api3 = __esm({
+    "src/core/vendetta/api.tsx"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_jsxRuntime();
+      init_assets();
+      init_commands();
+      init_debug();
+      init_loader();
+      init_patcher();
+      init_settings();
+      init_storage();
+      init_storage();
+      init_themes();
+      init_utils();
+      init_cyrb64();
+      init_logger();
+      init_metro();
+      init_common();
+      init_components();
+      init_components();
+      init_alerts();
+      init_color();
+      init_components2();
+      init_styles();
+      init_toasts();
+      init_dist();
+      import_react7 = __toESM(require_react());
+      import_react_native23 = __toESM(require_react_native());
+      init_plugins();
+      initVendettaObject = () => {
+        var createStackBasedFilter = (fn) => {
+          return (filter) => {
+            return fn(factories_exports.createSimpleFilter(filter, cyrb64Hash(new Error().stack)));
+          };
+        };
+        var api = window.vendetta = {
+          patcher: {
+            before: patcher_default.before,
+            after: patcher_default.after,
+            instead: patcher_default.instead
+          },
+          metro: {
+            modules: window.modules,
+            find: createStackBasedFilter(findExports),
+            findAll: createStackBasedFilter(findAllExports),
+            findByProps: (...props) => {
+              if (props.length === 1 && props[0] === "KeyboardAwareScrollView") {
+                props.push("listenToKeyboardEvents");
+              }
+              var ret = findByProps(...props);
+              if (ret == null) {
+                if (props.includes("ActionSheetTitleHeader")) {
+                  var module = findByProps("ActionSheetRow");
+                  return {
+                    ...module,
+                    ActionSheetTitleHeader: module.BottomSheetTitleHeader,
+                    ActionSheetContentContainer: ({ children }) => {
+                      (0, import_react7.useEffect)(() => console.warn("Discord has removed 'ActionSheetContentContainer', please move into something else. This has been temporarily replaced with View"), []);
+                      return /* @__PURE__ */ (0, import_react7.createElement)(import_react_native23.View, null, children);
+                    }
+                  };
+                }
+              }
+              return ret;
+            },
+            findByPropsAll: (...props) => findByPropsAll(...props),
+            findByName: (name, defaultExp) => {
+              if (name === "create" && typeof defaultExp === "undefined") {
+                return findByName("create", false).default;
+              }
+              return findByName(name, defaultExp ?? true);
+            },
+            findByNameAll: (name, defaultExp = true) => findByNameAll(name, defaultExp),
+            findByDisplayName: (displayName, defaultExp = true) => findByDisplayName(displayName, defaultExp),
+            findByDisplayNameAll: (displayName, defaultExp = true) => findByDisplayNameAll(displayName, defaultExp),
+            findByTypeName: (typeName, defaultExp = true) => findByTypeName(typeName, defaultExp),
+            findByTypeNameAll: (typeName, defaultExp = true) => findByTypeNameAll(typeName, defaultExp),
+            findByStoreName: (name) => findByStoreName(name),
+            common: {
+              constants,
+              channels,
+              i18n,
+              url,
+              toasts,
+              stylesheet: {
+                createThemedStyleSheet
+              },
+              clipboard,
+              assets,
+              invites,
+              commands,
+              navigation,
+              navigationStack,
+              NavigationNative,
+              Flux,
+              FluxDispatcher,
+              React: React2,
+              ReactNative,
+              moment: require_moment(),
+              chroma: require_chroma_js(),
+              lodash: require_lodash(),
+              util: require_util()
+            }
+          },
+          constants: {
+            DISCORD_SERVER: "https://discord.gg/n9QQ4XhhJP",
+            GITHUB: "https://github.com/vendetta-mod",
+            PROXY_PREFIX: "https://vd-plugins.github.io/proxy",
+            HTTP_REGEX: /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_+.~#?&/=]*)$/,
+            HTTP_REGEX_MULTI: /https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_+.~#?&//=]*)/g,
+            DISCORD_SERVER_ID: "1015931589865246730",
+            PLUGINS_CHANNEL_ID: "1091880384561684561",
+            THEMES_CHANNEL_ID: "1091880434939482202"
+          },
+          utils: {
+            findInReactTree: (tree, filter) => findInReactTree(tree, filter),
+            findInTree: (tree, filter, options) => findInTree(tree, filter, options),
+            safeFetch: (input, options, timeout) => safeFetch(input, options, timeout),
+            unfreeze: (obj) => Object.isFrozen(obj) ? {
+              ...obj
+            } : obj,
+            without: (object, ...keys) => omit(object, keys)
+          },
+          debug: {
+            connectToDebugger: (url2) => connectToDebugger(url2),
+            getDebugInfo: () => getDebugInfo()
+          },
+          ui: {
+            components: {
+              Forms,
+              General: ReactNative,
+              Alert: LegacyAlert,
+              Button: CompatButton,
+              HelpMessage: (...props) => /* @__PURE__ */ jsx(HelpMessage, {
+                ...props
+              }),
+              SafeAreaView: (...props) => /* @__PURE__ */ jsx(SafeAreaView, {
+                ...props
+              }),
+              Summary,
+              ErrorBoundary,
+              Codeblock,
+              Search: Search_default
+            },
+            toasts: {
+              showToast: (content, asset) => showToast(content, asset)
+            },
+            alerts: {
+              showConfirmationAlert: (options) => showConfirmationAlert(options),
+              showCustomAlert: (component, props) => showCustomAlert(component, props),
+              showInputAlert: (options) => showInputAlert(options)
+            },
+            assets: {
+              all: assetsMap,
+              find: (filter) => findAsset(filter),
+              getAssetByName: (name) => findAsset(name),
+              getAssetByID: (id) => findAsset(id),
+              getAssetIDByName: (name) => findAssetId(name)
+            },
+            semanticColors,
+            rawColors
+          },
+          plugins: {
+            plugins: VdPluginManager.plugins,
+            fetchPlugin: (source) => VdPluginManager.fetchPlugin(source),
+            installPlugin: (source, enabled2 = true) => VdPluginManager.installPlugin(source, enabled2),
+            startPlugin: (id) => VdPluginManager.startPlugin(id),
+            stopPlugin: (id, disable = true) => VdPluginManager.stopPlugin(id, disable),
+            removePlugin: (id) => VdPluginManager.removePlugin(id),
+            getSettings: (id) => VdPluginManager.getSettings(id)
+          },
+          themes: {
+            themes,
+            fetchTheme: (id, selected) => fetchTheme(id, selected),
+            installTheme: (id) => installTheme(id),
+            selectTheme: (id) => selectTheme(id === "default" ? null : themes[id]),
+            removeTheme: (id) => removeTheme(id),
+            getCurrentTheme: () => getThemeFromLoader(),
+            updateThemes: () => updateThemes()
+          },
+          commands: {
+            registerCommand
+          },
+          storage: {
+            createProxy: (target) => createProxy(target),
+            useProxy: (_storage) => useProxy(_storage),
+            createStorage: (backend) => createStorage(backend),
+            wrapSync: (store) => wrapSync(store),
+            awaitSyncWrapper: (store) => awaitStorage(store),
+            createMMKVBackend: (store) => createMMKVBackend(store),
+            createFileBackend: (file) => {
+              if (isPyonLoader() && file === "vendetta_theme.json") {
+                file = "pyoncord/current-theme.json";
+              }
+              return createFileBackend(file);
+            }
+          },
+          settings,
+          loader: {
+            identity: getVendettaLoaderIdentity() ?? void 0,
+            config: loaderConfig
+          },
+          logger: {
+            log: (...message) => console.log(...message),
+            info: (...message) => console.info(...message),
+            warn: (...message) => console.warn(...message),
+            error: (...message) => console.error(...message),
+            time: (...message) => console.time(...message),
+            trace: (...message) => console.trace(...message),
+            verbose: (...message) => console.log(...message)
+          },
+          version: versionHash,
+          unload: () => {
+            delete window.vendetta;
+          }
+        };
+        return () => api.unload();
+      };
+    }
+  });
+
   // src/lib/ui/safeMode.tsx
   function getErrorBoundaryContext() {
     var ctxt = findByNameLazy("ErrorBoundary")[_lazyContextSymbol];
@@ -9580,7 +9766,7 @@
       });
     });
   }
-  var import_react_native23, ErrorBoundary2, BadgableTabBar, styles2, tabs, safeMode_default;
+  var import_react_native24, ErrorBoundary2, BadgableTabBar, styles2, tabs, safeMode_default;
   var init_safeMode = __esm({
     "src/lib/ui/safeMode.tsx"() {
       "use strict";
@@ -9600,7 +9786,7 @@
       init_color();
       init_components2();
       init_styles();
-      import_react_native23 = __toESM(require_react_native());
+      import_react_native24 = __toESM(require_react_native());
       ErrorBoundary2 = findByNameLazy("ErrorBoundary");
       ({ BadgableTabBar } = lazyDestructure(() => findByProps("BadgableTabBar")));
       styles2 = createThemedStyleSheet({
@@ -9678,7 +9864,7 @@
           children: /* @__PURE__ */ jsxs(SafeAreaView, {
             style: styles2.container,
             children: [
-              /* @__PURE__ */ jsxs(import_react_native23.View, {
+              /* @__PURE__ */ jsxs(import_react_native24.View, {
                 style: styles2.header,
                 children: [
                   /* @__PURE__ */ jsx(ret.props.Illustration, {
@@ -9692,17 +9878,17 @@
                       marginRight: -80
                     }
                   }),
-                  /* @__PURE__ */ jsxs(import_react_native23.View, {
+                  /* @__PURE__ */ jsxs(import_react_native24.View, {
                     style: {
                       flex: 2,
                       paddingLeft: 24
                     },
                     children: [
-                      /* @__PURE__ */ jsx(import_react_native23.Text, {
+                      /* @__PURE__ */ jsx(import_react_native24.Text, {
                         style: styles2.headerTitle,
                         children: ret.props.title
                       }),
-                      /* @__PURE__ */ jsx(import_react_native23.Text, {
+                      /* @__PURE__ */ jsx(import_react_native24.Text, {
                         style: styles2.headerDescription,
                         children: ret.props.body
                       })
@@ -9710,12 +9896,12 @@
                   })
                 ]
               }),
-              /* @__PURE__ */ jsxs(import_react_native23.View, {
+              /* @__PURE__ */ jsxs(import_react_native24.View, {
                 style: {
                   flex: 6
                 },
                 children: [
-                  /* @__PURE__ */ jsx(import_react_native23.View, {
+                  /* @__PURE__ */ jsx(import_react_native24.View, {
                     style: {
                       paddingBottom: 8
                     },
@@ -9742,7 +9928,7 @@
                   })
                 ]
               }),
-              /* @__PURE__ */ jsx(import_react_native23.View, {
+              /* @__PURE__ */ jsx(import_react_native24.View, {
                 style: styles2.footer,
                 children: buttons.map((button) => {
                   var buttonIndex = buttons.indexOf(button) !== 0 ? 8 : 0;
@@ -9839,7 +10025,7 @@
       init_promiseAllSettled();
       init_global_d();
       init_modules_d();
-      init_api2();
+      init_api();
       init_fonts();
       init_plugins4();
       init_themes();
@@ -9888,7 +10074,7 @@
       init_fixes();
       init_i18n();
       init_settings3();
-      init_api();
+      init_api3();
       init_plugins();
       init_commands();
       init_debug();
@@ -9967,7 +10153,7 @@
         alert([
           "Failed to load Bunny!\n",
           `Build Number: ${ClientInfoManager2.Build}`,
-          `Bunny: ${"e3df56d-main"}`,
+          `Bunny: ${"a0c2ca7-main"}`,
           stack || e?.toString?.()
         ].join("\n"));
       }
