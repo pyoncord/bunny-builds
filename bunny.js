@@ -2899,6 +2899,124 @@
     }
   });
 
+  // src/metro/common/components.ts
+  var components_exports = {};
+  __export(components_exports, {
+    ActionSheet: () => ActionSheet,
+    ActionSheetRow: () => ActionSheetRow,
+    BottomSheetTitleHeader: () => BottomSheetTitleHeader,
+    Button: () => Button,
+    Card: () => Card,
+    CompatButton: () => CompatButton,
+    CompatSegmentedControl: () => CompatSegmentedControl,
+    FlashList: () => FlashList,
+    FloatingActionButton: () => FloatingActionButton,
+    FormCheckbox: () => FormCheckbox,
+    FormRadio: () => FormRadio,
+    FormSwitch: () => FormSwitch,
+    Forms: () => Forms,
+    HelpMessage: () => HelpMessage,
+    IconButton: () => IconButton,
+    LegacyAlert: () => LegacyAlert,
+    LegacyForm: () => LegacyForm,
+    LegacyFormArrow: () => LegacyFormArrow,
+    LegacyFormCTA: () => LegacyFormCTA,
+    LegacyFormCTAButton: () => LegacyFormCTAButton,
+    LegacyFormCardSection: () => LegacyFormCardSection,
+    LegacyFormCheckbox: () => LegacyFormCheckbox,
+    LegacyFormCheckboxRow: () => LegacyFormCheckboxRow,
+    LegacyFormCheckmark: () => LegacyFormCheckmark,
+    LegacyFormDivider: () => LegacyFormDivider,
+    LegacyFormHint: () => LegacyFormHint,
+    LegacyFormIcon: () => LegacyFormIcon,
+    LegacyFormInput: () => LegacyFormInput,
+    LegacyFormLabel: () => LegacyFormLabel,
+    LegacyFormRadio: () => LegacyFormRadio,
+    LegacyFormRadioGroup: () => LegacyFormRadioGroup,
+    LegacyFormRadioRow: () => LegacyFormRadioRow,
+    LegacyFormRow: () => LegacyFormRow,
+    LegacyFormSection: () => LegacyFormSection,
+    LegacyFormSelect: () => LegacyFormSelect,
+    LegacyFormSliderRow: () => LegacyFormSliderRow,
+    LegacyFormSubLabel: () => LegacyFormSubLabel,
+    LegacyFormSwitch: () => LegacyFormSwitch,
+    LegacyFormSwitchRow: () => LegacyFormSwitchRow,
+    LegacyFormTernaryCheckBox: () => LegacyFormTernaryCheckBox,
+    LegacyFormText: () => LegacyFormText,
+    LegacyFormTitle: () => LegacyFormTitle,
+    PressableScale: () => PressableScale,
+    RedesignCompat: () => RedesignCompat,
+    RowButton: () => RowButton,
+    SafeAreaView: () => SafeAreaView,
+    SegmentedControl: () => SegmentedControl,
+    SegmentedControlPages: () => SegmentedControlPages,
+    Stack: () => Stack,
+    TableCheckbox: () => TableCheckbox,
+    TableRadio: () => TableRadio,
+    TableRow: () => TableRow,
+    TableRowGroup: () => TableRowGroup,
+    TableRowIcon: () => TableRowIcon,
+    TableRowTrailingText: () => TableRowTrailingText,
+    TableSwitch: () => TableSwitch,
+    TableSwitchRow: () => TableSwitchRow,
+    Text: () => Text,
+    TextInput: () => TextInput,
+    TwinButtons: () => TwinButtons,
+    useSegmentedControlState: () => useSegmentedControlState
+  });
+  var bySingularProp, findSingular, findProp, LegacyAlert, CompatButton, HelpMessage, SafeAreaView, ActionSheetRow, Button, TwinButtons, IconButton, RowButton, PressableScale, TableRow, TableRowIcon, TableRowTrailingText, TableRowGroup, TableSwitchRow, TableSwitch, TableRadio, TableCheckbox, FormSwitch, FormRadio, FormCheckbox, Card, RedesignCompat, Stack, TextInput, SegmentedControl, SegmentedControlPages, useSegmentedControlState, CompatSegmentedControl, FloatingActionButton, ActionSheet, BottomSheetTitleHeader, textsModule, Text, Forms, LegacyForm, LegacyFormArrow, LegacyFormCTA, LegacyFormCTAButton, LegacyFormCardSection, LegacyFormCheckbox, LegacyFormCheckboxRow, LegacyFormCheckmark, LegacyFormDivider, LegacyFormHint, LegacyFormIcon, LegacyFormInput, LegacyFormLabel, LegacyFormRadio, LegacyFormRadioGroup, LegacyFormRadioRow, LegacyFormRow, LegacyFormSection, LegacyFormSelect, LegacyFormSliderRow, LegacyFormSubLabel, LegacyFormSwitch, LegacyFormSwitchRow, LegacyFormTernaryCheckBox, LegacyFormText, LegacyFormTitle, FlashList;
+  var init_components = __esm({
+    "src/metro/common/components.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_lazy();
+      init_factories();
+      init_finders();
+      init_wrappers();
+      bySingularProp = createFilterDefinition(([prop], m) => m[prop] && Object.keys(m).length === 1, (prop) => `bunny.metro.common.components.bySingularProp(${prop})`);
+      findSingular = (prop) => proxyLazy(() => findExports(bySingularProp(prop))?.[prop]);
+      findProp = (prop) => proxyLazy(() => findByProps(prop)[prop]);
+      LegacyAlert = findByDisplayNameLazy("FluxContainer(Alert)");
+      CompatButton = findByPropsLazy("Looks", "Colors", "Sizes");
+      HelpMessage = findByNameLazy("HelpMessage");
+      SafeAreaView = proxyLazy(() => findByProps("useSafeAreaInsets").SafeAreaView);
+      ActionSheetRow = findProp("ActionSheetRow");
+      Button = findSingular("Button");
+      TwinButtons = findProp("TwinButtons");
+      IconButton = findSingular("IconButton");
+      RowButton = findProp("RowButton");
+      PressableScale = findProp("PressableScale");
+      TableRow = findProp("TableRow");
+      TableRowIcon = findProp("TableRowIcon");
+      TableRowTrailingText = findProp("TableRowTrailingText");
+      TableRowGroup = findProp("TableRowGroup");
+      TableSwitchRow = findProp("TableSwitchRow");
+      TableSwitch = findSingular("FormSwitch");
+      TableRadio = findSingular("FormRadio");
+      TableCheckbox = findSingular("FormCheckbox");
+      FormSwitch = findSingular("FormSwitch");
+      FormRadio = findSingular("FormRadio");
+      FormCheckbox = findSingular("FormCheckbox");
+      Card = findProp("Card");
+      RedesignCompat = proxyLazy(() => findByProps("RedesignCompat").RedesignCompat);
+      Stack = findProp("Stack");
+      TextInput = findSingular("TextInput");
+      SegmentedControl = findProp("SegmentedControl");
+      SegmentedControlPages = findProp("SegmentedControlPages");
+      useSegmentedControlState = findSingular("useSegmentedControlState");
+      CompatSegmentedControl = findProp("CompatSegmentedControl");
+      FloatingActionButton = findProp("FloatingActionButton");
+      ActionSheet = findProp("ActionSheet");
+      BottomSheetTitleHeader = findProp("BottomSheetTitleHeader");
+      textsModule = findByPropsLazy("Text", "LegacyText");
+      Text = proxyLazy(() => textsModule.Text);
+      Forms = findByPropsLazy("Form", "FormSection");
+      ({ Form: LegacyForm, FormArrow: LegacyFormArrow, FormCTA: LegacyFormCTA, FormCTAButton: LegacyFormCTAButton, FormCardSection: LegacyFormCardSection, FormCheckbox: LegacyFormCheckbox, FormCheckboxRow: LegacyFormCheckboxRow, FormCheckmark: LegacyFormCheckmark, FormDivider: LegacyFormDivider, FormHint: LegacyFormHint, FormIcon: LegacyFormIcon, FormInput: LegacyFormInput, FormLabel: LegacyFormLabel, FormRadio: LegacyFormRadio, FormRadioGroup: LegacyFormRadioGroup, FormRadioRow: LegacyFormRadioRow, FormRow: LegacyFormRow, FormSection: LegacyFormSection, FormSelect: LegacyFormSelect, FormSliderRow: LegacyFormSliderRow, FormSubLabel: LegacyFormSubLabel, FormSwitch: LegacyFormSwitch, FormSwitchRow: LegacyFormSwitchRow, FormTernaryCheckBox: LegacyFormTernaryCheckBox, FormText: LegacyFormText, FormTitle: LegacyFormTitle } = lazyDestructure(() => Forms));
+      FlashList = findProp("FlashList");
+    }
+  });
+
   // src/metro/common/index.ts
   var common_exports = {};
   __export(common_exports, {
@@ -2911,6 +3029,7 @@
     channels: () => channels,
     clipboard: () => clipboard,
     commands: () => commands,
+    components: () => components_exports,
     constants: () => constants,
     i18n: () => i18n,
     invites: () => invites,
@@ -2929,6 +3048,7 @@
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
       init_wrappers();
+      init_components();
       constants = findByPropsLazy("Fonts", "Permissions");
       channels = findByPropsLazy("getVoiceChannelId");
       i18n = findByPropsLazy("Messages");
@@ -3171,7 +3291,16 @@
   });
 
   // shims/jsxRuntime.ts
+  var jsxRuntime_exports = {};
+  __export(jsxRuntime_exports, {
+    Fragment: () => Fragment,
+    jsx: () => jsx,
+    jsxs: () => jsxs
+  });
   function unproxyFirstArg(args) {
+    if (!args[0]) {
+      throw new Error("The first argument (Component) is falsy. Ensure that you are passing a valid component.");
+    }
     var factory = getProxyFactory(args[0]);
     if (factory)
       args[0] = factory();
@@ -3189,60 +3318,6 @@
       Fragment = Symbol.for("react.fragment");
       jsx = (...args) => jsxRuntime.jsx(...unproxyFirstArg(args));
       jsxs = (...args) => jsxRuntime.jsxs(...unproxyFirstArg(args));
-    }
-  });
-
-  // src/metro/common/components.ts
-  var bySingularProp, findSingular, findProp, LegacyAlert, CompatButton, HelpMessage, SafeAreaView, ActionSheetRow, Button, TwinButtons, IconButton, RowButton, PressableScale, TableRow, TableRowIcon, TableRowTrailingText, TableRowGroup, TableSwitchRow, TableSwitch, TableRadio, TableCheckbox, FormSwitch, FormRadio, FormCheckbox, Card, RedesignCompat, Stack, TextInput, SegmentedControl, SegmentedControlPages, useSegmentedControlState, CompatSegmentedControl, FloatingActionButton, ActionSheet, BottomSheetTitleHeader, textsModule, Text, Forms, LegacyForm, LegacyFormArrow, LegacyFormCTA, LegacyFormCTAButton, LegacyFormCardSection, LegacyFormCheckbox, LegacyFormCheckboxRow, LegacyFormCheckmark, LegacyFormDivider, LegacyFormHint, LegacyFormIcon, LegacyFormInput, LegacyFormLabel, LegacyFormRadio, LegacyFormRadioGroup, LegacyFormRadioRow, LegacyFormRow, LegacyFormSection, LegacyFormSelect, LegacyFormSliderRow, LegacyFormSubLabel, LegacyFormSwitch, LegacyFormSwitchRow, LegacyFormTernaryCheckBox, LegacyFormText, LegacyFormTitle, FlashList;
-  var init_components = __esm({
-    "src/metro/common/components.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_lazy();
-      init_factories();
-      init_finders();
-      init_wrappers();
-      bySingularProp = createFilterDefinition(([prop], m) => m[prop] && Object.keys(m).length === 1, (prop) => `bunny.metro.common.components.bySingularProp(${prop})`);
-      findSingular = (prop) => proxyLazy(() => findExports(bySingularProp(prop))?.[prop]);
-      findProp = (prop) => proxyLazy(() => findByProps(prop)[prop]);
-      LegacyAlert = findByDisplayNameLazy("FluxContainer(Alert)");
-      CompatButton = findByPropsLazy("Looks", "Colors", "Sizes");
-      HelpMessage = findByNameLazy("HelpMessage");
-      SafeAreaView = proxyLazy(() => findByProps("useSafeAreaInsets").SafeAreaView);
-      ActionSheetRow = findProp("ActionSheetRow");
-      Button = findSingular("Button");
-      TwinButtons = findProp("TwinButtons");
-      IconButton = findSingular("IconButton");
-      RowButton = findProp("RowButton");
-      PressableScale = findProp("PressableScale");
-      TableRow = findProp("TableRow");
-      TableRowIcon = findProp("TableRowIcon");
-      TableRowTrailingText = findProp("TableRowTrailingText");
-      TableRowGroup = findProp("TableRowGroup");
-      TableSwitchRow = findProp("TableSwitchRow");
-      TableSwitch = findSingular("FormSwitch");
-      TableRadio = findSingular("FormRadio");
-      TableCheckbox = findSingular("FormCheckbox");
-      FormSwitch = findSingular("FormSwitch");
-      FormRadio = findSingular("FormRadio");
-      FormCheckbox = findSingular("FormCheckbox");
-      Card = findProp("Card");
-      RedesignCompat = proxyLazy(() => findByProps("RedesignCompat").RedesignCompat);
-      Stack = findProp("Stack");
-      TextInput = findSingular("TextInput");
-      SegmentedControl = findProp("SegmentedControl");
-      SegmentedControlPages = findProp("SegmentedControlPages");
-      useSegmentedControlState = findSingular("useSegmentedControlState");
-      CompatSegmentedControl = findProp("CompatSegmentedControl");
-      FloatingActionButton = findProp("FloatingActionButton");
-      ActionSheet = findProp("ActionSheet");
-      BottomSheetTitleHeader = findProp("BottomSheetTitleHeader");
-      textsModule = findByPropsLazy("Text", "LegacyText");
-      Text = proxyLazy(() => textsModule.Text);
-      Forms = findByPropsLazy("Form", "FormSection");
-      ({ Form: LegacyForm, FormArrow: LegacyFormArrow, FormCTA: LegacyFormCTA, FormCTAButton: LegacyFormCTAButton, FormCardSection: LegacyFormCardSection, FormCheckbox: LegacyFormCheckbox, FormCheckboxRow: LegacyFormCheckboxRow, FormCheckmark: LegacyFormCheckmark, FormDivider: LegacyFormDivider, FormHint: LegacyFormHint, FormIcon: LegacyFormIcon, FormInput: LegacyFormInput, FormLabel: LegacyFormLabel, FormRadio: LegacyFormRadio, FormRadioGroup: LegacyFormRadioGroup, FormRadioRow: LegacyFormRadioRow, FormRow: LegacyFormRow, FormSection: LegacyFormSection, FormSelect: LegacyFormSelect, FormSliderRow: LegacyFormSliderRow, FormSubLabel: LegacyFormSubLabel, FormSwitch: LegacyFormSwitch, FormSwitchRow: LegacyFormSwitchRow, FormTernaryCheckBox: LegacyFormTernaryCheckBox, FormText: LegacyFormText, FormTitle: LegacyFormTitle } = lazyDestructure(() => Forms));
-      FlashList = findProp("FlashList");
     }
   });
 
@@ -3579,8 +3654,8 @@
   });
 
   // src/lib/ui/components/index.ts
-  var components_exports = {};
-  __export(components_exports, {
+  var components_exports2 = {};
+  __export(components_exports2, {
     Codeblock: () => Codeblock,
     ErrorBoundary: () => ErrorBoundary,
     Search: () => Search_default,
@@ -4042,7 +4117,7 @@
       init_logger();
       init_toasts();
       import_react_native8 = __toESM(require_react_native());
-      versionHash = "a0c2ca7-main";
+      versionHash = "019fdc2-main";
     }
   });
 
@@ -9462,7 +9537,7 @@
           },
           render: () => Promise.resolve().then(() => (init_General(), General_exports)),
           rawTabsConfig: {
-            useTrailing: () => `(${"a0c2ca7-main"})`
+            useTrailing: () => `(${"019fdc2-main"})`
           }
         },
         {
@@ -9979,7 +10054,7 @@
   __export(ui_exports, {
     alerts: () => alerts_exports,
     color: () => color_exports,
-    components: () => components_exports,
+    components: () => components_exports2,
     settings: () => settings_exports2,
     styles: () => styles_exports,
     toasts: () => toasts_exports
@@ -10001,6 +10076,7 @@
   // src/lib/index.ts
   var lib_exports = {};
   __export(lib_exports, {
+    _jsx: () => jsxRuntime_exports,
     api: () => api_exports,
     fonts: () => fonts_exports,
     managers: () => managers,
@@ -10035,6 +10111,7 @@
       init_fonts();
       init_plugins4();
       init_themes();
+      init_jsxRuntime();
       init_lazy();
       managers = proxyLazy(() => {
         console.warn("bunny.managers.* is deprecated, and moved the top level (bunny.*). bunny.managers will be eventually removed soon");
@@ -10153,7 +10230,7 @@
         alert([
           "Failed to load Bunny!\n",
           `Build Number: ${ClientInfoManager2.Build}`,
-          `Bunny: ${"a0c2ca7-main"}`,
+          `Bunny: ${"019fdc2-main"}`,
           stack || e?.toString?.()
         ].join("\n"));
       }
