@@ -1360,7 +1360,6 @@
           var value = target3[prop];
           if (value !== void 0 && value !== null) {
             emitter.emit("GET", {
-              parent: parentTarget,
               path: newPath,
               value
             });
@@ -1394,7 +1393,6 @@
             target3[prop] = value;
           }
           emitter.emit("SET", {
-            parent: parentTarget,
             path: [
               ...path,
               prop
@@ -1409,7 +1407,6 @@
           if (success)
             emitter.emit("DEL", {
               value,
-              parent: parentTarget,
               path: [
                 ...path,
                 prop
@@ -4117,7 +4114,7 @@
       init_logger();
       init_toasts();
       import_react_native8 = __toESM(require_react_native());
-      versionHash = "019fdc2-main";
+      versionHash = "fe937a4-main";
     }
   });
 
@@ -9537,7 +9534,7 @@
           },
           render: () => Promise.resolve().then(() => (init_General(), General_exports)),
           rawTabsConfig: {
-            useTrailing: () => `(${"019fdc2-main"})`
+            useTrailing: () => `(${"fe937a4-main"})`
           }
         },
         {
@@ -10230,7 +10227,7 @@
         alert([
           "Failed to load Bunny!\n",
           `Build Number: ${ClientInfoManager2.Build}`,
-          `Bunny: ${"019fdc2-main"}`,
+          `Bunny: ${"fe937a4-main"}`,
           stack || e?.toString?.()
         ].join("\n"));
       }
