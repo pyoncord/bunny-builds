@@ -2842,6 +2842,52 @@
     }
   });
 
+  // shims/jsxRuntime.ts
+  var jsxRuntime_exports = {};
+  __export(jsxRuntime_exports, {
+    Fragment: () => Fragment,
+    jsx: () => jsx,
+    jsxs: () => jsxs
+  });
+  function unproxyFirstArg(args) {
+    if (!args[0]) {
+      throw new Error("The first argument (Component) is falsy. Ensure that you are passing a valid component.");
+    }
+    var factory = getProxyFactory(args[0]);
+    if (factory)
+      args[0] = factory();
+    return args;
+  }
+  var jsxRuntime, Fragment, jsx, jsxs;
+  var init_jsxRuntime = __esm({
+    "shims/jsxRuntime.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_lazy();
+      init_wrappers();
+      jsxRuntime = findByPropsLazy("jsx", "jsxs", "Fragment");
+      Fragment = Symbol.for("react.fragment");
+      jsx = (...args) => jsxRuntime.jsx(...unproxyFirstArg(args));
+      jsxs = (...args) => jsxRuntime.jsxs(...unproxyFirstArg(args));
+    }
+  });
+
+  // src/core/ui/reporter/utils/isStack.tsx
+  function isComponentStack(error) {
+    return "componentStack" in error && typeof error.componentStack === "string";
+  }
+  function hasStack(error) {
+    return !!error.stack;
+  }
+  var init_isStack = __esm({
+    "src/core/ui/reporter/utils/isStack.tsx"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+    }
+  });
+
   // src/metro/common/components.ts
   var components_exports = {};
   __export(components_exports, {
@@ -3011,39 +3057,6 @@
       FluxDispatcher = findByProps("_interceptors");
       React2 = window.React = findByPropsLazy("createElement");
       ReactNative = window.ReactNative = findByPropsLazy("AppRegistry");
-    }
-  });
-
-  // globals:moment
-  var require_moment = __commonJS({
-    "globals:moment"(exports, module) {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      module.exports = require_depsModule()["moment"];
-    }
-  });
-
-  // src/core/fixes.ts
-  function onDispatch({ locale }) {
-    try {
-      import_moment.default.locale(locale.toLowerCase());
-    } catch (e) {
-      logger.error("Failed to fix timestamps...", e);
-    }
-    FluxDispatcher.unsubscribe("I18N_LOAD_SUCCESS", onDispatch);
-  }
-  var import_moment, fixes_default;
-  var init_fixes = __esm({
-    "src/core/fixes.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_logger();
-      init_common();
-      import_moment = __toESM(require_moment());
-      fixes_default = () => {
-        FluxDispatcher.subscribe("I18N_LOAD_SUCCESS", onDispatch);
-      };
     }
   });
 
@@ -3225,42 +3238,189 @@
     }
   });
 
-  // src/assets/icons/pyoncord.png
-  var pyoncord_default;
-  var init_pyoncord = __esm({
-    "src/assets/icons/pyoncord.png"() {
-      pyoncord_default = "data:image/png;base64,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";
-    }
+  // src/lib/ui/toasts.ts
+  var toasts_exports = {};
+  __export(toasts_exports, {
+    showToast: () => showToast
   });
-
-  // shims/jsxRuntime.ts
-  var jsxRuntime_exports = {};
-  __export(jsxRuntime_exports, {
-    Fragment: () => Fragment,
-    jsx: () => jsx,
-    jsxs: () => jsxs
-  });
-  function unproxyFirstArg(args) {
-    if (!args[0]) {
-      throw new Error("The first argument (Component) is falsy. Ensure that you are passing a valid component.");
-    }
-    var factory = getProxyFactory(args[0]);
-    if (factory)
-      args[0] = factory();
-    return args;
-  }
-  var jsxRuntime, Fragment, jsx, jsxs;
-  var init_jsxRuntime = __esm({
-    "shims/jsxRuntime.ts"() {
+  var uuid4, showToast;
+  var init_toasts = __esm({
+    "src/lib/ui/toasts.ts"() {
       "use strict";
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
+      init_i18n();
+      init_assets();
       init_lazy();
+      init_common();
       init_wrappers();
-      jsxRuntime = findByPropsLazy("jsx", "jsxs", "Fragment");
-      Fragment = Symbol.for("react.fragment");
-      jsx = (...args) => jsxRuntime.jsx(...unproxyFirstArg(args));
-      jsxs = (...args) => jsxRuntime.jsxs(...unproxyFirstArg(args));
+      ({ uuid4 } = lazyDestructure(() => findByProps("uuid4")));
+      showToast = (content, asset) => toasts.open({
+        // ? In build 182205/44707, Discord changed their toasts, source is no longer used, rather icon, and a key is needed.
+        // TODO: We could probably have the developer specify a key themselves, but this works to fix toasts
+        key: `vd-toast-${uuid4()}`,
+        content,
+        source: asset,
+        icon: asset
+      });
+      showToast.showCopyToClipboard = (message = Strings.COPIED_TO_CLIPBOARD) => {
+        showToast(message, findAssetId("toast_copy_link"));
+      };
+    }
+  });
+
+  // src/lib/api/debug.ts
+  var debug_exports = {};
+  __export(debug_exports, {
+    connectToDebugger: () => connectToDebugger,
+    getDebugInfo: () => getDebugInfo,
+    patchLogHook: () => patchLogHook,
+    toggleSafeMode: () => toggleSafeMode,
+    versionHash: () => versionHash
+  });
+  function toggleSafeMode() {
+    return _toggleSafeMode.apply(this, arguments);
+  }
+  function _toggleSafeMode() {
+    _toggleSafeMode = _async_to_generator(function* () {
+      settings.safeMode = {
+        ...settings.safeMode,
+        enabled: !settings.safeMode?.enabled
+      };
+      if (isThemeSupported()) {
+        if (getThemeFromLoader()?.id)
+          settings.safeMode.currentThemeId = getThemeFromLoader().id;
+        if (settings.safeMode?.enabled) {
+          yield selectTheme(null);
+        } else if (settings.safeMode?.currentThemeId) {
+          yield selectTheme(themes[settings.safeMode?.currentThemeId]);
+        }
+      }
+      setTimeout(BundleUpdaterManager.reload, 400);
+    });
+    return _toggleSafeMode.apply(this, arguments);
+  }
+  function connectToDebugger(url2) {
+    if (socket !== void 0 && socket.readyState !== WebSocket.CLOSED)
+      socket.close();
+    if (!url2) {
+      showToast("Invalid debugger URL!", findAssetId("Small"));
+      return;
+    }
+    socket = new WebSocket(`ws://${url2}`);
+    socket.addEventListener("open", () => showToast("Connected to debugger.", findAssetId("Check")));
+    socket.addEventListener("message", (message) => {
+      try {
+        (0, eval)(message.data);
+      } catch (e) {
+        console.error(e);
+      }
+    });
+    socket.addEventListener("error", (err) => {
+      console.log(`Debugger error: ${err.message}`);
+      showToast("An error occurred with the debugger connection!", findAssetId("Small"));
+    });
+  }
+  function patchLogHook() {
+    var unpatch = after("nativeLoggingHook", globalThis, (args) => {
+      if (socket?.readyState === WebSocket.OPEN)
+        socket.send(JSON.stringify({
+          message: args[0],
+          level: args[1]
+        }));
+      logger.log(args[0]);
+    });
+    return () => {
+      socket && socket.close();
+      unpatch();
+    };
+  }
+  function getDebugInfo() {
+    var hermesProps = window.HermesInternal.getRuntimeProperties();
+    var hermesVer = hermesProps["OSS Release Version"];
+    var padding = "for RN ";
+    var PlatformConstants = import_react_native3.Platform.constants;
+    var rnVer = PlatformConstants.reactNativeVersion;
+    return {
+      /**
+       * @deprecated use `bunny` field
+       * */
+      vendetta: {
+        version: versionHash.split("-")[0],
+        loader: getLoaderName()
+      },
+      bunny: {
+        version: versionHash,
+        loader: {
+          name: getLoaderName(),
+          version: getLoaderVersion()
+        }
+      },
+      discord: {
+        version: ClientInfoManager.Version,
+        build: ClientInfoManager.Build
+      },
+      react: {
+        version: React.version,
+        nativeVersion: hermesVer.startsWith(padding) ? hermesVer.substring(padding.length) : `${rnVer.major}.${rnVer.minor}.${rnVer.patch}`
+      },
+      hermes: {
+        version: hermesVer,
+        buildType: hermesProps.Build,
+        bytecodeVersion: hermesProps["Bytecode Version"]
+      },
+      ...import_react_native3.Platform.select({
+        android: {
+          os: {
+            name: "Android",
+            version: PlatformConstants.Release,
+            sdk: PlatformConstants.Version
+          }
+        },
+        ios: {
+          os: {
+            name: PlatformConstants.systemName,
+            version: PlatformConstants.osVersion
+          }
+        }
+      }),
+      ...import_react_native3.Platform.select({
+        android: {
+          device: {
+            manufacturer: PlatformConstants.Manufacturer,
+            brand: PlatformConstants.Brand,
+            model: PlatformConstants.Model,
+            codename: DeviceManager.device
+          }
+        },
+        ios: {
+          device: {
+            manufacturer: DeviceManager.deviceManufacturer,
+            brand: DeviceManager.deviceBrand,
+            model: DeviceManager.deviceModel,
+            codename: DeviceManager.device
+          }
+        }
+      })
+    };
+  }
+  var import_react_native3, socket, versionHash;
+  var init_debug = __esm({
+    "src/lib/api/debug.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_async_to_generator();
+      init_themes();
+      init_assets();
+      init_loader();
+      init_modules();
+      init_patcher();
+      init_settings();
+      init_logger();
+      init_toasts();
+      import_react_native3 = __toESM(require_react_native());
+      versionHash = "f447910-main";
     }
   });
 
@@ -3312,7 +3472,7 @@
   function AlertModal(props) {
     var forwardFailedModal = findByFilePath("modules/forwarding/native/ForwardFailedAlertModal.tsx");
     if (!forwardFailedModal && "extraContent" in props) {
-      props.content = /* @__PURE__ */ jsxs(import_react_native3.View, {
+      props.content = /* @__PURE__ */ jsxs(import_react_native4.View, {
         style: {
           gap: 16
         },
@@ -3322,7 +3482,7 @@
             color: "text-muted",
             children: props.content
           }),
-          /* @__PURE__ */ jsx(import_react_native3.View, {
+          /* @__PURE__ */ jsx(import_react_native4.View, {
             children: props.extraContent
           })
         ]
@@ -3333,7 +3493,7 @@
       ...props
     });
   }
-  var import_react_native3, _AlertModal, _AlertActionButton, AlertActionButton;
+  var import_react_native4, _AlertModal, _AlertActionButton, AlertActionButton;
   var init_AlertModal = __esm({
     "src/lib/ui/components/wrappers/AlertModal.tsx"() {
       "use strict";
@@ -3343,7 +3503,7 @@
       init_lazy();
       init_metro();
       init_components();
-      import_react_native3 = __toESM(require_react_native());
+      import_react_native4 = __toESM(require_react_native());
       ({ AlertModal: _AlertModal, AlertActionButton: _AlertActionButton } = lazyDestructure(() => findByProps("AlertModal", "AlertActions")));
       AlertActionButton = _AlertActionButton;
     }
@@ -3391,15 +3551,20 @@
   var styles_exports = {};
   __export(styles_exports, {
     TextStyleSheet: () => TextStyleSheet,
+    ThemeContext: () => ThemeContext,
+    createLegacyClassComponentStyles: () => createLegacyClassComponentStyles,
     createStyles: () => createStyles,
     createThemedStyleSheet: () => createThemedStyleSheet
   });
   function createStyles(sheet) {
-    return proxyLazy(() => CompatfulRedesign.createStyles(sheet));
+    return proxyLazy(() => Styles.createStyles(sheet));
+  }
+  function createLegacyClassComponentStyles(sheet) {
+    return proxyLazy(() => Styles.createLegacyClassComponentStyles(sheet));
   }
   function createThemedStyleSheet(sheet) {
     for (var key in sheet) {
-      sheet[key] = new Proxy(import_react_native4.StyleSheet.flatten(sheet[key]), {
+      sheet[key] = new Proxy(import_react_native5.StyleSheet.flatten(sheet[key]), {
         get(target, prop, receiver) {
           var res = Reflect.get(target, prop, receiver);
           return isSemanticColor(res) ? resolveSemanticColor(res) : res;
@@ -3408,7 +3573,7 @@
     }
     return sheet;
   }
-  var import_react_native4, CompatfulRedesign, TextStyleSheet;
+  var import_react_native5, Styles, ThemeContext, TextStyleSheet;
   var init_styles = __esm({
     "src/lib/ui/styles.ts"() {
       "use strict";
@@ -3417,8 +3582,11 @@
       init_lazy();
       init_wrappers();
       init_color();
-      import_react_native4 = __toESM(require_react_native());
-      CompatfulRedesign = findByPropsLazy("createStyles");
+      import_react_native5 = __toESM(require_react_native());
+      Styles = findByPropsLazy("createStyles");
+      ({ ThemeContext } = lazyDestructure(() => findByProps("ThemeContext"), {
+        hint: "object"
+      }));
       ({ TextStyleSheet } = lazyDestructure(() => findByProps("TextStyleSheet")));
     }
   });
@@ -3430,7 +3598,7 @@
         style,
         children
       });
-    return import_react_native5.Platform.select({
+    return import_react_native6.Platform.select({
       ios: /* @__PURE__ */ jsx(InputBasedCodeblock, {
         style,
         children
@@ -3442,7 +3610,7 @@
       })
     });
   }
-  var import_react_native5, useStyles, InputBasedCodeblock, TextBasedCodeblock;
+  var import_react_native6, useStyles, InputBasedCodeblock, TextBasedCodeblock;
   var init_Codeblock = __esm({
     "src/lib/ui/components/Codeblock.tsx"() {
       "use strict";
@@ -3452,7 +3620,7 @@
       init_common();
       init_color();
       init_styles();
-      import_react_native5 = __toESM(require_react_native());
+      import_react_native6 = __toESM(require_react_native());
       useStyles = createStyles({
         codeBlock: {
           fontFamily: constants.Fonts.CODE_NORMAL,
@@ -3466,7 +3634,7 @@
           padding: 10
         }
       });
-      InputBasedCodeblock = ({ style, children }) => /* @__PURE__ */ jsx(import_react_native5.TextInput, {
+      InputBasedCodeblock = ({ style, children }) => /* @__PURE__ */ jsx(import_react_native6.TextInput, {
         editable: false,
         multiline: true,
         style: [
@@ -3475,7 +3643,7 @@
         ],
         value: children
       });
-      TextBasedCodeblock = ({ selectable, style, children }) => /* @__PURE__ */ jsx(import_react_native5.Text, {
+      TextBasedCodeblock = ({ selectable, style, children }) => /* @__PURE__ */ jsx(import_react_native6.Text, {
         selectable,
         style: [
           useStyles().codeBlock,
@@ -3486,8 +3654,466 @@
     }
   });
 
+  // src/lib/ui/sheets.ts
+  var sheets_exports = {};
+  __export(sheets_exports, {
+    hideSheet: () => hideSheet,
+    showSheet: () => showSheet
+  });
+  function showSheet(key, lazyImport, props) {
+    if (!("then" in lazyImport))
+      lazyImport = Promise.resolve({
+        default: lazyImport
+      });
+    actionSheet.openLazy(lazyImport, key, props ?? {});
+  }
+  function hideSheet(key) {
+    actionSheet.hideActionSheet(key);
+  }
+  var actionSheet;
+  var init_sheets = __esm({
+    "src/lib/ui/sheets.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_wrappers();
+      actionSheet = findByPropsLazy("openLazy", "hideActionSheet");
+    }
+  });
+
+  // src/core/ui/reporter/utils/parseComponentStack.tsx
+  function parseComponentStack(componentStack) {
+    return componentStack.split(/[\s|\n]+?in /).filter(Boolean);
+  }
+  var init_parseComponentStack = __esm({
+    "src/core/ui/reporter/utils/parseComponentStack.tsx"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+    }
+  });
+
+  // globals:react
+  var require_react = __commonJS({
+    "globals:react"(exports, module) {
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      module.exports = require_depsModule()["react"];
+    }
+  });
+
+  // src/core/ui/reporter/components/ErrorComponentStackCard.tsx
+  function ErrorComponentStackCard(props) {
+    var [collapsed, setCollapsed] = (0, import_react.useState)(true);
+    var stack;
+    try {
+      stack = parseComponentStack(props.componentStack);
+      stack = collapsed ? stack.slice(0, 4) : stack;
+    } catch (e) {
+      return;
+    }
+    return /* @__PURE__ */ jsx(Card, {
+      children: /* @__PURE__ */ jsxs(import_react_native7.View, {
+        style: {
+          gap: 8
+        },
+        children: [
+          /* @__PURE__ */ jsx(Text, {
+            variant: "heading-lg/bold",
+            children: "Component Stack"
+          }),
+          /* @__PURE__ */ jsx(import_react_native7.View, {
+            style: {
+              gap: 4
+            },
+            children: stack.map((component) => /* @__PURE__ */ jsxs(import_react_native7.View, {
+              style: {
+                flexDirection: "row"
+              },
+              children: [
+                /* @__PURE__ */ jsx(Text, {
+                  variant: "text-md/bold",
+                  color: "text-muted",
+                  children: "<"
+                }),
+                /* @__PURE__ */ jsx(Text, {
+                  variant: "text-md/bold",
+                  children: component
+                }),
+                /* @__PURE__ */ jsx(Text, {
+                  variant: "text-md/bold",
+                  color: "text-muted",
+                  children: "/>"
+                })
+              ]
+            }))
+          }),
+          collapsed && /* @__PURE__ */ jsx(Text, {
+            children: "..."
+          }),
+          /* @__PURE__ */ jsxs(import_react_native7.View, {
+            style: {
+              gap: 8,
+              flexDirection: "row",
+              justifyContent: "center",
+              alignItems: "center"
+            },
+            children: [
+              /* @__PURE__ */ jsx(Button, {
+                variant: "secondary",
+                text: `Show ${collapsed ? "more" : "less"}`,
+                icon: collapsed ? findAssetId("down_arrow") : /* @__PURE__ */ jsx(import_react_native7.Image, {
+                  style: {
+                    transform: [
+                      {
+                        rotate: `${collapsed ? 0 : 180}deg`
+                      }
+                    ]
+                  },
+                  source: findAssetId("down_arrow")
+                }),
+                onPress: () => setCollapsed((v2) => !v2)
+              }),
+              /* @__PURE__ */ jsx(Button, {
+                variant: "secondary",
+                text: "Copy",
+                icon: findAssetId("CopyIcon"),
+                onPress: () => clipboard.setString(props.componentStack)
+              })
+            ]
+          })
+        ]
+      })
+    });
+  }
+  var import_react, import_react_native7;
+  var init_ErrorComponentStackCard = __esm({
+    "src/core/ui/reporter/components/ErrorComponentStackCard.tsx"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_jsxRuntime();
+      init_parseComponentStack();
+      init_assets();
+      init_common();
+      init_components();
+      import_react = __toESM(require_react());
+      import_react_native7 = __toESM(require_react_native());
+    }
+  });
+
+  // src/core/ui/reporter/utils/parseErrorStack.ts
+  function isInternalBytecodeSourceUrl(sourceUrl) {
+    return sourceUrl === "InternalBytecode.js";
+  }
+  function parseLine(line) {
+    var asFrame = line.match(RE_FRAME);
+    if (asFrame) {
+      return {
+        type: "FRAME",
+        functionName: asFrame[1],
+        location: asFrame[2] === "native" ? {
+          type: "NATIVE"
+        } : asFrame[3] === "address at " ? isInternalBytecodeSourceUrl(asFrame[4]) ? {
+          type: "INTERNAL_BYTECODE",
+          sourceUrl: asFrame[4],
+          line1Based: Number.parseInt(asFrame[5], 10),
+          virtualOffset0Based: Number.parseInt(asFrame[6], 10)
+        } : {
+          type: "BYTECODE",
+          sourceUrl: asFrame[4],
+          line1Based: Number.parseInt(asFrame[5], 10),
+          virtualOffset0Based: Number.parseInt(asFrame[6], 10)
+        } : {
+          type: "SOURCE",
+          sourceUrl: asFrame[4],
+          line1Based: Number.parseInt(asFrame[5], 10),
+          column1Based: Number.parseInt(asFrame[6], 10)
+        }
+      };
+    }
+    var asSkipped = line.match(RE_SKIPPED);
+    if (asSkipped) {
+      return {
+        type: "SKIPPED",
+        count: Number.parseInt(asSkipped[1], 10)
+      };
+    }
+  }
+  function parseHermesStack(stack) {
+    var lines = stack.split(/\n/);
+    var entries = [];
+    var lastMessageLine = -1;
+    for (var i = 0; i < lines.length; ++i) {
+      var line = lines[i];
+      if (!line) {
+        continue;
+      }
+      var entry = parseLine(line);
+      if (entry) {
+        entries.push(entry);
+        continue;
+      }
+      if (RE_COMPONENT_NO_STACK.test(line)) {
+        continue;
+      }
+      lastMessageLine = i;
+      entries = [];
+    }
+    var message = lines.slice(0, lastMessageLine + 1).join("\n");
+    return {
+      message,
+      entries
+    };
+  }
+  function convertHermesStack(stack) {
+    var frames = [];
+    for (var entry of stack.entries) {
+      if (entry.type !== "FRAME") {
+        continue;
+      }
+      var { location, functionName } = entry;
+      if (location.type === "NATIVE" || location.type === "INTERNAL_BYTECODE") {
+        continue;
+      }
+      frames.push({
+        methodName: functionName,
+        file: location.sourceUrl,
+        lineNumber: location.line1Based,
+        column: location.type === "SOURCE" ? location.column1Based - 1 : location.virtualOffset0Based
+      });
+    }
+    return frames;
+  }
+  function parseErrorStack(errorStack) {
+    if (errorStack == null) {
+      return [];
+    }
+    var parsedStack = Array.isArray(errorStack) ? errorStack : convertHermesStack(parseHermesStack(errorStack));
+    return parsedStack;
+  }
+  var RE_FRAME, RE_SKIPPED, RE_COMPONENT_NO_STACK;
+  var init_parseErrorStack = __esm({
+    "src/core/ui/reporter/utils/parseErrorStack.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      RE_FRAME = /^ {4}at (.+?)(?: \((native)\)?| \((address at )?(.*?):(\d+):(\d+)\))$/;
+      RE_SKIPPED = /^ {4}... skipping (\d+) frames$/;
+      RE_COMPONENT_NO_STACK = /^ {4}at .*$/;
+    }
+  });
+
+  // src/core/ui/reporter/components/ErrorStackCard.tsx
+  function ErrorStackCard(props) {
+    var [collapsed, setCollapsed] = (0, import_react2.useState)(true);
+    var stack;
+    try {
+      var parsedErrorStack = parseErrorStack(props.error.stack);
+      stack = collapsed ? parsedErrorStack.slice(0, 4) : parsedErrorStack;
+    } catch (e) {
+      return null;
+    }
+    return /* @__PURE__ */ jsx(Card, {
+      children: /* @__PURE__ */ jsxs(import_react_native8.View, {
+        style: {
+          gap: 12
+        },
+        children: [
+          /* @__PURE__ */ jsx(Text, {
+            variant: "heading-lg/bold",
+            children: "Call Stack"
+          }),
+          /* @__PURE__ */ jsx(import_react_native8.View, {
+            style: {
+              gap: 4
+            },
+            children: stack.map((f, id) => /* @__PURE__ */ jsx(Line, {
+              id,
+              frame: f
+            }))
+          }),
+          collapsed && /* @__PURE__ */ jsx(Text, {
+            children: "..."
+          }),
+          /* @__PURE__ */ jsxs(import_react_native8.View, {
+            style: {
+              gap: 8,
+              flexDirection: "row",
+              justifyContent: "center",
+              alignItems: "center"
+            },
+            children: [
+              /* @__PURE__ */ jsx(Button, {
+                variant: "secondary",
+                text: `Show ${collapsed ? "more" : "less"}`,
+                icon: collapsed ? findAssetId("down_arrow") : /* @__PURE__ */ jsx(import_react_native8.Image, {
+                  style: {
+                    transform: [
+                      {
+                        rotate: `${collapsed ? 0 : 180}deg`
+                      }
+                    ]
+                  },
+                  source: findAssetId("down_arrow")
+                }),
+                onPress: () => setCollapsed((v2) => !v2)
+              }),
+              /* @__PURE__ */ jsx(Button, {
+                variant: "secondary",
+                text: "Copy",
+                icon: findAssetId("CopyIcon"),
+                onPress: () => clipboard.setString(props.error.stack)
+              })
+            ]
+          })
+        ]
+      })
+    });
+  }
+  function Line(props) {
+    var [collapsed, setCollapsed] = (0, import_react2.useState)(true);
+    return /* @__PURE__ */ jsxs(import_react_native8.Pressable, {
+      onPress: () => setCollapsed((v2) => !v2),
+      children: [
+        /* @__PURE__ */ jsx(Text, {
+          style: {
+            fontFamily: constants.Fonts.CODE_BOLD
+          },
+          children: props.frame.methodName
+        }),
+        /* @__PURE__ */ jsx(Text, {
+          style: {
+            fontFamily: constants.Fonts.CODE_NORMAL
+          },
+          ellipsizeMode: "middle",
+          numberOfLines: collapsed ? 1 : void 0,
+          children: /* @__PURE__ */ jsxs(Text, {
+            color: "text-muted",
+            children: [
+              props.frame.file === INDEX_BUNDLE_FILE ? "jsbundle" : props.frame.file,
+              ":",
+              props.frame.lineNumber,
+              ":",
+              props.frame.column
+            ]
+          })
+        })
+      ]
+    }, props.id);
+  }
+  var import_react2, import_react_native8;
+  var init_ErrorStackCard = __esm({
+    "src/core/ui/reporter/components/ErrorStackCard.tsx"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_jsxRuntime();
+      init_parseErrorStack();
+      init_assets();
+      init_common();
+      init_components();
+      import_react2 = __toESM(require_react());
+      import_react_native8 = __toESM(require_react_native());
+      init_ErrorCard();
+    }
+  });
+
+  // src/core/ui/reporter/components/ErrorDetailsActionSheet.tsx
+  function ErrorDetailsActionSheet(props) {
+    return /* @__PURE__ */ jsx(ActionSheet, {
+      children: /* @__PURE__ */ jsxs(import_react_native9.View, {
+        style: {
+          gap: 12,
+          paddingVertical: 12
+        },
+        children: [
+          /* @__PURE__ */ jsx(Text, {
+            variant: "heading-lg/extrabold",
+            children: "Error"
+          }),
+          /* @__PURE__ */ jsx(Codeblock, {
+            selectable: true,
+            children: props.error.message
+          }),
+          hasStack(props.error) && /* @__PURE__ */ jsx(ErrorStackCard, {
+            error: props.error
+          }),
+          isComponentStack(props.error) ? /* @__PURE__ */ jsx(ErrorComponentStackCard, {
+            componentStack: props.error.componentStack
+          }) : null
+        ]
+      })
+    });
+  }
+  var import_react_native9;
+  var init_ErrorDetailsActionSheet = __esm({
+    "src/core/ui/reporter/components/ErrorDetailsActionSheet.tsx"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_jsxRuntime();
+      init_isStack();
+      init_components2();
+      init_components();
+      import_react_native9 = __toESM(require_react_native());
+      init_ErrorComponentStackCard();
+      init_ErrorStackCard();
+    }
+  });
+
+  // src/core/ui/reporter/components/ErrorCard.tsx
+  function ErrorCard(props) {
+    return /* @__PURE__ */ jsx(Card, {
+      children: /* @__PURE__ */ jsxs(Stack, {
+        children: [
+          props.header && typeof props.header !== "string" ? props.header : /* @__PURE__ */ jsx(Text, {
+            variant: "heading-lg/bold",
+            children: props.header ?? Strings.UH_OH
+          }),
+          /* @__PURE__ */ jsx(Codeblock, {
+            selectable: true,
+            children: String(props.error)
+          }),
+          /* @__PURE__ */ jsxs(TwinButtons, {
+            children: [
+              props.onRetryRender && /* @__PURE__ */ jsx(Button, {
+                variant: "destructive",
+                // icon={findAssetId("RetryIcon")}
+                text: Strings.RETRY_RENDER,
+                onPress: props.onRetryRender
+              }),
+              props.error instanceof Error ? /* @__PURE__ */ jsx(Button, {
+                text: "Details",
+                // icon={findAssetId("CircleInformationIcon-primary")}
+                onPress: () => showSheet("BunnyErrorDetailsActionSheet", ErrorDetailsActionSheet, {
+                  error: props.error
+                })
+              }) : null
+            ]
+          })
+        ]
+      })
+    });
+  }
+  var INDEX_BUNDLE_FILE;
+  var init_ErrorCard = __esm({
+    "src/core/ui/reporter/components/ErrorCard.tsx"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_jsxRuntime();
+      init_i18n();
+      init_components2();
+      init_sheets();
+      init_components();
+      init_ErrorDetailsActionSheet();
+      INDEX_BUNDLE_FILE = window.HermesInternal.getFunctionLocation(window.__r).fileName;
+    }
+  });
+
   // src/lib/ui/components/ErrorBoundary.tsx
-  var import_react_native6, styles, _React_Component, ErrorBoundary;
+  var _React_Component, ErrorBoundary;
   var init_ErrorBoundary = __esm({
     "src/lib/ui/components/ErrorBoundary.tsx"() {
       "use strict";
@@ -3499,31 +4125,16 @@
       init_define_property();
       init_inherits();
       init_jsxRuntime();
-      init_i18n();
+      init_ErrorCard();
       init_common();
-      init_components();
-      init_components2();
       init_styles();
-      import_react_native6 = __toESM(require_react_native());
-      styles = createThemedStyleSheet({
-        view: {
-          flex: 1,
-          flexDirection: "column",
-          margin: 10
-        },
-        title: {
-          fontSize: 20,
-          textAlign: "center",
-          marginBottom: 5
-        }
-      });
       ErrorBoundary = /* @__PURE__ */ function(_superClass) {
         "use strict";
-        _inherits(ErrorBoundary3, _superClass);
-        function ErrorBoundary3(props) {
-          _class_call_check(this, ErrorBoundary3);
+        _inherits(ErrorBoundary2, _superClass);
+        function ErrorBoundary2(props) {
+          _class_call_check(this, ErrorBoundary2);
           var _this;
-          _this = _call_super(this, ErrorBoundary3, [
+          _this = _call_super(this, ErrorBoundary2, [
             props
           ]);
           _this.state = {
@@ -3531,58 +4142,24 @@
           };
           return _this;
         }
-        _create_class(ErrorBoundary3, [
+        _create_class(ErrorBoundary2, [
           {
             key: "render",
             value: function render() {
               if (!this.state.hasErr)
                 return this.props.children;
-              return /* @__PURE__ */ jsxs(import_react_native6.ScrollView, {
-                style: styles.view,
-                children: [
-                  /* @__PURE__ */ jsx(LegacyFormText, {
-                    style: styles.title,
-                    children: Strings.UH_OH
-                  }),
-                  /* @__PURE__ */ jsx(Codeblock, {
-                    selectable: true,
-                    style: {
-                      marginBottom: 5
-                    },
-                    children: this.state.error.name
-                  }),
-                  /* @__PURE__ */ jsx(Codeblock, {
-                    selectable: true,
-                    style: {
-                      marginBottom: 5
-                    },
-                    children: this.state.error.message
-                  }),
-                  this.state.error.stack && /* @__PURE__ */ jsx(import_react_native6.ScrollView, {
-                    style: {
-                      maxHeight: 420,
-                      marginBottom: 5
-                    },
-                    children: /* @__PURE__ */ jsx(Codeblock, {
-                      selectable: true,
-                      children: this.state.error.stack
-                    })
-                  }),
-                  /* @__PURE__ */ jsx(Button, {
-                    size: "md",
-                    variant: "destructive",
-                    onPress: () => this.setState({
-                      hasErr: false
-                    }),
-                    text: Strings.RETRY
-                  })
-                ]
+              return /* @__PURE__ */ jsx(ErrorCard, {
+                error: this.state.error,
+                onRetryRender: () => this.setState({
+                  hasErr: false
+                })
               });
             }
           }
         ]);
-        return ErrorBoundary3;
+        return ErrorBoundary2;
       }(_React_Component = React2.Component);
+      _define_property(ErrorBoundary, "contextType", ThemeContext);
       _define_property(ErrorBoundary, "getDerivedStateFromError", (error) => ({
         hasErr: true,
         error
@@ -3592,7 +4169,7 @@
 
   // src/lib/ui/components/Search.tsx
   function SearchIcon() {
-    return /* @__PURE__ */ jsx(import_react_native7.Image, {
+    return /* @__PURE__ */ jsx(import_react_native10.Image, {
       style: {
         width: 16,
         height: 16
@@ -3600,7 +4177,7 @@
       source: findAssetId("search")
     });
   }
-  var import_react_native7, Search_default;
+  var import_react_native10, Search_default;
   var init_Search = __esm({
     "src/lib/ui/components/Search.tsx"() {
       "use strict";
@@ -3611,7 +4188,7 @@
       init_assets();
       init_components();
       init_ErrorBoundary();
-      import_react_native7 = __toESM(require_react_native());
+      import_react_native10 = __toESM(require_react_native());
       Search_default = ({ onChangeText, placeholder, style, isRound }) => {
         var [query, setQuery] = React.useState("");
         var onChange = (value) => {
@@ -3619,7 +4196,7 @@
           onChangeText?.(value);
         };
         return /* @__PURE__ */ jsx(ErrorBoundary, {
-          children: /* @__PURE__ */ jsx(import_react_native7.View, {
+          children: /* @__PURE__ */ jsx(import_react_native10.View, {
             style,
             children: /* @__PURE__ */ jsx(TextInput, {
               grow: true,
@@ -3662,11 +4239,11 @@
           onPress: () => {
             setHidden(!hidden);
             if (!noAnimation)
-              import_react_native8.LayoutAnimation.configureNext(import_react_native8.LayoutAnimation.Presets.easeInEaseOut);
+              import_react_native11.LayoutAnimation.configureNext(import_react_native11.LayoutAnimation.Presets.easeInEaseOut);
           }
         }),
         !hidden && /* @__PURE__ */ jsx(Fragment, {
-          children: /* @__PURE__ */ jsx(import_react_native8.View, {
+          children: /* @__PURE__ */ jsx(import_react_native11.View, {
             style: !noPadding && {
               paddingHorizontal: 15
             },
@@ -3676,7 +4253,7 @@
       ]
     });
   }
-  var import_react_native8;
+  var import_react_native11;
   var init_Summary = __esm({
     "src/lib/ui/components/Summary.tsx"() {
       "use strict";
@@ -3685,7 +4262,7 @@
       init_jsxRuntime();
       init_assets();
       init_components();
-      import_react_native8 = __toESM(require_react_native());
+      import_react_native11 = __toESM(require_react_native());
     }
   });
 
@@ -3708,6 +4285,187 @@
       init_ErrorBoundary();
       init_Search();
       init_Summary();
+    }
+  });
+
+  // src/core/ui/reporter/components/ErrorBoundaryScreen.tsx
+  function ErrorBoundaryScreen(props) {
+    var styles = useStyles2();
+    var debugInfo = getDebugInfo();
+    return /* @__PURE__ */ jsx(ErrorBoundary, {
+      children: /* @__PURE__ */ jsxs(SafeAreaView, {
+        style: styles.container,
+        children: [
+          /* @__PURE__ */ jsxs(import_react_native12.View, {
+            style: {
+              gap: 4
+            },
+            children: [
+              /* @__PURE__ */ jsx(Text, {
+                variant: "display-lg",
+                children: "Uh oh."
+              }),
+              /* @__PURE__ */ jsx(Text, {
+                variant: "text-md/normal",
+                children: "A crash occured while rendering a component. This could be caused by a plugin, Bunny or Discord itself."
+              }),
+              /* @__PURE__ */ jsxs(Text, {
+                variant: "text-sm/normal",
+                color: "text-muted",
+                children: [
+                  debugInfo.os.name,
+                  "; ",
+                  debugInfo.discord.build,
+                  " (",
+                  debugInfo.discord.version,
+                  "); ",
+                  debugInfo.bunny.version
+                ]
+              })
+            ]
+          }),
+          /* @__PURE__ */ jsxs(import_react_native12.ScrollView, {
+            fadingEdgeLength: 64,
+            contentContainerStyle: {
+              gap: 12
+            },
+            children: [
+              /* @__PURE__ */ jsx(Codeblock, {
+                selectable: true,
+                children: props.error.message
+              }),
+              hasStack(props.error) && /* @__PURE__ */ jsx(ErrorStackCard, {
+                error: props.error
+              }),
+              isComponentStack(props.error) ? /* @__PURE__ */ jsx(ErrorComponentStackCard, {
+                componentStack: props.error.componentStack
+              }) : null
+            ]
+          }),
+          /* @__PURE__ */ jsxs(Card, {
+            style: {
+              gap: 6
+            },
+            children: [
+              /* @__PURE__ */ jsx(Button, {
+                text: "Reload Discord",
+                onPress: () => BundleUpdaterManager.reload()
+              }),
+              !settings.safeMode?.enabled && /* @__PURE__ */ jsx(Button, {
+                text: "Reload in Safe Mode",
+                onPress: () => toggleSafeMode()
+              }),
+              /* @__PURE__ */ jsx(Button, {
+                variant: "destructive",
+                text: "Retry Render",
+                onPress: () => props.rerender()
+              })
+            ]
+          })
+        ]
+      })
+    });
+  }
+  var import_react_native12, useStyles2;
+  var init_ErrorBoundaryScreen = __esm({
+    "src/core/ui/reporter/components/ErrorBoundaryScreen.tsx"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_jsxRuntime();
+      init_isStack();
+      init_debug();
+      init_modules();
+      init_settings();
+      init_components2();
+      init_styles();
+      init_common();
+      init_components();
+      import_react_native12 = __toESM(require_react_native());
+      init_ErrorComponentStackCard();
+      init_ErrorStackCard();
+      useStyles2 = createStyles({
+        container: {
+          flex: 1,
+          backgroundColor: tokens.colors.BACKGROUND_PRIMARY,
+          paddingHorizontal: 16,
+          height: "100%",
+          padding: 8,
+          gap: 12
+        }
+      });
+    }
+  });
+
+  // src/core/debug/patches/patchErrorBoundary.tsx
+  function getErrorBoundaryContext() {
+    var ctxt = findByNameLazy("ErrorBoundary")[_lazyContextSymbol];
+    return new Promise((resolve) => ctxt.getExports((exp) => resolve(exp.prototype)));
+  }
+  function patchErrorBoundary() {
+    return after.await("render", getErrorBoundaryContext(), function() {
+      if (!this.state.error)
+        return;
+      return /* @__PURE__ */ jsx(ErrorBoundaryScreen, {
+        error: this.state.error,
+        rerender: () => this.setState({
+          info: null,
+          error: null
+        })
+      });
+    });
+  }
+  var init_patchErrorBoundary = __esm({
+    "src/core/debug/patches/patchErrorBoundary.tsx"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_jsxRuntime();
+      init_ErrorBoundaryScreen();
+      init_patcher();
+      init_lazy2();
+      init_wrappers();
+    }
+  });
+
+  // globals:moment
+  var require_moment = __commonJS({
+    "globals:moment"(exports, module) {
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      module.exports = require_depsModule()["moment"];
+    }
+  });
+
+  // src/core/fixes.ts
+  function onDispatch({ locale }) {
+    try {
+      import_moment.default.locale(locale.toLowerCase());
+    } catch (e) {
+      logger.error("Failed to fix timestamps...", e);
+    }
+    FluxDispatcher.unsubscribe("I18N_LOAD_SUCCESS", onDispatch);
+  }
+  var import_moment, fixes_default;
+  var init_fixes = __esm({
+    "src/core/fixes.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_logger();
+      init_common();
+      import_moment = __toESM(require_moment());
+      fixes_default = () => {
+        FluxDispatcher.subscribe("I18N_LOAD_SUCCESS", onDispatch);
+      };
+    }
+  });
+
+  // src/assets/icons/pyoncord.png
+  var pyoncord_default;
+  var init_pyoncord = __esm({
+    "src/assets/icons/pyoncord.png"() {
+      pyoncord_default = "data:image/png;base64,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";
     }
   });
 
@@ -3944,37 +4702,6 @@
     }
   });
 
-  // src/lib/ui/toasts.ts
-  var toasts_exports = {};
-  __export(toasts_exports, {
-    showToast: () => showToast
-  });
-  var uuid4, showToast;
-  var init_toasts = __esm({
-    "src/lib/ui/toasts.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_i18n();
-      init_assets();
-      init_lazy();
-      init_common();
-      init_wrappers();
-      ({ uuid4 } = lazyDestructure(() => findByProps("uuid4")));
-      showToast = (content, asset) => toasts.open({
-        // ? In build 182205/44707, Discord changed their toasts, source is no longer used, rather icon, and a key is needed.
-        // TODO: We could probably have the developer specify a key themselves, but this works to fix toasts
-        key: `vd-toast-${uuid4()}`,
-        content,
-        source: asset,
-        icon: asset
-      });
-      showToast.showCopyToClipboard = (message = Strings.COPIED_TO_CLIPBOARD) => {
-        showToast(message, findAssetId("toast_copy_link"));
-      };
-    }
-  });
-
   // src/core/ui/settings/pages/General/Version.tsx
   function Version({ label, version, icon }) {
     return /* @__PURE__ */ jsx(TableRow, {
@@ -4001,161 +4728,6 @@
       init_common();
       init_components();
       init_toasts();
-    }
-  });
-
-  // src/lib/api/debug.ts
-  var debug_exports = {};
-  __export(debug_exports, {
-    connectToDebugger: () => connectToDebugger,
-    getDebugInfo: () => getDebugInfo,
-    patchLogHook: () => patchLogHook,
-    toggleSafeMode: () => toggleSafeMode,
-    versionHash: () => versionHash
-  });
-  function toggleSafeMode() {
-    return _toggleSafeMode.apply(this, arguments);
-  }
-  function _toggleSafeMode() {
-    _toggleSafeMode = _async_to_generator(function* () {
-      settings.safeMode = {
-        ...settings.safeMode,
-        enabled: !settings.safeMode?.enabled
-      };
-      if (isThemeSupported()) {
-        if (getThemeFromLoader()?.id)
-          settings.safeMode.currentThemeId = getThemeFromLoader().id;
-        if (settings.safeMode?.enabled) {
-          yield selectTheme(null);
-        } else if (settings.safeMode?.currentThemeId) {
-          yield selectTheme(themes[settings.safeMode?.currentThemeId]);
-        }
-      }
-      setTimeout(BundleUpdaterManager.reload, 400);
-    });
-    return _toggleSafeMode.apply(this, arguments);
-  }
-  function connectToDebugger(url2) {
-    if (socket !== void 0 && socket.readyState !== WebSocket.CLOSED)
-      socket.close();
-    if (!url2) {
-      showToast("Invalid debugger URL!", findAssetId("Small"));
-      return;
-    }
-    socket = new WebSocket(`ws://${url2}`);
-    socket.addEventListener("open", () => showToast("Connected to debugger.", findAssetId("Check")));
-    socket.addEventListener("message", (message) => {
-      try {
-        (0, eval)(message.data);
-      } catch (e) {
-        console.error(e);
-      }
-    });
-    socket.addEventListener("error", (err) => {
-      console.log(`Debugger error: ${err.message}`);
-      showToast("An error occurred with the debugger connection!", findAssetId("Small"));
-    });
-  }
-  function patchLogHook() {
-    var unpatch = after("nativeLoggingHook", globalThis, (args) => {
-      if (socket?.readyState === WebSocket.OPEN)
-        socket.send(JSON.stringify({
-          message: args[0],
-          level: args[1]
-        }));
-      logger.log(args[0]);
-    });
-    return () => {
-      socket && socket.close();
-      unpatch();
-    };
-  }
-  function getDebugInfo() {
-    var hermesProps = window.HermesInternal.getRuntimeProperties();
-    var hermesVer = hermesProps["OSS Release Version"];
-    var padding = "for RN ";
-    var PlatformConstants = import_react_native9.Platform.constants;
-    var rnVer = PlatformConstants.reactNativeVersion;
-    return {
-      /**
-       * @deprecated use `bunny` field
-       * */
-      vendetta: {
-        version: versionHash.split("-")[0],
-        loader: getLoaderName()
-      },
-      bunny: {
-        version: versionHash,
-        loader: {
-          name: getLoaderName(),
-          version: getLoaderVersion()
-        }
-      },
-      discord: {
-        version: ClientInfoManager.Version,
-        build: ClientInfoManager.Build
-      },
-      react: {
-        version: React.version,
-        nativeVersion: hermesVer.startsWith(padding) ? hermesVer.substring(padding.length) : `${rnVer.major}.${rnVer.minor}.${rnVer.patch}`
-      },
-      hermes: {
-        version: hermesVer,
-        buildType: hermesProps.Build,
-        bytecodeVersion: hermesProps["Bytecode Version"]
-      },
-      ...import_react_native9.Platform.select({
-        android: {
-          os: {
-            name: "Android",
-            version: PlatformConstants.Release,
-            sdk: PlatformConstants.Version
-          }
-        },
-        ios: {
-          os: {
-            name: PlatformConstants.systemName,
-            version: PlatformConstants.osVersion
-          }
-        }
-      }),
-      ...import_react_native9.Platform.select({
-        android: {
-          device: {
-            manufacturer: PlatformConstants.Manufacturer,
-            brand: PlatformConstants.Brand,
-            model: PlatformConstants.Model,
-            codename: DeviceManager.device
-          }
-        },
-        ios: {
-          device: {
-            manufacturer: DeviceManager.deviceManufacturer,
-            brand: DeviceManager.deviceBrand,
-            model: DeviceManager.deviceModel,
-            codename: DeviceManager.device
-          }
-        }
-      })
-    };
-  }
-  var import_react_native9, socket, versionHash;
-  var init_debug = __esm({
-    "src/lib/api/debug.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_async_to_generator();
-      init_themes();
-      init_assets();
-      init_loader();
-      init_modules();
-      init_patcher();
-      init_settings();
-      init_logger();
-      init_toasts();
-      import_react_native9 = __toESM(require_react_native());
-      versionHash = "fd8ddce-main";
     }
   });
 
@@ -4224,7 +4796,7 @@
         icon: "ic_phonelink_24px"
       },
       {
-        label: import_react_native10.Platform.select({
+        label: import_react_native13.Platform.select({
           android: Strings.CODENAME,
           ios: Strings.MACHINE_ID
         }),
@@ -4232,7 +4804,7 @@
         icon: "ic_compose_24px"
       }
     ];
-    return /* @__PURE__ */ jsx(import_react_native10.ScrollView, {
+    return /* @__PURE__ */ jsx(import_react_native13.ScrollView, {
       style: {
         flex: 1
       },
@@ -4266,7 +4838,7 @@
       })
     });
   }
-  var import_react_native10;
+  var import_react_native13;
   var init_About = __esm({
     "src/core/ui/settings/pages/General/About.tsx"() {
       "use strict";
@@ -4279,7 +4851,7 @@
       init_debug();
       init_settings();
       init_components();
-      import_react_native10 = __toESM(require_react_native());
+      import_react_native13 = __toESM(require_react_native());
     }
   });
 
@@ -4292,7 +4864,7 @@
     useProxy(settings);
     var debugInfo = getDebugInfo();
     var navigation2 = NavigationNative.useNavigation();
-    return /* @__PURE__ */ jsx(import_react_native11.ScrollView, {
+    return /* @__PURE__ */ jsx(import_react_native14.ScrollView, {
       style: {
         flex: 1
       },
@@ -4372,7 +4944,7 @@
                 icon: /* @__PURE__ */ jsx(TableRow.Icon, {
                   source: findAssetId("ic_message_retry")
                 }),
-                onPress: () => import_react_native11.NativeModules.BundleUpdaterManager.reload()
+                onPress: () => import_react_native14.NativeModules.BundleUpdaterManager.reload()
               }),
               /* @__PURE__ */ jsx(TableRow, {
                 label: settings.safeMode?.enabled ? Strings.RELOAD_IN_NORMAL_MODE : Strings.RELOAD_IN_SAFE_MODE,
@@ -4412,7 +4984,7 @@
       })
     });
   }
-  var import_react_native11;
+  var import_react_native14;
   var init_General = __esm({
     "src/core/ui/settings/pages/General/index.tsx"() {
       "use strict";
@@ -4429,7 +5001,7 @@
       init_constants();
       init_common();
       init_components();
-      import_react_native11 = __toESM(require_react_native());
+      import_react_native14 = __toESM(require_react_native());
     }
   });
 
@@ -5262,15 +5834,6 @@
     }
   });
 
-  // globals:react
-  var require_react = __commonJS({
-    "globals:react"(exports, module) {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      module.exports = require_depsModule()["react"];
-    }
-  });
-
   // src/core/ui/components/AddonPage.tsx
   function InputAlert(props) {
     var [value, setValue] = React.useState("");
@@ -5302,7 +5865,7 @@
             state: error ? "error" : void 0,
             errorMessage: error || void 0
           }),
-          /* @__PURE__ */ jsx(import_react_native12.ScrollView, {
+          /* @__PURE__ */ jsx(import_react_native15.ScrollView, {
             horizontal: true,
             showsHorizontalScrollIndicator: false,
             style: {
@@ -5340,7 +5903,7 @@
     useProxy(settings);
     var [search, setSearch] = React.useState("");
     var [sortFn, setSortFn] = React.useState(() => null);
-    var results = (0, import_react.useMemo)(() => {
+    var results = (0, import_react3.useMemo)(() => {
       var values = props.items;
       if (props.resolveItem)
         values = values.map(props.resolveItem);
@@ -5356,7 +5919,7 @@
       sortFn,
       search
     ]);
-    var onInstallPress = (0, import_react.useCallback)(() => {
+    var onInstallPress = (0, import_react3.useCallback)(() => {
       if (!props.installAction)
         return () => {
         };
@@ -5371,7 +5934,7 @@
       }
     }, []);
     if (results.length === 0 && !search) {
-      return /* @__PURE__ */ jsxs(import_react_native12.View, {
+      return /* @__PURE__ */ jsxs(import_react_native15.View, {
         style: {
           gap: 32,
           flexGrow: 1,
@@ -5379,13 +5942,13 @@
           alignItems: "center"
         },
         children: [
-          /* @__PURE__ */ jsxs(import_react_native12.View, {
+          /* @__PURE__ */ jsxs(import_react_native15.View, {
             style: {
               gap: 8,
               alignItems: "center"
             },
             children: [
-              /* @__PURE__ */ jsx(import_react_native12.Image, {
+              /* @__PURE__ */ jsx(import_react_native15.Image, {
                 source: findAssetId("empty_quick_switcher")
               }),
               /* @__PURE__ */ jsx(Text, {
@@ -5404,12 +5967,12 @@
         ]
       });
     }
-    var headerElement = /* @__PURE__ */ jsxs(import_react_native12.View, {
+    var headerElement = /* @__PURE__ */ jsxs(import_react_native15.View, {
       style: {
         paddingBottom: 8
       },
       children: [
-        settings.safeMode?.enabled && /* @__PURE__ */ jsxs(import_react_native12.View, {
+        settings.safeMode?.enabled && /* @__PURE__ */ jsxs(import_react_native15.View, {
           style: {
             marginBottom: 10
           },
@@ -5421,7 +5984,7 @@
             props.safeModeHint?.footer
           ]
         }),
-        /* @__PURE__ */ jsxs(import_react_native12.View, {
+        /* @__PURE__ */ jsxs(import_react_native15.View, {
           style: {
             flexDirection: "row",
             gap: 8
@@ -5462,14 +6025,14 @@
           extraData: search,
           estimatedItemSize: 136,
           ListHeaderComponent: headerElement,
-          ListEmptyComponent: () => /* @__PURE__ */ jsxs(import_react_native12.View, {
+          ListEmptyComponent: () => /* @__PURE__ */ jsxs(import_react_native15.View, {
             style: {
               gap: 12,
               padding: 12,
               alignItems: "center"
             },
             children: [
-              /* @__PURE__ */ jsx(import_react_native12.Image, {
+              /* @__PURE__ */ jsx(import_react_native15.Image, {
                 source: findAssetId("devices_not_found")
               }),
               /* @__PURE__ */ jsx(Text, {
@@ -5483,7 +6046,7 @@
             padding: 8,
             paddingHorizontal: 12
           },
-          ItemSeparatorComponent: () => /* @__PURE__ */ jsx(import_react_native12.View, {
+          ItemSeparatorComponent: () => /* @__PURE__ */ jsx(import_react_native15.View, {
             style: {
               height: 8
             }
@@ -5501,7 +6064,7 @@
       ]
     });
   }
-  var import_fuzzysort, import_react, import_react_native12, showSimpleActionSheet, hideActionSheet, openAlert, dismissAlert;
+  var import_fuzzysort, import_react3, import_react_native15, showSimpleActionSheet, hideActionSheet, openAlert, dismissAlert;
   var init_AddonPage = __esm({
     "src/core/ui/components/AddonPage.tsx"() {
       "use strict";
@@ -5519,8 +6082,8 @@
       init_components();
       init_components2();
       import_fuzzysort = __toESM(require_fuzzysort());
-      import_react = __toESM(require_react());
-      import_react_native12 = __toESM(require_react_native());
+      import_react3 = __toESM(require_react());
+      import_react_native15 = __toESM(require_react_native());
       ({ showSimpleActionSheet, hideActionSheet } = lazyDestructure(() => findByProps("showSimpleActionSheet")));
       ({ openAlert, dismissAlert } = lazyDestructure(() => findByProps("openAlert", "dismissAlert")));
     }
@@ -5545,35 +6108,12 @@
     }
   });
 
-  // src/lib/ui/sheets.ts
-  var sheets_exports = {};
-  __export(sheets_exports, {
-    hideSheet: () => hideSheet,
-    showSheet: () => showSheet
-  });
-  function showSheet(key, lazyImport, props) {
-    actionSheet.openLazy(lazyImport, key, props ?? {});
-  }
-  function hideSheet(key) {
-    actionSheet.hideActionSheet(key);
-  }
-  var actionSheet;
-  var init_sheets = __esm({
-    "src/lib/ui/sheets.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_wrappers();
-      actionSheet = findByPropsLazy("openLazy", "hideActionSheet");
-    }
-  });
-
   // src/core/ui/settings/pages/Plugins/components/PluginCard.tsx
   function getHighlightColor() {
     return (0, import_chroma_js2.default)(tokens.unsafe_rawColors.YELLOW_300).alpha(0.3).hex();
   }
   function Title() {
-    var styles3 = usePluginCardStyles();
+    var styles = usePluginCardStyles();
     var { plugin, result } = useCardContext();
     var highlightedNode = result[0].highlight((m2, i) => /* @__PURE__ */ jsx(Text, {
       style: {
@@ -5587,15 +6127,15 @@
       variant: "heading-lg/semibold",
       children: highlightedNode.length ? highlightedNode : plugin.name
     });
-    return /* @__PURE__ */ jsxs(import_react_native13.View, {
+    return /* @__PURE__ */ jsxs(import_react_native16.View, {
       style: {
         flexDirection: "row",
         alignItems: "center",
         gap: 6
       },
       children: [
-        icon && /* @__PURE__ */ jsx(import_react_native13.Image, {
-          style: styles3.smallIcon,
+        icon && /* @__PURE__ */ jsx(import_react_native16.Image, {
+          style: styles.smallIcon,
           source: icon
         }),
         textNode
@@ -5651,7 +6191,7 @@
   function PluginCard({ result, item: plugin }) {
     plugin.usePluginState();
     var [, forceUpdate] = React.useReducer(() => ({}), 0);
-    var cardContextValue = (0, import_react2.useMemo)(() => ({
+    var cardContextValue = (0, import_react4.useMemo)(() => ({
       plugin,
       result
     }), [
@@ -5664,13 +6204,13 @@
         children: /* @__PURE__ */ jsxs(Stack, {
           spacing: 16,
           children: [
-            /* @__PURE__ */ jsxs(import_react_native13.View, {
+            /* @__PURE__ */ jsxs(import_react_native16.View, {
               style: {
                 flexDirection: "row",
                 justifyContent: "space-between"
               },
               children: [
-                /* @__PURE__ */ jsxs(import_react_native13.View, {
+                /* @__PURE__ */ jsxs(import_react_native16.View, {
                   style: {
                     flexShrink: 1
                   },
@@ -5679,7 +6219,7 @@
                     /* @__PURE__ */ jsx(Authors, {})
                   ]
                 }),
-                /* @__PURE__ */ jsx(import_react_native13.View, {
+                /* @__PURE__ */ jsx(import_react_native16.View, {
                   children: /* @__PURE__ */ jsxs(Stack, {
                     spacing: 12,
                     direction: "horizontal",
@@ -5703,7 +6243,7 @@
       })
     });
   }
-  var import_chroma_js2, import_react2, import_react_native13, CardContext, useCardContext, Actions;
+  var import_chroma_js2, import_react4, import_react_native16, CardContext, useCardContext, Actions;
   var init_PluginCard = __esm({
     "src/core/ui/settings/pages/Plugins/components/PluginCard.tsx"() {
       "use strict";
@@ -5716,14 +6256,14 @@
       init_components();
       init_sheets();
       import_chroma_js2 = __toESM(require_chroma_js());
-      import_react2 = __toESM(require_react());
-      import_react_native13 = __toESM(require_react_native());
-      CardContext = /* @__PURE__ */ (0, import_react2.createContext)(null);
-      useCardContext = () => (0, import_react2.useContext)(CardContext);
+      import_react4 = __toESM(require_react());
+      import_react_native16 = __toESM(require_react_native());
+      CardContext = /* @__PURE__ */ (0, import_react4.createContext)(null);
+      useCardContext = () => (0, import_react4.useContext)(CardContext);
       Actions = () => {
         var { plugin } = useCardContext();
         var navigation2 = NavigationNative.useNavigation();
-        return /* @__PURE__ */ jsxs(import_react_native13.View, {
+        return /* @__PURE__ */ jsxs(import_react_native16.View, {
           style: {
             flexDirection: "row",
             gap: 6
@@ -6321,7 +6861,7 @@
   __export(badges_exports, {
     default: () => badges_default
   });
-  var import_react3, useBadgesModule, badges_default;
+  var import_react5, useBadgesModule, badges_default;
   var init_badges = __esm({
     "src/core/plugins/badges/index.tsx"() {
       "use strict";
@@ -6330,7 +6870,7 @@
       init_patcher();
       init_jsx();
       init_metro();
-      import_react3 = __toESM(require_react());
+      import_react5 = __toESM(require_react());
       init_plugins2();
       useBadgesModule = findByName("useBadges", false);
       badges_default = defineCorePlugin({
@@ -6354,8 +6894,8 @@
             }
           });
           after("default", useBadgesModule, ([user], r) => {
-            var [badges, setBadges] = (0, import_react3.useState)(user ? badgeCache[user.userId] ??= [] : []);
-            (0, import_react3.useEffect)(() => {
+            var [badges, setBadges] = (0, import_react5.useState)(user ? badgeCache[user.userId] ??= [] : []);
+            (0, import_react5.useEffect)(() => {
               if (user) {
                 fetch(`https://raw.githubusercontent.com/pyoncord/badges/refs/heads/main/${user.userId}.json`).then((r2) => r2.json()).then((badges2) => setBadges(badgeCache[user.userId] = badges2));
               }
@@ -8005,20 +8545,20 @@
   function PluginInfoActionSheet({ plugin, navigation: navigation2 }) {
     plugin.usePluginState();
     return /* @__PURE__ */ jsx(ActionSheet, {
-      children: /* @__PURE__ */ jsxs(import_react_native14.ScrollView, {
+      children: /* @__PURE__ */ jsxs(import_react_native17.ScrollView, {
         contentContainerStyle: {
           gap: 8,
           marginBottom: 12
         },
         children: [
-          /* @__PURE__ */ jsxs(import_react_native14.View, {
+          /* @__PURE__ */ jsxs(import_react_native17.View, {
             style: {
               flexDirection: "row",
               alignItems: "center",
               paddingVertical: 24
             },
             children: [
-              /* @__PURE__ */ jsxs(import_react_native14.View, {
+              /* @__PURE__ */ jsxs(import_react_native17.View, {
                 style: {
                   gap: 4
                 },
@@ -8034,7 +8574,7 @@
                   })
                 ]
               }),
-              /* @__PURE__ */ jsx(import_react_native14.View, {
+              /* @__PURE__ */ jsx(import_react_native17.View, {
                 style: {
                   marginLeft: "auto"
                 },
@@ -8054,7 +8594,7 @@
               })
             ]
           }),
-          /* @__PURE__ */ jsx(import_react_native14.View, {
+          /* @__PURE__ */ jsx(import_react_native17.View, {
             style: {
               flexDirection: "row",
               justifyContent: "center",
@@ -8069,7 +8609,7 @@
       })
     });
   }
-  var import_react_native14;
+  var import_react_native17;
   var init_PluginInfoActionSheet = __esm({
     "src/core/ui/settings/pages/Plugins/sheets/PluginInfoActionSheet.tsx"() {
       "use strict";
@@ -8079,7 +8619,7 @@
       init_assets();
       init_sheets();
       init_components();
-      import_react_native14 = __toESM(require_react_native());
+      import_react_native17 = __toESM(require_react_native());
     }
   });
 
@@ -8128,9 +8668,9 @@
     var vdPlugin = VdPluginManager.plugins[plugin.id];
     var SettingsComponent = plugin.getPluginSettingsComponent();
     return /* @__PURE__ */ jsx(ActionSheet, {
-      children: /* @__PURE__ */ jsxs(import_react_native15.ScrollView, {
+      children: /* @__PURE__ */ jsxs(import_react_native18.ScrollView, {
         children: [
-          /* @__PURE__ */ jsxs(import_react_native15.View, {
+          /* @__PURE__ */ jsxs(import_react_native18.View, {
             style: {
               flexDirection: "row",
               alignItems: "center",
@@ -8141,7 +8681,7 @@
                 variant: "heading-xl/semibold",
                 children: plugin.name
               }),
-              /* @__PURE__ */ jsx(import_react_native15.View, {
+              /* @__PURE__ */ jsx(import_react_native18.View, {
                 style: {
                   marginLeft: "auto"
                 },
@@ -8278,7 +8818,7 @@
       })
     });
   }
-  var import_react_native15;
+  var import_react_native18;
   var init_VdPluginInfoActionSheet = __esm({
     "src/core/ui/settings/pages/Plugins/sheets/VdPluginInfoActionSheet.tsx"() {
       "use strict";
@@ -8295,7 +8835,7 @@
       init_components();
       init_sheets();
       init_toasts();
-      import_react_native15 = __toESM(require_react_native());
+      import_react_native18 = __toESM(require_react_native());
     }
   });
 
@@ -8381,14 +8921,14 @@
         var unproxiedPlugins = Object.values(VdPluginManager.plugins).filter((p) => !p.id.startsWith(VD_PROXY_PREFIX) && !p.id.startsWith(BUNNY_PROXY_PREFIX));
         if (!unproxiedPlugins.length)
           return null;
-        return /* @__PURE__ */ jsx(import_react_native16.View, {
+        return /* @__PURE__ */ jsx(import_react_native19.View, {
           style: {
             marginVertical: 12,
             marginHorizontal: 10
           },
           children: /* @__PURE__ */ jsx(Card, {
             border: "strong",
-            children: /* @__PURE__ */ jsxs(import_react_native16.View, {
+            children: /* @__PURE__ */ jsxs(import_react_native19.View, {
               style: {
                 flex: 1,
                 justifyContent: "center",
@@ -8396,7 +8936,7 @@
                 flexDirection: "row"
               },
               children: [
-                /* @__PURE__ */ jsxs(import_react_native16.View, {
+                /* @__PURE__ */ jsxs(import_react_native19.View, {
                   style: {
                     gap: 6,
                     flexShrink: 1
@@ -8413,7 +8953,7 @@
                     })
                   ]
                 }),
-                /* @__PURE__ */ jsx(import_react_native16.View, {
+                /* @__PURE__ */ jsx(import_react_native19.View, {
                   style: {
                     marginLeft: "auto"
                   },
@@ -8433,7 +8973,7 @@
                             contentContainerStyle: {
                               padding: 8
                             },
-                            ItemSeparatorComponent: () => /* @__PURE__ */ jsx(import_react_native16.View, {
+                            ItemSeparatorComponent: () => /* @__PURE__ */ jsx(import_react_native19.View, {
                               style: {
                                 height: 8
                               }
@@ -8509,7 +9049,7 @@
       }
     });
   }
-  var import_react_native16, openAlert2, AlertModal2, AlertActions, AlertActionButton2;
+  var import_react_native19, openAlert2, AlertModal2, AlertActions, AlertActionButton2;
   var init_Plugins = __esm({
     "src/core/ui/settings/pages/Plugins/index.tsx"() {
       "use strict";
@@ -8532,7 +9072,7 @@
       init_metro();
       init_common();
       init_components();
-      import_react_native16 = __toESM(require_react_native());
+      import_react_native19 = __toESM(require_react_native());
       init_bunny();
       init_vendetta();
       ({ openAlert: openAlert2 } = lazyDestructure(() => findByProps("openAlert", "dismissAlert")));
@@ -8542,40 +9082,40 @@
 
   // src/core/ui/components/AddonCard.tsx
   function AddonCard(props) {
-    var styles3 = useStyles2();
+    var styles = useStyles3();
     return /* @__PURE__ */ jsx(Card, {
       children: /* @__PURE__ */ jsxs(Stack, {
         spacing: 16,
         children: [
-          /* @__PURE__ */ jsxs(import_react_native17.View, {
+          /* @__PURE__ */ jsxs(import_react_native20.View, {
             style: {
               flexDirection: "row",
               alignItems: "center"
             },
             children: [
-              /* @__PURE__ */ jsxs(import_react_native17.View, {
-                style: styles3.headerLeading,
+              /* @__PURE__ */ jsxs(import_react_native20.View, {
+                style: styles.headerLeading,
                 children: [
                   /* @__PURE__ */ jsx(Text, {
-                    style: styles3.headerLabel,
+                    style: styles.headerLabel,
                     children: props.headerLabel
                   }),
                   props.headerSublabel && /* @__PURE__ */ jsx(Text, {
-                    style: styles3.headerSubtitle,
+                    style: styles.headerSubtitle,
                     children: props.headerSublabel
                   })
                 ]
               }),
-              /* @__PURE__ */ jsxs(import_react_native17.View, {
+              /* @__PURE__ */ jsxs(import_react_native20.View, {
                 style: [
-                  styles3.headerTrailing,
+                  styles.headerTrailing,
                   {
                     marginLeft: "auto"
                   }
                 ],
                 children: [
-                  /* @__PURE__ */ jsxs(import_react_native17.View, {
-                    style: styles3.actions,
+                  /* @__PURE__ */ jsxs(import_react_native20.View, {
+                    style: styles.actions,
                     children: [
                       props.overflowActions && /* @__PURE__ */ jsx(IconButton, {
                         onPress: () => showSimpleActionSheet3({
@@ -8611,7 +9151,7 @@
                   props.toggleType && (props.toggleType === "switch" ? /* @__PURE__ */ jsx(FormSwitch, {
                     value: props.toggleValue(),
                     onValueChange: props.onToggleChange
-                  }) : /* @__PURE__ */ jsx(import_react_native17.TouchableOpacity, {
+                  }) : /* @__PURE__ */ jsx(import_react_native20.TouchableOpacity, {
                     onPress: () => {
                       props.onToggleChange?.(!props.toggleValue());
                     },
@@ -8631,7 +9171,7 @@
       })
     });
   }
-  var import_react_native17, hideActionSheet2, showSimpleActionSheet3, useStyles2;
+  var import_react_native20, hideActionSheet2, showSimpleActionSheet3, useStyles3;
   var init_AddonCard = __esm({
     "src/core/ui/components/AddonCard.tsx"() {
       "use strict";
@@ -8644,10 +9184,10 @@
       init_wrappers();
       init_color();
       init_styles();
-      import_react_native17 = __toESM(require_react_native());
+      import_react_native20 = __toESM(require_react_native());
       ({ hideActionSheet: hideActionSheet2 } = lazyDestructure(() => findByProps("openLazy", "hideActionSheet")));
       ({ showSimpleActionSheet: showSimpleActionSheet3 } = lazyDestructure(() => findByProps("showSimpleActionSheet")));
-      useStyles2 = createStyles({
+      useStyles3 = createStyles({
         card: {
           backgroundColor: semanticColors?.CARD_SECONDARY_BG,
           borderRadius: 12,
@@ -9018,9 +9558,9 @@
   function RevengeFontsExtractor({ fonts: fonts2, setName }) {
     var currentTheme2 = getCurrentTheme().data;
     var themeFonts = currentTheme2.fonts;
-    var [fontName, setFontName] = (0, import_react4.useState)(guessFontName(Object.values(themeFonts)));
-    var [error, setError] = (0, import_react4.useState)(void 0);
-    return /* @__PURE__ */ jsxs(import_react_native18.View, {
+    var [fontName, setFontName] = (0, import_react6.useState)(guessFontName(Object.values(themeFonts)));
+    var [error, setError] = (0, import_react6.useState)(void 0);
+    return /* @__PURE__ */ jsxs(import_react_native21.View, {
       style: {
         padding: 8,
         paddingBottom: 16,
@@ -9070,10 +9610,10 @@
     });
   }
   function JsonFontImporter({ fonts: fonts2, setName, setSource }) {
-    var [fontLink, setFontLink] = (0, import_react4.useState)("");
-    var [saving, setSaving] = (0, import_react4.useState)(false);
-    var [error, setError] = (0, import_react4.useState)(void 0);
-    return /* @__PURE__ */ jsxs(import_react_native18.View, {
+    var [fontLink, setFontLink] = (0, import_react6.useState)("");
+    var [saving, setSaving] = (0, import_react6.useState)(false);
+    var [error, setError] = (0, import_react6.useState)(void 0);
+    return /* @__PURE__ */ jsxs(import_react_native21.View, {
       style: {
         padding: 8,
         paddingBottom: 16,
@@ -9114,9 +9654,9 @@
     });
   }
   function EntryEditorActionSheet(props) {
-    var [familyName, setFamilyName] = (0, import_react4.useState)(props.name);
-    var [fontUrl, setFontUrl] = (0, import_react4.useState)(props.fontEntries[props.name]);
-    return /* @__PURE__ */ jsxs(import_react_native18.View, {
+    var [familyName, setFamilyName] = (0, import_react6.useState)(props.name);
+    var [fontUrl, setFontUrl] = (0, import_react6.useState)(props.fontEntries[props.name]);
+    return /* @__PURE__ */ jsxs(import_react_native21.View, {
       style: {
         padding: 8,
         paddingBottom: 16,
@@ -9168,18 +9708,18 @@
     }), "FontEditorActionSheet");
   }
   function NewEntryRow({ fontEntry }) {
-    var nameRef = (0, import_react4.useRef)();
-    var urlRef = (0, import_react4.useRef)();
-    var [nameSet, setNameSet] = (0, import_react4.useState)(false);
-    var [error, setError] = (0, import_react4.useState)();
-    return /* @__PURE__ */ jsxs(import_react_native18.View, {
+    var nameRef = (0, import_react6.useRef)();
+    var urlRef = (0, import_react6.useRef)();
+    var [nameSet, setNameSet] = (0, import_react6.useState)(false);
+    var [error, setError] = (0, import_react6.useState)();
+    return /* @__PURE__ */ jsxs(import_react_native21.View, {
       style: {
         flexDirection: "row",
         gap: 8,
         justifyContent: "flex-start"
       },
       children: [
-        /* @__PURE__ */ jsx(import_react_native18.View, {
+        /* @__PURE__ */ jsx(import_react_native21.View, {
           style: {
             flex: 1
           },
@@ -9233,10 +9773,10 @@
     });
   }
   function FontEditor(props) {
-    var [name, setName] = (0, import_react4.useState)(props.name);
-    var [source, setSource] = (0, import_react4.useState)();
-    var [importing, setIsImporting] = (0, import_react4.useState)(false);
-    var memoEntry = (0, import_react4.useMemo)(() => {
+    var [name, setName] = (0, import_react6.useState)(props.name);
+    var [source, setSource] = (0, import_react6.useState)();
+    var [importing, setIsImporting] = (0, import_react6.useState)(false);
+    var memoEntry = (0, import_react6.useMemo)(() => {
       return createProxy(props.name ? {
         ...fonts[props.name].main
       } : {}).proxy;
@@ -9245,7 +9785,7 @@
     ]);
     var fontEntries = useProxy(memoEntry);
     var navigation2 = NavigationNative.useNavigation();
-    return /* @__PURE__ */ jsx(import_react_native18.ScrollView, {
+    return /* @__PURE__ */ jsx(import_react_native21.ScrollView, {
       style: {
         flex: 1
       },
@@ -9354,7 +9894,7 @@
               })
             ]
           }),
-          /* @__PURE__ */ jsx(import_react_native18.View, {
+          /* @__PURE__ */ jsx(import_react_native21.View, {
             style: {
               flexDirection: "row",
               justifyContent: "flex-end",
@@ -9398,7 +9938,7 @@
       })
     });
   }
-  var import_react4, import_react_native18, actionSheet2;
+  var import_react6, import_react_native21, actionSheet2;
   var init_FontEditor = __esm({
     "src/core/ui/settings/pages/Fonts/FontEditor.tsx"() {
       "use strict";
@@ -9416,8 +9956,8 @@
       init_components();
       init_wrappers();
       init_components2();
-      import_react4 = __toESM(require_react());
-      import_react_native18 = __toESM(require_react_native());
+      import_react6 = __toESM(require_react());
+      import_react_native21 = __toESM(require_react_native());
       actionSheet2 = findByPropsLazy("hideActionSheet");
     }
   });
@@ -9437,7 +9977,7 @@
     var { fontFamily: fontFamilyList, fontSize } = TextStyleSheet["text-md/medium"];
     var fontFamily = fontFamilyList.split(/,/g)[0];
     var typeface = Skia.useFont(font.main[fontFamily])?.getTypeface();
-    var paragraph = (0, import_react5.useMemo)(() => {
+    var paragraph = (0, import_react7.useMemo)(() => {
       if (!typeface)
         return null;
       var fMgr = SkiaApi.TypefaceFontProvider.Make();
@@ -9454,7 +9994,7 @@
     ]);
     return (
       // This does not work, actually :woeis:
-      /* @__PURE__ */ jsx(import_react_native19.View, {
+      /* @__PURE__ */ jsx(import_react_native22.View, {
         style: {
           height: 64
         },
@@ -9468,7 +10008,7 @@
             y: 0,
             width: 300
           })
-        }) : /* @__PURE__ */ jsx(import_react_native19.View, {
+        }) : /* @__PURE__ */ jsx(import_react_native22.View, {
           style: {
             justifyContent: "center",
             alignItems: "center"
@@ -9490,19 +10030,19 @@
       children: /* @__PURE__ */ jsxs(Stack, {
         spacing: 16,
         children: [
-          /* @__PURE__ */ jsxs(import_react_native19.View, {
+          /* @__PURE__ */ jsxs(import_react_native22.View, {
             style: {
               flexDirection: "row",
               alignItems: "center"
             },
             children: [
-              /* @__PURE__ */ jsx(import_react_native19.View, {
+              /* @__PURE__ */ jsx(import_react_native22.View, {
                 children: /* @__PURE__ */ jsx(Text, {
                   variant: "heading-lg/semibold",
                   children: font.name
                 })
               }),
-              /* @__PURE__ */ jsx(import_react_native19.View, {
+              /* @__PURE__ */ jsx(import_react_native22.View, {
                 style: {
                   marginLeft: "auto"
                 },
@@ -9552,7 +10092,7 @@
       })
     });
   }
-  var Skia, import_react5, import_react_native19, useToken;
+  var Skia, import_react7, import_react_native22, useToken;
   var init_FontCard = __esm({
     "src/core/ui/settings/pages/Fonts/FontCard.tsx"() {
       "use strict";
@@ -9572,8 +10112,8 @@
       init_components();
       Skia = __toESM(require_react_native_skia());
       init_styles();
-      import_react5 = __toESM(require_react());
-      import_react_native19 = __toESM(require_react_native());
+      import_react7 = __toESM(require_react());
+      import_react_native22 = __toESM(require_react_native());
       init_FontEditor();
       ({ useToken } = lazyDestructure(() => findByProps("useToken")));
     }
@@ -9633,9 +10173,9 @@
 
   // src/core/ui/hooks/useFS.ts
   function useFileExists(path, prefix) {
-    var [state, setState] = (0, import_react6.useState)(2);
+    var [state, setState] = (0, import_react8.useState)(2);
     var check = () => fileExists(path, prefix).then((exists) => setState(exists ? 1 : 0)).catch(() => setState(3));
-    var customFS = (0, import_react6.useMemo)(() => new Proxy(fs_exports, {
+    var customFS = (0, import_react8.useMemo)(() => new Proxy(fs_exports, {
       get(target, p, receiver) {
         var val = Reflect.get(target, p, receiver);
         if (typeof val !== "function")
@@ -9650,20 +10190,20 @@
         };
       }
     }), []);
-    (0, import_react6.useEffect)(() => void check(), []);
+    (0, import_react8.useEffect)(() => void check(), []);
     return [
       state,
       customFS
     ];
   }
-  var import_react6, CheckState;
+  var import_react8, CheckState;
   var init_useFS = __esm({
     "src/core/ui/hooks/useFS.ts"() {
       "use strict";
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
       init_fs();
-      import_react6 = __toESM(require_react());
+      import_react8 = __toESM(require_react());
       (function(CheckState2) {
         CheckState2[CheckState2["FALSE"] = 0] = "FALSE";
         CheckState2[CheckState2["TRUE"] = 1] = "TRUE";
@@ -9677,7 +10217,7 @@
   function AssetDisplay({ asset }) {
     return /* @__PURE__ */ jsx(LegacyFormRow, {
       label: `${asset.name} - ${asset.id}`,
-      trailing: /* @__PURE__ */ jsx(import_react_native20.Image, {
+      trailing: /* @__PURE__ */ jsx(import_react_native23.Image, {
         source: asset.id,
         style: {
           width: 32,
@@ -9690,7 +10230,7 @@
       }
     });
   }
-  var import_react_native20;
+  var import_react_native23;
   var init_AssetDisplay = __esm({
     "src/core/ui/settings/pages/Developer/AssetDisplay.tsx"() {
       "use strict";
@@ -9700,7 +10240,7 @@
       init_common();
       init_components();
       init_toasts();
-      import_react_native20 = __toESM(require_react_native());
+      import_react_native23 = __toESM(require_react_native());
     }
   });
 
@@ -9708,7 +10248,7 @@
   function AssetBrowser() {
     var [search, setSearch] = React.useState("");
     return /* @__PURE__ */ jsx(ErrorBoundary, {
-      children: /* @__PURE__ */ jsxs(import_react_native21.View, {
+      children: /* @__PURE__ */ jsxs(import_react_native24.View, {
         style: {
           flex: 1
         },
@@ -9719,7 +10259,7 @@
             },
             onChangeText: (v2) => setSearch(v2)
           }),
-          /* @__PURE__ */ jsx(import_react_native21.FlatList, {
+          /* @__PURE__ */ jsx(import_react_native24.FlatList, {
             data: Object.values(assetsMap).filter((a) => a.name.includes(search) || a.id.toString() === search),
             renderItem: ({ item }) => /* @__PURE__ */ jsx(AssetDisplay, {
               asset: item
@@ -9731,7 +10271,7 @@
       })
     });
   }
-  var import_react_native21;
+  var import_react_native24;
   var init_AssetBrowser = __esm({
     "src/core/ui/settings/pages/Developer/AssetBrowser.tsx"() {
       "use strict";
@@ -9742,7 +10282,7 @@
       init_assets();
       init_components();
       init_components2();
-      import_react_native21 = __toESM(require_react_native());
+      import_react_native24 = __toESM(require_react_native());
     }
   });
 
@@ -9753,12 +10293,12 @@
   });
   function Developer() {
     var [rdtFileExists, fs] = useFileExists("preloads/reactDevtools.js");
-    var styles3 = useStyles3();
+    var styles = useStyles4();
     var navigation2 = NavigationNative.useNavigation();
     useProxy(settings);
     useProxy(loaderConfig);
     return /* @__PURE__ */ jsx(ErrorBoundary, {
-      children: /* @__PURE__ */ jsx(import_react_native22.ScrollView, {
+      children: /* @__PURE__ */ jsx(import_react_native25.ScrollView, {
         style: {
           flex: 1
         },
@@ -9777,7 +10317,7 @@
               placeholder: "127.0.0.1:9090",
               size: "md",
               leadingIcon: () => /* @__PURE__ */ jsx(LegacyFormText, {
-                style: styles3.leadingText,
+                style: styles.leadingText,
                 children: "ws://"
               }),
               defaultValue: settings.debuggerUrl,
@@ -9801,7 +10341,7 @@
                     }),
                     onPress: () => window[getReactDevToolsProp() || "__vendetta_rdc"]?.connectToDevTools({
                       host: settings.debuggerUrl.split(":")?.[0],
-                      resolveRNStyle: import_react_native22.StyleSheet.flatten
+                      resolveRNStyle: import_react_native25.StyleSheet.flatten
                     })
                   })
                 })
@@ -9940,7 +10480,7 @@
       })
     });
   }
-  var import_react_native22, hideActionSheet3, showSimpleActionSheet4, RDT_EMBED_LINK, useStyles3;
+  var import_react_native25, hideActionSheet3, showSimpleActionSheet4, RDT_EMBED_LINK, useStyles4;
   var init_Developer = __esm({
     "src/core/ui/settings/pages/Developer/index.tsx"() {
       "use strict";
@@ -9963,11 +10503,11 @@
       init_color();
       init_components2();
       init_styles();
-      import_react_native22 = __toESM(require_react_native());
+      import_react_native25 = __toESM(require_react_native());
       ({ hideActionSheet: hideActionSheet3 } = lazyDestructure(() => findByProps("openLazy", "hideActionSheet")));
       ({ showSimpleActionSheet: showSimpleActionSheet4 } = lazyDestructure(() => findByProps("showSimpleActionSheet")));
       RDT_EMBED_LINK = "https://raw.githubusercontent.com/amsyarasyiq/rdt-embedder/main/dist.js";
-      useStyles3 = createStyles({
+      useStyles4 = createStyles({
         leadingText: {
           ...TextStyleSheet["heading-md/semibold"],
           color: semanticColors.TEXT_MUTED,
@@ -9989,7 +10529,7 @@
             uri: pyoncord_default
           },
           render: () => Promise.resolve().then(() => (init_General(), General_exports)),
-          useTrailing: () => `(${"fd8ddce-main"})`
+          useTrailing: () => `(${"f447910-main"})`
         },
         {
           key: "BUNNY_PLUGINS",
@@ -10059,7 +10599,7 @@
   });
 
   // src/core/vendetta/api.tsx
-  var import_react7, import_react_native23, initVendettaObject;
+  var import_react9, import_react_native26, initVendettaObject;
   var init_api3 = __esm({
     "src/core/vendetta/api.tsx"() {
       "use strict";
@@ -10088,8 +10628,8 @@
       init_styles();
       init_toasts();
       init_dist();
-      import_react7 = __toESM(require_react());
-      import_react_native23 = __toESM(require_react_native());
+      import_react9 = __toESM(require_react());
+      import_react_native26 = __toESM(require_react_native());
       init_plugins();
       initVendettaObject = () => {
         var createStackBasedFilter = (fn) => {
@@ -10119,8 +10659,8 @@
                     ...module,
                     ActionSheetTitleHeader: module.BottomSheetTitleHeader,
                     ActionSheetContentContainer: ({ children }) => {
-                      (0, import_react7.useEffect)(() => console.warn("Discord has removed 'ActionSheetContentContainer', please move into something else. This has been temporarily replaced with View"), []);
-                      return /* @__PURE__ */ (0, import_react7.createElement)(import_react_native23.View, null, children);
+                      (0, import_react9.useEffect)(() => console.warn("Discord has removed 'ActionSheetContentContainer', please move into something else. This has been temporarily replaced with View"), []);
+                      return /* @__PURE__ */ (0, import_react9.createElement)(import_react_native26.View, null, children);
                     }
                   };
                 }
@@ -10283,204 +10823,6 @@
     }
   });
 
-  // src/lib/ui/safeMode.tsx
-  function getErrorBoundaryContext() {
-    var ctxt = findByNameLazy("ErrorBoundary")[_lazyContextSymbol];
-    return new Promise((resolve) => {
-      ctxt.getExports((exp) => {
-        resolve(exp.prototype);
-      });
-    });
-  }
-  var import_react_native24, ErrorBoundary2, BadgableTabBar, styles2, tabs, safeMode_default;
-  var init_safeMode = __esm({
-    "src/lib/ui/safeMode.tsx"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_jsxRuntime();
-      init_i18n();
-      init_debug();
-      init_modules();
-      init_patcher();
-      init_settings();
-      init_lazy();
-      init_components();
-      init_lazy2();
-      init_wrappers();
-      init_color();
-      init_components2();
-      init_styles();
-      import_react_native24 = __toESM(require_react_native());
-      ErrorBoundary2 = findByNameLazy("ErrorBoundary");
-      ({ BadgableTabBar } = lazyDestructure(() => findByProps("BadgableTabBar")));
-      styles2 = createThemedStyleSheet({
-        container: {
-          flex: 1,
-          backgroundColor: semanticColors.BACKGROUND_PRIMARY,
-          paddingHorizontal: 16
-        },
-        header: {
-          flex: 1,
-          flexDirection: "row",
-          justifyContent: "center",
-          alignItems: "center",
-          marginVertical: 8
-        },
-        headerTitle: {
-          ...TextStyleSheet["heading-md/semibold"],
-          textAlign: "center",
-          textTransform: "uppercase",
-          color: semanticColors.HEADER_PRIMARY
-        },
-        headerDescription: {
-          ...TextStyleSheet["text-sm/medium"],
-          textAlign: "center",
-          color: semanticColors.TEXT_MUTED
-        },
-        footer: {
-          flexDirection: DeviceManager.isTablet ? "row" : "column",
-          justifyContent: "flex-end",
-          marginVertical: 8
-        }
-      });
-      tabs = [
-        {
-          id: "message",
-          title: () => Strings.MESSAGE
-        },
-        {
-          id: "stack",
-          title: () => Strings.STACK_TRACE
-        },
-        {
-          id: "componentStack",
-          title: () => Strings.COMPONENT,
-          trimWhitespace: true
-        }
-      ];
-      safeMode_default = () => after.await("render", getErrorBoundaryContext(), function(_2, ret) {
-        if (!this.state.error)
-          return;
-        this.state.activeTab ??= "message";
-        var tabData = tabs.find((t) => t.id === this.state.activeTab);
-        var errorText = this.state.error[this.state.activeTab];
-        var buttons = [
-          {
-            text: Strings.RELOAD_DISCORD,
-            onPress: this.handleReload
-          },
-          ...!settings.safeMode?.enabled ? [
-            {
-              text: Strings.RELOAD_IN_SAFE_MODE,
-              onPress: toggleSafeMode
-            }
-          ] : [],
-          {
-            text: Strings.RETRY_RENDER,
-            color: "red",
-            onPress: () => this.setState({
-              info: null,
-              error: null
-            })
-          }
-        ];
-        return /* @__PURE__ */ jsx(ErrorBoundary, {
-          children: /* @__PURE__ */ jsxs(SafeAreaView, {
-            style: styles2.container,
-            children: [
-              /* @__PURE__ */ jsxs(import_react_native24.View, {
-                style: styles2.header,
-                children: [
-                  /* @__PURE__ */ jsx(ret.props.Illustration, {
-                    style: {
-                      transform: [
-                        {
-                          scale: 0.6
-                        }
-                      ],
-                      marginLeft: -40,
-                      marginRight: -80
-                    }
-                  }),
-                  /* @__PURE__ */ jsxs(import_react_native24.View, {
-                    style: {
-                      flex: 2,
-                      paddingLeft: 24
-                    },
-                    children: [
-                      /* @__PURE__ */ jsx(import_react_native24.Text, {
-                        style: styles2.headerTitle,
-                        children: ret.props.title
-                      }),
-                      /* @__PURE__ */ jsx(import_react_native24.Text, {
-                        style: styles2.headerDescription,
-                        children: ret.props.body
-                      })
-                    ]
-                  })
-                ]
-              }),
-              /* @__PURE__ */ jsxs(import_react_native24.View, {
-                style: {
-                  flex: 6
-                },
-                children: [
-                  /* @__PURE__ */ jsx(import_react_native24.View, {
-                    style: {
-                      paddingBottom: 8
-                    },
-                    children: /* @__PURE__ */ jsx(BadgableTabBar, {
-                      tabs: tabs.map((t) => ({
-                        ...t,
-                        title: t.title()
-                      })),
-                      activeTab: this.state.activeTab,
-                      onTabSelected: (tab) => {
-                        this.setState({
-                          activeTab: tab
-                        });
-                      }
-                    })
-                  }),
-                  /* @__PURE__ */ jsx(Codeblock, {
-                    selectable: true,
-                    style: {
-                      flex: 1,
-                      textAlignVertical: "top"
-                    },
-                    children: tabData?.trimWhitespace ? errorText.split("\n").filter((i) => i.length !== 0).map((i) => i.trim()).join("\n") : errorText
-                  })
-                ]
-              }),
-              /* @__PURE__ */ jsx(import_react_native24.View, {
-                style: styles2.footer,
-                children: buttons.map((button) => {
-                  var buttonIndex = buttons.indexOf(button) !== 0 ? 8 : 0;
-                  return /* @__PURE__ */ jsx(CompatButton, {
-                    text: button.text,
-                    color: button.color ?? "brand",
-                    size: button.size ?? "small",
-                    onPress: button.onPress,
-                    style: {
-                      ...DeviceManager.isTablet ? {
-                        flex: `0.${buttons.length}`,
-                        marginLeft: buttonIndex
-                      } : {
-                        marginTop: buttonIndex
-                      },
-                      borderRadius: 16
-                    }
-                  });
-                })
-              })
-            ]
-          })
-        });
-      });
-    }
-  });
-
   // src/global.d.ts
   var init_global_d = __esm({
     "src/global.d.ts"() {
@@ -10608,6 +10950,7 @@
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
       init_async_to_generator();
+      init_patchErrorBoundary();
       init_fixes();
       init_i18n();
       init_settings3();
@@ -10623,7 +10966,6 @@
       init_loader();
       init_jsx();
       init_logger();
-      init_safeMode();
       init_settings2();
       init_lib();
       src_default = /* @__PURE__ */ _async_to_generator(function* () {
@@ -10639,7 +10981,7 @@
           initFetchI18nStrings(),
           initSettings(),
           fixes_default(),
-          safeMode_default(),
+          patchErrorBoundary(),
           updatePlugins()
         ]).then(
           // Push them all to unloader
@@ -10676,7 +11018,7 @@
         alert([
           "Failed to load Bunny!\n",
           `Build Number: ${ClientInfoManager2.Build}`,
-          `Bunny: ${"fd8ddce-main"}`,
+          `Bunny: ${"f447910-main"}`,
           stack || e?.toString?.()
         ].join("\n"));
       }
