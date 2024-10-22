@@ -3420,7 +3420,7 @@
       init_logger();
       init_toasts();
       import_react_native3 = __toESM(require_react_native());
-      versionHash = "f447910-main";
+      versionHash = "a0d467a-main";
     }
   });
 
@@ -4387,7 +4387,7 @@
       useStyles2 = createStyles({
         container: {
           flex: 1,
-          backgroundColor: tokens.colors.BACKGROUND_PRIMARY,
+          backgroundColor: tokens.colors.BG_BASE_SECONDARY,
           paddingHorizontal: 16,
           height: "100%",
           padding: 8,
@@ -10529,7 +10529,7 @@
             uri: pyoncord_default
           },
           render: () => Promise.resolve().then(() => (init_General(), General_exports)),
-          useTrailing: () => `(${"f447910-main"})`
+          useTrailing: () => `(${"a0d467a-main"})`
         },
         {
           key: "BUNNY_PLUGINS",
@@ -11018,7 +11018,7 @@
         alert([
           "Failed to load Bunny!\n",
           `Build Number: ${ClientInfoManager2.Build}`,
-          `Bunny: ${"f447910-main"}`,
+          `Bunny: ${"a0d467a-main"}`,
           stack || e?.toString?.()
         ].join("\n"));
       }
