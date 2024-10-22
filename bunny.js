@@ -6,17 +6,10 @@
   var __getOwnPropNames = Object.getOwnPropertyNames;
   var __getProtoOf = Object.getPrototypeOf;
   var __hasOwnProp = Object.prototype.hasOwnProperty;
-  var __require = /* @__PURE__ */ ((x2) => typeof require !== "undefined" ? require : typeof Proxy !== "undefined" ? new Proxy(x2, {
-    get: (a, b3) => (typeof require !== "undefined" ? require : a)[b3]
-  }) : x2)(function(x2) {
-    if (typeof require !== "undefined")
-      return require.apply(this, arguments);
-    throw Error('Dynamic require of "' + x2 + '" is not supported');
-  });
   var __esm = (fn, res) => function __init() {
     return fn && (res = (0, fn[__getOwnPropNames(fn)[0]])(fn = 0)), res;
   };
-  var __commonJS = (cb, mod) => function __require2() {
+  var __commonJS = (cb, mod) => function __require() {
     return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
   };
   var __export = (target, all) => {
@@ -71,13 +64,13 @@
     }
   });
 
-  // node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_async_to_generator.js
+  // node_modules/.pnpm/@swc+helpers@0.5.13/node_modules/@swc/helpers/esm/_async_to_generator.js
   function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
     try {
       var info = gen[key](arg);
       var value = info.value;
-    } catch (error2) {
-      reject(error2);
+    } catch (error) {
+      reject(error);
       return;
     }
     if (info.done)
@@ -101,7 +94,7 @@
     };
   }
   var init_async_to_generator = __esm({
-    "node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_async_to_generator.js"() {
+    "node_modules/.pnpm/@swc+helpers@0.5.13/node_modules/@swc/helpers/esm/_async_to_generator.js"() {
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
     }
@@ -112,13 +105,13 @@
     "node_modules/.pnpm/spitroast@1.4.4/node_modules/spitroast/dist/cjs.js"(exports, module) {
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
-      var __defProp3 = Object.defineProperty;
+      var __defProp2 = Object.defineProperty;
       var __getOwnPropDesc2 = Object.getOwnPropertyDescriptor;
       var __getOwnPropNames2 = Object.getOwnPropertyNames;
-      var __hasOwnProp3 = Object.prototype.hasOwnProperty;
+      var __hasOwnProp2 = Object.prototype.hasOwnProperty;
       var __export2 = (target, all) => {
         for (var name in all)
-          __defProp3(target, name, {
+          __defProp2(target, name, {
             get: all[name],
             enumerable: true
           });
@@ -126,8 +119,8 @@
       var __copyProps2 = (to, from, except, desc) => {
         if (from && typeof from === "object" || typeof from === "function") {
           var _loop2 = function(key2) {
-            if (!__hasOwnProp3.call(to, key2) && key2 !== except)
-              __defProp3(to, key2, {
+            if (!__hasOwnProp2.call(to, key2) && key2 !== except)
+              __defProp2(to, key2, {
                 get: () => from[key2],
                 enumerable: !(desc = __getOwnPropDesc2(from, key2)) || desc.enumerable
               });
@@ -137,7 +130,7 @@
         }
         return to;
       };
-      var __toCommonJS2 = (mod) => __copyProps2(__defProp3({}, "__esModule", {
+      var __toCommonJS2 = (mod) => __copyProps2(__defProp2({}, "__esModule", {
         value: true
       }), mod);
       var src_exports2 = {};
@@ -245,146 +238,132 @@
     }
   });
 
-  // src/lib/api/native/rn-modules/index.ts
-  var rn_modules_exports = {};
-  __export(rn_modules_exports, {
-    RTNBundleUpdaterManager: () => RTNBundleUpdaterManager,
-    RTNClientInfoManager: () => RTNClientInfoManager,
-    RTNDeviceManager: () => RTNDeviceManager,
-    RTNFileManager: () => RTNFileManager,
-    RTNMMKVManager: () => RTNMMKVManager,
-    RTNThemeManager: () => RTNThemeManager
+  // src/lib/api/native/modules/index.ts
+  var modules_exports = {};
+  __export(modules_exports, {
+    BundleUpdaterManager: () => BundleUpdaterManager,
+    ClientInfoManager: () => ClientInfoManager,
+    DeviceManager: () => DeviceManager,
+    FileManager: () => FileManager,
+    MMKVManager: () => MMKVManager,
+    ThemeManager: () => ThemeManager
   });
-  var nmp, RTNMMKVManager, RTNFileManager, RTNClientInfoManager, RTNDeviceManager, RTNBundleUpdaterManager, RTNThemeManager;
-  var init_rn_modules = __esm({
-    "src/lib/api/native/rn-modules/index.ts"() {
+  var nmp, MMKVManager, FileManager, ClientInfoManager, DeviceManager, BundleUpdaterManager, ThemeManager;
+  var init_modules = __esm({
+    "src/lib/api/native/modules/index.ts"() {
       "use strict";
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
       nmp = window.nativeModuleProxy;
-      RTNMMKVManager = nmp.MMKVManager;
-      RTNFileManager = nmp.DCDFileManager ?? nmp.RTNFileManager;
-      RTNClientInfoManager = nmp.InfoDictionaryManager ?? nmp.RTNClientInfoManager;
-      RTNDeviceManager = nmp.DCDDeviceManager ?? nmp.RTNDeviceManager;
-      ({ BundleUpdaterManager: RTNBundleUpdaterManager } = nmp);
-      RTNThemeManager = nmp.RTNThemeManager ?? nmp.DCDTheme;
+      MMKVManager = nmp.MMKVManager;
+      FileManager = nmp.DCDFileManager ?? nmp.RTNFileManager;
+      ClientInfoManager = nmp.InfoDictionaryManager ?? nmp.RTNClientInfoManager;
+      DeviceManager = nmp.DCDDeviceManager ?? nmp.RTNDeviceManager;
+      ({ BundleUpdaterManager } = nmp);
+      ThemeManager = nmp.RTNThemeManager ?? nmp.DCDTheme;
     }
   });
 
-  // src/lib/api/native/fs.ts
-  var fs_exports = {};
-  __export(fs_exports, {
-    clearFolder: () => clearFolder,
-    downloadFile: () => downloadFile,
-    fileExists: () => fileExists,
-    readFile: () => readFile,
-    removeFile: () => removeFile,
-    writeFile: () => writeFile
-  });
-  function clearFolder(path) {
-    return _clearFolder.apply(this, arguments);
+  // node_modules/.pnpm/@swc+helpers@0.5.13/node_modules/@swc/helpers/esm/_get_prototype_of.js
+  function _get_prototype_of(o) {
+    _get_prototype_of = Object.setPrototypeOf ? Object.getPrototypeOf : function getPrototypeOf(o2) {
+      return o2.__proto__ || Object.getPrototypeOf(o2);
+    };
+    return _get_prototype_of(o);
   }
-  function _clearFolder() {
-    _clearFolder = _async_to_generator(function* (path, prefix = "pyoncord/") {
-      if (typeof RTNFileManager.clearFolder !== "function")
-        throw new Error("'fs.clearFolder' is not supported");
-      return void (yield RTNFileManager.clearFolder("documents", `${prefix}${path}`));
-    });
-    return _clearFolder.apply(this, arguments);
-  }
-  function removeFile(path) {
-    return _removeFile.apply(this, arguments);
-  }
-  function _removeFile() {
-    _removeFile = _async_to_generator(function* (path, prefix = "pyoncord/") {
-      if (typeof RTNFileManager.removeFile !== "function")
-        throw new Error("'fs.removeFile' is not supported");
-      return void (yield RTNFileManager.removeFile("documents", `${prefix}${path}`));
-    });
-    return _removeFile.apply(this, arguments);
-  }
-  function fileExists(path) {
-    return _fileExists.apply(this, arguments);
-  }
-  function _fileExists() {
-    _fileExists = _async_to_generator(function* (path, prefix = "pyoncord/") {
-      return yield RTNFileManager.fileExists(`${RTNFileManager.getConstants().DocumentsDirPath}/${prefix}${path}`);
-    });
-    return _fileExists.apply(this, arguments);
-  }
-  function writeFile(path, data) {
-    return _writeFile.apply(this, arguments);
-  }
-  function _writeFile() {
-    _writeFile = _async_to_generator(function* (path, data, prefix = "pyoncord/") {
-      if (typeof data !== "string")
-        throw new Error("Argument 'data' must be a string");
-      return void (yield RTNFileManager.writeFile("documents", `${prefix}${path}`, data, "utf8"));
-    });
-    return _writeFile.apply(this, arguments);
-  }
-  function readFile(path) {
-    return _readFile.apply(this, arguments);
-  }
-  function _readFile() {
-    _readFile = _async_to_generator(function* (path, prefix = "pyoncord/") {
-      try {
-        return yield RTNFileManager.readFile(`${RTNFileManager.getConstants().DocumentsDirPath}/${prefix}${path}`, "utf8");
-      } catch (err) {
-        throw new Error(`An error occured while reading '${path}'`, {
-          cause: err
-        });
-      }
-    });
-    return _readFile.apply(this, arguments);
-  }
-  function downloadFile(url2, path) {
-    return _downloadFile.apply(this, arguments);
-  }
-  function _downloadFile() {
-    _downloadFile = _async_to_generator(function* (url2, path, prefix = "pyoncord/") {
-      var blob = yield fetch(url2).then((r) => r.blob());
-      var dataURL = yield new Promise((r) => {
-        var reader = new FileReader();
-        reader.onload = () => r(reader.result);
-        reader.readAsDataURL(blob);
-      });
-      var data;
-      if (dataURL == null) {
-        throw new Error("Failed to convert blob to data URL");
-      } else {
-        var index = dataURL.indexOf("base64,");
-        if (index === -1)
-          throw new Error("dataURL does not contain base64");
-        data = dataURL.slice(index + 7);
-      }
-      return void (yield RTNFileManager.writeFile("documents", `${prefix}${path}`, data, "base64"));
-    });
-    return _downloadFile.apply(this, arguments);
-  }
-  var init_fs = __esm({
-    "src/lib/api/native/fs.ts"() {
-      "use strict";
+  var init_get_prototype_of = __esm({
+    "node_modules/.pnpm/@swc+helpers@0.5.13/node_modules/@swc/helpers/esm/_get_prototype_of.js"() {
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
-      init_async_to_generator();
-      init_rn_modules();
     }
   });
 
-  // node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_class_call_check.js
+  // node_modules/.pnpm/@swc+helpers@0.5.13/node_modules/@swc/helpers/esm/_is_native_reflect_construct.js
+  function _is_native_reflect_construct() {
+    try {
+      var result = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function() {
+      }));
+    } catch (_2) {
+    }
+    return (_is_native_reflect_construct = function _is_native_reflect_construct2() {
+      return !!result;
+    })();
+  }
+  var init_is_native_reflect_construct = __esm({
+    "node_modules/.pnpm/@swc+helpers@0.5.13/node_modules/@swc/helpers/esm/_is_native_reflect_construct.js"() {
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+    }
+  });
+
+  // node_modules/.pnpm/@swc+helpers@0.5.13/node_modules/@swc/helpers/esm/_assert_this_initialized.js
+  function _assert_this_initialized(self) {
+    if (self === void 0)
+      throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+    return self;
+  }
+  var init_assert_this_initialized = __esm({
+    "node_modules/.pnpm/@swc+helpers@0.5.13/node_modules/@swc/helpers/esm/_assert_this_initialized.js"() {
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+    }
+  });
+
+  // node_modules/.pnpm/@swc+helpers@0.5.13/node_modules/@swc/helpers/esm/_type_of.js
+  function _type_of(obj) {
+    "@swc/helpers - typeof";
+    return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj;
+  }
+  var init_type_of = __esm({
+    "node_modules/.pnpm/@swc+helpers@0.5.13/node_modules/@swc/helpers/esm/_type_of.js"() {
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+    }
+  });
+
+  // node_modules/.pnpm/@swc+helpers@0.5.13/node_modules/@swc/helpers/esm/_possible_constructor_return.js
+  function _possible_constructor_return(self, call) {
+    if (call && (_type_of(call) === "object" || typeof call === "function"))
+      return call;
+    return _assert_this_initialized(self);
+  }
+  var init_possible_constructor_return = __esm({
+    "node_modules/.pnpm/@swc+helpers@0.5.13/node_modules/@swc/helpers/esm/_possible_constructor_return.js"() {
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_assert_this_initialized();
+      init_type_of();
+    }
+  });
+
+  // node_modules/.pnpm/@swc+helpers@0.5.13/node_modules/@swc/helpers/esm/_call_super.js
+  function _call_super(_this, derived, args) {
+    derived = _get_prototype_of(derived);
+    return _possible_constructor_return(_this, _is_native_reflect_construct() ? Reflect.construct(derived, args || [], _get_prototype_of(_this).constructor) : derived.apply(_this, args));
+  }
+  var init_call_super = __esm({
+    "node_modules/.pnpm/@swc+helpers@0.5.13/node_modules/@swc/helpers/esm/_call_super.js"() {
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_get_prototype_of();
+      init_is_native_reflect_construct();
+      init_possible_constructor_return();
+    }
+  });
+
+  // node_modules/.pnpm/@swc+helpers@0.5.13/node_modules/@swc/helpers/esm/_class_call_check.js
   function _class_call_check(instance, Constructor) {
     if (!(instance instanceof Constructor))
       throw new TypeError("Cannot call a class as a function");
   }
   var init_class_call_check = __esm({
-    "node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_class_call_check.js"() {
+    "node_modules/.pnpm/@swc+helpers@0.5.13/node_modules/@swc/helpers/esm/_class_call_check.js"() {
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
     }
   });
 
-  // node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_set_prototype_of.js
+  // node_modules/.pnpm/@swc+helpers@0.5.13/node_modules/@swc/helpers/esm/_set_prototype_of.js
   function _set_prototype_of(o, p) {
     _set_prototype_of = Object.setPrototypeOf || function setPrototypeOf(o2, p2) {
       o2.__proto__ = p2;
@@ -393,13 +372,13 @@
     return _set_prototype_of(o, p);
   }
   var init_set_prototype_of = __esm({
-    "node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_set_prototype_of.js"() {
+    "node_modules/.pnpm/@swc+helpers@0.5.13/node_modules/@swc/helpers/esm/_set_prototype_of.js"() {
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
     }
   });
 
-  // node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_inherits.js
+  // node_modules/.pnpm/@swc+helpers@0.5.13/node_modules/@swc/helpers/esm/_inherits.js
   function _inherits(subClass, superClass) {
     if (typeof superClass !== "function" && superClass !== null) {
       throw new TypeError("Super expression must either be null or a function");
@@ -415,37 +394,14 @@
       _set_prototype_of(subClass, superClass);
   }
   var init_inherits = __esm({
-    "node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_inherits.js"() {
+    "node_modules/.pnpm/@swc+helpers@0.5.13/node_modules/@swc/helpers/esm/_inherits.js"() {
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
       init_set_prototype_of();
     }
   });
 
-  // node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_is_native_reflect_construct.js
-  function _is_native_reflect_construct() {
-    if (typeof Reflect === "undefined" || !Reflect.construct)
-      return false;
-    if (Reflect.construct.sham)
-      return false;
-    if (typeof Proxy === "function")
-      return true;
-    try {
-      Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function() {
-      }));
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
-  var init_is_native_reflect_construct = __esm({
-    "node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_is_native_reflect_construct.js"() {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-    }
-  });
-
-  // node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_construct.js
+  // node_modules/.pnpm/@swc+helpers@0.5.13/node_modules/@swc/helpers/esm/_construct.js
   function _construct(Parent, args, Class) {
     if (_is_native_reflect_construct())
       _construct = Reflect.construct;
@@ -465,7 +421,7 @@
     return _construct.apply(null, arguments);
   }
   var init_construct = __esm({
-    "node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_construct.js"() {
+    "node_modules/.pnpm/@swc+helpers@0.5.13/node_modules/@swc/helpers/esm/_construct.js"() {
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
       init_is_native_reflect_construct();
@@ -473,32 +429,18 @@
     }
   });
 
-  // node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_get_prototype_of.js
-  function _get_prototype_of(o) {
-    _get_prototype_of = Object.setPrototypeOf ? Object.getPrototypeOf : function getPrototypeOf(o2) {
-      return o2.__proto__ || Object.getPrototypeOf(o2);
-    };
-    return _get_prototype_of(o);
-  }
-  var init_get_prototype_of = __esm({
-    "node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_get_prototype_of.js"() {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-    }
-  });
-
-  // node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_is_native_function.js
+  // node_modules/.pnpm/@swc+helpers@0.5.13/node_modules/@swc/helpers/esm/_is_native_function.js
   function _is_native_function(fn) {
     return Function.toString.call(fn).indexOf("[native code]") !== -1;
   }
   var init_is_native_function = __esm({
-    "node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_is_native_function.js"() {
+    "node_modules/.pnpm/@swc+helpers@0.5.13/node_modules/@swc/helpers/esm/_is_native_function.js"() {
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
     }
   });
 
-  // node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_wrap_native_super.js
+  // node_modules/.pnpm/@swc+helpers@0.5.13/node_modules/@swc/helpers/esm/_wrap_native_super.js
   function _wrap_native_super(Class) {
     var _cache = typeof Map === "function" ? /* @__PURE__ */ new Map() : void 0;
     _wrap_native_super = function _wrap_native_super2(Class2) {
@@ -527,7 +469,7 @@
     return _wrap_native_super(Class);
   }
   var init_wrap_native_super = __esm({
-    "node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_wrap_native_super.js"() {
+    "node_modules/.pnpm/@swc+helpers@0.5.13/node_modules/@swc/helpers/esm/_wrap_native_super.js"() {
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
       init_construct();
@@ -537,171 +479,114 @@
     }
   });
 
-  // node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_assert_this_initialized.js
-  function _assert_this_initialized(self) {
-    if (self === void 0)
-      throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-    return self;
-  }
-  var init_assert_this_initialized = __esm({
-    "node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_assert_this_initialized.js"() {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-    }
-  });
-
-  // node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_type_of.js
-  function _type_of(obj) {
-    "@swc/helpers - typeof";
-    return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj;
-  }
-  var init_type_of = __esm({
-    "node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_type_of.js"() {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-    }
-  });
-
-  // node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_possible_constructor_return.js
-  function _possible_constructor_return(self, call) {
-    if (call && (_type_of(call) === "object" || typeof call === "function"))
-      return call;
-    return _assert_this_initialized(self);
-  }
-  var init_possible_constructor_return = __esm({
-    "node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_possible_constructor_return.js"() {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_assert_this_initialized();
-      init_type_of();
-    }
-  });
-
-  // node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_create_super.js
-  function _create_super(Derived) {
-    var hasNativeReflectConstruct = _is_native_reflect_construct();
-    return function _createSuperInternal() {
-      var Super = _get_prototype_of(Derived), result;
-      if (hasNativeReflectConstruct) {
-        var NewTarget = _get_prototype_of(this).constructor;
-        result = Reflect.construct(Super, arguments, NewTarget);
-      } else {
-        result = Super.apply(this, arguments);
+  // node_modules/.pnpm/es-toolkit@1.21.0/node_modules/es-toolkit/dist/function/debounce.mjs
+  function debounce(func, debounceMs, { signal, edges } = {}) {
+    var pendingThis = void 0;
+    var pendingArgs = null;
+    var leading = edges != null && edges.includes("leading");
+    var trailing = edges == null || edges.includes("trailing");
+    var invoke = () => {
+      if (pendingArgs !== null) {
+        func.apply(pendingThis, pendingArgs);
+        pendingThis = void 0;
+        pendingArgs = null;
       }
-      return _possible_constructor_return(this, result);
     };
-  }
-  var init_create_super = __esm({
-    "node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_create_super.js"() {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_get_prototype_of();
-      init_is_native_reflect_construct();
-      init_possible_constructor_return();
-    }
-  });
-
-  // node_modules/.pnpm/es-toolkit@1.13.1/node_modules/es-toolkit/dist/chunk-24FKGR6U.mjs
-  var __defProp2, __getOwnPropSymbols, __hasOwnProp2, __propIsEnum, __defNormalProp, __spreadValues;
-  var init_chunk_24FKGR6U = __esm({
-    "node_modules/.pnpm/es-toolkit@1.13.1/node_modules/es-toolkit/dist/chunk-24FKGR6U.mjs"() {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      __defProp2 = Object.defineProperty;
-      __getOwnPropSymbols = Object.getOwnPropertySymbols;
-      __hasOwnProp2 = Object.prototype.hasOwnProperty;
-      __propIsEnum = Object.prototype.propertyIsEnumerable;
-      __defNormalProp = (obj, key, value) => key in obj ? __defProp2(obj, key, {
-        enumerable: true,
-        configurable: true,
-        writable: true,
-        value
-      }) : obj[key] = value;
-      __spreadValues = (a, b3) => {
-        for (var prop in b3 || (b3 = {}))
-          if (__hasOwnProp2.call(b3, prop))
-            __defNormalProp(a, prop, b3[prop]);
-        if (__getOwnPropSymbols)
-          for (var prop of __getOwnPropSymbols(b3)) {
-            if (__propIsEnum.call(b3, prop))
-              __defNormalProp(a, prop, b3[prop]);
-          }
-        return a;
-      };
-    }
-  });
-
-  // node_modules/.pnpm/es-toolkit@1.13.1/node_modules/es-toolkit/dist/chunk-BMRTZMRE.mjs
-  function isNotNil(x2) {
-    return x2 !== null && x2 !== void 0;
-  }
-  var init_chunk_BMRTZMRE = __esm({
-    "node_modules/.pnpm/es-toolkit@1.13.1/node_modules/es-toolkit/dist/chunk-BMRTZMRE.mjs"() {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-    }
-  });
-
-  // node_modules/.pnpm/es-toolkit@1.13.1/node_modules/es-toolkit/dist/chunk-WFZXCGEG.mjs
-  function omit(obj, keys) {
-    var result = __spreadValues({}, obj);
-    for (var key of keys) {
-      delete result[key];
-    }
-    return result;
-  }
-  var init_chunk_WFZXCGEG = __esm({
-    "node_modules/.pnpm/es-toolkit@1.13.1/node_modules/es-toolkit/dist/chunk-WFZXCGEG.mjs"() {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_chunk_24FKGR6U();
-    }
-  });
-
-  // node_modules/.pnpm/es-toolkit@1.13.1/node_modules/es-toolkit/dist/chunk-3IP4JVLL.mjs
-  function debounce(func, debounceMs, { signal } = {}) {
-    var timeoutId = null;
-    var debounced = function debounced2(...args) {
-      if (timeoutId !== null) {
-        clearTimeout(timeoutId);
+    var onTimerEnd = () => {
+      if (trailing) {
+        invoke();
       }
-      if (signal == null ? void 0 : signal.aborted) {
-        return;
+      cancel();
+    };
+    var timeoutId = null;
+    var schedule = () => {
+      if (timeoutId != null) {
+        clearTimeout(timeoutId);
       }
       timeoutId = setTimeout(() => {
-        func(...args);
         timeoutId = null;
+        onTimerEnd();
       }, debounceMs);
     };
-    var onAbort = function onAbort2() {
-      debounced.cancel();
-    };
-    debounced.cancel = function() {
+    var cancelTimer = () => {
       if (timeoutId !== null) {
         clearTimeout(timeoutId);
         timeoutId = null;
       }
     };
-    signal == null ? void 0 : signal.addEventListener("abort", onAbort, {
+    var cancel = () => {
+      cancelTimer();
+      pendingThis = void 0;
+      pendingArgs = null;
+    };
+    var flush = () => {
+      cancelTimer();
+      invoke();
+    };
+    var debounced = function debounced2(...args) {
+      if (signal?.aborted) {
+        return;
+      }
+      pendingThis = this;
+      pendingArgs = args;
+      var isFirstCall = timeoutId == null;
+      schedule();
+      if (leading && isFirstCall) {
+        invoke();
+      }
+    };
+    debounced.schedule = schedule;
+    debounced.cancel = cancel;
+    debounced.flush = flush;
+    signal?.addEventListener("abort", cancel, {
       once: true
     });
     return debounced;
   }
-  var init_chunk_3IP4JVLL = __esm({
-    "node_modules/.pnpm/es-toolkit@1.13.1/node_modules/es-toolkit/dist/chunk-3IP4JVLL.mjs"() {
+  var init_debounce = __esm({
+    "node_modules/.pnpm/es-toolkit@1.21.0/node_modules/es-toolkit/dist/function/debounce.mjs"() {
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
     }
   });
 
-  // node_modules/.pnpm/es-toolkit@1.13.1/node_modules/es-toolkit/dist/index.mjs
-  var init_dist = __esm({
-    "node_modules/.pnpm/es-toolkit@1.13.1/node_modules/es-toolkit/dist/index.mjs"() {
+  // node_modules/.pnpm/es-toolkit@1.21.0/node_modules/es-toolkit/dist/object/omit.mjs
+  function omit(obj, keys) {
+    var result = {
+      ...obj
+    };
+    for (var i = 0; i < keys.length; i++) {
+      var key = keys[i];
+      delete result[key];
+    }
+    return result;
+  }
+  var init_omit = __esm({
+    "node_modules/.pnpm/es-toolkit@1.21.0/node_modules/es-toolkit/dist/object/omit.mjs"() {
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
-      init_chunk_BMRTZMRE();
-      init_chunk_WFZXCGEG();
-      init_chunk_3IP4JVLL();
+    }
+  });
+
+  // node_modules/.pnpm/es-toolkit@1.21.0/node_modules/es-toolkit/dist/predicate/isNotNil.mjs
+  function isNotNil(x2) {
+    return x2 != null;
+  }
+  var init_isNotNil = __esm({
+    "node_modules/.pnpm/es-toolkit@1.21.0/node_modules/es-toolkit/dist/predicate/isNotNil.mjs"() {
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+    }
+  });
+
+  // node_modules/.pnpm/es-toolkit@1.21.0/node_modules/es-toolkit/dist/index.mjs
+  var init_dist = __esm({
+    "node_modules/.pnpm/es-toolkit@1.21.0/node_modules/es-toolkit/dist/index.mjs"() {
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_debounce();
+      init_omit();
+      init_isNotNil();
     }
   });
 
@@ -715,7 +600,6 @@
       (function(ModuleFlags2) {
         ModuleFlags2[ModuleFlags2["EXISTS"] = 1] = "EXISTS";
         ModuleFlags2[ModuleFlags2["BLACKLISTED"] = 2] = "BLACKLISTED";
-        ModuleFlags2[ModuleFlags2["ASSET"] = 4] = "ASSET";
       })(ModuleFlags || (ModuleFlags = {}));
       (function(ModulesMapInternal2) {
         ModulesMapInternal2[ModulesMapInternal2["FULL_LOOKUP"] = 0] = "FULL_LOOKUP";
@@ -786,36 +670,80 @@
     }
   });
 
-  // src/lib/api/assets/patches.ts
-  var patches_exports = {};
-  __export(patches_exports, {
-    assetsModule: () => assetsModule,
+  // src/lib/api/assets.ts
+  var assets_exports = {};
+  __export(assets_exports, {
+    assetsMap: () => assetsMap,
+    findAsset: () => findAsset,
+    findAssetId: () => findAssetId,
     patchAssets: () => patchAssets
   });
   function patchAssets(module) {
     if (assetsModule)
       return;
     assetsModule = module;
-    var unpatch = after("registerAsset", assetsModule, () => {
+    var unpatch = after("registerAsset", assetsModule, ([asset]) => {
       var moduleId = getImportingModuleId();
       if (moduleId !== -1)
-        indexAssetModuleFlag(moduleId);
+        indexAssetName(asset.name, moduleId);
     });
     return unpatch;
   }
-  var assetsModule;
-  var init_patches = __esm({
-    "src/lib/api/assets/patches.ts"() {
+  function findAsset(param) {
+    if (typeof param === "number")
+      return assetsModule.getAssetByID(param);
+    if (typeof param === "string")
+      return assetsMap[param];
+    return Object.values(assetsMap).find(param);
+  }
+  function findAssetId(name) {
+    return assetsMap[name]?.index;
+  }
+  var assetsMap, assetsModule;
+  var init_assets = __esm({
+    "src/lib/api/assets.ts"() {
       "use strict";
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
       init_patcher();
       init_caches();
-      init_modules();
+      init_modules2();
+      assetsMap = new Proxy({}, {
+        get(cache, p) {
+          if (typeof p !== "string")
+            return void 0;
+          if (cache[p])
+            return cache[p];
+          var moduleIds = getMetroCache().assetsIndex[p];
+          if (moduleIds == null)
+            return void 0;
+          for (var id in moduleIds) {
+            var assetIndex = requireModule(Number(id));
+            if (typeof assetIndex !== "number")
+              continue;
+            var assetDefinition = assetsModule.getAssetByID(assetIndex);
+            if (!assetDefinition)
+              continue;
+            assetDefinition.index ??= assetDefinition.id ??= assetIndex;
+            assetDefinition.moduleId ??= id;
+            cache[p] ??= assetDefinition;
+          }
+          return cache[p];
+        },
+        ownKeys(cache) {
+          var keys = [];
+          for (var key in getMetroCache().assetsIndex) {
+            cache[key] = this.get(cache, key, {});
+            if (cache[key])
+              keys.push(key);
+          }
+          return keys;
+        }
+      });
     }
   });
 
-  // node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_create_class.js
+  // node_modules/.pnpm/@swc+helpers@0.5.13/node_modules/@swc/helpers/esm/_create_class.js
   function _defineProperties(target, props) {
     for (var i = 0; i < props.length; i++) {
       var descriptor = props[i];
@@ -834,13 +762,13 @@
     return Constructor;
   }
   var init_create_class = __esm({
-    "node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_create_class.js"() {
+    "node_modules/.pnpm/@swc+helpers@0.5.13/node_modules/@swc/helpers/esm/_create_class.js"() {
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
     }
   });
 
-  // node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_define_property.js
+  // node_modules/.pnpm/@swc+helpers@0.5.13/node_modules/@swc/helpers/esm/_define_property.js
   function _define_property(obj, key, value) {
     if (key in obj) {
       Object.defineProperty(obj, key, {
@@ -854,7 +782,7 @@
     return obj;
   }
   var init_define_property = __esm({
-    "node_modules/.pnpm/@swc+helpers@0.5.12/node_modules/@swc/helpers/esm/_define_property.js"() {
+    "node_modules/.pnpm/@swc+helpers@0.5.13/node_modules/@swc/helpers/esm/_define_property.js"() {
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
     }
@@ -918,16 +846,742 @@
     }
   });
 
+  // src/metro/factories.ts
+  var factories_exports = {};
+  __export(factories_exports, {
+    createFilterDefinition: () => createFilterDefinition,
+    createSimpleFilter: () => createSimpleFilter
+  });
+  function createFilterDefinition(fn, uniqMaker) {
+    function createHolder(func, args, raw) {
+      return Object.assign(func, {
+        filter: fn,
+        raw,
+        uniq: [
+          raw && "raw::",
+          uniqMaker(args)
+        ].filter(Boolean).join("")
+      });
+    }
+    var curry = (raw) => (...args) => {
+      return createHolder((m2, id, defaultCheck) => {
+        return fn(args, m2, id, defaultCheck);
+      }, args, raw);
+    };
+    return Object.assign(curry(false), {
+      byRaw: curry(true),
+      uniqMaker
+    });
+  }
+  function createSimpleFilter(filter, uniq) {
+    return createFilterDefinition((_2, m2) => filter(m2), () => `dynamic::${uniq}`)();
+  }
+  var init_factories = __esm({
+    "src/metro/factories.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+    }
+  });
+
+  // src/metro/filters.ts
+  var filters_exports = {};
+  __export(filters_exports, {
+    byDisplayName: () => byDisplayName,
+    byFilePath: () => byFilePath,
+    byMutableProp: () => byMutableProp,
+    byName: () => byName,
+    byProps: () => byProps,
+    byStoreName: () => byStoreName,
+    byTypeName: () => byTypeName
+  });
+  var byProps, byName, byDisplayName, byTypeName, byStoreName, byFilePath, byMutableProp;
+  var init_filters = __esm({
+    "src/metro/filters.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_factories();
+      init_modules2();
+      byProps = createFilterDefinition((props, m2) => props.length === 0 ? m2[props[0]] : props.every((p) => m2[p]), (props) => `bunny.metro.byProps(${props.join(",")})`);
+      byName = createFilterDefinition(([name], m2) => m2.name === name, (name) => `bunny.metro.byName(${name})`);
+      byDisplayName = createFilterDefinition(([displayName], m2) => m2.displayName === displayName, (name) => `bunny.metro.byDisplayName(${name})`);
+      byTypeName = createFilterDefinition(([typeName], m2) => m2.type?.name === typeName, (name) => `bunny.metro.byTypeName(${name})`);
+      byStoreName = createFilterDefinition(([name], m2) => m2.getName?.length === 0 && m2.getName() === name, (name) => `bunny.metro.byStoreName(${name})`);
+      byFilePath = createFilterDefinition(
+        // module return depends on defaultCheck. if true, it'll return module.default, otherwise the whole module
+        // unlike filters like byName, defaultCheck doesn't affect the return since we don't rely on exports, but only its ID
+        // one could say that this is technically a hack, since defaultCheck is meant for filtering exports
+        ([path, exportDefault], _2, id, defaultCheck) => exportDefault === defaultCheck && metroModules[id]?.__filePath === path,
+        ([path, exportDefault]) => `bunny.metro.byFilePath(${path},${exportDefault})`
+      );
+      byMutableProp = createFilterDefinition(([prop], m2) => m2?.[prop] && !Object.getOwnPropertyDescriptor(m2, prop)?.get, (prop) => `bunny.metro.byMutableProp(${prop})`);
+    }
+  });
+
+  // src/metro/finders.ts
+  function filterExports(moduleExports, moduleId, filter) {
+    if (moduleExports.default && moduleExports.__esModule && filter(moduleExports.default, moduleId, true)) {
+      return {
+        exports: filter.raw ? moduleExports : moduleExports.default,
+        defaultExport: !filter.raw
+      };
+    }
+    if (!filter.raw && filter(moduleExports, moduleId, false)) {
+      return {
+        exports: moduleExports,
+        defaultExport: false
+      };
+    }
+    return {};
+  }
+  function findModule(filter) {
+    var { cacheId, finish } = getCacherForUniq(filter.uniq, false);
+    for (var [id, moduleExports] of getModules(filter.uniq, false)) {
+      var { exports: testedExports, defaultExport } = filterExports(moduleExports, id, filter);
+      if (testedExports !== void 0) {
+        cacheId(id, testedExports);
+        return {
+          id,
+          defaultExport
+        };
+      }
+    }
+    finish(true);
+    return {};
+  }
+  function findModuleId(filter) {
+    return findModule(filter)?.id;
+  }
+  function findExports(filter) {
+    var { id, defaultExport } = findModule(filter);
+    if (id == null)
+      return;
+    return defaultExport ? requireModule(id).default : requireModule(id);
+  }
+  function findAllModule(filter) {
+    var { cacheId, finish } = getCacherForUniq(filter.uniq, true);
+    var foundExports = [];
+    for (var [id, moduleExports] of getModules(filter.uniq, true)) {
+      var { exports: testedExports, defaultExport } = filterExports(moduleExports, id, filter);
+      if (testedExports !== void 0 && typeof defaultExport === "boolean") {
+        foundExports.push({
+          id,
+          defaultExport
+        });
+        cacheId(id, testedExports);
+      }
+    }
+    finish(foundExports.length === 0);
+    return foundExports;
+  }
+  function findAllModuleId(filter) {
+    return findAllModule(filter).map((e) => e.id);
+  }
+  function findAllExports(filter) {
+    return findAllModule(filter).map((ret) => {
+      if (!ret.id)
+        return;
+      var { id, defaultExport } = ret;
+      return defaultExport ? requireModule(id).default : requireModule(id);
+    });
+  }
+  var init_finders = __esm({
+    "src/metro/finders.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_caches();
+      init_modules2();
+    }
+  });
+
+  // src/lib/utils/lazy.ts
+  var lazy_exports = {};
+  __export(lazy_exports, {
+    getProxyFactory: () => getProxyFactory,
+    lazyDestructure: () => lazyDestructure,
+    proxyLazy: () => proxyLazy
+  });
+  function proxyLazy(factory, opts = {}) {
+    var cache;
+    var dummy = opts.hint !== "object" ? function dummy2() {
+    } : {};
+    var proxyFactory = () => cache ??= factory();
+    var proxy = new Proxy(dummy, lazyHandler);
+    factories.set(proxy, proxyFactory);
+    proxyContextHolder.set(dummy, {
+      factory,
+      options: opts
+    });
+    return proxy;
+  }
+  function lazyDestructure(factory, opts = {}) {
+    var proxiedObject = proxyLazy(factory);
+    return new Proxy({}, {
+      get(_2, property) {
+        if (property === Symbol.iterator) {
+          return function* () {
+            yield proxiedObject;
+            yield new Proxy({}, {
+              get: (_3, p) => proxyLazy(() => proxiedObject[p], opts)
+            });
+            throw new Error("This is not a real iterator, this is likely used incorrectly");
+          };
+        }
+        return proxyLazy(() => proxiedObject[property], opts);
+      }
+    });
+  }
+  function getProxyFactory(obj) {
+    return factories.get(obj);
+  }
+  var unconfigurable, isUnconfigurable, factories, proxyContextHolder, lazyHandler;
+  var init_lazy = __esm({
+    "src/lib/utils/lazy.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      unconfigurable = /* @__PURE__ */ new Set([
+        "arguments",
+        "caller",
+        "prototype"
+      ]);
+      isUnconfigurable = (key) => typeof key === "string" && unconfigurable.has(key);
+      factories = /* @__PURE__ */ new WeakMap();
+      proxyContextHolder = /* @__PURE__ */ new WeakMap();
+      lazyHandler = {
+        ...Object.fromEntries(Object.getOwnPropertyNames(Reflect).map((fnName) => {
+          return [
+            fnName,
+            (target, ...args) => {
+              var contextHolder = proxyContextHolder.get(target);
+              var resolved = contextHolder?.factory();
+              if (!resolved)
+                throw new Error(`Trying to Reflect.${fnName} of ${typeof resolved}`);
+              return Reflect[fnName](resolved, ...args);
+            }
+          ];
+        })),
+        has(target, p) {
+          var contextHolder = proxyContextHolder.get(target);
+          if (contextHolder?.options) {
+            var { exemptedEntries: isolatedEntries } = contextHolder.options;
+            if (isolatedEntries && p in isolatedEntries)
+              return true;
+          }
+          var resolved = contextHolder?.factory();
+          if (!resolved)
+            throw new Error(`Trying to Reflect.has of ${typeof resolved}`);
+          return Reflect.has(resolved, p);
+        },
+        get(target, p, receiver) {
+          var contextHolder = proxyContextHolder.get(target);
+          if (contextHolder?.options) {
+            var { exemptedEntries: isolatedEntries } = contextHolder.options;
+            if (isolatedEntries?.[p])
+              return isolatedEntries[p];
+          }
+          var resolved = contextHolder?.factory();
+          if (!resolved)
+            throw new Error(`Trying to Reflect.get of ${typeof resolved}`);
+          return Reflect.get(resolved, p, receiver);
+        },
+        ownKeys: (target) => {
+          var contextHolder = proxyContextHolder.get(target);
+          var resolved = contextHolder?.factory();
+          if (!resolved)
+            throw new Error(`Trying to Reflect.ownKeys of ${typeof resolved}`);
+          var cacheKeys = Reflect.ownKeys(resolved);
+          unconfigurable.forEach((key) => !cacheKeys.includes(key) && cacheKeys.push(key));
+          return cacheKeys;
+        },
+        getOwnPropertyDescriptor: (target, p) => {
+          var contextHolder = proxyContextHolder.get(target);
+          var resolved = contextHolder?.factory();
+          if (!resolved)
+            throw new Error(`Trying to getOwnPropertyDescriptor of ${typeof resolved}`);
+          if (isUnconfigurable(p))
+            return Reflect.getOwnPropertyDescriptor(target, p);
+          var descriptor = Reflect.getOwnPropertyDescriptor(resolved, p);
+          if (descriptor)
+            Object.defineProperty(target, p, descriptor);
+          return descriptor;
+        }
+      };
+    }
+  });
+
+  // src/metro/lazy.ts
+  var lazy_exports2 = {};
+  __export(lazy_exports2, {
+    _lazyContextSymbol: () => _lazyContextSymbol,
+    createLazyModule: () => createLazyModule,
+    getLazyContext: () => getLazyContext
+  });
+  function getIndexedFind(filter) {
+    var modulesMap = getMetroCache().findIndex[filter.uniq];
+    if (!modulesMap)
+      return void 0;
+    for (var k in modulesMap)
+      if (k[0] !== "_")
+        return Number(k);
+  }
+  function subscribeLazyModule(proxy, callback) {
+    var info = getLazyContext(proxy);
+    if (!info)
+      throw new Error("Subscribing a module for non-proxy-find");
+    if (!info.indexed)
+      throw new Error("Attempting to subscribe to a non-indexed find");
+    return subscribeModule(info.moduleId, () => {
+      callback(findExports(info.filter));
+    });
+  }
+  function getLazyContext(proxy) {
+    return _lazyContexts.get(proxy);
+  }
+  function createLazyModule(filter) {
+    var cache = void 0;
+    var moduleId = getIndexedFind(filter);
+    var context = {
+      filter,
+      indexed: !!moduleId,
+      moduleId,
+      getExports(cb) {
+        if (!moduleId || metroModules[moduleId]?.isInitialized) {
+          cb(this.forceLoad());
+          return () => void 0;
+        }
+        return this.subscribe(cb);
+      },
+      subscribe(cb) {
+        return subscribeLazyModule(proxy, cb);
+      },
+      get cache() {
+        return cache;
+      },
+      forceLoad() {
+        cache ??= findExports(filter);
+        if (!cache)
+          throw new Error(`${filter.uniq} is ${typeof cache}! (id ${context.moduleId ?? "unknown"})`);
+        return cache;
+      }
+    };
+    var proxy = proxyLazy(() => context.forceLoad(), {
+      exemptedEntries: {
+        [_lazyContextSymbol]: context,
+        [_patcherDelaySymbol]: (cb) => context.getExports(cb)
+      }
+    });
+    _lazyContexts.set(proxy, context);
+    return proxy;
+  }
+  var _lazyContextSymbol, _lazyContexts;
+  var init_lazy2 = __esm({
+    "src/metro/lazy.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_patcher();
+      init_lazy();
+      init_finders();
+      init_caches();
+      init_modules2();
+      _lazyContextSymbol = Symbol.for("bunny.metro.lazyContext");
+      _lazyContexts = /* @__PURE__ */ new WeakMap();
+    }
+  });
+
+  // src/metro/wrappers.ts
+  var findByProps, findByPropsLazy, findByPropsAll, findByName, findByNameLazy, findByNameAll, findByDisplayName, findByDisplayNameLazy, findByDisplayNameAll, findByTypeName, findByTypeNameLazy, findByTypeNameAll, findByStoreName, findByStoreNameLazy, findByFilePath, findByFilePathLazy;
+  var init_wrappers = __esm({
+    "src/metro/wrappers.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_filters();
+      init_finders();
+      init_lazy2();
+      findByProps = (...props) => findExports(byProps(...props));
+      findByPropsLazy = (...props) => createLazyModule(byProps(...props));
+      findByPropsAll = (...props) => findAllExports(byProps(...props));
+      findByName = (name, expDefault = true) => findExports(expDefault ? byName(name) : byName.byRaw(name));
+      findByNameLazy = (name, expDefault = true) => createLazyModule(expDefault ? byName(name) : byName.byRaw(name));
+      findByNameAll = (name, expDefault = true) => findAllExports(expDefault ? byName(name) : byName.byRaw(name));
+      findByDisplayName = (name, expDefault = true) => findExports(expDefault ? byDisplayName(name) : byDisplayName.byRaw(name));
+      findByDisplayNameLazy = (name, expDefault = true) => createLazyModule(expDefault ? byDisplayName(name) : byDisplayName.byRaw(name));
+      findByDisplayNameAll = (name, expDefault = true) => findAllExports(expDefault ? byDisplayName(name) : byDisplayName.byRaw(name));
+      findByTypeName = (name, expDefault = true) => findExports(expDefault ? byTypeName(name) : byTypeName.byRaw(name));
+      findByTypeNameLazy = (name, expDefault = true) => createLazyModule(expDefault ? byTypeName(name) : byTypeName.byRaw(name));
+      findByTypeNameAll = (name, expDefault = true) => findAllExports(expDefault ? byTypeName(name) : byTypeName.byRaw(name));
+      findByStoreName = (name) => findExports(byStoreName(name));
+      findByStoreNameLazy = (name) => createLazyModule(byStoreName(name));
+      findByFilePath = (path, expDefault = false) => findExports(byFilePath(path, expDefault));
+      findByFilePathLazy = (path, expDefault = false) => createLazyModule(byFilePath(path, expDefault));
+    }
+  });
+
+  // shims/depsModule.ts
+  var require_depsModule = __commonJS({
+    "shims/depsModule.ts"(exports, module) {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_wrappers();
+      module.exports = {
+        "react": findByPropsLazy("createElement"),
+        "react-native": findByPropsLazy("AppRegistry"),
+        "util": findByPropsLazy("inspect", "isNullOrUndefined"),
+        "moment": findByPropsLazy("isMoment"),
+        "chroma-js": findByPropsLazy("brewer"),
+        "lodash": findByPropsLazy("forEachRight"),
+        "@shopify/react-native-skia": findByPropsLazy("useFont")
+      };
+    }
+  });
+
+  // globals:react-native
+  var require_react_native = __commonJS({
+    "globals:react-native"(exports, module) {
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      module.exports = require_depsModule()["react-native"];
+    }
+  });
+
+  // src/core/vendetta/storage.ts
+  function createProxy(target = {}) {
+    var emitter = new Emitter();
+    var childrens = /* @__PURE__ */ new WeakMap();
+    var proxiedChildrenSet = /* @__PURE__ */ new WeakSet();
+    function createProxy1(target2, path) {
+      return new Proxy(target2, {
+        get(target3, prop) {
+          if (prop === emitterSymbol)
+            return emitter;
+          var newPath = [
+            ...path,
+            prop
+          ];
+          var value = target3[prop];
+          if (value !== void 0 && value !== null) {
+            emitter.emit("GET", {
+              path: newPath,
+              value
+            });
+            if (typeof value === "object") {
+              if (proxiedChildrenSet.has(value))
+                return value;
+              if (childrens.has(value))
+                return childrens.get(value);
+              var childrenProxy = createProxy1(value, newPath);
+              childrens.set(value, childrenProxy);
+              return childrenProxy;
+            }
+            return value;
+          }
+          return value;
+        },
+        set(target3, prop, value) {
+          if (typeof value === "object") {
+            if (childrens.has(value)) {
+              target3[prop] = childrens.get(value);
+            } else {
+              var childrenProxy = createProxy1(value, [
+                ...path,
+                prop
+              ]);
+              childrens.set(value, childrenProxy);
+              proxiedChildrenSet.add(value);
+              target3[prop] = childrenProxy;
+            }
+          } else {
+            target3[prop] = value;
+          }
+          emitter.emit("SET", {
+            path: [
+              ...path,
+              prop
+            ],
+            value: target3[prop]
+          });
+          return true;
+        },
+        deleteProperty(target3, prop) {
+          var value = typeof target3[prop] === "object" ? childrens.get(target3[prop]) : target3[prop];
+          var success = delete target3[prop];
+          if (success)
+            emitter.emit("DEL", {
+              value,
+              path: [
+                ...path,
+                prop
+              ]
+            });
+          return success;
+        }
+      });
+    }
+    return {
+      proxy: createProxy1(target, []),
+      emitter
+    };
+  }
+  function useProxy(storage) {
+    var emitter = storage?.[emitterSymbol];
+    if (!emitter)
+      throw new Error("storage?.[emitterSymbol] is undefined");
+    var [, forceUpdate] = React.useReducer((n) => ~n, 0);
+    React.useEffect(() => {
+      var listener = (event, data) => {
+        if (event === "DEL" && data.value === storage)
+          return;
+        forceUpdate();
+      };
+      emitter.on("SET", listener);
+      emitter.on("DEL", listener);
+      return () => {
+        emitter.off("SET", listener);
+        emitter.off("DEL", listener);
+      };
+    }, []);
+    return storage;
+  }
+  function createStorage(backend) {
+    return _createStorage.apply(this, arguments);
+  }
+  function _createStorage() {
+    _createStorage = _async_to_generator(function* (backend) {
+      var data = yield backend.get();
+      var { proxy, emitter } = createProxy(data);
+      var handler = () => backend.set(proxy);
+      emitter.on("SET", handler);
+      emitter.on("DEL", handler);
+      return proxy;
+    });
+    return _createStorage.apply(this, arguments);
+  }
+  function wrapSync(store) {
+    var awaited = void 0;
+    var awaitQueue = [];
+    var awaitInit = (cb) => awaited ? cb() : awaitQueue.push(cb);
+    store.then((v2) => {
+      awaited = v2;
+      awaitQueue.forEach((cb) => cb());
+    });
+    return new Proxy({}, {
+      ...Object.fromEntries(Object.getOwnPropertyNames(Reflect).map((k) => [
+        k,
+        (t, ...a) => Reflect[k](awaited ?? t, ...a)
+      ])),
+      get(target, prop, recv) {
+        if (prop === syncAwaitSymbol)
+          return awaitInit;
+        return Reflect.get(awaited ?? target, prop, recv);
+      }
+    });
+  }
+  function awaitStorage(...stores) {
+    return Promise.all(stores.map((store) => new Promise((res) => store[syncAwaitSymbol](res))));
+  }
+  var import_react_native, emitterSymbol, syncAwaitSymbol, ILLEGAL_CHARS_REGEX, filePathFixer, getMMKVPath, purgeStorage, createMMKVBackend, createFileBackend;
+  var init_storage = __esm({
+    "src/core/vendetta/storage.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_async_to_generator();
+      init_Emitter();
+      init_modules();
+      import_react_native = __toESM(require_react_native());
+      emitterSymbol = Symbol.for("vendetta.storage.emitter");
+      syncAwaitSymbol = Symbol.for("vendetta.storage.accessor");
+      ILLEGAL_CHARS_REGEX = /[<>:"/\\|?*]/g;
+      filePathFixer = (file) => import_react_native.Platform.select({
+        default: file,
+        ios: FileManager.saveFileToGallery ? file : `Documents/${file}`
+      });
+      getMMKVPath = (name) => {
+        if (ILLEGAL_CHARS_REGEX.test(name)) {
+          name = name.replace(ILLEGAL_CHARS_REGEX, "-").replace(/-+/g, "-");
+        }
+        return `vd_mmkv/${name}`;
+      };
+      purgeStorage = /* @__PURE__ */ function() {
+        var _ref = _async_to_generator(function* (store) {
+          if (yield MMKVManager.getItem(store)) {
+            MMKVManager.removeItem(store);
+          }
+          var mmkvPath = getMMKVPath(store);
+          if (yield FileManager.fileExists(`${FileManager.getConstants().DocumentsDirPath}/${mmkvPath}`)) {
+            yield FileManager.removeFile?.("documents", mmkvPath);
+          }
+        });
+        return function purgeStorage3(store) {
+          return _ref.apply(this, arguments);
+        };
+      }();
+      createMMKVBackend = (store, defaultData = {}) => {
+        var mmkvPath = getMMKVPath(store);
+        var defaultStr = JSON.stringify(defaultData);
+        return createFileBackend(mmkvPath, defaultData, _async_to_generator(function* () {
+          var path = `${FileManager.getConstants().DocumentsDirPath}/${mmkvPath}`;
+          if (yield FileManager.fileExists(path))
+            return;
+          var oldData = (yield MMKVManager.getItem(store)) ?? defaultStr;
+          if (oldData === "!!LARGE_VALUE!!") {
+            var cachePath = `${FileManager.getConstants().CacheDirPath}/mmkv/${store}`;
+            if (yield FileManager.fileExists(cachePath)) {
+              oldData = yield FileManager.readFile(cachePath, "utf8");
+            } else {
+              console.log(`${store}: Experienced data loss :(`);
+              oldData = defaultStr;
+            }
+          }
+          try {
+            JSON.parse(oldData);
+          } catch (e) {
+            console.error(`${store} had an unparseable data while migrating`);
+            oldData = defaultStr;
+          }
+          yield FileManager.writeFile("documents", filePathFixer(mmkvPath), oldData, "utf8");
+          if ((yield MMKVManager.getItem(store)) !== null) {
+            MMKVManager.removeItem(store);
+            console.log(`Successfully migrated ${store} store from MMKV storage to fs`);
+          }
+        })());
+      };
+      createFileBackend = (file, defaultData = {}, migratePromise) => {
+        return {
+          get: /* @__PURE__ */ _async_to_generator(function* () {
+            yield migratePromise;
+            var path = `${FileManager.getConstants().DocumentsDirPath}/${file}`;
+            if (yield FileManager.fileExists(path)) {
+              var content = yield FileManager.readFile(path, "utf8");
+              try {
+                return JSON.parse(content);
+              } catch (e) {
+              }
+            }
+            yield FileManager.writeFile("documents", filePathFixer(file), JSON.stringify(defaultData), "utf8");
+            return JSON.parse(yield FileManager.readFile(path, "utf8"));
+          }),
+          set: /* @__PURE__ */ function() {
+            var _ref = _async_to_generator(function* (data) {
+              yield migratePromise;
+              yield FileManager.writeFile("documents", filePathFixer(file), JSON.stringify(data), "utf8");
+            });
+            return function(data) {
+              return _ref.apply(this, arguments);
+            };
+          }()
+        };
+      };
+    }
+  });
+
+  // src/lib/api/native/fs.ts
+  var fs_exports = {};
+  __export(fs_exports, {
+    clearFolder: () => clearFolder,
+    downloadFile: () => downloadFile,
+    fileExists: () => fileExists,
+    readFile: () => readFile,
+    removeFile: () => removeFile,
+    writeFile: () => writeFile
+  });
+  function clearFolder(path) {
+    return _clearFolder.apply(this, arguments);
+  }
+  function _clearFolder() {
+    _clearFolder = _async_to_generator(function* (path, { prefix = "pyoncord/" } = {}) {
+      if (typeof FileManager.clearFolder !== "function")
+        throw new Error("'fs.clearFolder' is not supported");
+      return void (yield FileManager.clearFolder("documents", `${prefix}${path}`));
+    });
+    return _clearFolder.apply(this, arguments);
+  }
+  function removeFile(path) {
+    return _removeFile.apply(this, arguments);
+  }
+  function _removeFile() {
+    _removeFile = _async_to_generator(function* (path, { prefix = "pyoncord/" } = {}) {
+      if (typeof FileManager.removeFile !== "function")
+        throw new Error("'fs.removeFile' is not supported");
+      return void (yield FileManager.removeFile("documents", `${prefix}${path}`));
+    });
+    return _removeFile.apply(this, arguments);
+  }
+  function fileExists(path) {
+    return _fileExists.apply(this, arguments);
+  }
+  function _fileExists() {
+    _fileExists = _async_to_generator(function* (path, { prefix = "pyoncord/" } = {}) {
+      return yield FileManager.fileExists(`${FileManager.getConstants().DocumentsDirPath}/${prefix}${path}`);
+    });
+    return _fileExists.apply(this, arguments);
+  }
+  function writeFile(path, data) {
+    return _writeFile.apply(this, arguments);
+  }
+  function _writeFile() {
+    _writeFile = _async_to_generator(function* (path, data, { prefix = "pyoncord/" } = {}) {
+      if (typeof data !== "string")
+        throw new Error("Argument 'data' must be a string");
+      return void (yield FileManager.writeFile("documents", `${prefix}${path}`, data, "utf8"));
+    });
+    return _writeFile.apply(this, arguments);
+  }
+  function readFile(path) {
+    return _readFile.apply(this, arguments);
+  }
+  function _readFile() {
+    _readFile = _async_to_generator(function* (path, { prefix = "pyoncord/" } = {}) {
+      try {
+        return yield FileManager.readFile(`${FileManager.getConstants().DocumentsDirPath}/${prefix}${path}`, "utf8");
+      } catch (err) {
+        throw new Error(`An error occured while writing to '${path}'`, {
+          cause: err
+        });
+      }
+    });
+    return _readFile.apply(this, arguments);
+  }
+  function downloadFile(url2, path) {
+    return _downloadFile.apply(this, arguments);
+  }
+  function _downloadFile() {
+    _downloadFile = _async_to_generator(function* (url2, path, { prefix = "pyoncord/" } = {}) {
+      var response = yield fetch(url2);
+      if (!response.ok) {
+        throw new Error(`Failed to download file from ${url2}: ${response.statusText}`);
+      }
+      var arrayBuffer = yield response.arrayBuffer();
+      var data = Buffer.from(arrayBuffer).toString("base64");
+      return void (yield FileManager.writeFile("documents", `${prefix}${path}`, data, "base64"));
+    });
+    return _downloadFile.apply(this, arguments);
+  }
+  var init_fs = __esm({
+    "src/lib/api/native/fs.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_async_to_generator();
+      init_modules();
+    }
+  });
+
   // node_modules/.pnpm/@gullerya+object-observer@6.1.3/node_modules/@gullerya/object-observer/dist/object-observer.min.js
   var m, x, E, T, K, c, $, N, Y, I, B, D, R, z, y, g, q, H, G, J, F, P, L, C, Q, X, Z, _, b, S, V, U, W, v;
   var init_object_observer_min = __esm({
     "node_modules/.pnpm/@gullerya+object-observer@6.1.3/node_modules/@gullerya/object-observer/dist/object-observer.min.js"() {
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
+      init_call_super();
       init_class_call_check();
       init_create_class();
       init_inherits();
-      init_create_super();
       m = "insert";
       x = "update";
       E = "delete";
@@ -1302,20 +1956,24 @@
       V = /* @__PURE__ */ function(S2) {
         "use strict";
         _inherits(V2, S2);
-        var _super = _create_super(V2);
         function V2(t) {
           _class_call_check(this, V2);
-          return _super.call(this, t, Y);
+          return _call_super(this, V2, [
+            t,
+            Y
+          ]);
         }
         return V2;
       }(S);
       U = /* @__PURE__ */ function(S2) {
         "use strict";
         _inherits(U2, S2);
-        var _super = _create_super(U2);
         function U2(t) {
           _class_call_check(this, U2);
-          return _super.call(this, t, I);
+          return _call_super(this, U2, [
+            t,
+            I
+          ]);
         }
         _create_class(U2, [
           {
@@ -1330,10 +1988,12 @@
       W = /* @__PURE__ */ function(S2) {
         "use strict";
         _inherits(W2, S2);
-        var _super = _create_super(W2);
         function W2(t) {
           _class_call_check(this, W2);
-          return _super.call(this, t, B);
+          return _call_super(this, W2, [
+            t,
+            B
+          ]);
         }
         _create_class(W2, [
           {
@@ -1407,17 +2067,20 @@
   // src/lib/api/storage/index.ts
   var storage_exports = {};
   __export(storage_exports, {
-    awaitStorage: () => awaitStorage,
-    createStorage: () => createStorage,
+    awaitStorage: () => awaitStorage2,
+    createStorage: () => createStorage2,
     createStorageAndCallback: () => createStorageAndCallback,
     createStorageAsync: () => createStorageAsync,
-    migrateToNewStorage: () => migrateToNewStorage,
+    getPreloadedStorage: () => getPreloadedStorage,
     preloadStorageIfExists: () => preloadStorageIfExists,
-    purgeStorage: () => purgeStorage,
-    updateStorageAsync: () => updateStorageAsync,
+    purgeStorage: () => purgeStorage2,
+    updateStorage: () => updateStorage,
     useObservable: () => useObservable
   });
-  function createFileBackend(filePath) {
+  function createFileBackend2(filePath) {
+    var write = debounce((data) => {
+      writeFile(filePath, JSON.stringify(data));
+    }, 500);
     return {
       get: /* @__PURE__ */ _async_to_generator(function* () {
         try {
@@ -1428,51 +2091,21 @@
           });
         }
       }),
-      set: debounce(function() {
+      set: /* @__PURE__ */ function() {
         var _ref = _async_to_generator(function* (data) {
           if (!data || typeof data !== "object") {
             throw new Error("data needs to be an object");
           }
-          yield writeFile(filePath, JSON.stringify(data));
+          write(data);
         });
         return function(data) {
           return _ref.apply(this, arguments);
         };
-      }(), 500),
+      }(),
       exists: /* @__PURE__ */ _async_to_generator(function* () {
         return yield fileExists(filePath);
       })
     };
-  }
-  function migrateToNewStorage(oldKey, callback) {
-    return _migrateToNewStorage.apply(this, arguments);
-  }
-  function _migrateToNewStorage() {
-    _migrateToNewStorage = _async_to_generator(function* (oldKey, callback) {
-      var promise = new Promise((r) => resolvePromise = r);
-      var resolvePromise;
-      var migratedKeys = migrateToNewStorage._migrated ??= yield createStorageAsync(".__vd_migrations", {
-        dflt: []
-      });
-      if (migratedKeys.includes(oldKey))
-        return;
-      var fromMmkv;
-      var sanitizedOldKey = oldKey.replace(/[<>:"/\\|?*]/g, "-").replace(/-+/g, "-");
-      if (yield fileExists(`../vd_mmkv/${sanitizedOldKey}`)) {
-        createStorageAndCallback(`../vd_mmkv/${sanitizedOldKey}`, (proxy) => {
-          Promise.resolve(callback(proxy)).then(() => resolvePromise());
-        });
-      } else if (fromMmkv = yield RTNMMKVManager.getItem(oldKey)) {
-        yield callback(JSON.parse(fromMmkv));
-        migratedKeys.push(oldKey);
-        return Promise.resolve();
-      }
-      return promise.then((v2) => {
-        migratedKeys.push(oldKey);
-        return v2;
-      });
-    });
-    return _migrateToNewStorage.apply(this, arguments);
   }
   function useObservable(observables, opts) {
     if (observables.some((o) => o?.[storageInitErrorSymbol]))
@@ -1489,15 +2122,15 @@
       };
     }, []);
   }
-  function updateStorageAsync(path, value) {
-    return _updateStorageAsync.apply(this, arguments);
+  function updateStorage(path, value) {
+    return _updateStorage.apply(this, arguments);
   }
-  function _updateStorageAsync() {
-    _updateStorageAsync = _async_to_generator(function* (path, value) {
+  function _updateStorage() {
+    _updateStorage = _async_to_generator(function* (path, value) {
       _loadedStorage[path] = value;
-      yield createFileBackend(path).set(value);
+      createFileBackend2(path).set(value);
     });
-    return _updateStorageAsync.apply(this, arguments);
+    return _updateStorage.apply(this, arguments);
   }
   function createStorageAndCallback(path, cb, { dflt = {}, nullIfEmpty = false } = {}) {
     var emitter;
@@ -1525,11 +2158,11 @@
       v.observe(proxy, handler);
       cb(proxy);
     };
-    var backend = createFileBackend(path);
+    var backend = createFileBackend2(path);
     if (_loadedStorage[path]) {
       callback(_loadedStorage[path]);
     } else {
-      backend.exists().then(function() {
+      backend.exists().then(/* @__PURE__ */ function() {
         var _ref = _async_to_generator(function* (exists) {
           if (!exists) {
             if (nullIfEmpty) {
@@ -1565,7 +2198,7 @@
     _preloadStorageIfExists = _async_to_generator(function* (path) {
       if (_loadedStorage[path])
         return true;
-      var backend = createFileBackend(path);
+      var backend = createFileBackend2(path);
       if (yield backend.exists()) {
         _loadedStorage[path] = yield backend.get();
         return false;
@@ -1574,7 +2207,7 @@
     });
     return _preloadStorageIfExists.apply(this, arguments);
   }
-  function purgeStorage(path) {
+  function purgeStorage2(path) {
     return _purgeStorage.apply(this, arguments);
   }
   function _purgeStorage() {
@@ -1584,11 +2217,14 @@
     });
     return _purgeStorage.apply(this, arguments);
   }
-  function awaitStorage(...proxies) {
+  function awaitStorage2(...proxies) {
     return Promise.all(proxies.map((proxy) => proxy[storagePromiseSymbol]));
   }
-  var storageInitErrorSymbol, storagePromiseSymbol, _loadedStorage, createStorage;
-  var init_storage = __esm({
+  function getPreloadedStorage(path) {
+    return _loadedStorage[path];
+  }
+  var storageInitErrorSymbol, storagePromiseSymbol, _loadedStorage, createStorage2;
+  var init_storage2 = __esm({
     "src/lib/api/storage/index.ts"() {
       "use strict";
       init_asyncIteratorSymbol();
@@ -1597,14 +2233,13 @@
       init_Emitter();
       init_object_observer_min();
       init_fs();
-      init_rn_modules();
       init_dist();
       storageInitErrorSymbol = Symbol.for("bunny.storage.initError");
       storagePromiseSymbol = Symbol.for("bunny.storage.promise");
       _loadedStorage = {};
-      createStorage = (path, opts = {}) => {
+      createStorage2 = (path, opts = {}) => {
         var promise = new Promise((r) => resolvePromise = r);
-        var awaited, resolved, error2, resolvePromise;
+        var awaited, resolved, error, resolvePromise;
         createStorageAndCallback(path, (proxy) => {
           awaited = proxy;
           resolved = true;
@@ -1624,7 +2259,7 @@
           ])),
           get(target, prop, recv) {
             if (prop === storageInitErrorSymbol)
-              return error2;
+              return error;
             if (prop === storagePromiseSymbol)
               return promise;
             return check() && Reflect.get(awaited ?? target, prop, recv);
@@ -1634,1296 +2269,36 @@
     }
   });
 
-  // src/core/storage/BunnySettings.ts
-  var BunnySettings_exports = {};
-  __export(BunnySettings_exports, {
-    default: () => BunnySettings_default
+  // src/lib/utils/constants.ts
+  var constants_exports = {};
+  __export(constants_exports, {
+    BUNNY_PROXY_PREFIX: () => BUNNY_PROXY_PREFIX,
+    DISCORD_SERVER: () => DISCORD_SERVER,
+    GITHUB: () => GITHUB,
+    HTTP_REGEX: () => HTTP_REGEX,
+    HTTP_REGEX_MULTI: () => HTTP_REGEX_MULTI,
+    OFFICIAL_PLUGINS_REPO_URL: () => OFFICIAL_PLUGINS_REPO_URL,
+    VD_DISCORD_SERVER_ID: () => VD_DISCORD_SERVER_ID,
+    VD_PLUGINS_CHANNEL_ID: () => VD_PLUGINS_CHANNEL_ID,
+    VD_PROXY_PREFIX: () => VD_PROXY_PREFIX,
+    VD_THEMES_CHANNEL_ID: () => VD_THEMES_CHANNEL_ID
   });
-  var BunnySettings_default;
-  var init_BunnySettings = __esm({
-    "src/core/storage/BunnySettings.ts"() {
+  var DISCORD_SERVER, GITHUB, HTTP_REGEX, HTTP_REGEX_MULTI, BUNNY_PROXY_PREFIX, OFFICIAL_PLUGINS_REPO_URL, VD_PROXY_PREFIX, VD_DISCORD_SERVER_ID, VD_PLUGINS_CHANNEL_ID, VD_THEMES_CHANNEL_ID;
+  var init_constants = __esm({
+    "src/lib/utils/constants.ts"() {
       "use strict";
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
-      init_async_to_generator();
-      init_storage();
-      BunnySettings_default = {
-        general: createStorage("settings/general.json"),
-        developer: createStorage("settings/developer.json"),
-        loader: createStorage("loader.json", {
-          dflt: {
-            customLoadUrl: {
-              enabled: false,
-              url: "http://localhost:4040/bunny.js"
-            }
-          }
-        }),
-        prepare() {
-          return _async_to_generator(function* () {
-            yield awaitStorage(this.general, this.developer, this.loader);
-            yield migrateToNewStorage("VENDETTA_SETTINGS", (vdSettings) => {
-              this.general.patchIsStaff = vdSettings.enableDiscordDeveloperSettings;
-              this.general.safeModeEnabled = vdSettings.safeMode?.enabled ?? false;
-              this.developer.enabled = vdSettings.developerSettings;
-              this.developer.debuggerUrl = vdSettings.debuggerUrl;
-              this.developer.evalCommandEnabled = vdSettings.enableEvalCommand ?? false;
-            });
-          }).apply(this);
-        },
-        useSettings() {
-          useObservable([
-            this.general,
-            this.developer,
-            this.loader
-          ]);
-        },
-        isSafeMode() {
-          return this.general.safeModeEnabled ?? false;
-        }
-      };
-    }
-  });
-
-  // src/metro/polyfills/redesign.ts
-  var redesign_exports = {};
-  __export(redesign_exports, {
-    default: () => redesign_default
-  });
-  var redesignProps, _module, _source, cacher, actualExports, exportsKeysLength, prop, id, moduleExports, redesign_default;
-  var init_redesign = __esm({
-    "src/metro/polyfills/redesign.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_caches();
-      redesignProps = /* @__PURE__ */ new Set([
-        "AlertActionButton",
-        "AlertModal",
-        "AlertModalContainer",
-        "AvatarDuoPile",
-        "AvatarPile",
-        "BACKDROP_OPAQUE_MAX_OPACITY",
-        "Backdrop",
-        "Button",
-        "Card",
-        "ContextMenu",
-        "ContextMenuContainer",
-        "FauxHeader",
-        "FloatingActionButton",
-        "GhostInput",
-        "GuildIconPile",
-        "HeaderActionButton",
-        "HeaderButton",
-        "HeaderSubmittingIndicator",
-        "IconButton",
-        "Input",
-        "InputButton",
-        "InputContainer",
-        "LayerContext",
-        "LayerScope",
-        "Modal",
-        "ModalActionButton",
-        "ModalContent",
-        "ModalDisclaimer",
-        "ModalFloatingAction",
-        "ModalFloatingActionSpacer",
-        "ModalFooter",
-        "ModalScreen",
-        "ModalStepIndicator",
-        "NAV_BAR_HEIGHT",
-        "NAV_BAR_HEIGHT_MULTILINE",
-        "Navigator",
-        "NavigatorHeader",
-        "NavigatorScreen",
-        "Pile",
-        "PileOverflow",
-        "RedesignCompat",
-        "RedesignCompatContext",
-        "RowButton",
-        "STATUS_BAR_HEIGHT",
-        "SceneLoadingIndicator",
-        "SearchField",
-        "SegmentedControl",
-        "SegmentedControlPages",
-        "Slider",
-        "Stack",
-        "StepModal",
-        "StickyContext",
-        "StickyHeader",
-        "StickyWrapper",
-        "TABLE_ROW_CONTENT_HEIGHT",
-        "TABLE_ROW_HEIGHT",
-        "TableCheckboxRow",
-        "TableRadioGroup",
-        "TableRadioRow",
-        "TableRow",
-        "TableRowGroup",
-        "TableRowGroupTitle",
-        "TableRowIcon",
-        "TableSwitchRow",
-        "Tabs",
-        "TextArea",
-        "TextField",
-        "TextInput",
-        "Toast",
-        "dismissAlerts",
-        "getHeaderBackButton",
-        "getHeaderCloseButton",
-        "getHeaderConditionalBackButton",
-        "getHeaderNoTitle",
-        "getHeaderTextButton",
-        "hideContextMenu",
-        "navigatorShouldCrossfade",
-        "openAlert",
-        "useAccessibilityNativeStackOptions",
-        "useAndroidNavScrim",
-        "useCoachmark",
-        "useFloatingActionButtonScroll",
-        "useFloatingActionButtonState",
-        "useNativeStackNavigation",
-        "useNavigation",
-        "useNavigationTheme",
-        "useNavigatorBackPressHandler",
-        "useNavigatorScreens",
-        "useNavigatorShouldCrossfade",
-        "useSegmentedControlState",
-        "useStackNavigation",
-        "useTabNavigation",
-        "useTooltip"
-      ]);
-      _module = {};
-      _source = {};
-      cacher = getPolyfillModuleCacher("redesign_module");
-      for ([id, moduleExports] of cacher.getModules()) {
-        for (prop of redesignProps) {
-          actualExports = void 0;
-          if (moduleExports[prop]) {
-            actualExports = moduleExports;
-          } else if (moduleExports.default?.[prop]) {
-            actualExports = moduleExports.default;
-          } else {
-            continue;
-          }
-          exportsKeysLength = Reflect.ownKeys(actualExports).length;
-          if (_source[prop] && exportsKeysLength >= _source[prop]) {
-            continue;
-          }
-          _module[prop] = actualExports[prop];
-          _source[prop] = Reflect.ownKeys(actualExports).length;
-          cacher.cacheId(id);
-          if (exportsKeysLength === 1) {
-            redesignProps.delete(prop);
-          }
-        }
-      }
-      cacher.finish();
-      redesign_default = _module;
-    }
-  });
-
-  // src/metro/internals/modules.ts
-  var modules_exports = {};
-  __export(modules_exports, {
-    getCachedPolyfillModules: () => getCachedPolyfillModules,
-    getImportingModuleId: () => getImportingModuleId,
-    getModules: () => getModules,
-    metroModules: () => metroModules,
-    requireModule: () => requireModule,
-    subscribeModule: () => subscribeModule
-  });
-  function blacklistModule(id) {
-    Object.defineProperty(metroModules, id, {
-      enumerable: false
-    });
-    blacklistedIds.add(id);
-    indexBlacklistFlag(Number(id));
-  }
-  function isBadExports(exports) {
-    return !exports || exports === window || exports["<!@ pylix was here :fuyusquish: !@>"] === null || exports.__proto__ === Object.prototype && Reflect.ownKeys(exports).length === 0;
-  }
-  function onModuleRequire(moduleExports, id) {
-    indexExportsFlags(id, moduleExports);
-    moduleExports.initSentry &&= () => void 0;
-    if (moduleExports.default?.track && moduleExports.default.trackMaker)
-      moduleExports.default.track = () => Promise.resolve();
-    if (moduleExports.registerAsset) {
-      (init_patches(), __toCommonJS(patches_exports)).patchAssets(moduleExports);
-    }
-    if (!patchedNativeComponentRegistry && [
-      "customBubblingEventTypes",
-      "customDirectEventTypes",
-      "register",
-      "get"
-    ].every((x2) => moduleExports[x2])) {
-      instead2("register", moduleExports, (args, origFunc) => {
-        try {
-          return origFunc(...args);
-        } catch (e) {
-        }
-      });
-      patchedNativeComponentRegistry = true;
-    }
-    if (moduleExports?.default?.constructor?.displayName === "DeveloperExperimentStore") {
-      moduleExports.default = new Proxy(moduleExports.default, {
-        get(target, property, receiver) {
-          if (property === "isDeveloper") {
-            var { general } = (init_BunnySettings(), __toCommonJS(BunnySettings_exports)).default;
-            return general?.patchIsStaff ?? false;
-          }
-          return Reflect.get(target, property, receiver);
-        }
-      });
-    }
-    if (!patchedImportTracker && moduleExports.fileFinishedImporting) {
-      before2("fileFinishedImporting", moduleExports, ([filePath]) => {
-        if (_importingModuleId === -1 || !filePath)
-          return;
-        metroModules[_importingModuleId].__filePath = filePath;
-      });
-      patchedImportTracker = true;
-    }
-    if (!patchedInspectSource && window["__core-js_shared__"]) {
-      var inspect = (f) => typeof f === "function" && functionToString.apply(f, []);
-      window["__core-js_shared__"].inspectSource = inspect;
-      patchedInspectSource = true;
-    }
-    if (moduleExports.findHostInstance_DEPRECATED) {
-      var prevExports = metroModules[id - 1]?.publicModule.exports;
-      var inc = prevExports.default?.reactProfilingEnabled ? 1 : -1;
-      if (!metroModules[id + inc]?.isInitialized) {
-        blacklistModule(id + inc);
-      }
-    }
-    if (moduleExports.isMoment) {
-      instead2("defineLocale", moduleExports, (args, orig) => {
-        var origLocale = moduleExports.locale();
-        orig(...args);
-        moduleExports.locale(origLocale);
-      });
-    }
-    var subs = moduleSubscriptions.get(Number(id));
-    if (subs) {
-      subs.forEach((s) => s());
-      moduleSubscriptions.delete(Number(id));
-    }
-  }
-  function getImportingModuleId() {
-    return _importingModuleId;
-  }
-  function subscribeModule(id, cb) {
-    var subs = moduleSubscriptions.get(id) ?? /* @__PURE__ */ new Set();
-    subs.add(cb);
-    moduleSubscriptions.set(id, subs);
-    return () => subs.delete(cb);
-  }
-  function requireModule(id) {
-    if (!metroModules[0]?.isInitialized)
-      metroRequire(0);
-    if (blacklistedIds.has(id))
-      return void 0;
-    if (Number(id) === -1)
-      return init_redesign(), __toCommonJS(redesign_exports);
-    if (metroModules[id]?.isInitialized && !metroModules[id]?.hasError) {
-      return metroRequire(id);
-    }
-    var originalHandler = ErrorUtils.getGlobalHandler();
-    ErrorUtils.setGlobalHandler(noopHandler);
-    var moduleExports;
-    try {
-      moduleExports = metroRequire(id);
-    } catch (e) {
-      blacklistModule(id);
-      moduleExports = void 0;
-    }
-    ErrorUtils.setGlobalHandler(originalHandler);
-    return moduleExports;
-  }
-  function* getModules(uniq, all = false) {
-    yield [
-      -1,
-      (init_redesign(), __toCommonJS(redesign_exports))
-    ];
-    var cache = getMetroCache().findIndex[uniq];
-    if (all && !cache?.[`_${ModulesMapInternal.FULL_LOOKUP}`])
-      cache = void 0;
-    if (cache?.[`_${ModulesMapInternal.NOT_FOUND}`])
-      return;
-    for (var id in cache) {
-      if (id[0] === "_")
-        continue;
-      var exports = requireModule(Number(id));
-      if (isBadExports(exports))
-        continue;
-      yield [
-        id,
-        exports
-      ];
-    }
-    for (var id1 in metroModules) {
-      var exports1 = requireModule(Number(id1));
-      if (isBadExports(exports1))
-        continue;
-      yield [
-        id1,
-        exports1
-      ];
-    }
-  }
-  function* getCachedPolyfillModules(name) {
-    var cache = getMetroCache().polyfillIndex[name];
-    for (var id in cache) {
-      var exports = requireModule(Number(id));
-      if (isBadExports(exports))
-        continue;
-      yield [
-        id,
-        exports
-      ];
-    }
-    if (!cache[`_${ModulesMapInternal.FULL_LOOKUP}`]) {
-      for (var id1 in metroModules) {
-        var exports1 = requireModule(Number(id1));
-        if (isBadExports(exports1))
-          continue;
-        yield [
-          id1,
-          exports1
-        ];
-      }
-    }
-  }
-  var _loop, before2, instead2, metroModules, metroRequire, moduleSubscriptions, blacklistedIds, noopHandler, functionToString, patchedInspectSource, patchedImportTracker, patchedNativeComponentRegistry, _importingModuleId, key;
-  var init_modules = __esm({
-    "src/metro/internals/modules.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_caches();
-      init_enums();
-      _loop = function(key) {
-        var id = Number(key);
-        var metroModule = metroModules[id];
-        var cache = getMetroCache().flagsIndex[id];
-        if (cache & ModuleFlags.BLACKLISTED) {
-          blacklistModule(id);
-          return "continue";
-        }
-        if (metroModule.factory) {
-          instead2("factory", metroModule, (args, origFunc) => {
-            var originalImportingId = _importingModuleId;
-            _importingModuleId = id;
-            var { 1: metroRequire2, 4: moduleObject } = args;
-            args[
-              2
-              /* metroImportDefault */
-            ] = (id2) => {
-              var exps = metroRequire2(id2);
-              return exps && exps.__esModule ? exps.default : exps;
-            };
-            args[
-              3
-              /* metroImportAll */
-            ] = (id2) => {
-              var exps = metroRequire2(id2);
-              if (exps && exps.__esModule)
-                return exps;
-              var importAll = {};
-              if (exps)
-                Object.assign(importAll, exps);
-              importAll.default = exps;
-              return importAll;
-            };
-            origFunc(...args);
-            if (!isBadExports(moduleObject.exports)) {
-              onModuleRequire(moduleObject.exports, id);
-            } else {
-              blacklistModule(id);
-            }
-            _importingModuleId = originalImportingId;
-          });
-        }
-      };
-      ({ before: before2, instead: instead2 } = require_cjs());
-      metroModules = window.modules;
-      metroRequire = window.__r;
-      moduleSubscriptions = /* @__PURE__ */ new Map();
-      blacklistedIds = /* @__PURE__ */ new Set();
-      noopHandler = () => void 0;
-      functionToString = Function.prototype.toString;
-      patchedInspectSource = false;
-      patchedImportTracker = false;
-      patchedNativeComponentRegistry = false;
-      _importingModuleId = -1;
-      for (key in metroModules)
-        _loop(key);
-    }
-  });
-
-  // src/metro/internals/caches.ts
-  var caches_exports = {};
-  __export(caches_exports, {
-    getCacherForUniq: () => getCacherForUniq,
-    getMetroCache: () => getMetroCache,
-    getPolyfillModuleCacher: () => getPolyfillModuleCacher,
-    indexAssetModuleFlag: () => indexAssetModuleFlag,
-    indexBlacklistFlag: () => indexBlacklistFlag,
-    indexExportsFlags: () => indexExportsFlags,
-    initMetroCache: () => initMetroCache
-  });
-  function buildInitCache() {
-    var cache = {
-      _v: CACHE_VERSION,
-      _buildNumber: RTNClientInfoManager.Build,
-      _modulesCount: Object.keys(window.modules).length,
-      flagsIndex: {},
-      findIndex: {},
-      polyfillIndex: {}
-    };
-    setTimeout(() => {
-      for (var id in window.modules) {
-        (init_modules(), __toCommonJS(modules_exports)).requireModule(id);
-      }
-    }, 100);
-    _metroCache = cache;
-    return cache;
-  }
-  function initMetroCache() {
-    return _initMetroCache.apply(this, arguments);
-  }
-  function _initMetroCache() {
-    _initMetroCache = _async_to_generator(function* () {
-      if (!(yield fileExists(BUNNY_METRO_CACHE_KEY)))
-        return void buildInitCache();
-      var rawCache = yield readFile(BUNNY_METRO_CACHE_KEY);
-      try {
-        _metroCache = JSON.parse(rawCache);
-        if (_metroCache._v !== CACHE_VERSION) {
-          _metroCache = null;
-          throw "cache invalidated; cache version outdated";
-        }
-        if (_metroCache._buildNumber !== RTNClientInfoManager.Build) {
-          _metroCache = null;
-          throw "cache invalidated; version mismatch";
-        }
-        if (_metroCache._modulesCount !== Object.keys(window.modules).length) {
-          _metroCache = null;
-          throw "cache invalidated; modules count mismatch";
-        }
-      } catch (e) {
-        buildInitCache();
-      }
-    });
-    return _initMetroCache.apply(this, arguments);
-  }
-  function extractExportsFlags(moduleExports) {
-    if (!moduleExports)
-      return void 0;
-    var bit = ModuleFlags.EXISTS;
-    return bit;
-  }
-  function indexExportsFlags(moduleId, moduleExports) {
-    var flags = extractExportsFlags(moduleExports);
-    if (flags && flags !== ModuleFlags.EXISTS) {
-      _metroCache.flagsIndex[moduleId] = flags;
-    }
-  }
-  function indexBlacklistFlag(id) {
-    _metroCache.flagsIndex[id] |= ModuleFlags.BLACKLISTED;
-  }
-  function indexAssetModuleFlag(id) {
-    _metroCache.flagsIndex[id] |= ModuleFlags.ASSET;
-  }
-  function getCacherForUniq(uniq, allFind) {
-    var indexObject = _metroCache.findIndex[uniq] ??= {};
-    return {
-      cacheId(moduleId, exports) {
-        indexObject[moduleId] ??= extractExportsFlags(exports);
-        saveCache();
-      },
-      // Finish may not be called by single find
-      finish(notFound) {
-        if (allFind)
-          indexObject[`_${ModulesMapInternal.FULL_LOOKUP}`] = 1;
-        if (notFound)
-          indexObject[`_${ModulesMapInternal.NOT_FOUND}`] = 1;
-        saveCache();
-      }
-    };
-  }
-  function getPolyfillModuleCacher(name) {
-    var indexObject = _metroCache.polyfillIndex[name] ??= {};
-    return {
-      getModules() {
-        return (init_modules(), __toCommonJS(modules_exports)).getCachedPolyfillModules(name);
-      },
-      cacheId(moduleId) {
-        indexObject[moduleId] = 1;
-        saveCache();
-      },
-      finish() {
-        indexObject[`_${ModulesMapInternal.FULL_LOOKUP}`] = 1;
-        saveCache();
-      }
-    };
-  }
-  var CACHE_VERSION, BUNNY_METRO_CACHE_KEY, _metroCache, getMetroCache, saveCache;
-  var init_caches = __esm({
-    "src/metro/internals/caches.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_async_to_generator();
-      init_fs();
-      init_rn_modules();
-      init_dist();
-      init_enums();
-      CACHE_VERSION = 55;
-      BUNNY_METRO_CACHE_KEY = "__bunny_metro_cache_key__";
-      _metroCache = null;
-      getMetroCache = window.__getMetroCache = () => _metroCache;
-      saveCache = debounce(() => {
-        writeFile(BUNNY_METRO_CACHE_KEY, JSON.stringify(_metroCache));
-      }, 1e3);
-    }
-  });
-
-  // src/lib/utils/lazy.ts
-  var lazy_exports = {};
-  __export(lazy_exports, {
-    getProxyFactory: () => getProxyFactory,
-    lazyDestructure: () => lazyDestructure,
-    proxyLazy: () => proxyLazy
-  });
-  function proxyLazy(factory, opts = {}) {
-    var cache;
-    var dummy = opts.hint !== "object" ? function dummy2() {
-    } : {};
-    var proxyFactory = () => cache ??= factory();
-    var proxy = new Proxy(dummy, lazyHandler);
-    factories.set(proxy, proxyFactory);
-    proxyContextHolder.set(dummy, {
-      factory,
-      options: opts
-    });
-    return proxy;
-  }
-  function lazyDestructure(factory, opts = {}) {
-    var proxiedObject = proxyLazy(factory);
-    return new Proxy({}, {
-      get(_2, property) {
-        if (property === Symbol.iterator) {
-          return function* () {
-            yield proxiedObject;
-            yield new Proxy({}, {
-              get: (_3, p) => proxyLazy(() => proxiedObject[p], opts)
-            });
-            throw new Error("This is not a real iterator, this is likely used incorrectly");
-          };
-        }
-        return proxyLazy(() => proxiedObject[property], opts);
-      }
-    });
-  }
-  function getProxyFactory(obj) {
-    return factories.get(obj);
-  }
-  var unconfigurable, isUnconfigurable, factories, proxyContextHolder, lazyHandler;
-  var init_lazy = __esm({
-    "src/lib/utils/lazy.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      unconfigurable = /* @__PURE__ */ new Set([
-        "arguments",
-        "caller",
-        "prototype"
-      ]);
-      isUnconfigurable = (key) => typeof key === "string" && unconfigurable.has(key);
-      factories = /* @__PURE__ */ new WeakMap();
-      proxyContextHolder = /* @__PURE__ */ new WeakMap();
-      lazyHandler = {
-        ...Object.fromEntries(Object.getOwnPropertyNames(Reflect).map((fnName) => {
-          return [
-            fnName,
-            (target, ...args) => {
-              var contextHolder = proxyContextHolder.get(target);
-              var resolved = contextHolder?.factory();
-              if (!resolved)
-                throw new Error(`Trying to Reflect.${fnName} of ${typeof resolved}`);
-              return Reflect[fnName](resolved, ...args);
-            }
-          ];
-        })),
-        has(target, p) {
-          var contextHolder = proxyContextHolder.get(target);
-          if (contextHolder?.options) {
-            var { exemptedEntries: isolatedEntries } = contextHolder.options;
-            if (isolatedEntries && p in isolatedEntries)
-              return true;
-          }
-          var resolved = contextHolder?.factory();
-          if (!resolved)
-            throw new Error(`Trying to Reflect.has of ${typeof resolved}`);
-          return Reflect.has(resolved, p);
-        },
-        get(target, p, receiver) {
-          var contextHolder = proxyContextHolder.get(target);
-          if (contextHolder?.options) {
-            var { exemptedEntries: isolatedEntries } = contextHolder.options;
-            if (isolatedEntries?.[p])
-              return isolatedEntries[p];
-          }
-          var resolved = contextHolder?.factory();
-          if (!resolved)
-            throw new Error(`Trying to Reflect.get of ${typeof resolved}`);
-          return Reflect.get(resolved, p, receiver);
-        },
-        ownKeys: (target) => {
-          var contextHolder = proxyContextHolder.get(target);
-          var resolved = contextHolder?.factory();
-          if (!resolved)
-            throw new Error(`Trying to Reflect.ownKeys of ${typeof resolved}`);
-          var cacheKeys = Reflect.ownKeys(resolved);
-          unconfigurable.forEach((key) => !cacheKeys.includes(key) && cacheKeys.push(key));
-          return cacheKeys;
-        },
-        getOwnPropertyDescriptor: (target, p) => {
-          var contextHolder = proxyContextHolder.get(target);
-          var resolved = contextHolder?.factory();
-          if (!resolved)
-            throw new Error(`Trying to getOwnPropertyDescriptor of ${typeof resolved}`);
-          if (isUnconfigurable(p))
-            return Reflect.getOwnPropertyDescriptor(target, p);
-          var descriptor = Reflect.getOwnPropertyDescriptor(resolved, p);
-          if (descriptor)
-            Object.defineProperty(target, p, descriptor);
-          return descriptor;
-        }
-      };
-    }
-  });
-
-  // src/metro/factories.ts
-  var factories_exports = {};
-  __export(factories_exports, {
-    createFilterDefinition: () => createFilterDefinition,
-    createSimpleFilter: () => createSimpleFilter
-  });
-  function createFilterDefinition(fn, uniqMaker) {
-    function createHolder(func, args, raw) {
-      return Object.assign(func, {
-        filter: fn,
-        raw,
-        uniq: [
-          raw && "raw::",
-          uniqMaker(args)
-        ].filter(Boolean).join("")
-      });
-    }
-    var curry = (raw) => (...args) => {
-      return createHolder((m2, id, defaultCheck) => {
-        return fn(args, m2, id, defaultCheck);
-      }, args, raw);
-    };
-    return Object.assign(curry(false), {
-      byRaw: curry(true),
-      uniqMaker
-    });
-  }
-  function createSimpleFilter(filter, uniq) {
-    return createFilterDefinition((_2, m2) => filter(m2), () => `dynamic::${uniq}`)();
-  }
-  var init_factories = __esm({
-    "src/metro/factories.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-    }
-  });
-
-  // src/metro/filters.ts
-  var filters_exports = {};
-  __export(filters_exports, {
-    byDisplayName: () => byDisplayName,
-    byFilePath: () => byFilePath,
-    byMutableProp: () => byMutableProp,
-    byName: () => byName,
-    byProps: () => byProps,
-    byStoreName: () => byStoreName,
-    byTypeName: () => byTypeName
-  });
-  var byProps, byName, byDisplayName, byTypeName, byStoreName, byFilePath, byMutableProp;
-  var init_filters = __esm({
-    "src/metro/filters.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_factories();
-      init_modules();
-      byProps = createFilterDefinition((props, m2) => props.length === 0 ? m2[props[0]] : props.every((p) => m2[p]), (props) => `bunny.metro.byProps(${props.join(",")})`);
-      byName = createFilterDefinition(([name], m2) => m2.name === name, (name) => `bunny.metro.byName(${name})`);
-      byDisplayName = createFilterDefinition(([displayName], m2) => m2.displayName === displayName, (name) => `bunny.metro.byDisplayName(${name})`);
-      byTypeName = createFilterDefinition(([typeName], m2) => m2.type?.name === typeName, (name) => `bunny.metro.byTypeName(${name})`);
-      byStoreName = createFilterDefinition(([name], m2) => m2.getName?.length === 0 && m2.getName() === name, (name) => `bunny.metro.byStoreName(${name})`);
-      byFilePath = createFilterDefinition(
-        // module return depends on defaultCheck. if true, it'll return module.default, otherwise the whole module
-        // unlike filters like byName, defaultCheck doesn't affect the return since we don't rely on exports, but only its ID
-        // one could say that this is technically a hack, since defaultCheck is meant for filtering exports
-        ([path, exportDefault], _2, id, defaultCheck) => exportDefault === defaultCheck && metroModules[id]?.__filePath === path,
-        ([path, exportDefault]) => `bunny.metro.byFilePath(${path},${exportDefault})`
-      );
-      byMutableProp = createFilterDefinition(([prop], m2) => m2?.[prop] && !Object.getOwnPropertyDescriptor(m2, prop)?.get, (prop) => `bunny.metro.byMutableProp(${prop})`);
-    }
-  });
-
-  // src/metro/finders.ts
-  function filterExports(moduleExports, moduleId, filter) {
-    if (moduleExports.default && moduleExports.__esModule && filter(moduleExports.default, moduleId, true)) {
-      return {
-        exports: filter.raw ? moduleExports : moduleExports.default,
-        defaultExport: !filter.raw
-      };
-    }
-    if (!filter.raw && filter(moduleExports, moduleId, false)) {
-      return {
-        exports: moduleExports,
-        defaultExport: false
-      };
-    }
-    return {};
-  }
-  function findModule(filter) {
-    var { cacheId, finish } = getCacherForUniq(filter.uniq, false);
-    for (var [id, moduleExports] of getModules(filter.uniq, false)) {
-      var { exports: testedExports, defaultExport } = filterExports(moduleExports, id, filter);
-      if (testedExports !== void 0) {
-        cacheId(id, testedExports);
-        return {
-          id,
-          defaultExport
-        };
-      }
-    }
-    finish(true);
-    return {};
-  }
-  function findModuleId(filter) {
-    return findModule(filter)?.id;
-  }
-  function findExports(filter) {
-    var { id, defaultExport } = findModule(filter);
-    if (id == null)
-      return;
-    return defaultExport ? requireModule(id).default : requireModule(id);
-  }
-  function findAllModule(filter) {
-    var { cacheId, finish } = getCacherForUniq(filter.uniq, true);
-    var foundExports = [];
-    for (var [id, moduleExports] of getModules(filter.uniq, true)) {
-      var { exports: testedExports, defaultExport } = filterExports(moduleExports, id, filter);
-      if (testedExports !== void 0 && typeof defaultExport === "boolean") {
-        foundExports.push({
-          id,
-          defaultExport
-        });
-        cacheId(id, testedExports);
-      }
-    }
-    finish(foundExports.length === 0);
-    return foundExports;
-  }
-  function findAllModuleId(filter) {
-    return findAllModule(filter).map((e) => e.id);
-  }
-  function findAllExports(filter) {
-    return findAllModule(filter).map((ret) => {
-      if (!ret.id)
-        return;
-      var { id, defaultExport } = ret;
-      return defaultExport ? requireModule(id).default : requireModule(id);
-    });
-  }
-  var init_finders = __esm({
-    "src/metro/finders.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_caches();
-      init_modules();
-    }
-  });
-
-  // src/metro/lazy.ts
-  var lazy_exports2 = {};
-  __export(lazy_exports2, {
-    _lazyContextSymbol: () => _lazyContextSymbol,
-    createLazyModule: () => createLazyModule,
-    getLazyContext: () => getLazyContext
-  });
-  function getIndexedFind(filter) {
-    var modulesMap = getMetroCache().findIndex[filter.uniq];
-    if (!modulesMap)
-      return void 0;
-    for (var k in modulesMap)
-      if (k[0] !== "_")
-        return Number(k);
-  }
-  function subscribeLazyModule(proxy, callback) {
-    var info = getLazyContext(proxy);
-    if (!info)
-      throw new Error("Subscribing a module for non-proxy-find");
-    if (!info.indexed)
-      throw new Error("Attempting to subscribe to a non-indexed find");
-    return subscribeModule(info.moduleId, () => {
-      callback(findExports(info.filter));
-    });
-  }
-  function getLazyContext(proxy) {
-    return _lazyContexts.get(proxy);
-  }
-  function createLazyModule(filter) {
-    var cache = void 0;
-    var moduleId = getIndexedFind(filter);
-    var context = {
-      filter,
-      indexed: !!moduleId,
-      moduleId,
-      getExports(cb) {
-        if (!moduleId || metroModules[moduleId]?.isInitialized) {
-          cb(this.forceLoad());
-          return () => void 0;
-        }
-        return this.subscribe(cb);
-      },
-      subscribe(cb) {
-        return subscribeLazyModule(proxy, cb);
-      },
-      get cache() {
-        return cache;
-      },
-      forceLoad() {
-        cache ??= findExports(filter);
-        if (!cache)
-          throw new Error(`${filter.uniq} is ${typeof cache}! (id ${context.moduleId ?? "unknown"})`);
-        return cache;
-      }
-    };
-    var proxy = proxyLazy(() => context.forceLoad(), {
-      exemptedEntries: {
-        [_lazyContextSymbol]: context,
-        [_patcherDelaySymbol]: (cb) => context.getExports(cb)
-      }
-    });
-    _lazyContexts.set(proxy, context);
-    return proxy;
-  }
-  var _lazyContextSymbol, _lazyContexts;
-  var init_lazy2 = __esm({
-    "src/metro/lazy.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_patcher();
-      init_lazy();
-      init_finders();
-      init_caches();
-      init_modules();
-      _lazyContextSymbol = Symbol.for("bunny.metro.lazyContext");
-      _lazyContexts = /* @__PURE__ */ new WeakMap();
-    }
-  });
-
-  // src/metro/wrappers.ts
-  var findByProps, findByPropsLazy, findByPropsAll, findByName, findByNameLazy, findByNameAll, findByDisplayName, findByDisplayNameLazy, findByDisplayNameAll, findByTypeName, findByTypeNameLazy, findByTypeNameAll, findByStoreName, findByStoreNameLazy, findByFilePath, findByFilePathLazy;
-  var init_wrappers = __esm({
-    "src/metro/wrappers.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_filters();
-      init_finders();
-      init_lazy2();
-      findByProps = (...props) => findExports(byProps(...props));
-      findByPropsLazy = (...props) => createLazyModule(byProps(...props));
-      findByPropsAll = (...props) => findAllExports(byProps(...props));
-      findByName = (name, expDefault = true) => findExports(expDefault ? byName(name) : byName.byRaw(name));
-      findByNameLazy = (name, expDefault = true) => createLazyModule(expDefault ? byName(name) : byName.byRaw(name));
-      findByNameAll = (name, expDefault = true) => findAllExports(expDefault ? byName(name) : byName.byRaw(name));
-      findByDisplayName = (name, expDefault = true) => findExports(expDefault ? byDisplayName(name) : byDisplayName.byRaw(name));
-      findByDisplayNameLazy = (name, expDefault = true) => createLazyModule(expDefault ? byDisplayName(name) : byDisplayName.byRaw(name));
-      findByDisplayNameAll = (name, expDefault = true) => findAllExports(expDefault ? byDisplayName(name) : byDisplayName.byRaw(name));
-      findByTypeName = (name, expDefault = true) => findExports(expDefault ? byTypeName(name) : byTypeName.byRaw(name));
-      findByTypeNameLazy = (name, expDefault = true) => createLazyModule(expDefault ? byTypeName(name) : byTypeName.byRaw(name));
-      findByTypeNameAll = (name, expDefault = true) => findAllExports(expDefault ? byTypeName(name) : byTypeName.byRaw(name));
-      findByStoreName = (name) => findExports(byStoreName(name));
-      findByStoreNameLazy = (name) => createLazyModule(byStoreName(name));
-      findByFilePath = (path, expDefault = false) => findExports(byFilePath(path, expDefault));
-      findByFilePathLazy = (path, expDefault = false) => createLazyModule(byFilePath(path, expDefault));
-    }
-  });
-
-  // shims/jsxRuntime.ts
-  function unproxyFirstArg(args) {
-    var factory = getProxyFactory(args[0]);
-    if (factory)
-      args[0] = factory();
-    return args;
-  }
-  var jsxRuntime, Fragment, jsx, jsxs;
-  var init_jsxRuntime = __esm({
-    "shims/jsxRuntime.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_lazy();
-      init_wrappers();
-      jsxRuntime = findByPropsLazy("jsx", "jsxs", "Fragment");
-      Fragment = Symbol.for("react.fragment");
-      jsx = (...args) => jsxRuntime.jsx(...unproxyFirstArg(args));
-      jsxs = (...args) => jsxRuntime.jsxs(...unproxyFirstArg(args));
-    }
-  });
-
-  // src/metro/common/index.ts
-  var common_exports = {};
-  __export(common_exports, {
-    Flux: () => Flux,
-    FluxDispatcher: () => FluxDispatcher,
-    FluxUtils: () => FluxUtils,
-    NavigationNative: () => NavigationNative,
-    React: () => React2,
-    ReactNative: () => ReactNative,
-    assets: () => assets,
-    channels: () => channels,
-    clipboard: () => clipboard,
-    commands: () => commands,
-    constants: () => constants,
-    i18n: () => i18n,
-    invites: () => invites,
-    messageUtil: () => messageUtil,
-    navigation: () => navigation,
-    navigationStack: () => navigationStack,
-    semver: () => semver,
-    toasts: () => toasts,
-    tokens: () => tokens,
-    url: () => url,
-    useToken: () => useToken
-  });
-  var constants, channels, i18n, url, clipboard, assets, invites, commands, navigation, toasts, messageUtil, navigationStack, NavigationNative, semver, tokens, useToken, Flux, FluxDispatcher, FluxUtils, React2, ReactNative;
-  var init_common = __esm({
-    "src/metro/common/index.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_lazy();
-      init_wrappers();
-      constants = findByPropsLazy("Fonts", "Permissions");
-      channels = findByPropsLazy("getVoiceChannelId");
-      i18n = findByPropsLazy("Messages");
-      url = findByPropsLazy("openURL", "openDeeplink");
-      clipboard = findByPropsLazy("setString", "getString", "hasString");
-      assets = findByPropsLazy("registerAsset");
-      invites = findByPropsLazy("acceptInviteAndTransitionToInviteChannel");
-      commands = findByPropsLazy("getBuiltInCommands");
-      navigation = findByPropsLazy("pushLazy");
-      toasts = findByFilePathLazy("modules/toast/native/ToastActionCreators.tsx", true);
-      messageUtil = findByPropsLazy("sendBotMessage");
-      navigationStack = findByPropsLazy("createStackNavigator");
-      NavigationNative = findByPropsLazy("NavigationContainer");
-      semver = findByPropsLazy("parse", "clean");
-      tokens = findByPropsLazy("colors", "unsafe_rawColors");
-      ({ useToken } = lazyDestructure(() => findByProps("useToken")));
-      Flux = findByPropsLazy("connectStores");
-      FluxDispatcher = findByProps("_interceptors");
-      FluxUtils = findByProps("useStateFromStores");
-      React2 = window.React = findByPropsLazy("createElement");
-      ReactNative = window.ReactNative = findByPropsLazy("AppRegistry");
-    }
-  });
-
-  // src/metro/index.ts
-  var metro_exports = {};
-  __export(metro_exports, {
-    common: () => common_exports,
-    factories: () => factories_exports,
-    filters: () => filters_exports,
-    findAllExports: () => findAllExports,
-    findAllModule: () => findAllModule,
-    findAllModuleId: () => findAllModuleId,
-    findByDisplayName: () => findByDisplayName,
-    findByDisplayNameAll: () => findByDisplayNameAll,
-    findByDisplayNameLazy: () => findByDisplayNameLazy,
-    findByFilePath: () => findByFilePath,
-    findByFilePathLazy: () => findByFilePathLazy,
-    findByName: () => findByName,
-    findByNameAll: () => findByNameAll,
-    findByNameLazy: () => findByNameLazy,
-    findByProps: () => findByProps,
-    findByPropsAll: () => findByPropsAll,
-    findByPropsLazy: () => findByPropsLazy,
-    findByStoreName: () => findByStoreName,
-    findByStoreNameLazy: () => findByStoreNameLazy,
-    findByTypeName: () => findByTypeName,
-    findByTypeNameAll: () => findByTypeNameAll,
-    findByTypeNameLazy: () => findByTypeNameLazy,
-    findExports: () => findExports,
-    findModule: () => findModule,
-    findModuleId: () => findModuleId,
-    lazy: () => lazy_exports2
-  });
-  var init_metro = __esm({
-    "src/metro/index.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_common();
-      init_factories();
-      init_filters();
-      init_finders();
-      init_lazy2();
-      init_wrappers();
-    }
-  });
-
-  // shims/depsModule.ts
-  var require_depsModule = __commonJS({
-    "shims/depsModule.ts"(exports, module) {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_wrappers();
-      module.exports = {
-        "react": findByPropsLazy("createElement"),
-        "react-native": findByPropsLazy("AppRegistry"),
-        "util": findByPropsLazy("inspect", "isNullOrUndefined"),
-        "moment": findByPropsLazy("isMoment"),
-        "chroma-js": findByPropsLazy("brewer"),
-        "lodash": findByPropsLazy("forEachRight"),
-        "@shopify/react-native-skia": findByPropsLazy("useFont")
-      };
-    }
-  });
-
-  // globals:chroma-js
-  var require_chroma_js = __commonJS({
-    "globals:chroma-js"(exports, module) {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      module.exports = require_depsModule()["chroma-js"];
-    }
-  });
-
-  // globals:react-native
-  var require_react_native = __commonJS({
-    "globals:react-native"(exports, module) {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      module.exports = require_depsModule()["react-native"];
-    }
-  });
-
-  // src/lib/addons/themes/colors/parser.ts
-  function parseColorManifest(manifest) {
-    var resolveType = (type2 = "dark") => (ColorManager_default.preferences.type ?? type2) === "dark" ? "darker" : "light";
-    if (manifest.spec === 3) {
-      var semanticColorDefinitions = {};
-      for (var [semanticColorKey, semanticColorValue] of Object.entries(manifest.semantic ?? {})) {
-        if (typeof semanticColorValue === "object") {
-          var { type, value, opacity: semanticColorOpacity } = semanticColorValue;
-          if (type === "raw") {
-            semanticColorDefinitions[semanticColorKey] = {
-              value,
-              opacity: semanticColorOpacity ?? 1
-            };
-          } else {
-            var rawColorValue = tokenRef.RawColor[value];
-            semanticColorDefinitions[semanticColorKey] = {
-              value: rawColorValue,
-              opacity: semanticColorOpacity ?? 1
-            };
-          }
-        } else if (typeof semanticColorValue === "string") {
-          if (semanticColorValue.startsWith("#")) {
-            semanticColorDefinitions[semanticColorKey] = {
-              value: import_chroma_js.default.hex(semanticColorValue).hex(),
-              opacity: 1
-            };
-          } else {
-            semanticColorDefinitions[semanticColorKey] = {
-              value: tokenRef.RawColor[semanticColorValue],
-              opacity: 1
-            };
-          }
-        } else {
-          throw new Error(`Invalid semantic definitions: ${semanticColorValue}`);
-        }
-      }
-      return {
-        reference: resolveType(manifest.type),
-        semantic: semanticColorDefinitions,
-        raw: manifest.raw ?? {},
-        background: manifest.background
-      };
-    } else if (manifest.spec === 2) {
-      var semanticDefinitions = {};
-      var background = manifest.background ? {
-        ...omit(manifest.background, [
-          "alpha"
-        ]),
-        opacity: manifest.background.alpha
-      } : void 0;
-      if (manifest.semanticColors) {
-        for (var key in manifest.semanticColors) {
-          var values = manifest.semanticColors[key].map((c2) => c2 || void 0).slice(0, 2);
-          if (!values[0])
-            continue;
-          semanticDefinitions[key] = {
-            value: normalizeToHex(values[resolveType() === "light" ? 1 : 0]),
-            opacity: 1
-          };
-        }
-      }
-      if (manifest.rawColors) {
-        for (var key1 in manifest.rawColors) {
-          var value1 = manifest.rawColors[key1];
-          if (!value1)
-            continue;
-          manifest.rawColors[key1] = normalizeToHex(value1);
-        }
-        if (import_react_native.Platform.OS === "android")
-          applyAndroidAlphaKeys(manifest.rawColors);
-      }
-      return {
-        reference: resolveType(),
-        semantic: semanticDefinitions,
-        raw: manifest.rawColors ?? {},
-        background
-      };
-    }
-    throw new Error("Invalid theme spec");
-  }
-  function applyAndroidAlphaKeys(rawColors) {
-    if (!rawColors)
-      return;
-    var alphaMap = {
-      "BLACK_ALPHA_60": [
-        "BLACK",
-        0.6
-      ],
-      "BRAND_NEW_360_ALPHA_20": [
-        "BRAND_360",
-        0.2
-      ],
-      "BRAND_NEW_360_ALPHA_25": [
-        "BRAND_360",
-        0.25
-      ],
-      "BRAND_NEW_500_ALPHA_20": [
-        "BRAND_500",
-        0.2
-      ],
-      "PRIMARY_DARK_500_ALPHA_20": [
-        "PRIMARY_500",
-        0.2
-      ],
-      "PRIMARY_DARK_700_ALPHA_60": [
-        "PRIMARY_700",
-        0.6
-      ],
-      "STATUS_GREEN_500_ALPHA_20": [
-        "GREEN_500",
-        0.2
-      ],
-      "STATUS_RED_500_ALPHA_20": [
-        "RED_500",
-        0.2
-      ]
-    };
-    for (var key in alphaMap) {
-      var [colorKey, alpha] = alphaMap[key];
-      if (!rawColors[colorKey])
-        continue;
-      rawColors[key] = (0, import_chroma_js.default)(rawColors[colorKey]).alpha(alpha).hex();
-    }
-    return rawColors;
-  }
-  function normalizeToHex(colorString) {
-    if (colorString === void 0)
-      return void 0;
-    if (import_chroma_js.default.valid(colorString))
-      return (0, import_chroma_js.default)(colorString).hex();
-    var color = Number((0, import_react_native.processColor)(colorString));
-    return import_chroma_js.default.rgb(
-      color >> 16 & 255,
-      color >> 8 & 255,
-      color & 255,
-      color >> 24 & 255
-      // alpha
-    ).hex();
-  }
-  var import_chroma_js, import_react_native, tokenRef;
-  var init_parser = __esm({
-    "src/lib/addons/themes/colors/parser.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_metro();
-      import_chroma_js = __toESM(require_chroma_js());
-      init_dist();
-      import_react_native = __toESM(require_react_native());
-      init_colors();
-      tokenRef = findByProps("SemanticColor");
-    }
-  });
-
-  // src/lib/addons/themes/colors/updater.ts
-  function updateBunnyColor(colorManifest, { update = true }) {
-    if (BunnySettings_default.isSafeMode())
-      return;
-    var internalDef = colorManifest ? parseColorManifest(colorManifest) : null;
-    var ref = Object.assign(_colorRef, {
-      current: internalDef,
-      key: `bn-theme-${++_inc}`,
-      lastSetDiscordTheme: !ThemeStore.theme.startsWith("bn-theme-") ? ThemeStore.theme : _colorRef.lastSetDiscordTheme
-    });
-    if (internalDef != null) {
-      tokenRef2.Theme[ref.key.toUpperCase()] = ref.key;
-      FormDivider.DIVIDER_COLORS[ref.key] = FormDivider.DIVIDER_COLORS[ref.current.reference];
-      Object.keys(tokenRef2.Shadow).forEach((k) => tokenRef2.Shadow[k][ref.key] = tokenRef2.Shadow[k][ref.current.reference]);
-      Object.keys(tokenRef2.SemanticColor).forEach((k) => {
-        tokenRef2.SemanticColor[k][ref.key] = {
-          ...tokenRef2.SemanticColor[k][ref.current.reference]
-        };
-      });
-    }
-    if (update) {
-      AppearanceManager.setShouldSyncAppearanceSettings(false);
-      AppearanceManager.updateTheme(internalDef != null ? ref.key : ref.lastSetDiscordTheme);
-    }
-  }
-  var tokenRef2, origRawColor, AppearanceManager, ThemeStore, FormDivider, _inc, _colorRef;
-  var init_updater = __esm({
-    "src/lib/addons/themes/colors/updater.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_BunnySettings();
-      init_metro();
-      init_parser();
-      tokenRef2 = findByProps("SemanticColor");
-      origRawColor = {
-        ...tokenRef2.RawColor
-      };
-      AppearanceManager = findByPropsLazy("updateTheme");
-      ThemeStore = findByStoreNameLazy("ThemeStore");
-      FormDivider = findByPropsLazy("DIVIDER_COLORS");
-      _inc = 1;
-      _colorRef = {
-        current: null,
-        key: `bn-theme-${_inc}`,
-        origRaw: origRawColor,
-        lastSetDiscordTheme: "darker"
-      };
+      DISCORD_SERVER = "https://discord.gg/XjYgWXHb9Q";
+      GITHUB = "https://github.com/pyoncord";
+      HTTP_REGEX = /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_+.~#?&/=]*)$/;
+      HTTP_REGEX_MULTI = /https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_+.~#?&//=]*)/g;
+      BUNNY_PROXY_PREFIX = "https://bn-plugins.github.io/vd-proxy";
+      OFFICIAL_PLUGINS_REPO_URL = "https://bn-plugins.github.io/dist/repo.json";
+      VD_PROXY_PREFIX = "https://vd-plugins.github.io/proxy";
+      VD_DISCORD_SERVER_ID = "1015931589865246730";
+      VD_PLUGINS_CHANNEL_ID = "1091880384561684561";
+      VD_THEMES_CHANNEL_ID = "1091880434939482202";
     }
   });
 
@@ -3075,6 +2450,24 @@
     }
   });
 
+  // src/lib/utils/logger.ts
+  var logger_exports = {};
+  __export(logger_exports, {
+    LoggerClass: () => LoggerClass,
+    logger: () => logger
+  });
+  var LoggerClass, logger;
+  var init_logger = __esm({
+    "src/lib/utils/logger.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_wrappers();
+      LoggerClass = findByNameLazy("Logger");
+      logger = new LoggerClass("Bunny");
+    }
+  });
+
   // src/lib/utils/safeFetch.ts
   function safeFetch(input, options) {
     return _safeFetch.apply(this, arguments);
@@ -3108,12 +2501,14 @@
   // src/lib/utils/index.ts
   var utils_exports = {};
   __export(utils_exports, {
+    constants: () => constants_exports,
     cyrb64: () => cyrb64,
     findInReactTree: () => findInReactTree,
     findInTree: () => findInTree,
     hookDefineProperty: () => hookDefineProperty,
     invariant: () => invariant,
     lazy: () => lazy_exports,
+    logger: () => logger_exports,
     safeFetch: () => safeFetch
   });
   var init_utils = __esm({
@@ -3121,26 +2516,526 @@
       "use strict";
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
+      init_constants();
       init_cyrb64();
       init_findInReactTree();
       init_findInTree();
       init_hookDefineProperty();
       init_invariant();
-      init_safeFetch();
       init_lazy();
+      init_logger();
+      init_safeFetch();
+    }
+  });
+
+  // shims/jsxRuntime.ts
+  var jsxRuntime_exports = {};
+  __export(jsxRuntime_exports, {
+    Fragment: () => Fragment,
+    jsx: () => jsx,
+    jsxs: () => jsxs
+  });
+  function unproxyFirstArg(args) {
+    if (!args[0]) {
+      throw new Error("The first argument (Component) is falsy. Ensure that you are passing a valid component.");
+    }
+    var factory = getProxyFactory(args[0]);
+    if (factory)
+      args[0] = factory();
+    return args;
+  }
+  var jsxRuntime, Fragment, jsx, jsxs;
+  var init_jsxRuntime = __esm({
+    "shims/jsxRuntime.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_lazy();
+      init_wrappers();
+      jsxRuntime = findByPropsLazy("jsx", "jsxs", "Fragment");
+      Fragment = Symbol.for("react.fragment");
+      jsx = (...args) => jsxRuntime.jsx(...unproxyFirstArg(args));
+      jsxs = (...args) => jsxRuntime.jsxs(...unproxyFirstArg(args));
+    }
+  });
+
+  // src/lib/addons/themes/colors/preferences.ts
+  var colorsPref;
+  var init_preferences = __esm({
+    "src/lib/addons/themes/colors/preferences.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_storage2();
+      colorsPref = createStorage2("themes/colors/preferences.json", {
+        dflt: {
+          selected: null,
+          customBackground: null
+        }
+      });
+    }
+  });
+
+  // src/metro/common/components.ts
+  var components_exports = {};
+  __export(components_exports, {
+    ActionSheet: () => ActionSheet,
+    ActionSheetRow: () => ActionSheetRow,
+    AlertActionButton: () => AlertActionButton,
+    AlertActions: () => AlertActions,
+    AlertModal: () => AlertModal,
+    Avatar: () => Avatar,
+    AvatarPile: () => AvatarPile,
+    BottomSheetTitleHeader: () => BottomSheetTitleHeader,
+    Button: () => Button,
+    Card: () => Card,
+    CompatButton: () => CompatButton,
+    CompatSegmentedControl: () => CompatSegmentedControl,
+    FlashList: () => FlashList,
+    FloatingActionButton: () => FloatingActionButton,
+    FormCheckbox: () => FormCheckbox,
+    FormRadio: () => FormRadio,
+    FormSwitch: () => FormSwitch,
+    Forms: () => Forms,
+    HelpMessage: () => HelpMessage,
+    IconButton: () => IconButton,
+    LegacyAlert: () => LegacyAlert,
+    LegacyForm: () => LegacyForm,
+    LegacyFormArrow: () => LegacyFormArrow,
+    LegacyFormCTA: () => LegacyFormCTA,
+    LegacyFormCTAButton: () => LegacyFormCTAButton,
+    LegacyFormCardSection: () => LegacyFormCardSection,
+    LegacyFormCheckbox: () => LegacyFormCheckbox,
+    LegacyFormCheckboxRow: () => LegacyFormCheckboxRow,
+    LegacyFormCheckmark: () => LegacyFormCheckmark,
+    LegacyFormDivider: () => LegacyFormDivider,
+    LegacyFormHint: () => LegacyFormHint,
+    LegacyFormIcon: () => LegacyFormIcon,
+    LegacyFormInput: () => LegacyFormInput,
+    LegacyFormLabel: () => LegacyFormLabel,
+    LegacyFormRadio: () => LegacyFormRadio,
+    LegacyFormRadioGroup: () => LegacyFormRadioGroup,
+    LegacyFormRadioRow: () => LegacyFormRadioRow,
+    LegacyFormRow: () => LegacyFormRow,
+    LegacyFormSection: () => LegacyFormSection,
+    LegacyFormSelect: () => LegacyFormSelect,
+    LegacyFormSliderRow: () => LegacyFormSliderRow,
+    LegacyFormSubLabel: () => LegacyFormSubLabel,
+    LegacyFormSwitch: () => LegacyFormSwitch,
+    LegacyFormSwitchRow: () => LegacyFormSwitchRow,
+    LegacyFormTernaryCheckBox: () => LegacyFormTernaryCheckBox,
+    LegacyFormText: () => LegacyFormText,
+    LegacyFormTitle: () => LegacyFormTitle,
+    PressableScale: () => PressableScale,
+    RedesignCompat: () => RedesignCompat,
+    RowButton: () => RowButton,
+    SafeAreaView: () => SafeAreaView,
+    SegmentedControl: () => SegmentedControl,
+    SegmentedControlPages: () => SegmentedControlPages,
+    Stack: () => Stack,
+    TableCheckbox: () => TableCheckbox,
+    TableCheckboxRow: () => TableCheckboxRow,
+    TableRadio: () => TableRadio,
+    TableRadioGroup: () => TableRadioGroup,
+    TableRadioRow: () => TableRadioRow,
+    TableRow: () => TableRow,
+    TableRowGroup: () => TableRowGroup,
+    TableRowIcon: () => TableRowIcon,
+    TableRowTrailingText: () => TableRowTrailingText,
+    TableSwitch: () => TableSwitch,
+    TableSwitchRow: () => TableSwitchRow,
+    Text: () => Text,
+    TextArea: () => TextArea,
+    TextInput: () => TextInput,
+    TwinButtons: () => TwinButtons,
+    useSegmentedControlState: () => useSegmentedControlState
+  });
+  var bySingularProp, findSingular, findProp, LegacyAlert, CompatButton, HelpMessage, SafeAreaView, ActionSheetRow, Button, TwinButtons, IconButton, RowButton, PressableScale, TableRow, TableRowIcon, TableRowTrailingText, TableRowGroup, TableRadioGroup, TableRadioRow, TableSwitchRow, TableCheckboxRow, TableSwitch, TableRadio, TableCheckbox, FormSwitch, FormRadio, FormCheckbox, Card, RedesignCompat, AlertModal, AlertActionButton, AlertActions, AvatarPile, Stack, Avatar, TextInput, TextArea, SegmentedControl, SegmentedControlPages, useSegmentedControlState, CompatSegmentedControl, FloatingActionButton, ActionSheet, BottomSheetTitleHeader, textsModule, Text, Forms, LegacyForm, LegacyFormArrow, LegacyFormCTA, LegacyFormCTAButton, LegacyFormCardSection, LegacyFormCheckbox, LegacyFormCheckboxRow, LegacyFormCheckmark, LegacyFormDivider, LegacyFormHint, LegacyFormIcon, LegacyFormInput, LegacyFormLabel, LegacyFormRadio, LegacyFormRadioGroup, LegacyFormRadioRow, LegacyFormRow, LegacyFormSection, LegacyFormSelect, LegacyFormSliderRow, LegacyFormSubLabel, LegacyFormSwitch, LegacyFormSwitchRow, LegacyFormTernaryCheckBox, LegacyFormText, LegacyFormTitle, FlashList;
+  var init_components = __esm({
+    "src/metro/common/components.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_lazy();
+      init_factories();
+      init_finders();
+      init_wrappers();
+      bySingularProp = createFilterDefinition(([prop], m2) => m2[prop] && Object.keys(m2).length === 1, (prop) => `bunny.metro.common.components.bySingularProp(${prop})`);
+      findSingular = (prop) => proxyLazy(() => findExports(bySingularProp(prop))?.[prop]);
+      findProp = (...props) => proxyLazy(() => findByProps(...props)[props[0]]);
+      LegacyAlert = findByDisplayNameLazy("FluxContainer(Alert)");
+      CompatButton = findByPropsLazy("Looks", "Colors", "Sizes");
+      HelpMessage = findByNameLazy("HelpMessage");
+      SafeAreaView = proxyLazy(() => findByProps("useSafeAreaInsets").SafeAreaView);
+      ActionSheetRow = findProp("ActionSheetRow");
+      Button = findSingular("Button");
+      TwinButtons = findProp("TwinButtons");
+      IconButton = findSingular("IconButton");
+      RowButton = findProp("RowButton");
+      PressableScale = findProp("PressableScale");
+      TableRow = findProp("TableRow");
+      TableRowIcon = findProp("TableRowIcon");
+      TableRowTrailingText = findProp("TableRowTrailingText");
+      TableRowGroup = findProp("TableRowGroup");
+      TableRadioGroup = findProp("TableRadioGroup");
+      TableRadioRow = findProp("TableRadioRow");
+      TableSwitchRow = findProp("TableSwitchRow");
+      TableCheckboxRow = findProp("TableCheckboxRow");
+      TableSwitch = findSingular("FormSwitch");
+      TableRadio = findSingular("FormRadio");
+      TableCheckbox = findSingular("FormCheckbox");
+      FormSwitch = findSingular("FormSwitch");
+      FormRadio = findSingular("FormRadio");
+      FormCheckbox = findSingular("FormCheckbox");
+      Card = findProp("Card");
+      RedesignCompat = proxyLazy(() => findByProps("RedesignCompat").RedesignCompat);
+      AlertModal = findProp("AlertModal");
+      AlertActionButton = findProp("AlertActionButton");
+      AlertActions = findProp("AlertActions");
+      AvatarPile = findSingular("AvatarPile");
+      Stack = findProp("Stack");
+      Avatar = findProp("default", "AvatarSizes", "getStatusSize");
+      TextInput = findSingular("TextInput");
+      TextArea = findSingular("TextArea");
+      SegmentedControl = findProp("SegmentedControl");
+      SegmentedControlPages = findProp("SegmentedControlPages");
+      useSegmentedControlState = findSingular("useSegmentedControlState");
+      CompatSegmentedControl = findProp("CompatSegmentedControl");
+      FloatingActionButton = findProp("FloatingActionButton");
+      ActionSheet = findProp("ActionSheet");
+      BottomSheetTitleHeader = findProp("BottomSheetTitleHeader");
+      textsModule = findByPropsLazy("Text", "LegacyText");
+      Text = proxyLazy(() => textsModule.Text);
+      Forms = findByPropsLazy("Form", "FormSection");
+      ({ Form: LegacyForm, FormArrow: LegacyFormArrow, FormCTA: LegacyFormCTA, FormCTAButton: LegacyFormCTAButton, FormCardSection: LegacyFormCardSection, FormCheckbox: LegacyFormCheckbox, FormCheckboxRow: LegacyFormCheckboxRow, FormCheckmark: LegacyFormCheckmark, FormDivider: LegacyFormDivider, FormHint: LegacyFormHint, FormIcon: LegacyFormIcon, FormInput: LegacyFormInput, FormLabel: LegacyFormLabel, FormRadio: LegacyFormRadio, FormRadioGroup: LegacyFormRadioGroup, FormRadioRow: LegacyFormRadioRow, FormRow: LegacyFormRow, FormSection: LegacyFormSection, FormSelect: LegacyFormSelect, FormSliderRow: LegacyFormSliderRow, FormSubLabel: LegacyFormSubLabel, FormSwitch: LegacyFormSwitch, FormSwitchRow: LegacyFormSwitchRow, FormTernaryCheckBox: LegacyFormTernaryCheckBox, FormText: LegacyFormText, FormTitle: LegacyFormTitle } = lazyDestructure(() => Forms));
+      FlashList = findProp("FlashList");
+    }
+  });
+
+  // src/metro/common/index.ts
+  var common_exports = {};
+  __export(common_exports, {
+    Flux: () => Flux,
+    FluxDispatcher: () => FluxDispatcher,
+    NavigationNative: () => NavigationNative,
+    React: () => React2,
+    ReactNative: () => ReactNative,
+    assets: () => assets,
+    channels: () => channels,
+    clipboard: () => clipboard,
+    commands: () => commands,
+    components: () => components_exports,
+    constants: () => constants,
+    i18n: () => i18n,
+    invites: () => invites,
+    messageUtil: () => messageUtil,
+    navigation: () => navigation,
+    navigationStack: () => navigationStack,
+    semver: () => semver,
+    toasts: () => toasts,
+    tokens: () => tokens,
+    url: () => url
+  });
+  var constants, channels, i18n, url, clipboard, assets, invites, commands, navigation, toasts, messageUtil, navigationStack, NavigationNative, tokens, semver, Flux, FluxDispatcher, React2, ReactNative;
+  var init_common = __esm({
+    "src/metro/common/index.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_wrappers();
+      init_components();
+      constants = findByPropsLazy("Fonts", "Permissions");
+      channels = findByPropsLazy("getVoiceChannelId");
+      i18n = findByPropsLazy("Messages");
+      url = findByPropsLazy("openURL", "openDeeplink");
+      clipboard = findByPropsLazy("setString", "getString", "hasString");
+      assets = findByPropsLazy("registerAsset");
+      invites = findByPropsLazy("acceptInviteAndTransitionToInviteChannel");
+      commands = findByPropsLazy("getBuiltInCommands");
+      navigation = findByPropsLazy("pushLazy");
+      toasts = findByFilePathLazy("modules/toast/native/ToastActionCreators.tsx", true);
+      messageUtil = findByPropsLazy("sendBotMessage");
+      navigationStack = findByPropsLazy("createStackNavigator");
+      NavigationNative = findByPropsLazy("NavigationContainer");
+      tokens = findByPropsLazy("colors", "unsafe_rawColors");
+      semver = findByPropsLazy("parse", "clean");
+      Flux = findByPropsLazy("connectStores");
+      FluxDispatcher = findByProps("_interceptors");
+      React2 = window.React = findByPropsLazy("createElement");
+      ReactNative = window.ReactNative = findByPropsLazy("AppRegistry");
+    }
+  });
+
+  // src/metro/index.ts
+  var metro_exports = {};
+  __export(metro_exports, {
+    common: () => common_exports,
+    factories: () => factories_exports,
+    filters: () => filters_exports,
+    findAllExports: () => findAllExports,
+    findAllModule: () => findAllModule,
+    findAllModuleId: () => findAllModuleId,
+    findByDisplayName: () => findByDisplayName,
+    findByDisplayNameAll: () => findByDisplayNameAll,
+    findByDisplayNameLazy: () => findByDisplayNameLazy,
+    findByFilePath: () => findByFilePath,
+    findByFilePathLazy: () => findByFilePathLazy,
+    findByName: () => findByName,
+    findByNameAll: () => findByNameAll,
+    findByNameLazy: () => findByNameLazy,
+    findByProps: () => findByProps,
+    findByPropsAll: () => findByPropsAll,
+    findByPropsLazy: () => findByPropsLazy,
+    findByStoreName: () => findByStoreName,
+    findByStoreNameLazy: () => findByStoreNameLazy,
+    findByTypeName: () => findByTypeName,
+    findByTypeNameAll: () => findByTypeNameAll,
+    findByTypeNameLazy: () => findByTypeNameLazy,
+    findExports: () => findExports,
+    findModule: () => findModule,
+    findModuleId: () => findModuleId,
+    lazy: () => lazy_exports2
+  });
+  var init_metro = __esm({
+    "src/metro/index.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_common();
+      init_factories();
+      init_filters();
+      init_finders();
+      init_lazy2();
+      init_wrappers();
+    }
+  });
+
+  // globals:chroma-js
+  var require_chroma_js = __commonJS({
+    "globals:chroma-js"(exports, module) {
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      module.exports = require_depsModule()["chroma-js"];
+    }
+  });
+
+  // src/lib/addons/themes/colors/parser.ts
+  function parseColorManifest(manifest) {
+    var resolveType = (type2 = "dark") => (colorsPref.type ?? type2) === "dark" ? "darker" : "light";
+    if (manifest.spec === 3) {
+      var semanticColorDefinitions = {};
+      for (var [semanticColorKey, semanticColorValue] of Object.entries(manifest.semantic ?? {})) {
+        if (typeof semanticColorValue === "object") {
+          var { type, value, opacity: semanticColorOpacity } = semanticColorValue;
+          if (type === "raw") {
+            semanticColorDefinitions[semanticColorKey] = {
+              value,
+              opacity: semanticColorOpacity ?? 1
+            };
+          } else {
+            var rawColorValue = tokenRef.RawColor[value];
+            semanticColorDefinitions[semanticColorKey] = {
+              value: rawColorValue,
+              opacity: semanticColorOpacity ?? 1
+            };
+          }
+        } else if (typeof semanticColorValue === "string") {
+          if (semanticColorValue.startsWith("#")) {
+            semanticColorDefinitions[semanticColorKey] = {
+              value: import_chroma_js.default.hex(semanticColorValue).hex(),
+              opacity: 1
+            };
+          } else {
+            semanticColorDefinitions[semanticColorKey] = {
+              value: tokenRef.RawColor[semanticColorValue],
+              opacity: 1
+            };
+          }
+        } else {
+          throw new Error(`Invalid semantic definitions: ${semanticColorValue}`);
+        }
+      }
+      return {
+        spec: 3,
+        reference: resolveType(manifest.type),
+        semantic: semanticColorDefinitions,
+        raw: manifest.raw ?? {},
+        background: manifest.background
+      };
+    } else if (manifest.spec === 2) {
+      var semanticDefinitions = {};
+      var background = manifest.background ? {
+        ...omit(manifest.background, [
+          "alpha"
+        ]),
+        opacity: manifest.background.alpha
+      } : void 0;
+      if (manifest.semanticColors) {
+        for (var key in manifest.semanticColors) {
+          var values = manifest.semanticColors[key].map((c2) => c2 || void 0).slice(0, 2);
+          if (!values[0])
+            continue;
+          semanticDefinitions[key] = {
+            value: normalizeToHex(values[resolveType() === "light" ? 1 : 0]),
+            opacity: 1
+          };
+        }
+      }
+      if (manifest.rawColors) {
+        for (var key1 in manifest.rawColors) {
+          var value1 = manifest.rawColors[key1];
+          if (!value1)
+            continue;
+          manifest.rawColors[key1] = normalizeToHex(value1);
+        }
+        if (import_react_native2.Platform.OS === "android")
+          applyAndroidAlphaKeys(manifest.rawColors);
+      }
+      return {
+        spec: 2,
+        reference: resolveType(),
+        semantic: semanticDefinitions,
+        raw: manifest.rawColors ?? {},
+        background
+      };
+    }
+    throw new Error("Invalid theme spec");
+  }
+  function applyAndroidAlphaKeys(rawColors2) {
+    if (!rawColors2)
+      return;
+    var alphaMap = {
+      "BLACK_ALPHA_60": [
+        "BLACK",
+        0.6
+      ],
+      "BRAND_NEW_360_ALPHA_20": [
+        "BRAND_360",
+        0.2
+      ],
+      "BRAND_NEW_360_ALPHA_25": [
+        "BRAND_360",
+        0.25
+      ],
+      "BRAND_NEW_500_ALPHA_20": [
+        "BRAND_500",
+        0.2
+      ],
+      "PRIMARY_DARK_500_ALPHA_20": [
+        "PRIMARY_500",
+        0.2
+      ],
+      "PRIMARY_DARK_700_ALPHA_60": [
+        "PRIMARY_700",
+        0.6
+      ],
+      "STATUS_GREEN_500_ALPHA_20": [
+        "GREEN_500",
+        0.2
+      ],
+      "STATUS_RED_500_ALPHA_20": [
+        "RED_500",
+        0.2
+      ]
+    };
+    for (var key in alphaMap) {
+      var [colorKey, alpha] = alphaMap[key];
+      if (!rawColors2[colorKey])
+        continue;
+      rawColors2[key] = (0, import_chroma_js.default)(rawColors2[colorKey]).alpha(alpha).hex();
+    }
+    return rawColors2;
+  }
+  function normalizeToHex(colorString) {
+    if (colorString === void 0)
+      return void 0;
+    if (import_chroma_js.default.valid(colorString))
+      return (0, import_chroma_js.default)(colorString).hex();
+    var color2 = Number((0, import_react_native2.processColor)(colorString));
+    return import_chroma_js.default.rgb(
+      color2 >> 16 & 255,
+      color2 >> 8 & 255,
+      color2 & 255,
+      color2 >> 24 & 255
+      // alpha
+    ).hex();
+  }
+  var import_chroma_js, import_react_native2, tokenRef;
+  var init_parser = __esm({
+    "src/lib/addons/themes/colors/parser.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_metro();
+      import_chroma_js = __toESM(require_chroma_js());
+      init_dist();
+      import_react_native2 = __toESM(require_react_native());
+      init_preferences();
+      tokenRef = findByProps("SemanticColor");
+    }
+  });
+
+  // src/lib/addons/themes/colors/updater.ts
+  function updateBunnyColor(colorManifest, { update = true }) {
+    if (settings.safeMode?.enabled)
+      return;
+    var internalDef = colorManifest ? parseColorManifest(colorManifest) : null;
+    var ref = Object.assign(_colorRef, {
+      current: internalDef,
+      key: `bn-theme-${++_inc}`,
+      lastSetDiscordTheme: !ThemeStore.theme.startsWith("bn-theme-") ? ThemeStore.theme : _colorRef.lastSetDiscordTheme
+    });
+    if (internalDef != null) {
+      tokenRef2.Theme[ref.key.toUpperCase()] = ref.key;
+      FormDivider.DIVIDER_COLORS[ref.key] = FormDivider.DIVIDER_COLORS[ref.current.reference];
+      Object.keys(tokenRef2.Shadow).forEach((k) => tokenRef2.Shadow[k][ref.key] = tokenRef2.Shadow[k][ref.current.reference]);
+      Object.keys(tokenRef2.SemanticColor).forEach((k) => {
+        tokenRef2.SemanticColor[k][ref.key] = {
+          ...tokenRef2.SemanticColor[k][ref.current.reference]
+        };
+      });
+    }
+    if (update) {
+      AppearanceManager.setShouldSyncAppearanceSettings(false);
+      AppearanceManager.updateTheme(internalDef != null ? ref.key : ref.lastSetDiscordTheme);
+    }
+  }
+  var tokenRef2, origRawColor, AppearanceManager, ThemeStore, FormDivider, _inc, _colorRef;
+  var init_updater = __esm({
+    "src/lib/addons/themes/colors/updater.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_settings();
+      init_metro();
+      init_parser();
+      tokenRef2 = findByProps("SemanticColor");
+      origRawColor = {
+        ...tokenRef2.RawColor
+      };
+      AppearanceManager = findByPropsLazy("updateTheme");
+      ThemeStore = findByStoreNameLazy("ThemeStore");
+      FormDivider = findByPropsLazy("DIVIDER_COLORS");
+      _inc = 1;
+      _colorRef = {
+        current: null,
+        key: `bn-theme-${_inc}`,
+        origRaw: origRawColor,
+        lastSetDiscordTheme: "darker"
+      };
     }
   });
 
   // src/lib/addons/themes/colors/patches/background.tsx
   function patchChatBackground() {
-    var patches = [
+    var patches2 = [
       after("default", MessagesWrapperConnected, (_2, ret) => {
         useObservable([
-          ColorManager_default.preferences
+          colorsPref
         ]);
-        if (!_colorRef.current || ColorManager_default.preferences.customBackground === "hidden")
+        if (!_colorRef.current || !_colorRef.current.background?.url || colorsPref.customBackground === "hidden")
           return ret;
-        return /* @__PURE__ */ jsx(import_react_native2.ImageBackground, {
+        return /* @__PURE__ */ jsx(import_react_native3.ImageBackground, {
           style: {
             flex: 1,
             height: "100%"
@@ -3167,24 +3062,24 @@
         }
       })
     ];
-    return () => patches.forEach((x2) => x2());
+    return () => patches2.forEach((x2) => x2());
   }
-  var import_chroma_js2, import_react_native2, MessagesWrapperConnected, MessagesWrapper;
+  var import_chroma_js2, import_react_native3, MessagesWrapperConnected, MessagesWrapper;
   var init_background = __esm({
     "src/lib/addons/themes/colors/patches/background.tsx"() {
       "use strict";
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
       init_jsxRuntime();
+      init_preferences();
       init_updater();
       init_patcher();
-      init_storage();
+      init_storage2();
       init_utils();
       init_lazy();
       init_metro();
       import_chroma_js2 = __toESM(require_chroma_js());
-      import_react_native2 = __toESM(require_react_native());
-      init_colors();
+      import_react_native3 = __toESM(require_react_native());
       MessagesWrapperConnected = findByNameLazy("MessagesWrapperConnected", false);
       ({ MessagesWrapper } = lazyDestructure(() => findByProps("MessagesWrapper")));
     }
@@ -3208,7 +3103,7 @@
     var unpatches = [
       before("isThemeDark", isThemeModule, callback),
       before("isThemeLight", isThemeModule, callback),
-      before("updateTheme", RTNThemeManager, callback),
+      before("updateTheme", ThemeManager, callback),
       instead("resolveSemanticColor", tokenReference.default.meta ?? tokenReference.default.internal, (args, orig) => {
         if (!_colorRef.current)
           return orig(...args);
@@ -3217,6 +3112,9 @@
         args[0] = _colorRef.current.reference;
         var [name, colorDef] = extractInfo(_colorRef.current.reference, args[1]);
         var semanticDef = _colorRef.current.semantic[name];
+        if (!semanticDef && _colorRef.current.spec === 2 && name in SEMANTIC_FALLBACK_MAP) {
+          semanticDef = _colorRef.current.semantic[SEMANTIC_FALLBACK_MAP[name]];
+        }
         if (semanticDef?.value) {
           return (0, import_chroma_js3.default)(semanticDef.value).alpha(semanticDef.opacity).hex();
         }
@@ -3244,14 +3142,14 @@
       colorDef[themeName]
     ];
   }
-  var import_chroma_js3, tokenReference, isThemeModule;
+  var import_chroma_js3, tokenReference, isThemeModule, SEMANTIC_FALLBACK_MAP;
   var init_resolver = __esm({
     "src/lib/addons/themes/colors/patches/resolver.ts"() {
       "use strict";
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
       init_updater();
-      init_rn_modules();
+      init_modules();
       init_patcher();
       init_metro();
       init_filters();
@@ -3259,6 +3157,18 @@
       import_chroma_js3 = __toESM(require_chroma_js());
       tokenReference = findByProps("SemanticColor");
       isThemeModule = createLazyModule(byMutableProp("isThemeDark"));
+      SEMANTIC_FALLBACK_MAP = {
+        "BG_BACKDROP": "BACKGROUND_FLOATING",
+        "BG_BASE_PRIMARY": "BACKGROUND_PRIMARY",
+        "BG_BASE_SECONDARY": "BACKGROUND_SECONDARY",
+        "BG_BASE_TERTIARY": "BACKGROUND_SECONDARY_ALT",
+        "BG_MOD_FAINT": "BACKGROUND_MODIFIER_ACCENT",
+        "BG_MOD_STRONG": "BACKGROUND_MODIFIER_ACCENT",
+        "BG_MOD_SUBTLE": "BACKGROUND_MODIFIER_ACCENT",
+        "BG_SURFACE_OVERLAY": "BACKGROUND_FLOATING",
+        "BG_SURFACE_OVERLAY_TMP": "BACKGROUND_FLOATING",
+        "BG_SURFACE_RAISED": "BACKGROUND_MOBILE_PRIMARY"
+      };
     }
   });
 
@@ -3268,7 +3178,7 @@
       "ThemeStore",
       "SelectivelySyncedUserSettingsStore"
     ]);
-    var patches = [
+    var patches2 = [
       after("get", mmkvStorage, ([key], ret) => {
         if (!_colorRef.current || !patchedKeys.has(key))
           return;
@@ -3288,10 +3198,10 @@
         ];
       })
     ];
-    return () => patches.forEach((p) => p());
+    return () => patches2.forEach((p) => p());
   }
   var mmkvStorage;
-  var init_storage2 = __esm({
+  var init_storage3 = __esm({
     "src/lib/addons/themes/colors/patches/storage.ts"() {
       "use strict";
       init_asyncIteratorSymbol();
@@ -3310,50 +3220,240 @@
     }
   });
 
-  // src/lib/api/native/loader.ts
-  var loader_exports = {};
-  __export(loader_exports, {
-    LOADER_IDENTITY: () => LOADER_IDENTITY,
-    getVendettaLoaderIdentity: () => getVendettaLoaderIdentity
+  // src/lib/addons/themes/colors/index.ts
+  function initColors(manifest) {
+    var patches2 = [
+      patchStorage(),
+      patchDefinitionAndResolver(),
+      patchChatBackground()
+    ];
+    if (manifest)
+      updateBunnyColor(manifest, {
+        update: false
+      });
+    return () => patches2.forEach((p) => p());
+  }
+  var init_colors = __esm({
+    "src/lib/addons/themes/colors/index.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_background();
+      init_resolver();
+      init_storage3();
+      init_updater();
+    }
   });
-  function getVendettaLoaderIdentity() {
-    if (window.__vendetta_loader)
-      return window.__vendetta_loader;
-    var loader = {
-      name: bnPayload.loaderName,
-      features: {
-        loaderConfig: LOADER_IDENTITY.features.loaderConfig != null,
-        syscolors: LOADER_IDENTITY.features.sysColors != null ? {
-          prop: "__vendetta_syscolors"
-        } : void 0,
-        themes: LOADER_IDENTITY.features.themes != null ? {
-          prop: "__vendetta_theme"
-        } : void 0
+
+  // src/lib/addons/themes/index.ts
+  var themes_exports = {};
+  __export(themes_exports, {
+    fetchTheme: () => fetchTheme,
+    getCurrentTheme: () => getCurrentTheme,
+    getThemeFromLoader: () => getThemeFromLoader,
+    initThemes: () => initThemes,
+    installTheme: () => installTheme,
+    removeTheme: () => removeTheme,
+    selectTheme: () => selectTheme,
+    themes: () => themes,
+    updateThemes: () => updateThemes
+  });
+  function writeTheme(theme) {
+    return _writeTheme.apply(this, arguments);
+  }
+  function _writeTheme() {
+    _writeTheme = _async_to_generator(function* (theme) {
+      if (typeof theme !== "object")
+        throw new Error("Theme must be an object");
+      yield createFileBackend(getThemeFilePath() || "theme.json").set(theme);
+    });
+    return _writeTheme.apply(this, arguments);
+  }
+  function processData(data) {
+    if (data.semanticColors) {
+      var { semanticColors: semanticColors2 } = data;
+      for (var key in semanticColors2) {
+        for (var index in semanticColors2[key]) {
+          semanticColors2[key][index] &&= normalizeToHex(semanticColors2[key][index]) || false;
+        }
       }
+    }
+    if (data.rawColors) {
+      var { rawColors: rawColors2 } = data;
+      for (var key1 in rawColors2) {
+        var normalized = normalizeToHex(rawColors2[key1]);
+        if (normalized)
+          data.rawColors[key1] = normalized;
+      }
+      if (import_react_native4.Platform.OS === "android")
+        applyAndroidAlphaKeys(rawColors2);
+    }
+    data.spec ??= 2;
+    return data;
+  }
+  function fetchTheme(id) {
+    return _fetchTheme.apply(this, arguments);
+  }
+  function _fetchTheme() {
+    _fetchTheme = _async_to_generator(function* (id, selected = false) {
+      var themeJSON;
+      try {
+        themeJSON = yield (yield safeFetch(id, {
+          cache: "no-store"
+        })).json();
+      } catch (e) {
+        throw new Error(`Failed to fetch theme at ${id}`);
+      }
+      themes[id] = {
+        id,
+        selected,
+        data: processData(themeJSON)
+      };
+      if (selected) {
+        writeTheme(themes[id]);
+        updateBunnyColor(themes[id].data, {
+          update: true
+        });
+      }
+    });
+    return _fetchTheme.apply(this, arguments);
+  }
+  function installTheme(id) {
+    return _installTheme.apply(this, arguments);
+  }
+  function _installTheme() {
+    _installTheme = _async_to_generator(function* (id) {
+      if (typeof id !== "string" || id in themes)
+        throw new Error("Theme already installed");
+      yield fetchTheme(id);
+    });
+    return _installTheme.apply(this, arguments);
+  }
+  function selectTheme(theme, write = true) {
+    if (theme)
+      theme.selected = true;
+    Object.keys(themes).forEach((k) => themes[k].selected = themes[k].id === theme?.id);
+    if (theme == null && write) {
+      updateBunnyColor(null, {
+        update: true
+      });
+      return writeTheme({});
+    } else if (theme) {
+      updateBunnyColor(theme.data, {
+        update: true
+      });
+      return writeTheme(theme);
+    }
+  }
+  function removeTheme(id) {
+    return _removeTheme.apply(this, arguments);
+  }
+  function _removeTheme() {
+    _removeTheme = _async_to_generator(function* (id) {
+      var theme = themes[id];
+      if (theme.selected)
+        yield selectTheme(null);
+      delete themes[id];
+      return theme.selected;
+    });
+    return _removeTheme.apply(this, arguments);
+  }
+  function updateThemes() {
+    return _updateThemes.apply(this, arguments);
+  }
+  function _updateThemes() {
+    _updateThemes = _async_to_generator(function* () {
+      yield awaitStorage(themes);
+      var currentTheme = getThemeFromLoader();
+      yield allSettled(Object.keys(themes).map((id) => fetchTheme(id, currentTheme?.id === id)));
+    });
+    return _updateThemes.apply(this, arguments);
+  }
+  function getCurrentTheme() {
+    return Object.values(themes).find((t) => t.selected) ?? null;
+  }
+  function getThemeFromLoader() {
+    return getStoredTheme();
+  }
+  function initThemes() {
+    return _initThemes.apply(this, arguments);
+  }
+  function _initThemes() {
+    _initThemes = _async_to_generator(function* () {
+      if (!isThemeSupported())
+        return;
+      try {
+        if (isPyonLoader()) {
+          writeFile("../vendetta_theme.json", "null");
+        }
+        yield awaitStorage2(colorsPref);
+        var currentTheme = getThemeFromLoader();
+        initColors(currentTheme?.data ?? null);
+        updateThemes().catch((e) => console.error("Failed to update themes", e));
+      } catch (e) {
+        console.error("Failed to initialize themes", e);
+      }
+    });
+    return _initThemes.apply(this, arguments);
+  }
+  var import_react_native4, themes;
+  var init_themes = __esm({
+    "src/lib/addons/themes/index.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_async_to_generator();
+      init_storage();
+      init_fs();
+      init_loader();
+      init_storage2();
+      init_utils();
+      import_react_native4 = __toESM(require_react_native());
+      init_colors();
+      init_parser();
+      init_preferences();
+      init_updater();
+      themes = wrapSync(createStorage(createMMKVBackend("VENDETTA_THEMES")));
+    }
+  });
+
+  // src/lib/api/native/loader.ts
+  function isVendettaLoader() {
+    return vendettaLoaderIdentity != null;
+  }
+  function isPyonLoader() {
+    return pyonLoaderIdentity != null;
+  }
+  function polyfillVendettaLoaderIdentity() {
+    if (!isPyonLoader() || isVendettaLoader())
+      return null;
+    var loader = {
+      name: pyonLoaderIdentity.loaderName,
+      features: {}
     };
-    if (LOADER_IDENTITY.features.sysColors != null) {
+    if (isLoaderConfigSupported())
+      loader.features.loaderConfig = true;
+    if (isSysColorsSupported()) {
+      loader.features.syscolors = {
+        prop: "__vendetta_syscolors"
+      };
       Object.defineProperty(globalThis, "__vendetta_syscolors", {
-        get: () => LOADER_IDENTITY.features.sysColors?.palette,
+        get: () => getSysColors(),
         configurable: true
       });
     }
-    if (LOADER_IDENTITY.features.themes != null) {
+    if (isThemeSupported()) {
+      loader.features.themes = {
+        prop: "__vendetta_theme"
+      };
       Object.defineProperty(globalThis, "__vendetta_theme", {
+        // get: () => getStoredTheme(),
         get: () => {
-          try {
-            var { default: ColorManager } = __require("@lib/addons/themes/colors/manager");
-            var { selected } = ColorManager.preferences;
-            var manifest = ColorManager.getCurrentManifest();
-            if (selected == null || manifest == null)
-              return null;
-            return {
-              id: ColorManager.getId(manifest, ColorManager.infos[selected].sourceUrl),
-              data: ColorManager.convertToVd(manifest),
-              selected: true
-            };
-          } catch (e) {
-            return LOADER_IDENTITY.features.themes?.stored;
-          }
+          var id = getStoredTheme()?.id;
+          if (!id)
+            return null;
+          var { themes: themes2 } = (init_themes(), __toCommonJS(themes_exports));
+          return themes2[id] ?? getStoredTheme() ?? null;
         },
         configurable: true
       });
@@ -3364,643 +3464,675 @@
     });
     return loader;
   }
-  var bnPayload, vdPayload, LOADER_IDENTITY;
+  function getVendettaLoaderIdentity() {
+    if (globalThis.__vendetta_loader)
+      return globalThis.__vendetta_loader;
+    return polyfillVendettaLoaderIdentity();
+  }
+  function getLoaderName() {
+    if (isPyonLoader())
+      return pyonLoaderIdentity.loaderName;
+    else if (isVendettaLoader())
+      return vendettaLoaderIdentity.name;
+    return "Unknown";
+  }
+  function getLoaderVersion() {
+    if (isPyonLoader())
+      return pyonLoaderIdentity.loaderVersion;
+    return null;
+  }
+  function isLoaderConfigSupported() {
+    if (isPyonLoader()) {
+      return true;
+    } else if (isVendettaLoader()) {
+      return vendettaLoaderIdentity.features.loaderConfig;
+    }
+    return false;
+  }
+  function isThemeSupported() {
+    if (isPyonLoader()) {
+      return pyonLoaderIdentity.hasThemeSupport;
+    } else if (isVendettaLoader()) {
+      return vendettaLoaderIdentity.features.themes != null;
+    }
+    return false;
+  }
+  function getStoredTheme() {
+    if (isPyonLoader()) {
+      return pyonLoaderIdentity.storedTheme;
+    } else if (isVendettaLoader()) {
+      var themeProp = vendettaLoaderIdentity.features.themes?.prop;
+      if (!themeProp)
+        return null;
+      return globalThis[themeProp] || null;
+    }
+    return null;
+  }
+  function getThemeFilePath() {
+    if (isPyonLoader()) {
+      return "pyoncord/current-theme.json";
+    } else if (isVendettaLoader()) {
+      return "vendetta_theme.json";
+    }
+    return null;
+  }
+  function isReactDevToolsPreloaded() {
+    if (isPyonLoader()) {
+      return Boolean(window.__reactDevTools);
+    }
+    if (isVendettaLoader()) {
+      return vendettaLoaderIdentity.features.devtools != null;
+    }
+    return false;
+  }
+  function getReactDevToolsProp() {
+    if (!isReactDevToolsPreloaded())
+      return null;
+    if (isPyonLoader()) {
+      window.__pyoncord_rdt = window.__reactDevTools.exports;
+      return "__pyoncord_rdt";
+    }
+    if (isVendettaLoader()) {
+      return vendettaLoaderIdentity.features.devtools.prop;
+    }
+    return null;
+  }
+  function getReactDevToolsVersion() {
+    if (!isReactDevToolsPreloaded())
+      return null;
+    if (isPyonLoader()) {
+      return window.__reactDevTools.version || null;
+    }
+    if (isVendettaLoader()) {
+      return vendettaLoaderIdentity.features.devtools.version;
+    }
+    return null;
+  }
+  function isSysColorsSupported() {
+    if (isPyonLoader())
+      return pyonLoaderIdentity.isSysColorsSupported;
+    else if (isVendettaLoader()) {
+      return vendettaLoaderIdentity.features.syscolors != null;
+    }
+    return false;
+  }
+  function getSysColors() {
+    if (!isSysColorsSupported())
+      return null;
+    if (isPyonLoader()) {
+      return pyonLoaderIdentity.sysColors;
+    } else if (isVendettaLoader()) {
+      return vendettaLoaderIdentity.features.syscolors.prop;
+    }
+    return null;
+  }
+  function getLoaderConfigPath() {
+    if (isPyonLoader()) {
+      return "pyoncord/loader.json";
+    } else if (isVendettaLoader()) {
+      return "vendetta_loader.json";
+    }
+    return "loader.json";
+  }
+  function isFontSupported() {
+    if (isPyonLoader())
+      return pyonLoaderIdentity.fontPatch === 2;
+    return false;
+  }
+  var pyonLoaderIdentity, vendettaLoaderIdentity;
   var init_loader = __esm({
     "src/lib/api/native/loader.ts"() {
       "use strict";
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
-      ({ __PYON_LOADER__: bnPayload, __vendetta_loader: vdPayload } = globalThis);
-      LOADER_IDENTITY = (() => {
-        if (bnPayload) {
-          return {
-            type: "bunny",
-            name: bnPayload.loaderName,
-            version: bnPayload.loaderVersion,
-            features: {
-              loaderConfig: {
-                path: "loader.json"
-              },
-              themes: bnPayload.hasThemeSupport ? {
-                stored: bnPayload.storedTheme,
-                storePath: "current-theme.json"
-              } : null,
-              rdt: {
-                version: window.__reactDevTools?.version,
-                exports: window.__reactDevTools?.exports
-              },
-              sysColors: bnPayload.isSysColorsSupported ? {
-                palette: bnPayload.sysColors
-              } : null,
-              fonts: bnPayload.fontPatch ? {
-                version: bnPayload.fontPatch
-              } : null
-            }
-          };
-        } else {
-          return {
-            type: "vendetta",
-            name: vdPayload.name,
-            version: "N/A",
-            features: {
-              loaderConfig: {
-                path: "../vendetta_loader.json"
-              },
-              themes: vdPayload.features.themes != null ? {
-                stored: window[vdPayload.features.themes.prop] || null,
-                storePath: "../vendetta_theme.json"
-              } : null,
-              rdt: vdPayload.features.devtools != null ? {
-                exports: window[vdPayload.features.devtools.prop] || null,
-                version: vdPayload.features.devtools.version
-              } : null,
-              sysColors: vdPayload.features.syscolors ? {
-                palette: window[vdPayload.features.syscolors.prop] || null
-              } : null,
-              fonts: null
-            }
-          };
-        }
-      })();
+      pyonLoaderIdentity = globalThis.__PYON_LOADER__;
+      vendettaLoaderIdentity = globalThis.__vendetta_loader;
+      getVendettaLoaderIdentity();
     }
   });
 
-  // globals:lodash
-  var require_lodash = __commonJS({
-    "globals:lodash"(exports, module) {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      module.exports = require_depsModule()["lodash"];
-    }
+  // src/lib/api/settings.ts
+  var settings_exports = {};
+  __export(settings_exports, {
+    loaderConfig: () => loaderConfig,
+    settings: () => settings
   });
-
-  // src/lib/addons/themes/colors/ColorManager.ts
-  var import_chroma_js4, import_lodash, ColorManager_default;
-  var init_ColorManager = __esm({
-    "src/lib/addons/themes/colors/ColorManager.ts"() {
+  var settings, loaderConfig;
+  var init_settings = __esm({
+    "src/lib/api/settings.ts"() {
       "use strict";
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
-      init_async_to_generator();
-      init_BunnySettings();
-      init_fs();
-      init_loader();
       init_storage();
-      init_utils();
-      init_safeFetch();
-      import_chroma_js4 = __toESM(require_chroma_js());
-      import_lodash = __toESM(require_lodash());
-      init_colors();
-      init_parser();
-      init_updater();
-      ColorManager_default = {
-        preferences: createStorage("themes/colors/preferences.json", {
-          dflt: {
-            selected: null,
-            per: {},
-            customBackground: null
-          }
-        }),
-        infos: createStorage("themes/colors/info.json"),
-        prepare() {
-          return _async_to_generator(function* () {
-            yield awaitStorage(this.preferences, this.infos);
-            yield this.migrate("VENDETTA_THEMES");
-            yield allSettled(this.getAllIds().map((id) => preloadStorageIfExists(`themes/colors/data/${id}.json`)));
-            if (!BunnySettings_default.isSafeMode()) {
-              if (this.preferences.selected) {
-                initColors(this.getCurrentManifest());
-              } else {
-                initColors(null);
-              }
-            }
-            if (LOADER_IDENTITY.type === "bunny" && (yield fileExists("../vendetta_theme.json"))) {
-              yield writeFile("../vendetta_theme.json", "null");
-            }
-          }).apply(this);
-        },
-        initialize() {
-          return _async_to_generator(function* () {
-            this.updateAll();
-          }).apply(this);
-        },
-        migrate(oldKey) {
-          return _async_to_generator(function* () {
-            var _this = this;
-            return migrateToNewStorage(oldKey, function() {
-              var _ref = _async_to_generator(function* (storage) {
-                for (var [id, vdTheme] of Object.entries(storage)) {
-                  var sanitizedId = _this.sanitizeId(id);
-                  yield updateStorageAsync(`themes/colors/data/${sanitizedId}.json`, vdTheme.data);
-                  if (vdTheme.selected) {
-                    _this.preferences.selected = sanitizedId;
-                  }
-                  _this.preferences.per[sanitizedId] ??= {
-                    autoUpdate: true
-                  };
-                  _this.infos[sanitizedId] ??= {
-                    timeInstalled: null,
-                    sourceUrl: id
-                  };
-                }
-              });
-              return function(storage) {
-                return _ref.apply(this, arguments);
-              };
-            }());
-          }).apply(this);
-        },
-        useColors() {
-          useObservable([
-            this.preferences,
-            this.infos
-          ]);
-        },
-        sanitizeId(id) {
-          return id.replace(/[<>:"/\\|?*]/g, "-").replace(/-+/g, "-");
-        },
-        convertToVd(manifest) {
-          var semanticColors = {};
-          if (manifest.spec === 2 && manifest.semanticColors) {
-            for (var key in manifest.semanticColors) {
-              semanticColors[key] &&= semanticColors[key].map((str) => normalizeToHex(str || void 0)).map((x2) => x2 || false);
-            }
-          } else if (manifest.spec === 3) {
-            var _loop2 = function(key12) {
-              var applyOpacity = (v2) => (0, import_chroma_js4.default)(v2).alpha(intDef.semantic[key12].opacity).hex();
-              var value = applyOpacity(intDef.semantic[key12].value);
-              semanticColors[key12] = manifest.type === "dark" ? [
-                value
-              ] : [
-                false,
-                value
-              ];
-            };
-            var intDef = parseColorManifest(manifest);
-            for (var key1 in intDef.semantic)
-              _loop2(key1);
-          }
-          return {
-            spec: 2,
-            name: manifest.spec === 3 ? manifest.display.name : manifest.name,
-            description: manifest.spec === 3 ? manifest.display.description : manifest.description,
-            authors: manifest.spec === 3 ? manifest.display.authors : manifest.authors,
-            semanticColors,
-            rawColors: manifest.spec === 3 ? manifest.raw : applyAndroidAlphaKeys(manifest.rawColors),
-            background: manifest.spec === 2 ? manifest.background : manifest.background ? {
-              ...(0, import_lodash.omit)(manifest.background, [
-                "opacity"
-              ]),
-              alpha: manifest.background.opacity
-            } : void 0,
-            ...manifest.spec === 3 && manifest.extras
-          };
-        },
-        checkColor(manifest) {
-          invariant(manifest.spec === 2 || manifest.spec === 3, "Invalid theme spec");
-          if (manifest.spec === 2) {
-            return this.convertToVd(manifest);
+      init_loader();
+      settings = wrapSync(createStorage(createMMKVBackend("VENDETTA_SETTINGS")));
+      loaderConfig = wrapSync(createStorage(createFileBackend(getLoaderConfigPath(), {
+        customLoadUrl: {
+          enabled: false,
+          url: "http://localhost:4040/bunny.js"
+        }
+      })));
+    }
+  });
+
+  // src/metro/polyfills/redesign.ts
+  var redesign_exports = {};
+  __export(redesign_exports, {
+    default: () => redesign_default
+  });
+  var redesignProps, _module, _source, cacher, actualExports, exportsKeysLength, prop, id, moduleExports, redesign_default;
+  var init_redesign = __esm({
+    "src/metro/polyfills/redesign.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_caches();
+      redesignProps = /* @__PURE__ */ new Set([
+        "AlertActionButton",
+        "AlertModal",
+        "AlertModalContainer",
+        "AvatarDuoPile",
+        "AvatarPile",
+        "BACKDROP_OPAQUE_MAX_OPACITY",
+        "Backdrop",
+        "Button",
+        "Card",
+        "ContextMenu",
+        "ContextMenuContainer",
+        "FauxHeader",
+        "FloatingActionButton",
+        "GhostInput",
+        "GuildIconPile",
+        "HeaderActionButton",
+        "HeaderButton",
+        "HeaderSubmittingIndicator",
+        "IconButton",
+        "Input",
+        "InputButton",
+        "InputContainer",
+        "LayerContext",
+        "LayerScope",
+        "Modal",
+        "ModalActionButton",
+        "ModalContent",
+        "ModalDisclaimer",
+        "ModalFloatingAction",
+        "ModalFloatingActionSpacer",
+        "ModalFooter",
+        "ModalScreen",
+        "ModalStepIndicator",
+        "NAV_BAR_HEIGHT",
+        "NAV_BAR_HEIGHT_MULTILINE",
+        "Navigator",
+        "NavigatorHeader",
+        "NavigatorScreen",
+        "Pile",
+        "PileOverflow",
+        "RedesignCompat",
+        "RedesignCompatContext",
+        "RowButton",
+        "STATUS_BAR_HEIGHT",
+        "SceneLoadingIndicator",
+        "SearchField",
+        "SegmentedControl",
+        "SegmentedControlPages",
+        "Slider",
+        "Stack",
+        "StepModal",
+        "StickyContext",
+        "StickyHeader",
+        "StickyWrapper",
+        "TABLE_ROW_CONTENT_HEIGHT",
+        "TABLE_ROW_HEIGHT",
+        "TableCheckboxRow",
+        "TableRadioGroup",
+        "TableRadioRow",
+        "TableRow",
+        "TableRowGroup",
+        "TableRowGroupTitle",
+        "TableRowIcon",
+        "TableSwitchRow",
+        "Tabs",
+        "TextArea",
+        "TextField",
+        "TextInput",
+        "Toast",
+        "dismissAlerts",
+        "getHeaderBackButton",
+        "getHeaderCloseButton",
+        "getHeaderConditionalBackButton",
+        "getHeaderNoTitle",
+        "getHeaderTextButton",
+        "hideContextMenu",
+        "navigatorShouldCrossfade",
+        "openAlert",
+        "useAccessibilityNativeStackOptions",
+        "useAndroidNavScrim",
+        "useCoachmark",
+        "useFloatingActionButtonScroll",
+        "useFloatingActionButtonState",
+        "useNativeStackNavigation",
+        "useNavigation",
+        "useNavigationTheme",
+        "useNavigatorBackPressHandler",
+        "useNavigatorScreens",
+        "useNavigatorShouldCrossfade",
+        "useSegmentedControlState",
+        "useStackNavigation",
+        "useTabNavigation",
+        "useTooltip"
+      ]);
+      _module = {};
+      _source = {};
+      cacher = getPolyfillModuleCacher("redesign_module");
+      for ([id, moduleExports] of cacher.getModules()) {
+        for (prop of redesignProps) {
+          actualExports = void 0;
+          if (moduleExports[prop]) {
+            actualExports = moduleExports;
+          } else if (moduleExports.default?.[prop]) {
+            actualExports = moduleExports.default;
           } else {
-            parseColorManifest(manifest);
-            return manifest;
+            continue;
           }
-        },
-        getAllIds() {
-          return Object.keys(this.infos);
-        },
-        getId(manifest, url2) {
-          return this.sanitizeId("id" in manifest ? manifest.id : url2);
-        },
-        getCurrentManifest() {
-          if (!this.preferences.selected)
-            return null;
-          return this.getManifest(this.preferences.selected);
-        },
-        getManifest(id) {
-          id = this.sanitizeId(id);
-          if (!this.infos[id])
-            throw new Error(`${id} is not installed`);
-          return createStorage(`themes/colors/data/${id}.json`);
-        },
-        getDisplayInfo(id) {
-          id = this.sanitizeId(id);
-          var manifest = createStorage(`themes/colors/data/${id}.json`, {
-            nullIfEmpty: true
+          exportsKeysLength = Reflect.ownKeys(actualExports).length;
+          if (_source[prop] && exportsKeysLength >= _source[prop]) {
+            continue;
+          }
+          _module[prop] = actualExports[prop];
+          _source[prop] = Reflect.ownKeys(actualExports).length;
+          cacher.cacheId(id);
+          if (exportsKeysLength === 1) {
+            redesignProps.delete(prop);
+          }
+        }
+      }
+      cacher.finish();
+      redesign_default = _module;
+    }
+  });
+
+  // src/metro/internals/modules.ts
+  var modules_exports2 = {};
+  __export(modules_exports2, {
+    getCachedPolyfillModules: () => getCachedPolyfillModules,
+    getImportingModuleId: () => getImportingModuleId,
+    getModules: () => getModules,
+    metroModules: () => metroModules,
+    requireModule: () => requireModule,
+    subscribeModule: () => subscribeModule
+  });
+  function blacklistModule(id) {
+    Object.defineProperty(metroModules, id, {
+      enumerable: false
+    });
+    blacklistedIds.add(id);
+    indexBlacklistFlag(Number(id));
+  }
+  function isBadExports(exports) {
+    return !exports || exports === window || exports["<!@ pylix was here :fuyusquish: !@>"] === null || exports.__proto__ === Object.prototype && Reflect.ownKeys(exports).length === 0;
+  }
+  function onModuleRequire(moduleExports, id) {
+    indexExportsFlags(id, moduleExports);
+    moduleExports.initSentry &&= () => void 0;
+    if (moduleExports.default?.track && moduleExports.default.trackMaker)
+      moduleExports.default.track = () => Promise.resolve();
+    if (moduleExports.registerAsset) {
+      (init_assets(), __toCommonJS(assets_exports)).patchAssets(moduleExports);
+    }
+    if (!patchedNativeComponentRegistry && [
+      "customBubblingEventTypes",
+      "customDirectEventTypes",
+      "register",
+      "get"
+    ].every((x2) => moduleExports[x2])) {
+      instead2("register", moduleExports, (args, origFunc) => {
+        try {
+          return origFunc(...args);
+        } catch (e) {
+        }
+      });
+      patchedNativeComponentRegistry = true;
+    }
+    if (moduleExports?.default?.constructor?.displayName === "DeveloperExperimentStore") {
+      moduleExports.default = new Proxy(moduleExports.default, {
+        get(target, property, receiver) {
+          if (property === "isDeveloper") {
+            var { settings: settings2 } = (init_settings(), __toCommonJS(settings_exports));
+            return settings2.enableDiscordDeveloperSettings ?? false;
+          }
+          return Reflect.get(target, property, receiver);
+        }
+      });
+    }
+    if (!patchedImportTracker && moduleExports.fileFinishedImporting) {
+      before2("fileFinishedImporting", moduleExports, ([filePath]) => {
+        if (_importingModuleId === -1 || !filePath)
+          return;
+        metroModules[_importingModuleId].__filePath = filePath;
+      });
+      patchedImportTracker = true;
+    }
+    if (!patchedInspectSource && window["__core-js_shared__"]) {
+      var inspect = (f) => typeof f === "function" && functionToString.apply(f, []);
+      window["__core-js_shared__"].inspectSource = inspect;
+      patchedInspectSource = true;
+    }
+    if (moduleExports.findHostInstance_DEPRECATED) {
+      var prevExports = metroModules[id - 1]?.publicModule.exports;
+      var inc = prevExports.default?.reactProfilingEnabled ? 1 : -1;
+      if (!metroModules[id + inc]?.isInitialized) {
+        blacklistModule(id + inc);
+      }
+    }
+    if (moduleExports.isMoment) {
+      instead2("defineLocale", moduleExports, (args, orig) => {
+        var origLocale = moduleExports.locale();
+        orig(...args);
+        moduleExports.locale(origLocale);
+      });
+    }
+    var subs = moduleSubscriptions.get(Number(id));
+    if (subs) {
+      subs.forEach((s) => s());
+      moduleSubscriptions.delete(Number(id));
+    }
+  }
+  function getImportingModuleId() {
+    return _importingModuleId;
+  }
+  function subscribeModule(id, cb) {
+    var subs = moduleSubscriptions.get(id) ?? /* @__PURE__ */ new Set();
+    subs.add(cb);
+    moduleSubscriptions.set(id, subs);
+    return () => subs.delete(cb);
+  }
+  function requireModule(id) {
+    if (!metroModules[0]?.isInitialized)
+      metroRequire(0);
+    if (blacklistedIds.has(id))
+      return void 0;
+    if (Number(id) === -1)
+      return init_redesign(), __toCommonJS(redesign_exports);
+    if (metroModules[id]?.isInitialized && !metroModules[id]?.hasError) {
+      return metroRequire(id);
+    }
+    var originalHandler = ErrorUtils.getGlobalHandler();
+    ErrorUtils.setGlobalHandler(noopHandler);
+    var moduleExports;
+    try {
+      moduleExports = metroRequire(id);
+    } catch (e) {
+      blacklistModule(id);
+      moduleExports = void 0;
+    }
+    ErrorUtils.setGlobalHandler(originalHandler);
+    return moduleExports;
+  }
+  function* getModules(uniq, all = false) {
+    yield [
+      -1,
+      (init_redesign(), __toCommonJS(redesign_exports))
+    ];
+    var cache = getMetroCache().findIndex[uniq];
+    if (all && !cache?.[`_${ModulesMapInternal.FULL_LOOKUP}`])
+      cache = void 0;
+    if (cache?.[`_${ModulesMapInternal.NOT_FOUND}`])
+      return;
+    for (var id in cache) {
+      if (id[0] === "_")
+        continue;
+      var exports = requireModule(Number(id));
+      if (isBadExports(exports))
+        continue;
+      yield [
+        id,
+        exports
+      ];
+    }
+    for (var id1 in metroModules) {
+      var exports1 = requireModule(Number(id1));
+      if (isBadExports(exports1))
+        continue;
+      yield [
+        id1,
+        exports1
+      ];
+    }
+  }
+  function* getCachedPolyfillModules(name) {
+    var cache = getMetroCache().polyfillIndex[name];
+    for (var id in cache) {
+      var exports = requireModule(Number(id));
+      if (isBadExports(exports))
+        continue;
+      yield [
+        id,
+        exports
+      ];
+    }
+    if (!cache[`_${ModulesMapInternal.FULL_LOOKUP}`]) {
+      for (var id1 in metroModules) {
+        var exports1 = requireModule(Number(id1));
+        if (isBadExports(exports1))
+          continue;
+        yield [
+          id1,
+          exports1
+        ];
+      }
+    }
+  }
+  var _loop, before2, instead2, metroModules, metroRequire, moduleSubscriptions, blacklistedIds, noopHandler, functionToString, patchedInspectSource, patchedImportTracker, patchedNativeComponentRegistry, _importingModuleId, key;
+  var init_modules2 = __esm({
+    "src/metro/internals/modules.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_caches();
+      init_enums();
+      _loop = function(key) {
+        var id = Number(key);
+        var metroModule = metroModules[id];
+        var cache = getMetroCache().exportsIndex[id];
+        if (cache & ModuleFlags.BLACKLISTED) {
+          blacklistModule(id);
+          return "continue";
+        }
+        if (metroModule.factory) {
+          instead2("factory", metroModule, (args, origFunc) => {
+            var originalImportingId = _importingModuleId;
+            _importingModuleId = id;
+            var { 1: metroRequire2, 4: moduleObject } = args;
+            args[
+              2
+              /* metroImportDefault */
+            ] = (id2) => {
+              var exps = metroRequire2(id2);
+              return exps && exps.__esModule ? exps.default : exps;
+            };
+            args[
+              3
+              /* metroImportAll */
+            ] = (id2) => {
+              var exps = metroRequire2(id2);
+              if (exps && exps.__esModule)
+                return exps;
+              var importAll = {};
+              if (exps)
+                Object.assign(importAll, exps);
+              importAll.default = exps;
+              return importAll;
+            };
+            origFunc(...args);
+            if (!isBadExports(moduleObject.exports)) {
+              onModuleRequire(moduleObject.exports, id);
+            } else {
+              blacklistModule(id);
+            }
+            _importingModuleId = originalImportingId;
           });
-          if (!manifest)
-            throw new Error(`Theme manifest of '${id}' was not stored`);
-          if (manifest.spec === 3) {
-            return {
-              id,
-              ...manifest.display
-            };
-          } else {
-            return {
-              id,
-              name: manifest.name,
-              description: manifest.description,
-              authors: manifest.authors
-            };
-          }
-        },
-        writeForNative(manifest) {
-          return _async_to_generator(function* () {
-            manifest = manifest && this.convertToVd(manifest);
-            if (manifest) {
-              yield writeFile("current-theme.json", JSON.stringify({
-                id: "native",
-                data: manifest,
-                selected: true
-              }));
-            } else {
-              yield writeFile("current-theme.json", "null");
-            }
-          }).apply(this);
-        },
-        fetch(url2) {
-          return _async_to_generator(function* () {
-            var manifest;
-            try {
-              manifest = yield (yield safeFetch(url2, {
-                cache: "no-store"
-              })).json();
-              manifest = this.checkColor(manifest);
-            } catch (e) {
-              throw new Error(`Failed to fetch theme at ${url2}`);
-            }
-            var id = this.getId(manifest, url2);
-            yield updateStorageAsync(`themes/colors/data/${id}.json`, manifest);
-            return manifest;
-          }).apply(this);
-        },
-        refresh(id) {
-          return _async_to_generator(function* () {
-            id = this.sanitizeId(id);
-            var { sourceUrl } = this.infos[id];
-            yield this.fetch(sourceUrl);
-            if (this.preferences.selected === id) {
-              updateBunnyColor(this.getCurrentManifest(), {
-                update: true
-              });
-            }
-          }).apply(this);
-        },
-        select(id) {
-          return _async_to_generator(function* () {
-            id &&= this.sanitizeId(id);
-            invariant(id ? this.infos[id] : true, "Tried to select non-existent theme");
-            if (this.preferences.selected === id)
-              return;
-            this.preferences.selected = id;
-            if (id) {
-              var manifest = yield createStorageAsync(`themes/colors/data/${id}.json`, {
-                nullIfEmpty: true
-              });
-              manifest ??= yield this.fetch(this.infos[id].sourceUrl);
-              updateBunnyColor(manifest, {
-                update: true
-              });
-              yield this.writeForNative(manifest);
-            } else {
-              updateBunnyColor(null, {
-                update: true
-              });
-              yield this.writeForNative(null);
-            }
-          }).apply(this);
-        },
-        install(url2) {
-          return _async_to_generator(function* () {
-            if (this.getAllIds().some((id2) => this.infos[id2].sourceUrl === url2)) {
-              throw new Error("Theme is already installed");
-            }
-            var manifest = yield this.fetch(url2);
-            var id = this.getId(manifest, url2);
-            this.preferences.per[id] = {
-              autoUpdate: true
-            };
-            this.infos[id] = {
-              sourceUrl: url2,
-              timeInstalled: (/* @__PURE__ */ new Date()).toISOString()
-            };
-          }).apply(this);
-        },
-        uninstall(id) {
-          return _async_to_generator(function* () {
-            id = this.sanitizeId(id);
-            if (this.preferences.selected === id) {
-              yield this.select(null);
-            }
-            delete this.infos[id];
-            delete this.preferences.per[id];
-            yield removeFile(`themes/colors/data/${id}.json`);
-          }).apply(this);
-        },
-        updateAll() {
-          return _async_to_generator(function* () {
-            var update = (id) => this.fetch(this.infos[id].sourceUrl);
-            yield allSettled(this.getAllIds().map(update));
-          }).apply(this);
         }
       };
+      ({ before: before2, instead: instead2 } = require_cjs());
+      metroModules = window.modules;
+      metroRequire = window.__r;
+      moduleSubscriptions = /* @__PURE__ */ new Map();
+      blacklistedIds = /* @__PURE__ */ new Set();
+      noopHandler = () => void 0;
+      functionToString = Function.prototype.toString;
+      patchedInspectSource = false;
+      patchedImportTracker = false;
+      patchedNativeComponentRegistry = false;
+      _importingModuleId = -1;
+      for (key in metroModules)
+        _loop(key);
     }
   });
 
-  // src/lib/addons/themes/colors/index.ts
-  var colors_exports = {};
-  __export(colors_exports, {
-    ColorManager: () => ColorManager_default,
-    default: () => initColors
+  // src/metro/internals/caches.ts
+  var caches_exports = {};
+  __export(caches_exports, {
+    getCacherForUniq: () => getCacherForUniq,
+    getMetroCache: () => getMetroCache,
+    getPolyfillModuleCacher: () => getPolyfillModuleCacher,
+    indexAssetName: () => indexAssetName,
+    indexBlacklistFlag: () => indexBlacklistFlag,
+    indexExportsFlags: () => indexExportsFlags,
+    initMetroCache: () => initMetroCache
   });
-  function initColors(manifest) {
-    var patches = [
-      patchStorage(),
-      patchDefinitionAndResolver(),
-      patchChatBackground()
-    ];
-    if (manifest)
-      updateBunnyColor(manifest, {
-        update: false
-      });
-    return () => patches.forEach((p) => p());
+  function buildInitCache() {
+    var cache = {
+      _v: CACHE_VERSION,
+      _buildNumber: ClientInfoManager.Build,
+      _modulesCount: Object.keys(window.modules).length,
+      exportsIndex: {},
+      findIndex: {},
+      polyfillIndex: {},
+      assetsIndex: {}
+    };
+    setTimeout(() => {
+      for (var id in window.modules) {
+        (init_modules2(), __toCommonJS(modules_exports2)).requireModule(id);
+      }
+    }, 100);
+    _metroCache = cache;
+    return cache;
   }
-  var init_colors = __esm({
-    "src/lib/addons/themes/colors/index.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_background();
-      init_resolver();
-      init_storage2();
-      init_updater();
-      init_ColorManager();
-    }
-  });
-
-  // src/core/debug/safeMode.ts
-  function toggleSafeMode() {
-    return _toggleSafeMode.apply(this, arguments);
+  function initMetroCache() {
+    return _initMetroCache.apply(this, arguments);
   }
-  function _toggleSafeMode() {
-    _toggleSafeMode = _async_to_generator(function* ({ to = !BunnySettings_default.general.safeModeEnabled, reload = true } = {}) {
-      var enabled = BunnySettings_default.general.safeModeEnabled = to;
-      var currentColor = ColorManager_default.getCurrentManifest();
-      yield ColorManager_default.writeForNative(enabled ? null : currentColor);
-      if (reload)
-        setTimeout(() => RTNBundleUpdaterManager.reload(), 500);
+  function _initMetroCache() {
+    _initMetroCache = _async_to_generator(function* () {
+      var rawCache = yield MMKVManager.getItem(BUNNY_METRO_CACHE_KEY);
+      if (rawCache == null)
+        return void buildInitCache();
+      try {
+        _metroCache = JSON.parse(rawCache);
+        if (_metroCache._v !== CACHE_VERSION) {
+          _metroCache = null;
+          throw "cache invalidated; cache version outdated";
+        }
+        if (_metroCache._buildNumber !== ClientInfoManager.Build) {
+          _metroCache = null;
+          throw "cache invalidated; version mismatch";
+        }
+        if (_metroCache._modulesCount !== Object.keys(window.modules).length) {
+          _metroCache = null;
+          throw "cache invalidated; modules count mismatch";
+        }
+      } catch (e) {
+        buildInitCache();
+      }
     });
-    return _toggleSafeMode.apply(this, arguments);
+    return _initMetroCache.apply(this, arguments);
   }
-  var init_safeMode = __esm({
-    "src/core/debug/safeMode.ts"() {
+  function extractExportsFlags(moduleExports) {
+    if (!moduleExports)
+      return void 0;
+    var bit = ModuleFlags.EXISTS;
+    return bit;
+  }
+  function indexExportsFlags(moduleId, moduleExports) {
+    var flags = extractExportsFlags(moduleExports);
+    if (flags && flags !== ModuleFlags.EXISTS) {
+      _metroCache.exportsIndex[moduleId] = flags;
+    }
+  }
+  function indexBlacklistFlag(id) {
+    _metroCache.exportsIndex[id] |= ModuleFlags.BLACKLISTED;
+  }
+  function getCacherForUniq(uniq, allFind) {
+    var indexObject = _metroCache.findIndex[uniq] ??= {};
+    return {
+      cacheId(moduleId, exports) {
+        indexObject[moduleId] ??= extractExportsFlags(exports);
+        saveCache();
+      },
+      // Finish may not be called by single find
+      finish(notFound) {
+        if (allFind)
+          indexObject[`_${ModulesMapInternal.FULL_LOOKUP}`] = 1;
+        if (notFound)
+          indexObject[`_${ModulesMapInternal.NOT_FOUND}`] = 1;
+        saveCache();
+      }
+    };
+  }
+  function getPolyfillModuleCacher(name) {
+    var indexObject = _metroCache.polyfillIndex[name] ??= {};
+    return {
+      getModules() {
+        return (init_modules2(), __toCommonJS(modules_exports2)).getCachedPolyfillModules(name);
+      },
+      cacheId(moduleId) {
+        indexObject[moduleId] = 1;
+        saveCache();
+      },
+      finish() {
+        indexObject[`_${ModulesMapInternal.FULL_LOOKUP}`] = 1;
+        saveCache();
+      }
+    };
+  }
+  function indexAssetName(name, moduleId) {
+    if (!isNaN(moduleId)) {
+      (_metroCache.assetsIndex[name] ??= {})[moduleId] = 1;
+      saveCache();
+    }
+  }
+  var CACHE_VERSION, BUNNY_METRO_CACHE_KEY, _metroCache, getMetroCache, saveCache;
+  var init_caches = __esm({
+    "src/metro/internals/caches.ts"() {
       "use strict";
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
       init_async_to_generator();
-      init_BunnySettings();
-      init_colors();
-      init_rn_modules();
+      init_modules();
+      init_dist();
+      init_enums();
+      CACHE_VERSION = 52;
+      BUNNY_METRO_CACHE_KEY = "__bunny_metro_cache_key__";
+      _metroCache = null;
+      getMetroCache = window.__getMetroCache = () => _metroCache;
+      saveCache = debounce(() => {
+        MMKVManager.setItem(BUNNY_METRO_CACHE_KEY, JSON.stringify(_metroCache));
+      }, 1e3);
     }
   });
 
   // src/core/ui/reporter/utils/isStack.tsx
-  function isComponentStack(error2) {
-    return "componentStack" in error2 && typeof error2.componentStack === "string";
+  function isComponentStack(error) {
+    return "componentStack" in error && typeof error.componentStack === "string";
   }
-  function hasStack(error2) {
-    return !!error2.stack;
+  function hasStack(error) {
+    return !!error.stack;
   }
   var init_isStack = __esm({
     "src/core/ui/reporter/utils/isStack.tsx"() {
       "use strict";
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
-    }
-  });
-
-  // src/lib/api/debug.ts
-  var debug_exports = {};
-  __export(debug_exports, {
-    getDebugInfo: () => getDebugInfo
-  });
-  function getDebugInfo() {
-    var hermesProps = window.HermesInternal.getRuntimeProperties();
-    var hermesVer = hermesProps["OSS Release Version"];
-    var padding = "for RN ";
-    var PlatformConstants = import_react_native3.Platform.constants;
-    var rnVer = PlatformConstants.reactNativeVersion;
-    return {
-      /**
-       * @deprecated use `bunny` field
-       * */
-      vendetta: {
-        version: "2b93038-dev".split("-")[0],
-        loader: LOADER_IDENTITY.name
-      },
-      bunny: {
-        version: "2b93038-dev",
-        loader: {
-          name: LOADER_IDENTITY.name,
-          version: LOADER_IDENTITY.version
-        }
-      },
-      discord: {
-        version: RTNClientInfoManager.Version,
-        build: RTNClientInfoManager.Build
-      },
-      react: {
-        version: React.version,
-        nativeVersion: hermesVer.startsWith(padding) ? hermesVer.substring(padding.length) : `${rnVer.major}.${rnVer.minor}.${rnVer.patch}`
-      },
-      hermes: {
-        version: hermesVer,
-        buildType: hermesProps.Build,
-        bytecodeVersion: hermesProps["Bytecode Version"]
-      },
-      ...import_react_native3.Platform.select({
-        android: {
-          os: {
-            name: "Android",
-            version: PlatformConstants.Release,
-            sdk: PlatformConstants.Version
-          }
-        },
-        ios: {
-          os: {
-            name: PlatformConstants.systemName,
-            version: PlatformConstants.osVersion
-          }
-        }
-      }),
-      ...import_react_native3.Platform.select({
-        android: {
-          device: {
-            manufacturer: PlatformConstants.Manufacturer,
-            brand: PlatformConstants.Brand,
-            model: PlatformConstants.Model,
-            codename: RTNDeviceManager.device
-          }
-        },
-        ios: {
-          device: {
-            manufacturer: RTNDeviceManager.deviceManufacturer,
-            brand: RTNDeviceManager.deviceBrand,
-            model: RTNDeviceManager.deviceModel,
-            codename: RTNDeviceManager.device
-          }
-        }
-      })
-    };
-  }
-  var import_react_native3;
-  var init_debug = __esm({
-    "src/lib/api/debug.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_rn_modules();
-      import_react_native3 = __toESM(require_react_native());
-      init_loader();
-    }
-  });
-
-  // src/lib/ui/styles.ts
-  var styles_exports = {};
-  __export(styles_exports, {
-    TextStyleSheet: () => TextStyleSheet,
-    ThemeContext: () => ThemeContext,
-    createLegacyClassComponentStyles: () => createLegacyClassComponentStyles,
-    createStyles: () => createStyles,
-    isSemanticColor: () => isSemanticColor,
-    resolveSemanticColor: () => resolveSemanticColor
-  });
-  function isSemanticColor(sym) {
-    return colorResolver.isSemanticColor(sym);
-  }
-  function resolveSemanticColor(sym, theme = ThemeStore2.theme) {
-    return colorResolver.resolveSemanticColor(theme, sym);
-  }
-  function createStyles(sheet) {
-    return proxyLazy(() => Styles.createStyles(sheet));
-  }
-  function createLegacyClassComponentStyles(sheet) {
-    return proxyLazy(() => Styles.createLegacyClassComponentStyles(sheet));
-  }
-  var Styles, ThemeContext, TextStyleSheet, ThemeStore2, colorResolver;
-  var init_styles = __esm({
-    "src/lib/ui/styles.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_lazy();
-      init_common();
-      init_wrappers();
-      Styles = findByPropsLazy("createStyles");
-      ({ ThemeContext } = lazyDestructure(() => findByProps("ThemeContext"), {
-        hint: "object"
-      }));
-      ({ TextStyleSheet } = lazyDestructure(() => findByProps("TextStyleSheet")));
-      ThemeStore2 = findByStoreNameLazy("ThemeStore");
-      colorResolver = tokens.meta ??= tokens.internal;
-    }
-  });
-
-  // src/lib/ui/components/Codeblock.tsx
-  function Codeblock({ selectable, style, backgroundStyle, children }) {
-    var styles = useStyles();
-    if (!selectable) {
-      return /* @__PURE__ */ jsx(import_react_native4.ScrollView, {
-        style: [
-          backgroundStyle,
-          styles.background
-        ],
-        children: /* @__PURE__ */ jsx(TextBasedCodeblock, {
-          style,
-          children
-        })
-      });
-    } else {
-      return /* @__PURE__ */ jsx(import_react_native4.ScrollView, {
-        style: [
-          backgroundStyle,
-          styles.background
-        ],
-        children: import_react_native4.Platform.select({
-          ios: /* @__PURE__ */ jsx(InputBasedCodeblock, {
-            style,
-            children
-          }),
-          default: /* @__PURE__ */ jsx(TextBasedCodeblock, {
-            style,
-            children,
-            selectable: true
-          })
-        })
-      });
-    }
-  }
-  var import_react_native4, useStyles, InputBasedCodeblock, TextBasedCodeblock;
-  var init_Codeblock = __esm({
-    "src/lib/ui/components/Codeblock.tsx"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_jsxRuntime();
-      init_common();
-      init_styles();
-      import_react_native4 = __toESM(require_react_native());
-      useStyles = createStyles({
-        background: {
-          backgroundColor: tokens.colors.BACKGROUND_SECONDARY,
-          borderWidth: 1,
-          borderRadius: 12,
-          borderColor: tokens.colors.BACKGROUND_TERTIARY,
-          padding: 10
-        },
-        codeBlock: {
-          fontFamily: constants.Fonts.CODE_NORMAL,
-          fontSize: 12,
-          textAlignVertical: "center",
-          color: tokens.colors.TEXT_NORMAL
-        }
-      });
-      InputBasedCodeblock = ({ style, children }) => /* @__PURE__ */ jsx(import_react_native4.TextInput, {
-        editable: false,
-        multiline: true,
-        style: [
-          useStyles().codeBlock,
-          style && style
-        ],
-        value: children
-      });
-      TextBasedCodeblock = ({ selectable, style, children }) => /* @__PURE__ */ jsx(import_react_native4.Text, {
-        selectable,
-        style: [
-          useStyles().codeBlock,
-          style && style
-        ],
-        children
-      });
-    }
-  });
-
-  // src/core/logger/index.ts
-  function error(strings, ...args) {
-    if (Array.isArray(strings) && "raw" in strings) {
-      console.error(String.raw(strings, ...args));
-    }
-    console.error(strings, ...args);
-  }
-  var logger;
-  var init_logger = __esm({
-    "src/core/logger/index.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      logger = {
-        ...console,
-        error
-      };
     }
   });
 
@@ -4145,7 +4277,7 @@
       }
       if (!_loadedLocale.has(resolvedLocale)) {
         _loadedLocale.add(resolvedLocale);
-        fetch(`https://raw.githubusercontent.com/pyoncord/i18n/main/resources/${resolvedLocale}/bunny.json`).then((r) => r.json()).then((strings) => _loadedStrings[resolvedLocale] = strings).then(() => resolvedLocale === _lastSetLocale && (_currentLocale = resolvedLocale)).catch((e) => logger.error`An error occured while fetching strings for ${resolvedLocale}: ${e}`);
+        fetch(`https://raw.githubusercontent.com/pyoncord/i18n/main/resources/${resolvedLocale}/bunny.json`).then((r) => r.json()).then((strings) => _loadedStrings[resolvedLocale] = strings).then(() => resolvedLocale === _lastSetLocale && (_currentLocale = resolvedLocale)).catch((e) => console.error(`An error occured while fetching strings for ${resolvedLocale}: ${e}`));
       } else {
         _currentLocale = resolvedLocale;
       }
@@ -4163,7 +4295,6 @@
       "use strict";
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
-      init_logger();
       init_common();
       init_wrappers();
       init_default();
@@ -4183,7 +4314,384 @@
     }
   });
 
+  // src/lib/ui/toasts.ts
+  var toasts_exports = {};
+  __export(toasts_exports, {
+    showToast: () => showToast
+  });
+  var uuid4, showToast;
+  var init_toasts = __esm({
+    "src/lib/ui/toasts.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_i18n();
+      init_assets();
+      init_lazy();
+      init_common();
+      init_wrappers();
+      ({ uuid4 } = lazyDestructure(() => findByProps("uuid4")));
+      showToast = (content, asset) => toasts.open({
+        // ? In build 182205/44707, Discord changed their toasts, source is no longer used, rather icon, and a key is needed.
+        // TODO: We could probably have the developer specify a key themselves, but this works to fix toasts
+        key: `vd-toast-${uuid4()}`,
+        content,
+        source: asset,
+        icon: asset
+      });
+      showToast.showCopyToClipboard = (message = Strings.COPIED_TO_CLIPBOARD) => {
+        showToast(message, findAssetId("toast_copy_link"));
+      };
+    }
+  });
+
+  // src/lib/api/debug.ts
+  var debug_exports = {};
+  __export(debug_exports, {
+    connectToDebugger: () => connectToDebugger,
+    getDebugInfo: () => getDebugInfo,
+    patchLogHook: () => patchLogHook,
+    toggleSafeMode: () => toggleSafeMode,
+    versionHash: () => versionHash
+  });
+  function toggleSafeMode() {
+    return _toggleSafeMode.apply(this, arguments);
+  }
+  function _toggleSafeMode() {
+    _toggleSafeMode = _async_to_generator(function* () {
+      settings.safeMode = {
+        ...settings.safeMode,
+        enabled: !settings.safeMode?.enabled
+      };
+      if (isThemeSupported()) {
+        if (getThemeFromLoader()?.id)
+          settings.safeMode.currentThemeId = getThemeFromLoader().id;
+        if (settings.safeMode?.enabled) {
+          yield selectTheme(null);
+        } else if (settings.safeMode?.currentThemeId) {
+          yield selectTheme(themes[settings.safeMode?.currentThemeId]);
+        }
+      }
+      setTimeout(BundleUpdaterManager.reload, 400);
+    });
+    return _toggleSafeMode.apply(this, arguments);
+  }
+  function connectToDebugger(url2) {
+    if (socket !== void 0 && socket.readyState !== WebSocket.CLOSED)
+      socket.close();
+    if (!url2) {
+      showToast("Invalid debugger URL!", findAssetId("Small"));
+      return;
+    }
+    socket = new WebSocket(`ws://${url2}`);
+    socket.addEventListener("open", () => showToast("Connected to debugger.", findAssetId("Check")));
+    socket.addEventListener("message", (message) => {
+      try {
+        (0, eval)(message.data);
+      } catch (e) {
+        console.error(e);
+      }
+    });
+    socket.addEventListener("error", (err) => {
+      console.log(`Debugger error: ${err.message}`);
+      showToast("An error occurred with the debugger connection!", findAssetId("Small"));
+    });
+  }
+  function patchLogHook() {
+    var unpatch = after("nativeLoggingHook", globalThis, (args) => {
+      if (socket?.readyState === WebSocket.OPEN)
+        socket.send(JSON.stringify({
+          message: args[0],
+          level: args[1]
+        }));
+      logger.log(args[0]);
+    });
+    return () => {
+      socket && socket.close();
+      unpatch();
+    };
+  }
+  function getDebugInfo() {
+    var hermesProps = window.HermesInternal.getRuntimeProperties();
+    var hermesVer = hermesProps["OSS Release Version"];
+    var padding = "for RN ";
+    var PlatformConstants = import_react_native5.Platform.constants;
+    var rnVer = PlatformConstants.reactNativeVersion;
+    return {
+      /**
+       * @deprecated use `bunny` field
+       * */
+      vendetta: {
+        version: versionHash.split("-")[0],
+        loader: getLoaderName()
+      },
+      bunny: {
+        version: versionHash,
+        loader: {
+          name: getLoaderName(),
+          version: getLoaderVersion()
+        }
+      },
+      discord: {
+        version: ClientInfoManager.Version,
+        build: ClientInfoManager.Build
+      },
+      react: {
+        version: React.version,
+        nativeVersion: hermesVer.startsWith(padding) ? hermesVer.substring(padding.length) : `${rnVer.major}.${rnVer.minor}.${rnVer.patch}`
+      },
+      hermes: {
+        version: hermesVer,
+        buildType: hermesProps.Build,
+        bytecodeVersion: hermesProps["Bytecode Version"]
+      },
+      ...import_react_native5.Platform.select({
+        android: {
+          os: {
+            name: "Android",
+            version: PlatformConstants.Release,
+            sdk: PlatformConstants.Version
+          }
+        },
+        ios: {
+          os: {
+            name: PlatformConstants.systemName,
+            version: PlatformConstants.osVersion
+          }
+        }
+      }),
+      ...import_react_native5.Platform.select({
+        android: {
+          device: {
+            manufacturer: PlatformConstants.Manufacturer,
+            brand: PlatformConstants.Brand,
+            model: PlatformConstants.Model,
+            codename: DeviceManager.device
+          }
+        },
+        ios: {
+          device: {
+            manufacturer: DeviceManager.deviceManufacturer,
+            brand: DeviceManager.deviceBrand,
+            model: DeviceManager.deviceModel,
+            codename: DeviceManager.device
+          }
+        }
+      })
+    };
+  }
+  var import_react_native5, socket, versionHash;
+  var init_debug = __esm({
+    "src/lib/api/debug.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_async_to_generator();
+      init_themes();
+      init_assets();
+      init_loader();
+      init_modules();
+      init_patcher();
+      init_settings();
+      init_logger();
+      init_toasts();
+      import_react_native5 = __toESM(require_react_native());
+      versionHash = "ada2480-dev";
+    }
+  });
+
+  // src/lib/ui/components/wrappers/AlertModal.tsx
+  function AlertModal2(props) {
+    var forwardFailedModal = findByFilePath("modules/forwarding/native/ForwardFailedAlertModal.tsx");
+    if (!forwardFailedModal && "extraContent" in props) {
+      props.content = /* @__PURE__ */ jsxs(import_react_native6.View, {
+        style: {
+          gap: 16
+        },
+        children: [
+          /* @__PURE__ */ jsx(Text, {
+            variant: "text-md/medium",
+            color: "text-muted",
+            children: props.content
+          }),
+          /* @__PURE__ */ jsx(import_react_native6.View, {
+            children: props.extraContent
+          })
+        ]
+      });
+      delete props.extraContent;
+    }
+    return /* @__PURE__ */ jsx(_AlertModal, {
+      ...props
+    });
+  }
+  var import_react_native6, _AlertModal, _AlertActionButton, AlertActionButton2;
+  var init_AlertModal = __esm({
+    "src/lib/ui/components/wrappers/AlertModal.tsx"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_jsxRuntime();
+      init_lazy();
+      init_metro();
+      init_components();
+      import_react_native6 = __toESM(require_react_native());
+      ({ AlertModal: _AlertModal, AlertActionButton: _AlertActionButton } = lazyDestructure(() => findByProps("AlertModal", "AlertActions")));
+      AlertActionButton2 = _AlertActionButton;
+    }
+  });
+
+  // src/lib/ui/components/wrappers/index.ts
+  var wrappers_exports = {};
+  __export(wrappers_exports, {
+    AlertActionButton: () => AlertActionButton2,
+    AlertModal: () => AlertModal2
+  });
+  var init_wrappers2 = __esm({
+    "src/lib/ui/components/wrappers/index.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_AlertModal();
+    }
+  });
+
+  // src/lib/ui/color.ts
+  function isSemanticColor(sym) {
+    return colorResolver.isSemanticColor(sym);
+  }
+  function resolveSemanticColor(sym, theme = ThemeStore2.theme) {
+    return colorResolver.resolveSemanticColor(theme, sym);
+  }
+  var color, semanticColors, rawColors, ThemeStore2, colorResolver;
+  var init_color = __esm({
+    "src/lib/ui/color.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_common();
+      init_wrappers();
+      color = findByProps("SemanticColor");
+      semanticColors = color?.default?.colors ?? constants?.ThemeColorMap;
+      rawColors = color?.default?.unsafe_rawColors ?? constants?.Colors;
+      ThemeStore2 = findByStoreNameLazy("ThemeStore");
+      colorResolver = color.default.meta ??= color.default.internal;
+    }
+  });
+
+  // src/lib/ui/styles.ts
+  var styles_exports = {};
+  __export(styles_exports, {
+    TextStyleSheet: () => TextStyleSheet,
+    ThemeContext: () => ThemeContext,
+    createLegacyClassComponentStyles: () => createLegacyClassComponentStyles,
+    createStyles: () => createStyles,
+    createThemedStyleSheet: () => createThemedStyleSheet
+  });
+  function createStyles(sheet) {
+    return proxyLazy(() => Styles.createStyles(sheet));
+  }
+  function createLegacyClassComponentStyles(sheet) {
+    return proxyLazy(() => Styles.createLegacyClassComponentStyles(sheet));
+  }
+  function createThemedStyleSheet(sheet) {
+    for (var key in sheet) {
+      sheet[key] = new Proxy(import_react_native7.StyleSheet.flatten(sheet[key]), {
+        get(target, prop, receiver) {
+          var res = Reflect.get(target, prop, receiver);
+          return isSemanticColor(res) ? resolveSemanticColor(res) : res;
+        }
+      });
+    }
+    return sheet;
+  }
+  var import_react_native7, Styles, ThemeContext, TextStyleSheet;
+  var init_styles = __esm({
+    "src/lib/ui/styles.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_lazy();
+      init_wrappers();
+      init_color();
+      import_react_native7 = __toESM(require_react_native());
+      Styles = findByPropsLazy("createStyles");
+      ({ ThemeContext } = lazyDestructure(() => findByProps("ThemeContext"), {
+        hint: "object"
+      }));
+      ({ TextStyleSheet } = lazyDestructure(() => findByProps("TextStyleSheet")));
+    }
+  });
+
+  // src/lib/ui/components/Codeblock.tsx
+  function Codeblock({ selectable, style, children }) {
+    if (!selectable)
+      return /* @__PURE__ */ jsx(TextBasedCodeblock, {
+        style,
+        children
+      });
+    return import_react_native8.Platform.select({
+      ios: /* @__PURE__ */ jsx(InputBasedCodeblock, {
+        style,
+        children
+      }),
+      default: /* @__PURE__ */ jsx(TextBasedCodeblock, {
+        style,
+        children,
+        selectable: true
+      })
+    });
+  }
+  var import_react_native8, useStyles, InputBasedCodeblock, TextBasedCodeblock;
+  var init_Codeblock = __esm({
+    "src/lib/ui/components/Codeblock.tsx"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_jsxRuntime();
+      init_common();
+      init_color();
+      init_styles();
+      import_react_native8 = __toESM(require_react_native());
+      useStyles = createStyles({
+        codeBlock: {
+          fontFamily: constants.Fonts.CODE_NORMAL,
+          fontSize: 12,
+          textAlignVertical: "center",
+          backgroundColor: semanticColors.BACKGROUND_SECONDARY,
+          color: semanticColors.TEXT_NORMAL,
+          borderWidth: 1,
+          borderRadius: 12,
+          borderColor: semanticColors.BACKGROUND_TERTIARY,
+          padding: 10
+        }
+      });
+      InputBasedCodeblock = ({ style, children }) => /* @__PURE__ */ jsx(import_react_native8.TextInput, {
+        editable: false,
+        multiline: true,
+        style: [
+          useStyles().codeBlock,
+          style && style
+        ],
+        value: children
+      });
+      TextBasedCodeblock = ({ selectable, style, children }) => /* @__PURE__ */ jsx(import_react_native8.Text, {
+        selectable,
+        style: [
+          useStyles().codeBlock,
+          style && style
+        ],
+        children
+      });
+    }
+  });
+
   // src/lib/ui/sheets.ts
+  var sheets_exports = {};
+  __export(sheets_exports, {
+    hideSheet: () => hideSheet,
+    showSheet: () => showSheet
+  });
   function showSheet(key, lazyImport, props) {
     if (!("then" in lazyImport))
       lazyImport = Promise.resolve({
@@ -4205,69 +4713,6 @@
     }
   });
 
-  // src/metro/common/components.ts
-  var bySingularProp, findSingular, findProp, LegacyAlert, CompatButton, HelpMessage, SafeAreaView, ActionSheetRow, Button, TwinButtons, IconButton, RowButton, PressableScale, TableRow, TableRowIcon, TableRowTrailingText, TableRowGroup, TableRadioGroup, TableRadioRow, TableSwitchRow, TableCheckboxRow, TableSwitch, TableRadio, TableCheckbox, FormSwitch, FormRadio, FormCheckbox, Card, RedesignCompat, AlertModal, AlertActionButton, AlertActions, AvatarPile, Stack, Avatar, TextInput2, TextArea, SegmentedControl, SegmentedControlPages, useSegmentedControlState, CompatSegmentedControl, FloatingActionButton, ActionSheet, BottomSheetTitleHeader, textsModule, Text2, Forms, LegacyForm, LegacyFormArrow, LegacyFormCTA, LegacyFormCTAButton, LegacyFormCardSection, LegacyFormCheckbox, LegacyFormCheckboxRow, LegacyFormCheckmark, LegacyFormDivider, LegacyFormHint, LegacyFormIcon, LegacyFormInput, LegacyFormLabel, LegacyFormRadio, LegacyFormRadioGroup, LegacyFormRadioRow, LegacyFormRow, LegacyFormSection, LegacyFormSelect, LegacyFormSliderRow, LegacyFormSubLabel, LegacyFormSwitch, LegacyFormSwitchRow, LegacyFormTernaryCheckBox, LegacyFormText, LegacyFormTitle, FlashList;
-  var init_components = __esm({
-    "src/metro/common/components.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_lazy();
-      init_factories();
-      init_finders();
-      init_wrappers();
-      bySingularProp = createFilterDefinition(([prop], m2) => m2[prop] && Object.keys(m2).length === 1, (prop) => `bunny.metro.common.components.bySingularProp(${prop})`);
-      findSingular = (prop) => proxyLazy(() => findExports(bySingularProp(prop))?.[prop]);
-      findProp = (...props) => proxyLazy(() => findByProps(...props)[props[0]]);
-      LegacyAlert = findByDisplayNameLazy("FluxContainer(Alert)");
-      CompatButton = findByPropsLazy("Looks", "Colors", "Sizes");
-      HelpMessage = findByNameLazy("HelpMessage");
-      SafeAreaView = proxyLazy(() => findByProps("useSafeAreaInsets").SafeAreaView);
-      ActionSheetRow = findProp("ActionSheetRow");
-      Button = findSingular("Button");
-      TwinButtons = findProp("TwinButtons");
-      IconButton = findSingular("IconButton");
-      RowButton = findProp("RowButton");
-      PressableScale = findProp("PressableScale");
-      TableRow = findProp("TableRow");
-      TableRowIcon = findProp("TableRowIcon");
-      TableRowTrailingText = findProp("TableRowTrailingText");
-      TableRowGroup = findProp("TableRowGroup");
-      TableRadioGroup = findProp("TableRadioGroup");
-      TableRadioRow = findProp("TableRadioRow");
-      TableSwitchRow = findProp("TableSwitchRow");
-      TableCheckboxRow = findProp("TableCheckboxRow");
-      TableSwitch = findSingular("FormSwitch");
-      TableRadio = findSingular("FormRadio");
-      TableCheckbox = findSingular("FormCheckbox");
-      FormSwitch = findSingular("FormSwitch");
-      FormRadio = findSingular("FormRadio");
-      FormCheckbox = findSingular("FormCheckbox");
-      Card = findProp("Card");
-      RedesignCompat = proxyLazy(() => findByProps("RedesignCompat").RedesignCompat);
-      AlertModal = findProp("AlertModal");
-      AlertActionButton = findProp("AlertActionButton");
-      AlertActions = findProp("AlertActions");
-      AvatarPile = findSingular("AvatarPile");
-      Stack = findProp("Stack");
-      Avatar = findProp("default", "AvatarSizes", "getStatusSize");
-      TextInput2 = findSingular("TextInput");
-      TextArea = findSingular("TextArea");
-      SegmentedControl = findProp("SegmentedControl");
-      SegmentedControlPages = findProp("SegmentedControlPages");
-      useSegmentedControlState = findSingular("useSegmentedControlState");
-      CompatSegmentedControl = findProp("CompatSegmentedControl");
-      FloatingActionButton = findProp("FloatingActionButton");
-      ActionSheet = findProp("ActionSheet");
-      BottomSheetTitleHeader = findProp("BottomSheetTitleHeader");
-      textsModule = findByPropsLazy("Text", "LegacyText");
-      Text2 = proxyLazy(() => textsModule.Text);
-      Forms = findByPropsLazy("Form", "FormSection");
-      ({ Form: LegacyForm, FormArrow: LegacyFormArrow, FormCTA: LegacyFormCTA, FormCTAButton: LegacyFormCTAButton, FormCardSection: LegacyFormCardSection, FormCheckbox: LegacyFormCheckbox, FormCheckboxRow: LegacyFormCheckboxRow, FormCheckmark: LegacyFormCheckmark, FormDivider: LegacyFormDivider, FormHint: LegacyFormHint, FormIcon: LegacyFormIcon, FormInput: LegacyFormInput, FormLabel: LegacyFormLabel, FormRadio: LegacyFormRadio, FormRadioGroup: LegacyFormRadioGroup, FormRadioRow: LegacyFormRadioRow, FormRow: LegacyFormRow, FormSection: LegacyFormSection, FormSelect: LegacyFormSelect, FormSliderRow: LegacyFormSliderRow, FormSubLabel: LegacyFormSubLabel, FormSwitch: LegacyFormSwitch, FormSwitchRow: LegacyFormSwitchRow, FormTernaryCheckBox: LegacyFormTernaryCheckBox, FormText: LegacyFormText, FormTitle: LegacyFormTitle } = lazyDestructure(() => Forms));
-      FlashList = findProp("FlashList");
-    }
-  });
-
   // src/core/ui/reporter/utils/parseComponentStack.tsx
   function parseComponentStack(componentStack) {
     return componentStack.split(/[\s|\n]+?in /).filter(Boolean);
@@ -4277,76 +4722,6 @@
       "use strict";
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
-    }
-  });
-
-  // src/lib/api/assets/index.ts
-  var assets_exports = {};
-  __export(assets_exports, {
-    filterAssets: () => filterAssets,
-    findAsset: () => findAsset,
-    findAssetId: () => findAssetId,
-    iterateAssets: () => iterateAssets
-  });
-  function* iterateAssets() {
-    var { flagsIndex } = getMetroCache();
-    var yielded = /* @__PURE__ */ new Set();
-    for (var id in flagsIndex) {
-      if (flagsIndex[id] & ModuleFlags.ASSET) {
-        var assetId = requireModule(Number(id));
-        if (typeof assetId !== "number" || yielded.has(assetId))
-          continue;
-        yield getAssetById(assetId);
-        yielded.add(assetId);
-      }
-    }
-  }
-  function getAssetById(id) {
-    var asset = assetsModule.getAssetByID(id);
-    if (!asset)
-      return asset;
-    return Object.assign(asset, {
-      id
-    });
-  }
-  function findAsset(param) {
-    if (typeof param === "number")
-      return getAssetById(param);
-    if (typeof param === "string" && _nameToAssetCache[param]) {
-      return _nameToAssetCache[param];
-    }
-    for (var asset of iterateAssets()) {
-      if (typeof param === "string" && asset.name === param) {
-        _nameToAssetCache[param] = asset;
-        return asset;
-      } else if (typeof param === "function" && param(asset)) {
-        return asset;
-      }
-    }
-  }
-  function filterAssets(param) {
-    var filteredAssets = [];
-    for (var asset of iterateAssets()) {
-      if (typeof param === "string" ? asset.name === param : param(asset)) {
-        filteredAssets.push(asset);
-      }
-    }
-    return filteredAssets;
-  }
-  function findAssetId(name) {
-    return findAsset(name)?.id;
-  }
-  var _nameToAssetCache;
-  var init_assets = __esm({
-    "src/lib/api/assets/index.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_caches();
-      init_enums();
-      init_modules();
-      init_patches();
-      _nameToAssetCache = {};
     }
   });
 
@@ -4370,34 +4745,34 @@
       return;
     }
     return /* @__PURE__ */ jsx(Card, {
-      children: /* @__PURE__ */ jsxs(import_react_native5.View, {
+      children: /* @__PURE__ */ jsxs(import_react_native9.View, {
         style: {
           gap: 8
         },
         children: [
-          /* @__PURE__ */ jsx(Text2, {
+          /* @__PURE__ */ jsx(Text, {
             variant: "heading-lg/bold",
             children: "Component Stack"
           }),
-          /* @__PURE__ */ jsx(import_react_native5.View, {
+          /* @__PURE__ */ jsx(import_react_native9.View, {
             style: {
               gap: 4
             },
-            children: stack.map((component) => /* @__PURE__ */ jsxs(import_react_native5.View, {
+            children: stack.map((component) => /* @__PURE__ */ jsxs(import_react_native9.View, {
               style: {
                 flexDirection: "row"
               },
               children: [
-                /* @__PURE__ */ jsx(Text2, {
+                /* @__PURE__ */ jsx(Text, {
                   variant: "text-md/bold",
                   color: "text-muted",
                   children: "<"
                 }),
-                /* @__PURE__ */ jsx(Text2, {
+                /* @__PURE__ */ jsx(Text, {
                   variant: "text-md/bold",
                   children: component
                 }),
-                /* @__PURE__ */ jsx(Text2, {
+                /* @__PURE__ */ jsx(Text, {
                   variant: "text-md/bold",
                   color: "text-muted",
                   children: "/>"
@@ -4405,10 +4780,10 @@
               ]
             }))
           }),
-          collapsed && /* @__PURE__ */ jsx(Text2, {
+          collapsed && /* @__PURE__ */ jsx(Text, {
             children: "..."
           }),
-          /* @__PURE__ */ jsxs(import_react_native5.View, {
+          /* @__PURE__ */ jsxs(import_react_native9.View, {
             style: {
               gap: 8,
               flexDirection: "row",
@@ -4419,7 +4794,7 @@
               /* @__PURE__ */ jsx(Button, {
                 variant: "secondary",
                 text: `Show ${collapsed ? "more" : "less"}`,
-                icon: collapsed ? findAssetId("down_arrow") : /* @__PURE__ */ jsx(import_react_native5.Image, {
+                icon: collapsed ? findAssetId("down_arrow") : /* @__PURE__ */ jsx(import_react_native9.Image, {
                   style: {
                     transform: [
                       {
@@ -4443,7 +4818,7 @@
       })
     });
   }
-  var import_react, import_react_native5;
+  var import_react, import_react_native9;
   var init_ErrorComponentStackCard = __esm({
     "src/core/ui/reporter/components/ErrorComponentStackCard.tsx"() {
       "use strict";
@@ -4455,7 +4830,7 @@
       init_common();
       init_components();
       import_react = __toESM(require_react());
-      import_react_native5 = __toESM(require_react_native());
+      import_react_native9 = __toESM(require_react_native());
     }
   });
 
@@ -4572,16 +4947,16 @@
       return null;
     }
     return /* @__PURE__ */ jsx(Card, {
-      children: /* @__PURE__ */ jsxs(import_react_native6.View, {
+      children: /* @__PURE__ */ jsxs(import_react_native10.View, {
         style: {
           gap: 12
         },
         children: [
-          /* @__PURE__ */ jsx(Text2, {
+          /* @__PURE__ */ jsx(Text, {
             variant: "heading-lg/bold",
             children: "Call Stack"
           }),
-          /* @__PURE__ */ jsx(import_react_native6.View, {
+          /* @__PURE__ */ jsx(import_react_native10.View, {
             style: {
               gap: 4
             },
@@ -4590,10 +4965,10 @@
               frame: f
             }))
           }),
-          collapsed && /* @__PURE__ */ jsx(Text2, {
+          collapsed && /* @__PURE__ */ jsx(Text, {
             children: "..."
           }),
-          /* @__PURE__ */ jsxs(import_react_native6.View, {
+          /* @__PURE__ */ jsxs(import_react_native10.View, {
             style: {
               gap: 8,
               flexDirection: "row",
@@ -4604,7 +4979,7 @@
               /* @__PURE__ */ jsx(Button, {
                 variant: "secondary",
                 text: `Show ${collapsed ? "more" : "less"}`,
-                icon: collapsed ? findAssetId("down_arrow") : /* @__PURE__ */ jsx(import_react_native6.Image, {
+                icon: collapsed ? findAssetId("down_arrow") : /* @__PURE__ */ jsx(import_react_native10.Image, {
                   style: {
                     transform: [
                       {
@@ -4630,22 +5005,22 @@
   }
   function Line(props) {
     var [collapsed, setCollapsed] = (0, import_react2.useState)(true);
-    return /* @__PURE__ */ jsxs(import_react_native6.Pressable, {
+    return /* @__PURE__ */ jsxs(import_react_native10.Pressable, {
       onPress: () => setCollapsed((v2) => !v2),
       children: [
-        /* @__PURE__ */ jsx(Text2, {
+        /* @__PURE__ */ jsx(Text, {
           style: {
             fontFamily: constants.Fonts.CODE_BOLD
           },
           children: props.frame.methodName
         }),
-        /* @__PURE__ */ jsx(Text2, {
+        /* @__PURE__ */ jsx(Text, {
           style: {
             fontFamily: constants.Fonts.CODE_NORMAL
           },
           ellipsizeMode: "middle",
           numberOfLines: collapsed ? 1 : void 0,
-          children: /* @__PURE__ */ jsxs(Text2, {
+          children: /* @__PURE__ */ jsxs(Text, {
             color: "text-muted",
             children: [
               props.frame.file === INDEX_BUNDLE_FILE ? "jsbundle" : props.frame.file,
@@ -4659,7 +5034,7 @@
       ]
     }, props.id);
   }
-  var import_react2, import_react_native6;
+  var import_react2, import_react_native10;
   var init_ErrorStackCard = __esm({
     "src/core/ui/reporter/components/ErrorStackCard.tsx"() {
       "use strict";
@@ -4671,7 +5046,7 @@
       init_common();
       init_components();
       import_react2 = __toESM(require_react());
-      import_react_native6 = __toESM(require_react_native());
+      import_react_native10 = __toESM(require_react_native());
       init_ErrorCard();
     }
   });
@@ -4679,13 +5054,13 @@
   // src/core/ui/reporter/components/ErrorDetailsActionSheet.tsx
   function ErrorDetailsActionSheet(props) {
     return /* @__PURE__ */ jsx(ActionSheet, {
-      children: /* @__PURE__ */ jsxs(import_react_native7.View, {
+      children: /* @__PURE__ */ jsxs(import_react_native11.View, {
         style: {
           gap: 12,
           paddingVertical: 12
         },
         children: [
-          /* @__PURE__ */ jsx(Text2, {
+          /* @__PURE__ */ jsx(Text, {
             variant: "heading-lg/extrabold",
             children: "Error"
           }),
@@ -4703,7 +5078,7 @@
       })
     });
   }
-  var import_react_native7;
+  var import_react_native11;
   var init_ErrorDetailsActionSheet = __esm({
     "src/core/ui/reporter/components/ErrorDetailsActionSheet.tsx"() {
       "use strict";
@@ -4713,7 +5088,7 @@
       init_isStack();
       init_components2();
       init_components();
-      import_react_native7 = __toESM(require_react_native());
+      import_react_native11 = __toESM(require_react_native());
       init_ErrorComponentStackCard();
       init_ErrorStackCard();
     }
@@ -4724,7 +5099,7 @@
     return /* @__PURE__ */ jsx(Card, {
       children: /* @__PURE__ */ jsxs(Stack, {
         children: [
-          props.header && typeof props.header !== "string" ? props.header : /* @__PURE__ */ jsx(Text2, {
+          props.header && typeof props.header !== "string" ? props.header : /* @__PURE__ */ jsx(Text, {
             variant: "heading-lg/bold",
             children: props.header ?? Strings.UH_OH
           }),
@@ -4770,41 +5145,30 @@
   });
 
   // src/lib/ui/components/ErrorBoundary.tsx
-  var getStyles, _React_Component, ErrorBoundary;
+  var _React_Component, ErrorBoundary;
   var init_ErrorBoundary = __esm({
     "src/lib/ui/components/ErrorBoundary.tsx"() {
       "use strict";
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
+      init_call_super();
       init_class_call_check();
       init_create_class();
       init_define_property();
       init_inherits();
-      init_create_super();
       init_jsxRuntime();
       init_ErrorCard();
       init_common();
       init_styles();
-      getStyles = createLegacyClassComponentStyles({
-        view: {
-          flex: 1,
-          flexDirection: "column",
-          margin: 10
-        },
-        title: {
-          fontSize: 20,
-          textAlign: "center",
-          marginBottom: 5
-        }
-      });
       ErrorBoundary = /* @__PURE__ */ function(_superClass) {
         "use strict";
         _inherits(ErrorBoundary2, _superClass);
-        var _super = _create_super(ErrorBoundary2);
         function ErrorBoundary2(props) {
           _class_call_check(this, ErrorBoundary2);
           var _this;
-          _this = _super.call(this, props);
+          _this = _call_super(this, ErrorBoundary2, [
+            props
+          ]);
           _this.state = {
             hasErr: false
           };
@@ -4814,7 +5178,6 @@
           {
             key: "render",
             value: function render() {
-              var styles = getStyles(this.context);
               if (!this.state.hasErr)
                 return this.props.children;
               return /* @__PURE__ */ jsx(ErrorCard, {
@@ -4829,16 +5192,16 @@
         return ErrorBoundary2;
       }(_React_Component = React2.Component);
       _define_property(ErrorBoundary, "contextType", ThemeContext);
-      _define_property(ErrorBoundary, "getDerivedStateFromError", (error2) => ({
+      _define_property(ErrorBoundary, "getDerivedStateFromError", (error) => ({
         hasErr: true,
-        error: error2
+        error
       }));
     }
   });
 
   // src/lib/ui/components/Search.tsx
   function SearchIcon() {
-    return /* @__PURE__ */ jsx(import_react_native8.Image, {
+    return /* @__PURE__ */ jsx(import_react_native12.Image, {
       style: {
         width: 16,
         height: 16
@@ -4846,7 +5209,7 @@
       source: findAssetId("search")
     });
   }
-  var import_react_native8, Search_default;
+  var import_react_native12, Search_default;
   var init_Search = __esm({
     "src/lib/ui/components/Search.tsx"() {
       "use strict";
@@ -4857,7 +5220,7 @@
       init_assets();
       init_components();
       init_ErrorBoundary();
-      import_react_native8 = __toESM(require_react_native());
+      import_react_native12 = __toESM(require_react_native());
       Search_default = ({ onChangeText, placeholder, style, isRound }) => {
         var [query, setQuery] = React.useState("");
         var onChange = (value) => {
@@ -4865,9 +5228,9 @@
           onChangeText?.(value);
         };
         return /* @__PURE__ */ jsx(ErrorBoundary, {
-          children: /* @__PURE__ */ jsx(import_react_native8.View, {
+          children: /* @__PURE__ */ jsx(import_react_native12.View, {
             style,
-            children: /* @__PURE__ */ jsx(TextInput2, {
+            children: /* @__PURE__ */ jsx(TextInput, {
               grow: true,
               isClearable: true,
               leadingIcon: SearchIcon,
@@ -4908,11 +5271,11 @@
           onPress: () => {
             setHidden(!hidden);
             if (!noAnimation)
-              import_react_native9.LayoutAnimation.configureNext(import_react_native9.LayoutAnimation.Presets.easeInEaseOut);
+              import_react_native13.LayoutAnimation.configureNext(import_react_native13.LayoutAnimation.Presets.easeInEaseOut);
           }
         }),
         !hidden && /* @__PURE__ */ jsx(Fragment, {
-          children: /* @__PURE__ */ jsx(import_react_native9.View, {
+          children: /* @__PURE__ */ jsx(import_react_native13.View, {
             style: !noPadding && {
               paddingHorizontal: 15
             },
@@ -4922,7 +5285,7 @@
       ]
     });
   }
-  var import_react_native9;
+  var import_react_native13;
   var init_Summary = __esm({
     "src/lib/ui/components/Summary.tsx"() {
       "use strict";
@@ -4931,23 +5294,25 @@
       init_jsxRuntime();
       init_assets();
       init_components();
-      import_react_native9 = __toESM(require_react_native());
+      import_react_native13 = __toESM(require_react_native());
     }
   });
 
   // src/lib/ui/components/index.ts
-  var components_exports = {};
-  __export(components_exports, {
+  var components_exports2 = {};
+  __export(components_exports2, {
     Codeblock: () => Codeblock,
     ErrorBoundary: () => ErrorBoundary,
     Search: () => Search_default,
-    Summary: () => Summary
+    Summary: () => Summary,
+    wrappers: () => wrappers_exports
   });
   var init_components2 = __esm({
     "src/lib/ui/components/index.ts"() {
       "use strict";
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
+      init_wrappers2();
       init_Codeblock();
       init_ErrorBoundary();
       init_Search();
@@ -4963,20 +5328,20 @@
       children: /* @__PURE__ */ jsxs(SafeAreaView, {
         style: styles.container,
         children: [
-          /* @__PURE__ */ jsxs(import_react_native10.View, {
+          /* @__PURE__ */ jsxs(import_react_native14.View, {
             style: {
               gap: 4
             },
             children: [
-              /* @__PURE__ */ jsx(Text2, {
+              /* @__PURE__ */ jsx(Text, {
                 variant: "display-lg",
                 children: "Uh oh."
               }),
-              /* @__PURE__ */ jsx(Text2, {
+              /* @__PURE__ */ jsx(Text, {
                 variant: "text-md/normal",
                 children: "A crash occured while rendering a component. This could be caused by a plugin, Bunny or Discord itself."
               }),
-              /* @__PURE__ */ jsxs(Text2, {
+              /* @__PURE__ */ jsxs(Text, {
                 variant: "text-sm/normal",
                 color: "text-muted",
                 children: [
@@ -4991,7 +5356,7 @@
               })
             ]
           }),
-          /* @__PURE__ */ jsxs(import_react_native10.ScrollView, {
+          /* @__PURE__ */ jsxs(import_react_native14.ScrollView, {
             fadingEdgeLength: 64,
             contentContainerStyle: {
               gap: 12
@@ -5016,9 +5381,9 @@
             children: [
               /* @__PURE__ */ jsx(Button, {
                 text: "Reload Discord",
-                onPress: () => RTNBundleUpdaterManager.reload()
+                onPress: () => BundleUpdaterManager.reload()
               }),
-              !BunnySettings_default.isSafeMode() && /* @__PURE__ */ jsx(Button, {
+              !settings.safeMode?.enabled && /* @__PURE__ */ jsx(Button, {
                 text: "Reload in Safe Mode",
                 onPress: () => toggleSafeMode()
               }),
@@ -5033,29 +5398,28 @@
       })
     });
   }
-  var import_react_native10, useStyles2;
+  var import_react_native14, useStyles2;
   var init_ErrorBoundaryScreen = __esm({
     "src/core/ui/reporter/components/ErrorBoundaryScreen.tsx"() {
       "use strict";
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
       init_jsxRuntime();
-      init_safeMode();
-      init_BunnySettings();
       init_isStack();
       init_debug();
-      init_rn_modules();
+      init_modules();
+      init_settings();
       init_components2();
       init_styles();
       init_common();
       init_components();
-      import_react_native10 = __toESM(require_react_native());
+      import_react_native14 = __toESM(require_react_native());
       init_ErrorComponentStackCard();
       init_ErrorStackCard();
       useStyles2 = createStyles({
         container: {
           flex: 1,
-          backgroundColor: tokens.colors.BACKGROUND_PRIMARY,
+          backgroundColor: tokens.colors.BG_BASE_SECONDARY,
           paddingHorizontal: 16,
           height: "100%",
           padding: 8,
@@ -5096,237 +5460,35 @@
     }
   });
 
-  // src/lib/ui/toasts.ts
-  var toasts_exports = {};
-  __export(toasts_exports, {
-    showToast: () => showToast
-  });
-  function showToast(contentOrProps, icon) {
-    if (typeof contentOrProps === "string") {
-      toasts.open({
-        key: `bn-toast-${uuid4()}`,
-        content: contentOrProps,
-        source: icon,
-        icon
-      });
-    } else {
-      contentOrProps.key ??= `bn-toast-${uuid4()}`;
-      toasts.open({
-        ...contentOrProps,
-        source: contentOrProps.icon
-      });
-    }
-  }
-  var uuid4;
-  var init_toasts = __esm({
-    "src/lib/ui/toasts.ts"() {
-      "use strict";
+  // globals:moment
+  var require_moment = __commonJS({
+    "globals:moment"(exports, module) {
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
-      init_i18n();
-      init_assets();
-      init_lazy();
-      init_common();
-      init_wrappers();
-      ({ uuid4 } = lazyDestructure(() => findByProps("uuid4")));
-      showToast.showCopyToClipboard = (content = Strings.COPIED_TO_CLIPBOARD) => {
-        showToast({
-          content,
-          icon: findAssetId("CopyIcon")
-        });
-      };
+      module.exports = require_depsModule()["moment"];
     }
   });
 
-  // src/core/logger/debugger.ts
-  function connectToDebugger(url2) {
-    if (socket !== void 0 && socket.readyState !== WebSocket.CLOSED)
-      socket.close();
-    if (!url2) {
-      showToast("Invalid debugger URL!", findAssetId("Small"));
-      return;
+  // src/core/fixes.ts
+  function onDispatch({ locale }) {
+    try {
+      import_moment.default.locale(locale.toLowerCase());
+    } catch (e) {
+      logger.error("Failed to fix timestamps...", e);
     }
-    socket = new WebSocket(`ws://${url2}`);
-    socket.addEventListener("open", () => showToast("Connected to debugger.", findAssetId("Check")));
-    socket.addEventListener("message", (message) => {
-      try {
-        (0, eval)(message.data);
-      } catch (e) {
-        logger.error(e);
-      }
-    });
-    socket.addEventListener("error", (err) => {
-      logger.log(`Debugger error: ${err.message}`);
-      showToast("An error occurred with the debugger connection!", findAssetId("Small"));
-    });
+    FluxDispatcher.unsubscribe("I18N_LOAD_SUCCESS", onDispatch);
   }
-  function patchLogHook() {
-    var unpatch = after("nativeLoggingHook", globalThis, (args) => {
-      if (socket?.readyState === WebSocket.OPEN) {
-        socket.send(JSON.stringify({
-          message: args[0],
-          level: args[1]
-        }));
-      }
-    });
-    return () => {
-      socket && socket.close();
-      unpatch();
-    };
-  }
-  var socket;
-  var init_debugger = __esm({
-    "src/core/logger/debugger.ts"() {
+  var import_moment, fixes_default;
+  var init_fixes = __esm({
+    "src/core/fixes.ts"() {
       "use strict";
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
       init_logger();
-      init_assets();
-      init_patcher();
-      init_toasts();
-    }
-  });
-
-  // src/core/reporter/enums.ts
-  var PluginStage, PluginDisableReason;
-  var init_enums2 = __esm({
-    "src/core/reporter/enums.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      (function(PluginStage2) {
-        PluginStage2["FETCHING"] = "FETCHING";
-        PluginStage2["FETCHED"] = "FETCHED";
-        PluginStage2["PARSING"] = "PARSING";
-        PluginStage2["PARSED"] = "PARSED";
-        PluginStage2["INSTANTIATING"] = "INSTANTIATING";
-        PluginStage2["INSTANTIATED"] = "INSTANTIATED";
-        PluginStage2["STARTING"] = "STARTING";
-        PluginStage2["RUNNING"] = "RUNNING";
-        PluginStage2["STOPPING"] = "STOPPING";
-        PluginStage2["STOPPED"] = "STOPPED";
-      })(PluginStage || (PluginStage = {}));
-      (function(PluginDisableReason2) {
-        PluginDisableReason2["REQUESTED"] = "REQUESTED";
-        PluginDisableReason2["ERROR"] = "ERROR";
-      })(PluginDisableReason || (PluginDisableReason = {}));
-    }
-  });
-
-  // src/core/reporter/errorConverter.ts
-  function convertToSerialized(error2, flow = []) {
-    var newError = error2 instanceof Error ? {
-      name: error2.name,
-      stack: error2.stack,
-      message: error2.message,
-      cause: error2.cause ? String(error2.cause) : void 0
-    } : String(error2);
-    if (typeof newError === "object" && error2 instanceof Error && error2.cause instanceof Error && !flow.includes(error2)) {
-      newError.cause = convertToSerialized(error2.cause, [
-        ...flow,
-        error2
-      ]);
-    }
-    return newError;
-  }
-  function convertToError(error2) {
-    var ctr = (error2.name ? window[error2.name] : null) ?? Error;
-    var newErr = new ctr();
-    for (var { property, enumerable } of ERROR_PROPERTIES) {
-      if (property in error2) {
-        Object.defineProperty(newErr, property, {
-          value: error2[property],
-          enumerable,
-          configurable: true,
-          writable: true
-        });
-      }
-    }
-    var { cause } = error2;
-    if (cause && typeof cause !== "string") {
-      newErr.cause = convertToError(cause);
-    }
-    return newErr;
-  }
-  var ERROR_PROPERTIES;
-  var init_errorConverter = __esm({
-    "src/core/reporter/errorConverter.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      ERROR_PROPERTIES = [
-        {
-          property: "name",
-          enumerable: false
-        },
-        {
-          property: "message",
-          enumerable: false
-        },
-        {
-          property: "stack",
-          enumerable: false
-        },
-        {
-          property: "cause",
-          enumerable: false
-        }
-      ];
-    }
-  });
-
-  // src/core/reporter/PluginReporter.ts
-  var PluginReporter_default;
-  var init_PluginReporter = __esm({
-    "src/core/reporter/PluginReporter.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_object_observer_min();
-      init_storage();
-      init_enums2();
-      init_errorConverter();
-      PluginReporter_default = {
-        stages: v.from({}),
-        errors: createStorage("plugins/reporter/last-errors.json"),
-        disableReason: createStorage("plugins/reporter/disable-reason.json"),
-        useReporter() {
-          useObservable([
-            this.stages,
-            this.disableReason,
-            this.errors
-          ]);
-        },
-        prepare() {
-          return awaitStorage(this.disableReason, this.errors);
-        },
-        hasErrors() {
-          return !!Object.keys(this.errors).length;
-        },
-        getError(id) {
-          var error2 = this.errors[id];
-          if (typeof error2 === "string")
-            return error2;
-          return convertToError(error2);
-        },
-        updateStage(id, stage) {
-          this.stages[id] = stage;
-          if (stage === PluginStage.RUNNING && this.errors[id]) {
-            delete this.errors[id];
-          }
-        },
-        reportPluginError(id, error2) {
-          this.errors[id] = convertToSerialized(error2);
-        },
-        reportPluginDisable(id, reason) {
-          this.disableReason[id] = reason;
-        },
-        clearPluginReports(id, stage = false) {
-          delete this.disableReason[id];
-          delete this.errors[id];
-          if (stage)
-            delete this.stages[id];
-        }
+      init_common();
+      import_moment = __toESM(require_moment());
+      fixes_default = () => {
+        FluxDispatcher.subscribe("I18N_LOAD_SUCCESS", onDispatch);
       };
     }
   });
@@ -5336,1143 +5498,6 @@
   var init_pyoncord = __esm({
     "src/assets/icons/pyoncord.png"() {
       pyoncord_default = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAAXNSR0IArs4c6QAABoBJREFUeF7lW1nIVlUUXasom80kijJKaVQzGtTUjCJteNBmeqigssnIpDIqwmw0GqhQi4iw8SEaHtKgMpNKM7SiyUZpLppoTi0rd2f9nCu36/2+79zxv/5t8MV/n333WWefffb0EQ0iM+sH4AEAowG8CGAqycVVqsgqhWeVbWavAtg/tu4vABNIPphVVih/YwAws2EAlrRQfChJgVM6NQmARwGc0GKHX5PcofTdA2gSAJ8A2KXNJueQPLpsEJoEwI8A+rTZ4GrnIAeQ/KpMEJoEwCoAm3TY3DKSezcKADPbCMDWADYEIK/9B4CVJC2LomYWwv8PgC1JCqxSqJAFmNlOAF6PAfA3ACn3MYBLSD4bqmUgABI3l+T4ULmd+IoCcDeAs9p8RI5NPDNJrminTAYAZAVbkJSlFaaiALwJYEiAFh8CuJHk7Fa8ZqaNbRAgSyzjSc4N5G3LVhQAmfiYDIosBXAGyXeSa8xMJ9orUNb7AAZm9TNpsosCMNnd/9sDlY7Y/gRwAYDZJOUzusjMfvK+JFRcX5J6OgtRUQB2B/BBDg3k8ZeQHBED4AsASoZCaTTJRaHMrfiKAqD1jwM4NqcinwE4mOTnZiYgBWgozSN5RChzJQB40x0A4KMCivwO4GQAFwI4JIMcRYa9i74GhSwgZr5XuWs8LYPyaazPAMh6ojvLeop8tywA5L0V/FSSsbXZ4Eh3DV7udgD8VdgMwK8+JC6iU5a115GcmmVBkrcUC4hdhYPcPX6+RhAWkDysMQB4SzgXwB0Zoroi+q8iKcvLTaVaQMwSZgGYWBMIfUj+nBeBSgDwljADwHk1XIdCL0FlAMRAOL/i0tsgku82zgI8AMruLgNwfV4FA9btQ/KtAL5UlkotIOYTjgdwr6o5eRVts244SWWZuagWALw1DFUGCGBwLk1bLxpG8pW8MmsDwIPQ25W+7wNwTF6FU9bJ2U7L+xLUCkDsSij5keLblASEagmjSL6XVV63AOCtQSVw3d2yytxr3JN7LUklZsHUnQAMcnUE1RRVTi+TXgIwjqSsoiN1CwBmtqvzA28A2LyjhvkYlCKr9vhcp+W1A2BmewB4AcB2nZQr+Hc1aaaQlK9pSbUC4E9eLfCynF8IRoo/JpJUMXYdqgUAM9N3RgFYGKJxDh71FK5WAwbAvgAeShRnPgWwZxoIdQFwEwCV0DfOsbmQJWPi993MZGGqMsdT5e9VdE3GC5UCYGY69ehUQjaSh0dv/5B4j0FCXJ8hrWexHMAIkj9EH6oEADNTZUjNj+MqeOaSIM0nOTb5n2amStH8FEQVNh8eWcJaAHybe7gfU9kLgEzmbd/91VCCujArXdd3hdA2M73fKobKzDTYIK+uRsel7tT75jnKnGvUUtuWpMrra8nMNG12aguZatjKMa7pAsDMtnK9tkdylKVz6lz6snsATFKPwB+M+gtppx//sBoyCyMAkuNppWtYg0CVxeT4tvfPbKcI8zHXpD2RZnaOW3RXDQo27ROrSfYSAGowylv/30iR4qYCQBFSVe9zk0Fd5GKH0QJAPfpO96XJG8mjmyJHOcHFAuA1APvlkbIerzmN5P3SXwBc7IaOblmPN5NVdaXK/RUDRACoTqcOq4KfptA37l1XuKpma0QKrlQ/2LEEJY8i+XQXAD4Q6u+uwZwKKrbtdNWYjMboNDClf0qTl+ktb5W6RsLMbDc/naZK80Cvt/YQSvruYJIr46GwanQTAJzph5Y1/Vk2aVZQCck8xR4kpUgpZGYCQDHNOK9/p6bpRSRvS02GzEx1tZGlaAbopH8DcDnJO0uS2VaMmWnzk1xz9hrXldIob9o+ldf0W+cPZiafkLvbmtDsSY3MytQ7mXUVwJiZrFozTKoK6QcZSVrXAszsSABPFVRIs4MzyjTxgvoo4TsAwCm+Yy2rEC1PswC9CAfm+KBMSsWPW0l+l2N9LUt8UfYKf8Vn/gcAM9MT82VGTeTYngBwdqeB6Ixya2FPAnCSKx4+HPhlBRJ6vsaS/DZwTePYkgCozx7SqpJXl69YmqzFNW6HHRSKxwGhc79XApgV2npqOiBxAE73/ftWOquRqbJT7mGEJoIRhcIaZVGjMm14QT+BucHVDKa7oUSlkT2KIgAUT6/zIwbXYFTmpLxZU909kiIAprhM6+bEDqf7Hy93pY09lSIAFriO7aF+k7/4aYs0i+hxOEQAqIGgNrJ+iDS5p3j4kNP6F9f7+CyBdXonAAAAAElFTkSuQmCC";
-    }
-  });
-
-  // src/lib/utils/isValidHttpUrl.ts
-  function isValidHttpUrl(input) {
-    var url2;
-    try {
-      url2 = new URL(input);
-    } catch (e) {
-      return false;
-    }
-    return url2.protocol === "http:" || url2.protocol === "https:";
-  }
-  var init_isValidHttpUrl = __esm({
-    "src/lib/utils/isValidHttpUrl.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-    }
-  });
-
-  // src/lib/addons/fonts/FontManager.ts
-  var FontManager_default;
-  var init_FontManager = __esm({
-    "src/lib/addons/fonts/FontManager.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_async_to_generator();
-      init_fs();
-      init_storage();
-      init_utils();
-      init_isValidHttpUrl();
-      init_dist();
-      FontManager_default = {
-        preferences: createStorage("themes/fonts/preferences.json", {
-          dflt: {
-            selected: null,
-            per: {}
-          }
-        }),
-        traces: createStorage("themes/fonts/traces.json"),
-        prepare() {
-          return _async_to_generator(function* () {
-            yield awaitStorage(this.preferences, this.traces);
-            var _this = this;
-            yield migrateToNewStorage("BUNNY_FONTS", function() {
-              var _ref = _async_to_generator(function* (storage) {
-                _this.preferences.selected = storage.__selected ?? null;
-                for (var id in storage) {
-                  if (id.startsWith("__"))
-                    continue;
-                  var sanitizedId = _this.sanitizeId(id);
-                  _this.preferences.per[sanitizedId] = {};
-                  _this.traces[sanitizedId] = {
-                    sourceUrl: storage[id].__source ?? null,
-                    timeInstalled: null,
-                    lastEdited: null
-                  };
-                  yield updateStorageAsync(`themes/fonts/manifests/${sanitizedId}.json`, _this.convertToNewFormat(storage[id], sanitizedId));
-                }
-              });
-              return function(storage) {
-                return _ref.apply(this, arguments);
-              };
-            }());
-            yield allSettled(this.getAllIds().map((id) => preloadStorageIfExists(`themes/fonts/manifests/${id}.json`)));
-          }).apply(this);
-        },
-        sanitizeId(id) {
-          return id.replace(/[<>:"/\\|?*]/g, "-").replace(/-+/g, "-");
-        },
-        getAllIds() {
-          return Object.keys(this.traces);
-        },
-        useFonts() {
-          useObservable([
-            this.preferences,
-            this.traces
-          ]);
-        },
-        convertToNewFormat(font, id) {
-          return {
-            spec: 3,
-            id: this.sanitizeId(id),
-            display: {
-              name: font.name,
-              description: font.description
-            },
-            main: font.main,
-            extras: omit(font, [
-              "name",
-              "description",
-              "main",
-              "spec"
-            ])
-          };
-        },
-        getManifest(id) {
-          return createStorage(`themes/fonts/manifests/${id}.json`, {
-            nullIfEmpty: true
-          });
-        },
-        writeToNative(manifest) {
-          return _async_to_generator(function* () {
-            if (manifest) {
-              var definition = {
-                name: manifest.id,
-                description: manifest.display.description,
-                main: manifest.main
-              };
-              yield writeFile("fonts.json", JSON.stringify(definition));
-            } else {
-              yield removeFile("fonts.json");
-            }
-          })();
-        },
-        validate(font, url2) {
-          if (!font || typeof font !== "object")
-            throw new Error("URL returned a null/non-object JSON");
-          if (typeof font.spec !== "number")
-            throw new Error("Invalid font 'spec' number");
-          if (font.spec !== 1 && font.spec !== 3)
-            throw new Error("Only fonts which follows spec: 1 and 3 are supported");
-          if (font.spec === 1) {
-            var requiredFields = [
-              "name",
-              "main"
-            ];
-            if (requiredFields.some((f) => f && !font[f]))
-              throw new Error(`Font is missing one of the fields: ${requiredFields}`);
-            if (font.name.startsWith("__"))
-              throw new Error("Font names cannot start with __");
-            if (url2 && this.sanitizeId(url2) in this.traces)
-              throw new Error("Font was already installed");
-          } else {
-            var requiredFields1 = [
-              "id",
-              "main"
-            ];
-            if (requiredFields1.some((f) => f && !font[f]))
-              throw new Error(`Font is missing one of the fields: ${requiredFields1}`);
-            if (this.sanitizeId(font.id) in this.traces)
-              throw new Error("Font was already installed");
-            if (font.id !== this.sanitizeId(font.id))
-              throw new Error("Font id contains illegal characters");
-          }
-        },
-        initialize() {
-          return _async_to_generator(function* () {
-            this.updateAll();
-          }).apply(this);
-        },
-        fetch(url2) {
-          return _async_to_generator(function* () {
-            var fontManifest;
-            try {
-              fontManifest = yield (yield safeFetch(url2)).json();
-            } catch (e) {
-              throw new Error(`Failed to fetch fonts at ${url2}`, {
-                cause: e
-              });
-            }
-            this.validate(fontManifest, url2);
-            if (fontManifest.spec === 1) {
-              fontManifest = this.convertToNewFormat(fontManifest, url2);
-            }
-            fontManifest.id = this.sanitizeId(fontManifest.id);
-            try {
-              yield Promise.all(Object.entries(fontManifest.main).map(function() {
-                var _ref = _async_to_generator(function* ([font, url3]) {
-                  var ext = url3.split(".").pop();
-                  if (ext !== "ttf" && ext !== "otf")
-                    ext = "ttf";
-                  var path = `downloads/fonts/${fontManifest.id}/${font}.${ext}`;
-                  if (!(yield fileExists(path)))
-                    yield downloadFile(url3, path);
-                });
-                return function(_2) {
-                  return _ref.apply(this, arguments);
-                };
-              }()));
-            } catch (e) {
-              throw new Error("Failed to download font assets", {
-                cause: e
-              });
-            }
-            return fontManifest;
-          }).apply(this);
-        },
-        install(url2) {
-          return _async_to_generator(function* () {
-            if (!isValidHttpUrl(url2) || Object.values(this.traces).some((f) => f.sourceUrl === url2)) {
-              throw new Error("Invalid source or font was already installed");
-            }
-            var font = yield this.fetch(url2);
-            this.preferences.per[font.id] = {};
-            this.traces[font.id] = {
-              sourceUrl: url2,
-              timeInstalled: (/* @__PURE__ */ new Date()).toISOString(),
-              lastEdited: null
-            };
-          }).apply(this);
-        },
-        saveLocally(manifest, { markAsEdited = false }) {
-          return _async_to_generator(function* () {
-            this.validate(manifest, null);
-            yield updateStorageAsync(`themes/fonts/manifests/${manifest.id}.json`, manifest);
-            if (manifest.id in this.traces) {
-              Object.assign(this.traces[manifest.id], {
-                lastEdited: markAsEdited ? (/* @__PURE__ */ new Date()).toISOString() : null
-              });
-            } else {
-              this.preferences.per[manifest.id] = {};
-              this.traces[manifest.id] = {
-                sourceUrl: null,
-                timeInstalled: (/* @__PURE__ */ new Date()).toISOString(),
-                lastEdited: markAsEdited ? (/* @__PURE__ */ new Date()).toISOString() : null
-              };
-            }
-          }).apply(this);
-        },
-        select(id) {
-          return _async_to_generator(function* () {
-            id &&= this.sanitizeId(id);
-            if (id && !this.traces[id] || typeof id !== "string")
-              throw new Error(`Unknown font '${id}'`);
-            this.preferences.selected = id;
-            yield this.writeToNative(id != null ? this.getManifest(id) : null);
-          }).apply(this);
-        },
-        uninstall(id) {
-          return _async_to_generator(function* () {
-            id = this.sanitizeId(id);
-            if (!this.traces[id])
-              throw new Error(`Unknown font '${id}'`);
-            if (this.preferences.selected === id) {
-              this.select(null);
-            }
-            delete this.traces[id];
-            delete this.preferences.per[id];
-            throw new Error("Method not implemented.");
-          }).apply(this);
-        },
-        updateAll() {
-          return _async_to_generator(function* () {
-            for (var id in this.traces) {
-              var { sourceUrl, lastEdited } = this.traces[id];
-              if (!sourceUrl || lastEdited)
-                continue;
-              this.fetch(sourceUrl);
-            }
-          }).apply(this);
-        }
-      };
-    }
-  });
-
-  // src/lib/addons/fonts/index.ts
-  var fonts_exports = {};
-  __export(fonts_exports, {
-    FontManager: () => FontManager_default
-  });
-  var init_fonts = __esm({
-    "src/lib/addons/fonts/index.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_FontManager();
-    }
-  });
-
-  // src/lib/constants.ts
-  var DISCORD_SERVER, GITHUB, VD_PROXY_PREFIX, BUNNY_PROXY_PREFIX;
-  var init_constants = __esm({
-    "src/lib/constants.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      DISCORD_SERVER = "https://discord.gg/XjYgWXHb9Q";
-      GITHUB = "https://github.com/pyoncord";
-      VD_PROXY_PREFIX = "https://vd-plugins.github.io/proxy";
-      BUNNY_PROXY_PREFIX = "https://bn-plugins.github.io/vd-proxy";
-    }
-  });
-
-  // src/lib/api/commands/types.ts
-  var ApplicationCommandInputType, ApplicationCommandOptionType, ApplicationCommandType;
-  var init_types = __esm({
-    "src/lib/api/commands/types.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      (function(ApplicationCommandInputType2) {
-        ApplicationCommandInputType2[ApplicationCommandInputType2["BUILT_IN"] = 0] = "BUILT_IN";
-        ApplicationCommandInputType2[ApplicationCommandInputType2["BUILT_IN_TEXT"] = 1] = "BUILT_IN_TEXT";
-        ApplicationCommandInputType2[ApplicationCommandInputType2["BUILT_IN_INTEGRATION"] = 2] = "BUILT_IN_INTEGRATION";
-        ApplicationCommandInputType2[ApplicationCommandInputType2["BOT"] = 3] = "BOT";
-        ApplicationCommandInputType2[ApplicationCommandInputType2["PLACEHOLDER"] = 4] = "PLACEHOLDER";
-      })(ApplicationCommandInputType || (ApplicationCommandInputType = {}));
-      (function(ApplicationCommandOptionType2) {
-        ApplicationCommandOptionType2[ApplicationCommandOptionType2["SUB_COMMAND"] = 1] = "SUB_COMMAND";
-        ApplicationCommandOptionType2[ApplicationCommandOptionType2["SUB_COMMAND_GROUP"] = 2] = "SUB_COMMAND_GROUP";
-        ApplicationCommandOptionType2[ApplicationCommandOptionType2["STRING"] = 3] = "STRING";
-        ApplicationCommandOptionType2[ApplicationCommandOptionType2["INTEGER"] = 4] = "INTEGER";
-        ApplicationCommandOptionType2[ApplicationCommandOptionType2["BOOLEAN"] = 5] = "BOOLEAN";
-        ApplicationCommandOptionType2[ApplicationCommandOptionType2["USER"] = 6] = "USER";
-        ApplicationCommandOptionType2[ApplicationCommandOptionType2["CHANNEL"] = 7] = "CHANNEL";
-        ApplicationCommandOptionType2[ApplicationCommandOptionType2["ROLE"] = 8] = "ROLE";
-        ApplicationCommandOptionType2[ApplicationCommandOptionType2["MENTIONABLE"] = 9] = "MENTIONABLE";
-        ApplicationCommandOptionType2[ApplicationCommandOptionType2["NUMBER"] = 10] = "NUMBER";
-        ApplicationCommandOptionType2[ApplicationCommandOptionType2["ATTACHMENT"] = 11] = "ATTACHMENT";
-      })(ApplicationCommandOptionType || (ApplicationCommandOptionType = {}));
-      (function(ApplicationCommandType2) {
-        ApplicationCommandType2[ApplicationCommandType2["CHAT"] = 1] = "CHAT";
-        ApplicationCommandType2[ApplicationCommandType2["USER"] = 2] = "USER";
-        ApplicationCommandType2[ApplicationCommandType2["MESSAGE"] = 3] = "MESSAGE";
-      })(ApplicationCommandType || (ApplicationCommandType = {}));
-    }
-  });
-
-  // src/core/commands/eval.ts
-  var eval_exports = {};
-  __export(eval_exports, {
-    default: () => eval_default
-  });
-  function wrapInJSCodeblock(resString) {
-    return "```js\n" + resString.replaceAll("`", "`" + ZERO_WIDTH_SPACE_CHARACTER) + "\n```";
-  }
-  var util, AsyncFunction, ZERO_WIDTH_SPACE_CHARACTER, eval_default;
-  var init_eval = __esm({
-    "src/core/commands/eval.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_async_to_generator();
-      init_i18n();
-      init_BunnySettings();
-      init_types();
-      init_common();
-      init_wrappers();
-      util = findByPropsLazy("inspect");
-      AsyncFunction = _async_to_generator(function* () {
-        return void 0;
-      }).constructor;
-      ZERO_WIDTH_SPACE_CHARACTER = "\u200B";
-      eval_default = () => ({
-        name: "eval",
-        description: Strings.COMMAND_EVAL_DESC,
-        shouldHide: () => BunnySettings_default.developer.evalCommandEnabled === true,
-        options: [
-          {
-            name: "code",
-            type: ApplicationCommandOptionType.STRING,
-            description: Strings.COMMAND_EVAL_OPT_CODE,
-            required: true
-          },
-          {
-            name: "async",
-            type: ApplicationCommandOptionType.BOOLEAN,
-            description: Strings.COMMAND_EVAL_OPT_ASYNC
-          }
-        ],
-        execute([code, async], ctx) {
-          return _async_to_generator(function* () {
-            try {
-              var res = util.inspect(async?.value ? yield AsyncFunction(code.value)() : eval?.(code.value));
-              var trimmedRes = res.length > 2e3 ? res.slice(0, 2e3) + "..." : res;
-              messageUtil.sendBotMessage(ctx.channel.id, wrapInJSCodeblock(trimmedRes));
-            } catch (err) {
-              messageUtil.sendBotMessage(ctx.channel.id, wrapInJSCodeblock(err?.stack ?? err));
-            }
-          })();
-        }
-      });
-    }
-  });
-
-  // src/core/commands/debug.ts
-  var debug_exports2 = {};
-  __export(debug_exports2, {
-    default: () => debug_default
-  });
-  var debug_default;
-  var init_debug2 = __esm({
-    "src/core/commands/debug.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_i18n();
-      init_types();
-      init_debug();
-      init_common();
-      debug_default = () => ({
-        name: "debug",
-        description: Strings.COMMAND_DEBUG_DESC,
-        options: [
-          {
-            name: "ephemeral",
-            type: ApplicationCommandOptionType.BOOLEAN,
-            description: Strings.COMMAND_DEBUG_OPT_EPHEMERALLY
-          }
-        ],
-        execute([ephemeral], ctx) {
-          var info = getDebugInfo();
-          var content = [
-            "**Bunny Debug Info**",
-            `> Bunny: ${info.bunny.version} (${info.bunny.loader.name} ${info.bunny.loader.version})`,
-            `> Discord: ${info.discord.version} (${info.discord.build})`,
-            `> React: ${info.react.version} (RN ${info.react.nativeVersion})`,
-            `> Hermes: ${info.hermes.version} (bcv${info.hermes.bytecodeVersion})`,
-            `> System: ${info.os.name} ${info.os.version} ${info.os.sdk ? `(SDK ${info.os.sdk})` : ""}`.trimEnd(),
-            `> Device: ${info.device.model} (${info.device.codename})`
-          ].join("\n");
-          if (ephemeral?.value) {
-            messageUtil.sendBotMessage(ctx.channel.id, content);
-          } else {
-            messageUtil.sendMessage(ctx.channel.id, {
-              content
-            });
-          }
-        }
-      });
-    }
-  });
-
-  // src/core/commands/plugins.ts
-  var plugins_exports = {};
-  __export(plugins_exports, {
-    default: () => plugins_default
-  });
-  var plugins_default;
-  var init_plugins = __esm({
-    "src/core/commands/plugins.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_i18n();
-      init_PluginManager();
-      init_types();
-      init_common();
-      plugins_default = () => ({
-        name: "plugins",
-        description: Strings.COMMAND_PLUGINS_DESC,
-        options: [
-          {
-            name: "ephemeral",
-            displayName: "ephemeral",
-            type: ApplicationCommandOptionType.BOOLEAN,
-            description: Strings.COMMAND_DEBUG_OPT_EPHEMERALLY
-          }
-        ],
-        execute([ephemeral], ctx) {
-          var plugins = PluginManager_default.getAllIds().map((id) => PluginManager_default.getManifest(id)).filter(Boolean);
-          plugins.sort((a, b3) => a.display.name.localeCompare(b3.display.name));
-          var enabled = plugins.filter((p) => PluginManager_default.settings[p.id].enabled).map((p) => p.display.name);
-          var disabled = plugins.filter((p) => !PluginManager_default.settings[p.id].enabled).map((p) => p.display.name);
-          var content = [
-            `**Installed Plugins (${plugins.length}):**`,
-            ...enabled.length > 0 ? [
-              `Enabled (${enabled.length}):`,
-              "> " + enabled.join(", ")
-            ] : [],
-            ...disabled.length > 0 ? [
-              `Disabled (${disabled.length}):`,
-              "> " + disabled.join(", ")
-            ] : []
-          ].join("\n");
-          if (ephemeral?.value) {
-            messageUtil.sendBotMessage(ctx.channel.id, content);
-          } else {
-            messageUtil.sendMessage(ctx.channel.id, {
-              content
-            });
-          }
-        }
-      });
-    }
-  });
-
-  // src/lib/api/commands/index.ts
-  var commands_exports = {};
-  __export(commands_exports, {
-    patchCommands: () => patchCommands,
-    registerCommand: () => registerCommand
-  });
-  function patchCommands() {
-    var unpatch = after("getBuiltInCommands", commands, ([type], res) => {
-      return [
-        ...res,
-        ...commands2.filter((c2) => (type instanceof Array ? type.includes(c2.type) : type === c2.type) && c2.__bunny?.shouldHide?.() !== false)
-      ];
-    });
-    [
-      (init_eval(), __toCommonJS(eval_exports)),
-      (init_debug2(), __toCommonJS(debug_exports2)),
-      (init_plugins(), __toCommonJS(plugins_exports))
-    ].forEach((r) => registerCommand(r.default()));
-    return () => {
-      commands2 = [];
-      unpatch();
-    };
-  }
-  function registerCommand(command) {
-    var builtInCommands;
-    try {
-      builtInCommands = commands.getBuiltInCommands(ApplicationCommandType.CHAT, true, false);
-    } catch (e) {
-      builtInCommands = commands.getBuiltInCommands(Object.values(ApplicationCommandType), true, false);
-    }
-    builtInCommands.sort((a, b3) => parseInt(b3.id) - parseInt(a.id));
-    var lastCommand = builtInCommands[builtInCommands.length - 1];
-    command.id = (parseInt(lastCommand.id, 10) - 1).toString();
-    command.__bunny = {
-      shouldHide: command.shouldHide
-    };
-    command.applicationId ??= "-1";
-    command.type ??= ApplicationCommandType.CHAT;
-    command.inputType = ApplicationCommandInputType.BUILT_IN;
-    command.displayName ??= command.name;
-    command.untranslatedName ??= command.name;
-    command.displayDescription ??= command.description;
-    command.untranslatedDescription ??= command.description;
-    if (command.options)
-      for (var opt of command.options) {
-        opt.displayName ??= opt.name;
-        opt.displayDescription ??= opt.description;
-      }
-    instead("execute", command, (args, orig) => {
-      Promise.resolve(orig.apply(command, args)).then((ret) => {
-        if (ret && typeof ret === "object") {
-          messageUtil.sendMessage(args[1].channel.id, ret);
-        }
-      }).catch((err) => {
-        logger.error("Failed to execute command", err);
-      });
-    });
-    commands2.push(command);
-    return () => commands2 = commands2.filter(({ id }) => id !== command.id);
-  }
-  var commands2;
-  var init_commands = __esm({
-    "src/lib/api/commands/index.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_logger();
-      init_types();
-      init_patcher();
-      init_common();
-      commands2 = [];
-    }
-  });
-
-  // src/lib/api/flux/index.ts
-  var flux_exports = {};
-  __export(flux_exports, {
-    dispatcher: () => dispatcher,
-    injectFluxInterceptor: () => injectFluxInterceptor,
-    intercept: () => intercept
-  });
-  function injectFluxInterceptor() {
-    var cb = (payload) => {
-      for (var intercept2 of intercepts) {
-        var res = intercept2(payload);
-        if (res == null) {
-          continue;
-        } else if (!res) {
-          payload[blockedSym] = true;
-        } else if (typeof res === "object") {
-          Object.assign(payload, res);
-          payload[modifiedSym] = true;
-        }
-      }
-      return blockedSym in payload;
-    };
-    (dispatcher._interceptors ??= []).unshift(cb);
-    return () => dispatcher._interceptors &&= dispatcher._interceptors.filter((v2) => v2 !== cb);
-  }
-  function intercept(cb) {
-    intercepts.push(cb);
-    return () => {
-      intercepts = intercepts.filter((i) => i !== cb);
-    };
-  }
-  var blockedSym, modifiedSym, dispatcher, intercepts;
-  var init_flux = __esm({
-    "src/lib/api/flux/index.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_common();
-      blockedSym = Symbol.for("bunny.flux.blocked");
-      modifiedSym = Symbol.for("bunny.flux.modified");
-      dispatcher = FluxDispatcher;
-      intercepts = [];
-    }
-  });
-
-  // src/lib/api/native/index.ts
-  var native_exports = {};
-  __export(native_exports, {
-    NativeModules: () => rn_modules_exports,
-    fs: () => fs_exports,
-    loader: () => loader_exports
-  });
-  var init_native = __esm({
-    "src/lib/api/native/index.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_fs();
-      init_loader();
-      init_rn_modules();
-    }
-  });
-
-  // src/lib/api/index.ts
-  var api_exports = {};
-  __export(api_exports, {
-    assets: () => assets_exports,
-    commands: () => commands_exports,
-    debug: () => debug_exports,
-    flux: () => flux_exports,
-    native: () => native_exports,
-    patcher: () => patcher_exports,
-    settings: () => BunnySettings_exports,
-    storage: () => storage_exports
-  });
-  var init_api = __esm({
-    "src/lib/api/index.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_BunnySettings();
-      init_assets();
-      init_commands();
-      init_debug();
-      init_flux();
-      init_native();
-      init_patcher();
-      init_storage();
-    }
-  });
-
-  // src/lib/addons/plugins/api.ts
-  function shimDisposableFn(unpatches, f) {
-    return (...props) => {
-      var up = f(...props);
-      unpatches.push(up);
-      return up;
-    };
-  }
-  function createBunnyPluginAPI(id) {
-    var disposers = new Array();
-    var object = {
-      ...window.bunny,
-      api: {
-        ...window.bunny.api,
-        patcher: {
-          before: shimDisposableFn(disposers, patcher_exports.before),
-          after: shimDisposableFn(disposers, patcher_exports.after),
-          instead: shimDisposableFn(disposers, patcher_exports.instead)
-        },
-        commands: {
-          ...window.bunny.api.commands,
-          registerCommand: shimDisposableFn(disposers, registerCommand)
-        },
-        flux: {
-          ...window.bunny.api.flux,
-          intercept: shimDisposableFn(disposers, window.bunny.api.flux.intercept)
-        }
-      },
-      // Added something in here? Make sure to also update BunnyPluginProperty in ./types
-      plugin: {
-        createStorage: () => createStorage(`plugins/storage/${id}.json`),
-        manifest: PluginManager_default.getManifest(id),
-        logger
-      }
-    };
-    return {
-      object,
-      disposers
-    };
-  }
-  var init_api2 = __esm({
-    "src/lib/addons/plugins/api.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_logger();
-      init_api();
-      init_commands();
-      init_storage();
-      init_PluginManager();
-    }
-  });
-
-  // src/lib/addons/plugins/PluginManager.ts
-  function assert(condition, id, attempt) {
-    if (!condition)
-      throw new Error(`[${id}] Attempted to ${attempt}`);
-  }
-  var import_lodash2, _fetch, fetchJS, fetchJSON, instances, bunnyApiObjects, updatePromiseMap, PluginManager_default;
-  var init_PluginManager = __esm({
-    "src/lib/addons/plugins/PluginManager.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_async_to_generator();
-      init_logger();
-      init_enums2();
-      init_PluginReporter();
-      init_object_observer_min();
-      init_fs();
-      init_storage();
-      init_constants();
-      init_isValidHttpUrl();
-      init_safeFetch();
-      import_lodash2 = __toESM(require_lodash());
-      init_api2();
-      _fetch = (repoUrl, path) => safeFetch(new URL(path, repoUrl), {
-        cache: "no-store"
-      });
-      fetchJS = (repoUrl, path) => _fetch(repoUrl, path).then((r) => r.text());
-      fetchJSON = (repoUrl, path) => _fetch(repoUrl, path).then((r) => r.json());
-      instances = v.from({});
-      bunnyApiObjects = /* @__PURE__ */ new Map();
-      updatePromiseMap = /* @__PURE__ */ new Map();
-      PluginManager_default = {
-        settings: createStorage("plugins/settings.json"),
-        traces: createStorage("plugins/infos.json"),
-        initialize() {
-          return _async_to_generator(function* () {
-            var _this = this;
-            this.getAllIds().map(function() {
-              var _ref = _async_to_generator(function* (id) {
-                if (_this.settings[id].enabled) {
-                  yield updatePromiseMap.get(id);
-                  _this.start(id, {
-                    throwOnPluginError: true
-                  });
-                }
-              });
-              return function(id) {
-                return _ref.apply(this, arguments);
-              };
-            }());
-          }).apply(this);
-        },
-        prepare() {
-          return _async_to_generator(function* () {
-            yield awaitStorage(this.settings, this.traces);
-            yield this.migrate("VENDETTA_PLUGINS");
-            var pluginIds = this.getAllIds();
-            yield Promise.all(pluginIds.map((id2) => preloadStorageIfExists(`plugins/manifests/${id2}.json`)));
-            for (var id of pluginIds) {
-              updatePromiseMap.set(id, this.fetch(this.traces[id].sourceUrl, {
-                id
-              }));
-            }
-          }).apply(this);
-        },
-        migrate(oldKey) {
-          var _this = this;
-          return migrateToNewStorage(oldKey, function() {
-            var _ref = _async_to_generator(function* (storage) {
-              for (var plugin of Object.values(storage)) {
-                var sanitizedId = _this.sanitizeId(plugin.id);
-                var pluginStorage = yield createStorageAsync(`../vd_mmkv/${sanitizedId}`, {
-                  nullIfEmpty: true
-                });
-                yield updateStorageAsync(`plugins/manifests/${sanitizedId}.json`, _this.convertToBn(plugin.id, plugin.manifest));
-                yield writeFile(`plugins/scripts/${sanitizedId}.js`, plugin.js);
-                if (pluginStorage) {
-                  yield updateStorageAsync(`plugins/storage/${sanitizedId}.json`, pluginStorage);
-                }
-                _this.settings[sanitizedId] ??= {
-                  enabled: plugin.enabled,
-                  autoUpdate: plugin.update
-                };
-                _this.traces[sanitizedId] ??= {
-                  sourceUrl: plugin.id,
-                  installTime: null,
-                  isVendetta: true
-                };
-              }
-            });
-            return function(storage) {
-              return _ref.apply(this, arguments);
-            };
-          }());
-        },
-        usePlugin(id) {
-          id = this.sanitizeId(id);
-          useObservable([
-            this.settings,
-            this.traces,
-            instances
-          ], {
-            pathsFrom: id
-          });
-        },
-        usePlugins() {
-          useObservable([
-            this.settings,
-            this.traces,
-            instances
-          ]);
-        },
-        convertToBn(source, vdManifest) {
-          return {
-            id: this.sanitizeId(source),
-            display: {
-              name: vdManifest.name,
-              description: vdManifest.description,
-              authors: vdManifest.authors
-            },
-            main: vdManifest.main,
-            hash: vdManifest.hash,
-            extras: {
-              ...(0, import_lodash2.omit)(vdManifest, [
-                "name",
-                "description",
-                "authors",
-                "main",
-                "hash"
-              ])
-            }
-          };
-        },
-        convertToVd(manifest) {
-          return {
-            name: manifest.display.name,
-            description: manifest.display.description,
-            authors: manifest.display.authors,
-            main: manifest.main,
-            hash: manifest.hash,
-            ...manifest.extras
-          };
-        },
-        sanitizeId(id) {
-          if (isValidHttpUrl(id) && !id.endsWith("/"))
-            id += "/";
-          return id.replace(/[<>:"/\\|?*]/g, "-").replace(/-+/g, "-");
-        },
-        getManifest(id) {
-          id = this.sanitizeId(id);
-          return createStorage(`plugins/manifests/${id}.json`);
-        },
-        getAllIds() {
-          return Object.keys(this.traces);
-        },
-        getType(manifest) {
-          if ("display" in manifest)
-            return "bunny";
-          if ([
-            "name",
-            "main"
-          ].every((p) => p in manifest))
-            return "vendetta";
-          throw new Error("Invalid plugin manifest");
-        },
-        isProxied(id) {
-          var { sourceUrl } = this.traces[this.sanitizeId(id)];
-          return sourceUrl.startsWith(VD_PROXY_PREFIX) || sourceUrl.startsWith(BUNNY_PROXY_PREFIX);
-        },
-        getUnproxiedPlugins() {
-          return this.getAllIds().filter((p) => !this.isProxied(p));
-        },
-        getSettingsComponent(id) {
-          return instances[id]?.SettingsComponent;
-        },
-        refetch(id) {
-          return _async_to_generator(function* () {
-            id = this.sanitizeId(id);
-            var { sourceUrl } = this.traces[id];
-            yield this.fetch(sourceUrl, {
-              id
-            });
-          }).apply(this);
-        },
-        fetch(url2, { id = "" } = {}) {
-          return _async_to_generator(function* () {
-            if (!url2.endsWith("/"))
-              url2 += "/";
-            var existingId = id || Object.entries(this.traces).find(([, v2]) => v2.sourceUrl === url2)?.[0];
-            var existingManifest = existingId ? this.getManifest(existingId) : null;
-            if (existingId)
-              PluginReporter_default.updateStage(id, PluginStage.FETCHING);
-            var pluginManifest;
-            try {
-              pluginManifest = yield fetchJSON(url2, "manifest.json");
-              if (this.getType(pluginManifest) === "vendetta") {
-                pluginManifest = this.convertToBn(url2, pluginManifest);
-              }
-            } catch (err) {
-              throw new Error(`Failed to fetch manifest for ${url2}`, {
-                cause: err
-              });
-            }
-            assert(this.traces[pluginManifest.id] ? this.traces[pluginManifest.id].sourceUrl === url2 : true, pluginManifest.id ?? url2, "fetching a plugin already installed with another source");
-            var pluginJs;
-            if (existingManifest?.hash !== pluginManifest.hash) {
-              try {
-                pluginJs = yield fetchJS(url2, pluginManifest.main);
-              } catch (e) {
-              }
-              if (pluginJs) {
-                try {
-                  yield writeFile(`plugins/scripts/${pluginManifest.id}.js`, pluginJs);
-                  yield updateStorageAsync(`plugins/manifests/${pluginManifest.id}.json`, pluginManifest);
-                } catch (err) {
-                  throw new Error(`Unable to update file for plugin ${id}`);
-                }
-              }
-            }
-            if (!pluginJs && !existingManifest)
-              throw new Error(`Failed to fetch JS for ${url2}`);
-            PluginReporter_default.updateStage(pluginManifest.id, PluginStage.FETCHED);
-            return pluginManifest;
-          }).apply(this);
-        },
-        start(id, { throwOnPluginError = false, awaitPlugin = true } = {}) {
-          return _async_to_generator(function* () {
-            id = this.sanitizeId(id);
-            var manifest = this.getManifest(id);
-            assert(manifest, id, "start a non-registered plugin");
-            assert(id in this.settings, id, "start a non-installed plugin");
-            assert(this.settings[id]?.enabled, id, "start a disabled plugin");
-            assert(!instances[id], id, "start an already started plugin");
-            yield preloadStorageIfExists(`plugins/storage/${id}.json`);
-            var pluginInstance;
-            if (!this.traces[id].isVendetta) {
-              var instantiator;
-              try {
-                PluginReporter_default.updateStage(id, PluginStage.PARSING);
-                var iife = yield readFile(`plugins/scripts/${id}.js`);
-                instantiator = globalEvalWithSourceUrl(`(bunny,definePlugin)=>{${iife};return plugin?.default ?? plugin;}`, `bunny-plugin/${id}-${manifest.hash}`);
-                PluginReporter_default.updateStage(id, PluginStage.PARSED);
-              } catch (error2) {
-                PluginReporter_default.reportPluginError(id, error2);
-                throw new Error("An error occured while parsing plugin's code, possibly a syntax error?", {
-                  cause: error2
-                });
-              }
-              try {
-                PluginReporter_default.updateStage(id, PluginStage.INSTANTIATING);
-                var api = createBunnyPluginAPI(id);
-                pluginInstance = instantiator(api.object, (p) => {
-                  return Object.assign(p, {
-                    manifest
-                  });
-                });
-                if (!pluginInstance)
-                  throw new Error(`Plugin '${id}' does not export a valid plugin instance`);
-                bunnyApiObjects.set(id, api);
-                instances[id] = pluginInstance;
-                PluginReporter_default.updateStage(id, PluginStage.INSTANTIATED);
-              } catch (error2) {
-                PluginReporter_default.reportPluginError(id, error2);
-                throw new Error("An error occured while instantiating plugin's code", {
-                  cause: error2
-                });
-              }
-            } else {
-              var instantiator1;
-              try {
-                PluginReporter_default.updateStage(id, PluginStage.PARSING);
-                var iife1 = yield readFile(`plugins/scripts/${id}.js`);
-                instantiator1 = globalEvalWithSourceUrl(`vendetta=>{return ${iife1}}`, `vd-plugin/${id}-${manifest.hash}`);
-                PluginReporter_default.updateStage(id, PluginStage.PARSED);
-              } catch (err) {
-                PluginReporter_default.reportPluginError(id, err);
-                if (throwOnPluginError) {
-                  throw new Error("An error occured while parsing Vendetta plugin", {
-                    cause: err
-                  });
-                } else {
-                  return;
-                }
-              }
-              try {
-                PluginReporter_default.updateStage(id, PluginStage.INSTANTIATING);
-                var vendettaForPlugins = {
-                  ...window.vendetta,
-                  plugin: {
-                    id: manifest.id,
-                    manifest: this.convertToVd(manifest),
-                    storage: yield createStorageAsync(`plugins/storage/${this.sanitizeId(id)}.json`)
-                  },
-                  logger
-                };
-                var raw = instantiator1(vendettaForPlugins);
-                var ret = typeof raw === "function" ? raw() : raw;
-                var rawInstance = ret?.default ?? ret ?? {};
-                pluginInstance = {
-                  start: rawInstance.onLoad && (() => rawInstance.onLoad()),
-                  stop: rawInstance.onUnload && (() => rawInstance.onUnload()),
-                  SettingsComponent: rawInstance.settings
-                };
-                instances[id] = pluginInstance;
-                PluginReporter_default.updateStage(id, PluginStage.INSTANTIATED);
-              } catch (err) {
-                PluginReporter_default.reportPluginError(id, err);
-                this.disable(id, {
-                  throwOnPluginError: false,
-                  reason: PluginDisableReason.ERROR
-                });
-                if (throwOnPluginError) {
-                  throw new Error("An error occured while instantiating Vendetta plugin", {
-                    cause: err
-                  });
-                } else {
-                  return;
-                }
-              }
-            }
-            try {
-              PluginReporter_default.updateStage(id, PluginStage.STARTING);
-              var promise = pluginInstance.start?.();
-              if (awaitPlugin)
-                yield promise;
-              PluginReporter_default.updateStage(id, PluginStage.RUNNING);
-            } catch (error2) {
-              PluginReporter_default.reportPluginError(id, error2);
-              this.disable(id, {
-                throwOnPluginError: false,
-                reason: PluginDisableReason.ERROR
-              });
-              if (throwOnPluginError) {
-                throw new Error("An error occured while starting the plugin", {
-                  cause: error2
-                });
-              }
-            }
-          }).apply(this);
-        },
-        stop(id, { throwOnPluginError = false, awaitPlugin = false } = {}) {
-          return _async_to_generator(function* () {
-            id = this.sanitizeId(id);
-            var instance = instances[id];
-            assert(instance, id, "stop a non-started plugin");
-            try {
-              PluginReporter_default.updateStage(id, PluginStage.STOPPING);
-              var promise = instance.stop?.();
-              if (awaitPlugin)
-                yield promise;
-              PluginReporter_default.updateStage(id, PluginStage.STOPPED);
-            } catch (err) {
-              if (throwOnPluginError) {
-                throw new Error("instance.stop() threw an error", {
-                  cause: err
-                });
-              }
-            } finally {
-              var obj = bunnyApiObjects.get(id);
-              obj?.disposers.forEach((d) => d());
-              delete instances[id];
-            }
-          }).apply(this);
-        },
-        enable(id, { start = true } = {}) {
-          return _async_to_generator(function* () {
-            id = this.sanitizeId(id);
-            assert(this.settings[id], id, "enable a non-installed plugin");
-            this.settings[id].enabled = true;
-            PluginReporter_default.clearPluginReports(id);
-            if (start)
-              yield this.start(id);
-          }).apply(this);
-        },
-        disable(id, { throwOnPluginError = false, reason = PluginDisableReason.REQUESTED } = {}) {
-          return _async_to_generator(function* () {
-            id = this.sanitizeId(id);
-            assert(this.settings[id], id, "disable a non-installed plugin");
-            instances[id] && this.stop(id, {
-              throwOnPluginError
-            });
-            this.settings[id].enabled = false;
-            PluginReporter_default.reportPluginDisable(id, reason);
-          }).apply(this);
-        },
-        install(url2, { start = true, enable = true } = {}) {
-          return _async_to_generator(function* () {
-            if (!url2.endsWith("/"))
-              url2 += "/";
-            if (!(start ? enable : true)) {
-              throw new Error("Instant start is true but plugin is not pre-enabled");
-            }
-            var manifest = yield this.fetch(url2);
-            this.traces[manifest.id] = {
-              sourceUrl: url2,
-              installTime: (/* @__PURE__ */ new Date()).toISOString(),
-              isVendetta: manifest.id.startsWith("https-")
-            };
-            this.settings[manifest.id] = {
-              enabled: enable,
-              autoUpdate: true
-            };
-            if (start)
-              yield this.start(manifest.id, {
-                awaitPlugin: false,
-                throwOnPluginError: false
-              });
-          }).apply(this);
-        },
-        uninstall(id, { keepData = false } = {}) {
-          return _async_to_generator(function* () {
-            id = this.sanitizeId(id);
-            if (instances[id]) {
-              yield this.stop(id);
-            }
-            delete this.traces[id];
-            delete this.settings[id];
-            PluginReporter_default.clearPluginReports(id);
-            yield removeFile(`plugins/scripts/${id}.js`);
-            yield purgeStorage(`plugins/manifests/${id}.json`);
-            if (!keepData)
-              yield purgeStorage(`plugins/storage/${id}.json`);
-          }).apply(this);
-        }
-      };
-    }
-  });
-
-  // src/lib/addons/plugins/index.ts
-  var plugins_exports2 = {};
-  __export(plugins_exports2, {
-    PluginManager: () => PluginManager_default
-  });
-  var init_plugins2 = __esm({
-    "src/lib/addons/plugins/index.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_PluginManager();
     }
   });
 
@@ -6526,15 +5551,22 @@
   function SettingsSection() {
     var navigation2 = NavigationNative.useNavigation();
     return /* @__PURE__ */ jsx(Fragment, {
-      children: Object.keys(registeredSections).map((sect) => /* @__PURE__ */ jsx(LegacyFormSection, {
+      children: Object.keys(registeredSections).map((sect) => registeredSections[sect].length > 0 && /* @__PURE__ */ jsx(LegacyFormSection, {
         title: sect,
-        children: registeredSections[sect].filter((r) => r.usePredicate?.() ?? true).map((row) => /* @__PURE__ */ jsx(LegacyFormRow, {
-          label: row.title(),
-          leading: /* @__PURE__ */ jsx(LegacyFormIcon, {
-            source: row.icon
-          }),
-          trailing: LegacyFormRow.Arrow,
-          onPress: wrapOnPress(row.onPress, navigation2, row.render, row.title())
+        children: registeredSections[sect].filter((r) => r.usePredicate?.() ?? true).map((row, i, arr) => /* @__PURE__ */ jsxs(Fragment, {
+          children: [
+            /* @__PURE__ */ jsx(LegacyFormRow, {
+              label: row.title(),
+              leading: /* @__PURE__ */ jsx(LegacyFormIcon, {
+                source: row.icon
+              }),
+              trailing: /* @__PURE__ */ jsx(LegacyFormRow.Arrow, {
+                label: row.useTrailing?.() || void 0
+              }),
+              onPress: wrapOnPress(row.onPress, navigation2, row.render, row.title())
+            }),
+            i !== arr.length - 1 && /* @__PURE__ */ jsx(LegacyFormDivider, {})
+          ]
         }))
       }, sect))
     });
@@ -6563,7 +5595,7 @@
           i18n.Messages.BILLING_SETTINGS,
           i18n.Messages.PREMIUM_SETTINGS
         ];
-        var sections = findInReactTree(res.props.children, (n) => n?.children?.[1]?.type === LegacyFormSection)?.children;
+        var sections = findInReactTree(res.props.children, (n) => n?.children?.[1]?.type === LegacyFormSection)?.children || res.props.children;
         if (sections) {
           var index = sections.findIndex((c2) => titles.includes(c2?.props.label));
           sections.splice(-~index || 4, 0, /* @__PURE__ */ jsx(SettingsSection, {}));
@@ -6583,7 +5615,7 @@
       init_common();
       init_components();
       init_wrappers();
-      init_settings();
+      init_settings2();
       init_shared();
     }
   });
@@ -6601,6 +5633,7 @@
         title: row.title,
         icon: row.icon,
         usePredicate: row.usePredicate,
+        useTrailing: row.useTrailing,
         onPress: wrapOnPress(row.onPress, null, row.render, row.title()),
         withArrow: true,
         ...row.rawTabsConfig
@@ -6665,7 +5698,7 @@
       init_utils();
       init_common();
       init_wrappers();
-      init_settings();
+      init_settings2();
       init_shared();
       settingConstants = findByPropsLazy("SETTING_RENDERER_CONFIG");
       SettingsOverviewScreen = findByNameLazy("SettingsOverviewScreen", false);
@@ -6673,9 +5706,9 @@
   });
 
   // src/lib/ui/settings/index.tsx
-  var settings_exports = {};
-  __export(settings_exports, {
-    patchSettingsSection: () => patchSettingsSection,
+  var settings_exports2 = {};
+  __export(settings_exports2, {
+    patchSettings: () => patchSettings,
     registerSection: () => registerSection,
     registeredSections: () => registeredSections
   });
@@ -6683,14 +5716,14 @@
     registeredSections[section.name] = section.items;
     return () => delete registeredSections[section.name];
   }
-  function patchSettingsSection() {
+  function patchSettings() {
     var unpatches = new Array();
     patchPanelUI(unpatches);
     patchTabsUI(unpatches);
     return () => unpatches.forEach((u) => u());
   }
   var registeredSections;
-  var init_settings = __esm({
+  var init_settings2 = __esm({
     "src/lib/ui/settings/index.tsx"() {
       "use strict";
       init_asyncIteratorSymbol();
@@ -6708,8 +5741,7 @@
       icon: /* @__PURE__ */ jsx(TableRow.Icon, {
         source: findAssetId(icon)
       }),
-      trailing: /* @__PURE__ */ jsx(Text2, {
-        variant: "text-sm/normal",
+      trailing: /* @__PURE__ */ jsx(LegacyFormText, {
         children: version
       }),
       onPress: () => {
@@ -6733,8 +5765,8 @@
 
   // src/core/ui/settings/pages/General/About.tsx
   function About() {
-    BunnySettings_default.useSettings();
     var debugInfo = getDebugInfo();
+    useProxy(settings);
     var versions = [
       {
         label: Strings.BUNNY,
@@ -6796,7 +5828,7 @@
         icon: "ic_phonelink_24px"
       },
       {
-        label: import_react_native11.Platform.select({
+        label: import_react_native15.Platform.select({
           android: Strings.CODENAME,
           ios: Strings.MACHINE_ID
         }),
@@ -6804,7 +5836,7 @@
         icon: "ic_compose_24px"
       }
     ];
-    return /* @__PURE__ */ jsx(import_react_native11.ScrollView, {
+    return /* @__PURE__ */ jsx(import_react_native15.ScrollView, {
       style: {
         flex: 1
       },
@@ -6838,7 +5870,7 @@
       })
     });
   }
-  var import_react_native11;
+  var import_react_native15;
   var init_About = __esm({
     "src/core/ui/settings/pages/General/About.tsx"() {
       "use strict";
@@ -6846,24 +5878,12 @@
       init_promiseAllSettled();
       init_jsxRuntime();
       init_i18n();
-      init_BunnySettings();
       init_Version();
+      init_storage();
       init_debug();
+      init_settings();
       init_components();
-      import_react_native11 = __toESM(require_react_native());
-    }
-  });
-
-  // src/lib/ui/alerts.ts
-  var openAlert, dismissAlert;
-  var init_alerts = __esm({
-    "src/lib/ui/alerts.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_lazy();
-      init_metro();
-      ({ openAlert, dismissAlert } = lazyDestructure(() => findByProps("openAlert", "dismissAlert")));
+      import_react_native15 = __toESM(require_react_native());
     }
   });
 
@@ -6873,10 +5893,10 @@
     default: () => General
   });
   function General() {
-    BunnySettings_default.useSettings();
+    useProxy(settings);
     var debugInfo = getDebugInfo();
     var navigation2 = NavigationNative.useNavigation();
-    return /* @__PURE__ */ jsx(import_react_native12.ScrollView, {
+    return /* @__PURE__ */ jsx(import_react_native16.ScrollView, {
       style: {
         flex: 1
       },
@@ -6919,6 +5939,7 @@
                 icon: /* @__PURE__ */ jsx(TableRow.Icon, {
                   source: findAssetId("CircleInformationIcon-primary")
                 }),
+                trailing: TableRow.Arrow,
                 onPress: () => navigation2.push("BUNNY_CUSTOM_PAGE", {
                   title: Strings.ABOUT,
                   render: () => /* @__PURE__ */ jsx(About, {})
@@ -6930,19 +5951,19 @@
             title: Strings.LINKS,
             children: [
               /* @__PURE__ */ jsx(TableRow, {
-                arrow: true,
                 label: Strings.DISCORD_SERVER,
                 icon: /* @__PURE__ */ jsx(TableRow.Icon, {
                   source: findAssetId("Discord")
                 }),
+                trailing: TableRow.Arrow,
                 onPress: () => url.openDeeplink(DISCORD_SERVER)
               }),
               /* @__PURE__ */ jsx(TableRow, {
-                arrow: true,
                 label: Strings.GITHUB,
                 icon: /* @__PURE__ */ jsx(TableRow.Icon, {
                   source: findAssetId("img_account_sync_github_white")
                 }),
+                trailing: TableRow.Arrow,
                 onPress: () => url.openURL(GITHUB)
               })
             ]
@@ -6953,49 +5974,26 @@
               /* @__PURE__ */ jsx(TableRow, {
                 label: Strings.RELOAD_DISCORD,
                 icon: /* @__PURE__ */ jsx(TableRow.Icon, {
-                  source: findAssetId("RetryIcon")
+                  source: findAssetId("ic_message_retry")
                 }),
-                onPress: () => import_react_native12.NativeModules.BundleUpdaterManager.reload()
+                onPress: () => import_react_native16.NativeModules.BundleUpdaterManager.reload()
               }),
-              /* @__PURE__ */ jsx(TableSwitchRow, {
-                label: "Safe Mode",
-                subLabel: "Load Bunny without loading add-ons",
+              /* @__PURE__ */ jsx(TableRow, {
+                label: settings.safeMode?.enabled ? Strings.RELOAD_IN_NORMAL_MODE : Strings.RELOAD_IN_SAFE_MODE,
+                subLabel: settings.safeMode?.enabled ? Strings.RELOAD_IN_NORMAL_MODE_DESC : Strings.RELOAD_IN_SAFE_MODE_DESC,
                 icon: /* @__PURE__ */ jsx(TableRow.Icon, {
-                  source: findAssetId("ShieldIcon")
+                  source: findAssetId("ic_privacy_24px")
                 }),
-                value: BunnySettings_default.isSafeMode(),
-                onValueChange: (to) => {
-                  toggleSafeMode({
-                    to,
-                    reload: false
-                  });
-                  openAlert("bunny-reload-safe-mode", /* @__PURE__ */ jsx(AlertModal, {
-                    title: "Reload now?",
-                    content: !to ? "All add-ons will load normally." : "All add-ons will be temporarily disabled upon reload.",
-                    actions: /* @__PURE__ */ jsxs(AlertActions, {
-                      children: [
-                        /* @__PURE__ */ jsx(AlertActionButton, {
-                          text: "Reload Now",
-                          variant: "destructive",
-                          onPress: () => RTNBundleUpdaterManager.reload()
-                        }),
-                        /* @__PURE__ */ jsx(AlertActionButton, {
-                          text: "Later",
-                          variant: "secondary"
-                        })
-                      ]
-                    })
-                  }));
-                }
+                onPress: toggleSafeMode
               }),
               /* @__PURE__ */ jsx(TableSwitchRow, {
                 label: Strings.DEVELOPER_SETTINGS,
                 icon: /* @__PURE__ */ jsx(TableRow.Icon, {
-                  source: findAssetId("WrenchIcon")
+                  source: findAssetId("ic_progress_wrench_24px")
                 }),
-                value: BunnySettings_default.developer.enabled,
+                value: settings.developerSettings,
                 onValueChange: (v2) => {
-                  BunnySettings_default.developer.enabled = v2;
+                  settings.developerSettings = v2;
                 }
               })
             ]
@@ -7006,11 +6004,11 @@
               label: Strings.SETTINGS_ACTIVATE_DISCORD_EXPERIMENTS,
               subLabel: Strings.SETTINGS_ACTIVATE_DISCORD_EXPERIMENTS_DESC,
               icon: /* @__PURE__ */ jsx(TableRow.Icon, {
-                source: findAssetId("WrenchIcon")
+                source: findAssetId("ic_progress_wrench_24px")
               }),
-              value: BunnySettings_default.general.patchIsStaff,
+              value: settings.enableDiscordDeveloperSettings,
               onValueChange: (v2) => {
-                BunnySettings_default.general.patchIsStaff = v2;
+                settings.enableDiscordDeveloperSettings = v2;
               }
             })
           })
@@ -7018,26 +6016,60 @@
       })
     });
   }
-  var import_react_native12;
+  var import_react_native16;
   var init_General = __esm({
     "src/core/ui/settings/pages/General/index.tsx"() {
       "use strict";
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
       init_jsxRuntime();
-      init_safeMode();
       init_i18n();
-      init_BunnySettings();
-      init_settings2();
+      init_settings3();
       init_About();
+      init_storage();
       init_assets();
       init_debug();
-      init_rn_modules();
+      init_settings();
       init_constants();
-      init_alerts();
       init_common();
       init_components();
-      import_react_native12 = __toESM(require_react_native());
+      import_react_native16 = __toESM(require_react_native());
+    }
+  });
+
+  // src/lib/ui/alerts.ts
+  var alerts_exports = {};
+  __export(alerts_exports, {
+    dismissAlert: () => dismissAlert,
+    openAlert: () => openAlert
+  });
+  var openAlert, dismissAlert;
+  var init_alerts = __esm({
+    "src/lib/ui/alerts.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_lazy();
+      init_metro();
+      ({ openAlert, dismissAlert } = lazyDestructure(() => findByProps("openAlert", "dismissAlert")));
+    }
+  });
+
+  // src/lib/utils/isValidHttpUrl.ts
+  function isValidHttpUrl(input) {
+    var url2;
+    try {
+      url2 = new URL(input);
+    } catch (e) {
+      return false;
+    }
+    return url2.protocol === "http:" || url2.protocol === "https:";
+  }
+  var init_isValidHttpUrl = __esm({
+    "src/lib/utils/isValidHttpUrl.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
     }
   });
 
@@ -7046,11 +6078,11 @@
     "node_modules/.pnpm/fuzzysort@3.0.2/node_modules/fuzzysort/fuzzysort.js"(exports, module) {
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
+      init_call_super();
       init_class_call_check();
       init_create_class();
       init_inherits();
       init_wrap_native_super();
-      init_create_super();
       ((root, UMD) => {
         if (typeof define === "function" && define.amd)
           define([], UMD);
@@ -7350,10 +6382,9 @@
         }();
         var KeysResult = /* @__PURE__ */ function(Array1) {
           _inherits(KeysResult2, Array1);
-          var _super = _create_super(KeysResult2);
           function KeysResult2() {
             _class_call_check(this, KeysResult2);
-            return _super.apply(this, arguments);
+            return _call_super(this, KeysResult2, arguments);
           }
           _create_class(KeysResult2, [
             {
@@ -7856,7 +6887,7 @@
   // src/core/ui/components/AddonPage.tsx
   function InputAlert(props) {
     var [value, setValue] = React.useState("");
-    var [error2, setError] = React.useState("");
+    var [error, setError] = React.useState("");
     var [isFetching, setIsFetching] = React.useState(false);
     function onConfirmWrapper() {
       setIsFetching(true);
@@ -7870,21 +6901,21 @@
           marginTop: -12
         },
         children: [
-          /* @__PURE__ */ jsx(TextInput2, {
+          /* @__PURE__ */ jsx(TextInput, {
             autoFocus: true,
             isClearable: true,
             value,
             onChange: (v2) => {
               setValue(v2);
-              if (error2)
+              if (error)
                 setError("");
             },
             returnKeyType: "done",
             onSubmitEditing: onConfirmWrapper,
-            state: error2 ? "error" : void 0,
-            errorMessage: error2 || void 0
+            state: error ? "error" : void 0,
+            errorMessage: error || void 0
           }),
-          /* @__PURE__ */ jsx(import_react_native13.ScrollView, {
+          /* @__PURE__ */ jsx(import_react_native17.ScrollView, {
             horizontal: true,
             showsHorizontalScrollIndicator: false,
             style: {
@@ -7919,7 +6950,6 @@
     });
   }
   function AddonPage({ CardComponent, ...props }) {
-    BunnySettings_default.useSettings();
     var [search, setSearch] = React.useState("");
     var [sortFn, setSortFn] = React.useState(() => null);
     var navigation2 = NavigationNative.useNavigation();
@@ -7968,7 +6998,7 @@
       }
     }, []);
     if (results.length === 0 && !search) {
-      return /* @__PURE__ */ jsxs(import_react_native13.View, {
+      return /* @__PURE__ */ jsxs(import_react_native17.View, {
         style: {
           gap: 32,
           flexGrow: 1,
@@ -7976,16 +7006,16 @@
           alignItems: "center"
         },
         children: [
-          /* @__PURE__ */ jsxs(import_react_native13.View, {
+          /* @__PURE__ */ jsxs(import_react_native17.View, {
             style: {
               gap: 8,
               alignItems: "center"
             },
             children: [
-              /* @__PURE__ */ jsx(import_react_native13.Image, {
+              /* @__PURE__ */ jsx(import_react_native17.Image, {
                 source: findAssetId("empty_quick_switcher")
               }),
-              /* @__PURE__ */ jsx(Text2, {
+              /* @__PURE__ */ jsx(Text, {
                 variant: "text-lg/semibold",
                 color: "text-normal",
                 children: "Oops! Nothing to see here\u2026 yet!"
@@ -8001,12 +7031,12 @@
         ]
       });
     }
-    var headerElement = /* @__PURE__ */ jsxs(import_react_native13.View, {
+    var headerElement = /* @__PURE__ */ jsxs(import_react_native17.View, {
       style: {
         paddingBottom: 8
       },
       children: [
-        BunnySettings_default.isSafeMode() && /* @__PURE__ */ jsxs(import_react_native13.View, {
+        settings.safeMode?.enabled && /* @__PURE__ */ jsxs(import_react_native17.View, {
           style: {
             marginBottom: 10
           },
@@ -8018,7 +7048,7 @@
             props.safeModeHint?.footer
           ]
         }),
-        /* @__PURE__ */ jsxs(import_react_native13.View, {
+        /* @__PURE__ */ jsxs(import_react_native17.View, {
           style: {
             flexDirection: "row",
             gap: 8
@@ -8059,17 +7089,17 @@
           extraData: search,
           estimatedItemSize: 136,
           ListHeaderComponent: headerElement,
-          ListEmptyComponent: () => /* @__PURE__ */ jsxs(import_react_native13.View, {
+          ListEmptyComponent: () => /* @__PURE__ */ jsxs(import_react_native17.View, {
             style: {
               gap: 12,
               padding: 12,
               alignItems: "center"
             },
             children: [
-              /* @__PURE__ */ jsx(import_react_native13.Image, {
+              /* @__PURE__ */ jsx(import_react_native17.Image, {
                 source: findAssetId("devices_not_found")
               }),
-              /* @__PURE__ */ jsx(Text2, {
+              /* @__PURE__ */ jsx(Text, {
                 variant: "text-lg/semibold",
                 color: "text-normal",
                 children: "Hmmm... could not find that!"
@@ -8081,7 +7111,7 @@
             paddingHorizontal: 12,
             paddingBottom: 90
           },
-          ItemSeparatorComponent: () => /* @__PURE__ */ jsx(import_react_native13.View, {
+          ItemSeparatorComponent: () => /* @__PURE__ */ jsx(import_react_native17.View, {
             style: {
               height: 8
             }
@@ -8099,15 +7129,15 @@
       ]
     });
   }
-  var import_fuzzysort, import_react3, import_react_native13, showSimpleActionSheet, hideActionSheet;
+  var import_fuzzysort, import_react3, import_react_native17, showSimpleActionSheet, hideActionSheet;
   var init_AddonPage = __esm({
     "src/core/ui/components/AddonPage.tsx"() {
       "use strict";
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
       init_jsxRuntime();
-      init_BunnySettings();
       init_assets();
+      init_settings();
       init_alerts();
       init_sheets();
       init_isValidHttpUrl();
@@ -8119,7 +7149,7 @@
       init_dist();
       import_fuzzysort = __toESM(require_fuzzysort());
       import_react3 = __toESM(require_react());
-      import_react_native13 = __toESM(require_react_native());
+      import_react_native17 = __toESM(require_react_native());
       ({ showSimpleActionSheet, hideActionSheet } = lazyDestructure(() => findByProps("showSimpleActionSheet")));
     }
   });
@@ -8143,73 +7173,37 @@
     }
   });
 
-  // src/core/ui/settings/pages/Plugins/usePluginStatusColor.tsx
-  function usePluginStatusColor(id) {
-    PluginReporter_default.useReporter();
-    var dangerBg = useToken(tokens.colors.STATUS_DANGER_BACKGROUND);
-    var positiveBg = useToken(tokens.colors.STATUS_POSITIVE_BACKGROUND);
-    var offlineBg = useToken(tokens.colors.STATUS_OFFLINE);
-    var stage = PluginReporter_default.stages[id];
-    var disableReason = PluginReporter_default.disableReason[id];
-    if (stage === PluginStage.RUNNING) {
-      return positiveBg;
-    }
-    if (disableReason === PluginDisableReason.ERROR) {
-      return dangerBg;
-    }
-    return offlineBg;
-  }
-  var init_usePluginStatusColor = __esm({
-    "src/core/ui/settings/pages/Plugins/usePluginStatusColor.tsx"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_enums2();
-      init_PluginReporter();
-      init_common();
-    }
-  });
-
   // src/core/ui/settings/pages/Plugins/components/PluginCard.tsx
   function getHighlightColor() {
-    return (0, import_chroma_js5.default)(tokens.unsafe_rawColors.YELLOW_300).alpha(0.3).hex();
+    return (0, import_chroma_js4.default)(tokens.unsafe_rawColors.YELLOW_300).alpha(0.3).hex();
   }
   function Title() {
     var styles = usePluginCardStyles();
     var { plugin, result } = useCardContext();
-    var statusColor = usePluginStatusColor(plugin.id);
-    var highlightedNode = result[0].highlight((m2, i) => /* @__PURE__ */ jsx(Text2, {
+    var highlightedNode = result[0].highlight((m2, i) => /* @__PURE__ */ jsx(Text, {
       style: {
         backgroundColor: getHighlightColor()
       },
       children: m2
     }, i));
     var icon = plugin.icon && findAssetId(plugin.icon);
-    var textNode = /* @__PURE__ */ jsx(Text2, {
+    var textNode = /* @__PURE__ */ jsx(Text, {
       numberOfLines: 1,
       variant: "heading-lg/semibold",
       children: highlightedNode.length ? highlightedNode : plugin.name
     });
-    return /* @__PURE__ */ jsxs(import_react_native14.View, {
+    return /* @__PURE__ */ jsxs(import_react_native18.View, {
       style: {
         flexDirection: "row",
         alignItems: "center",
         gap: 6
       },
       children: [
-        icon && /* @__PURE__ */ jsx(import_react_native14.Image, {
+        icon && /* @__PURE__ */ jsx(import_react_native18.Image, {
           style: styles.smallIcon,
           source: icon
         }),
-        textNode,
-        /* @__PURE__ */ jsx(import_react_native14.View, {
-          style: {
-            borderRadius: 4,
-            backgroundColor: statusColor,
-            height: 8,
-            width: 8
-          }
-        })
+        textNode
       ]
     });
   }
@@ -8217,14 +7211,14 @@
     var { plugin, result } = useCardContext();
     if (!plugin.authors)
       return null;
-    var highlightedNode = result[2].highlight((m2, i) => /* @__PURE__ */ jsx(Text2, {
+    var highlightedNode = result[2].highlight((m2, i) => /* @__PURE__ */ jsx(Text, {
       style: {
         backgroundColor: getHighlightColor()
       },
       children: m2
     }, i));
     if (highlightedNode.length > 0)
-      return /* @__PURE__ */ jsxs(Text2, {
+      return /* @__PURE__ */ jsxs(Text, {
         variant: "text-md/semibold",
         color: "text-muted",
         children: [
@@ -8240,7 +7234,7 @@
       children.push(", ");
     }
     children.pop();
-    return /* @__PURE__ */ jsx(Text2, {
+    return /* @__PURE__ */ jsx(Text, {
       variant: "text-md/semibold",
       color: "text-muted",
       children
@@ -8248,51 +7242,20 @@
   }
   function Description() {
     var { plugin, result } = useCardContext();
-    var highlightedNode = result[1].highlight((m2, i) => /* @__PURE__ */ jsx(Text2, {
+    var highlightedNode = result[1].highlight((m2, i) => /* @__PURE__ */ jsx(Text, {
       style: {
         backgroundColor: getHighlightColor()
       },
       children: m2
     }, i));
-    return /* @__PURE__ */ jsx(Text2, {
+    return /* @__PURE__ */ jsx(Text, {
       variant: "text-md/medium",
       children: highlightedNode.length ? highlightedNode : plugin.description
     });
   }
-  function Actions() {
-    var { plugin } = useCardContext();
-    var navigation2 = NavigationNative.useNavigation();
-    return /* @__PURE__ */ jsxs(import_react_native14.View, {
-      style: {
-        flexDirection: "row",
-        gap: 6
-      },
-      children: [
-        /* @__PURE__ */ jsx(IconButton, {
-          size: "sm",
-          variant: "secondary",
-          icon: findAssetId("WrenchIcon"),
-          disabled: !plugin.getPluginSettingsComponent(),
-          onPress: () => navigation2.push("BUNNY_CUSTOM_PAGE", {
-            title: plugin.name,
-            render: plugin.getPluginSettingsComponent()
-          })
-        }),
-        /* @__PURE__ */ jsx(IconButton, {
-          size: "sm",
-          variant: "secondary",
-          icon: findAssetId("CircleInformationIcon-primary"),
-          onPress: () => void showSheet("PluginInfoActionSheet", plugin.resolveSheetComponent(), {
-            plugin,
-            navigation: navigation2
-          })
-        })
-      ]
-    });
-  }
   function PluginCard({ result, item: plugin }) {
     plugin.usePluginState();
-    var navigation2 = NavigationNative.useNavigation();
+    var [, forceUpdate] = React.useReducer(() => ({}), 0);
     var cardContextValue = (0, import_react4.useMemo)(() => ({
       plugin,
       result
@@ -8300,25 +7263,19 @@
       plugin,
       result
     ]);
-    if (!plugin.isInstalled())
-      return null;
     return /* @__PURE__ */ jsx(CardContext.Provider, {
       value: cardContextValue,
       children: /* @__PURE__ */ jsx(Card, {
-        onPress: () => void showSheet("PluginInfoActionSheet", plugin.resolveSheetComponent(), {
-          plugin,
-          navigation: navigation2
-        }),
         children: /* @__PURE__ */ jsxs(Stack, {
           spacing: 16,
           children: [
-            /* @__PURE__ */ jsxs(import_react_native14.View, {
+            /* @__PURE__ */ jsxs(import_react_native18.View, {
               style: {
                 flexDirection: "row",
                 justifyContent: "space-between"
               },
               children: [
-                /* @__PURE__ */ jsxs(import_react_native14.View, {
+                /* @__PURE__ */ jsxs(import_react_native18.View, {
                   style: {
                     flexShrink: 1
                   },
@@ -8327,7 +7284,7 @@
                     /* @__PURE__ */ jsx(Authors, {})
                   ]
                 }),
-                /* @__PURE__ */ jsx(import_react_native14.View, {
+                /* @__PURE__ */ jsx(import_react_native18.View, {
                   children: /* @__PURE__ */ jsxs(Stack, {
                     spacing: 12,
                     direction: "horizontal",
@@ -8337,6 +7294,7 @@
                         value: plugin.isEnabled(),
                         onValueChange: (v2) => {
                           plugin.toggle(v2);
+                          forceUpdate();
                         }
                       })
                     ]
@@ -8350,7 +7308,7 @@
       })
     });
   }
-  var import_chroma_js5, import_react4, import_react_native14, CardContext, useCardContext;
+  var import_chroma_js4, import_react4, import_react_native18, CardContext, useCardContext, Actions;
   var init_PluginCard = __esm({
     "src/core/ui/settings/pages/Plugins/components/PluginCard.tsx"() {
       "use strict";
@@ -8358,23 +7316,360 @@
       init_promiseAllSettled();
       init_jsxRuntime();
       init_usePluginCardStyles();
-      init_usePluginStatusColor();
       init_assets();
       init_common();
       init_components();
       init_sheets();
-      import_chroma_js5 = __toESM(require_chroma_js());
+      import_chroma_js4 = __toESM(require_chroma_js());
       import_react4 = __toESM(require_react());
-      import_react_native14 = __toESM(require_react_native());
+      import_react_native18 = __toESM(require_react_native());
       CardContext = /* @__PURE__ */ (0, import_react4.createContext)(null);
       useCardContext = () => (0, import_react4.useContext)(CardContext);
+      Actions = () => {
+        var { plugin } = useCardContext();
+        var navigation2 = NavigationNative.useNavigation();
+        return /* @__PURE__ */ jsxs(import_react_native18.View, {
+          style: {
+            flexDirection: "row",
+            gap: 6
+          },
+          children: [
+            /* @__PURE__ */ jsx(IconButton, {
+              size: "sm",
+              variant: "secondary",
+              icon: findAssetId("WrenchIcon"),
+              disabled: !plugin.getPluginSettingsComponent(),
+              onPress: () => navigation2.push("BUNNY_CUSTOM_PAGE", {
+                title: plugin.name,
+                render: plugin.getPluginSettingsComponent()
+              })
+            }),
+            /* @__PURE__ */ jsx(IconButton, {
+              size: "sm",
+              variant: "secondary",
+              icon: findAssetId("CircleInformationIcon-primary"),
+              onPress: () => void showSheet("PluginInfoActionSheet", plugin.resolveSheetComponent(), {
+                plugin,
+                navigation: navigation2
+              })
+            })
+          ]
+        });
+      };
     }
   });
 
-  // src/core/vendetta/ui/components/InputAlert.tsx
+  // src/core/vendetta/plugins.ts
+  var plugins, pluginInstance, VdPluginManager;
+  var init_plugins = __esm({
+    "src/core/vendetta/plugins.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_async_to_generator();
+      init_storage();
+      init_settings();
+      init_utils();
+      init_constants();
+      init_logger();
+      plugins = wrapSync(createStorage(createMMKVBackend("VENDETTA_PLUGINS")));
+      pluginInstance = {};
+      VdPluginManager = {
+        plugins,
+        pluginFetch(url2) {
+          return _async_to_generator(function* () {
+            if (url2.startsWith(VD_PROXY_PREFIX)) {
+              url2 = url2.replace("https://bunny-mod.github.io/plugins-proxy", BUNNY_PROXY_PREFIX).replace(VD_PROXY_PREFIX, BUNNY_PROXY_PREFIX);
+            }
+            return yield safeFetch(url2, {
+              cache: "no-store"
+            });
+          })();
+        },
+        fetchPlugin(id) {
+          return _async_to_generator(function* () {
+            if (!id.endsWith("/"))
+              id += "/";
+            var existingPlugin = plugins[id];
+            var pluginManifest;
+            try {
+              pluginManifest = yield (yield this.pluginFetch(id + "manifest.json")).json();
+            } catch (e) {
+              throw new Error(`Failed to fetch manifest for ${id}`);
+            }
+            var pluginJs;
+            if (existingPlugin?.manifest.hash !== pluginManifest.hash) {
+              try {
+                pluginJs = yield (yield this.pluginFetch(id + (pluginManifest.main || "index.js"))).text();
+              } catch (e) {
+              }
+            }
+            if (!pluginJs && !existingPlugin)
+              throw new Error(`Failed to fetch JS for ${id}`);
+            plugins[id] = {
+              id,
+              manifest: pluginManifest,
+              enabled: existingPlugin?.enabled ?? false,
+              update: existingPlugin?.update ?? true,
+              js: pluginJs ?? existingPlugin.js
+            };
+          }).apply(this);
+        },
+        installPlugin(id, enabled = true) {
+          return _async_to_generator(function* () {
+            if (!id.endsWith("/"))
+              id += "/";
+            if (typeof id !== "string" || id in plugins)
+              throw new Error("Plugin already installed");
+            yield this.fetchPlugin(id);
+            if (enabled)
+              yield this.startPlugin(id);
+          }).apply(this);
+        },
+        /**
+         * @internal
+         */
+        evalPlugin(plugin) {
+          return _async_to_generator(function* () {
+            var vendettaForPlugins = {
+              ...window.vendetta,
+              plugin: {
+                id: plugin.id,
+                manifest: plugin.manifest,
+                // Wrapping this with wrapSync is NOT an option.
+                storage: yield createStorage(createMMKVBackend(plugin.id))
+              },
+              logger: new LoggerClass(`Bunny \xBB ${plugin.manifest.name}`)
+            };
+            var pluginString = `vendetta=>{return ${plugin.js}}
+//# sourceURL=${plugin.id}`;
+            var raw = (0, eval)(pluginString)(vendettaForPlugins);
+            var ret = typeof raw === "function" ? raw() : raw;
+            return ret?.default ?? ret ?? {};
+          })();
+        },
+        startPlugin(id) {
+          return _async_to_generator(function* () {
+            if (!id.endsWith("/"))
+              id += "/";
+            var plugin = plugins[id];
+            if (!plugin)
+              throw new Error("Attempted to start non-existent plugin");
+            try {
+              if (!settings.safeMode?.enabled) {
+                var pluginRet = yield this.evalPlugin(plugin);
+                pluginInstance[id] = pluginRet;
+                pluginRet.onLoad?.();
+              }
+              plugin.enabled = true;
+            } catch (e) {
+              logger.error(`Plugin ${plugin.id} errored whilst loading, and will be unloaded`, e);
+              try {
+                pluginInstance[plugin.id]?.onUnload?.();
+              } catch (e2) {
+                logger.error(`Plugin ${plugin.id} errored whilst unloading`, e2);
+              }
+              delete pluginInstance[id];
+              plugin.enabled = false;
+            }
+          }).apply(this);
+        },
+        stopPlugin(id, disable = true) {
+          if (!id.endsWith("/"))
+            id += "/";
+          var plugin = plugins[id];
+          var pluginRet = pluginInstance[id];
+          if (!plugin)
+            throw new Error("Attempted to stop non-existent plugin");
+          if (!settings.safeMode?.enabled) {
+            try {
+              pluginRet?.onUnload?.();
+            } catch (e) {
+              logger.error(`Plugin ${plugin.id} errored whilst unloading`, e);
+            }
+            delete pluginInstance[id];
+          }
+          if (disable)
+            plugin.enabled = false;
+        },
+        removePlugin(id) {
+          return _async_to_generator(function* () {
+            if (!id.endsWith("/"))
+              id += "/";
+            var plugin = plugins[id];
+            if (plugin.enabled)
+              this.stopPlugin(id);
+            delete plugins[id];
+            yield purgeStorage(id);
+          }).apply(this);
+        },
+        /**
+         * @internal
+         */
+        initPlugins() {
+          return _async_to_generator(function* () {
+            yield awaitStorage(settings, plugins);
+            var allIds = Object.keys(plugins);
+            if (!settings.safeMode?.enabled) {
+              var _this = this;
+              yield allSettled(allIds.filter((pl) => plugins[pl].enabled).map(/* @__PURE__ */ function() {
+                var _ref = _async_to_generator(function* (pl) {
+                  return plugins[pl].update && (yield _this.fetchPlugin(pl).catch((e) => logger.error(e.message))), yield _this.startPlugin(pl);
+                });
+                return function(pl) {
+                  return _ref.apply(this, arguments);
+                };
+              }()));
+              allIds.filter((pl) => !plugins[pl].enabled && plugins[pl].update).forEach((pl) => this.fetchPlugin(pl));
+            }
+            return () => this.stopAllPlugins();
+          }).apply(this);
+        },
+        stopAllPlugins() {
+          return Object.keys(pluginInstance).forEach((p) => this.stopPlugin(p, false));
+        },
+        getSettings: (id) => pluginInstance[id]?.settings
+      };
+    }
+  });
+
+  // src/core/plugins/quickinstall/forumPost.tsx
+  function useExtractThreadContent(thread, _firstMessage = null, actionSheet3 = false) {
+    if (thread.guild_id !== VD_DISCORD_SERVER_ID)
+      return;
+    var postType;
+    if (thread.parent_id === VD_PLUGINS_CHANNEL_ID) {
+      postType = "Plugin";
+    } else if (thread.parent_id === VD_THEMES_CHANNEL_ID && isThemeSupported()) {
+      postType = "Theme";
+    } else
+      return;
+    var { firstMessage } = actionSheet3 ? useFirstForumPostMessage(thread) : {
+      firstMessage: _firstMessage
+    };
+    var urls = firstMessage?.content?.match(HTTP_REGEX_MULTI)?.filter(postMap[postType].urlsFilter);
+    if (!urls || !urls[0])
+      return;
+    if (postType === "Plugin" && !urls[0].endsWith("/"))
+      urls[0] += "/";
+    return [
+      postType,
+      urls[0]
+    ];
+  }
+  function useInstaller(thread, firstMessage = null, actionSheet3 = false) {
+    var [postType, url2] = useExtractThreadContent(thread, firstMessage, actionSheet3) ?? [];
+    useProxy(VdPluginManager.plugins);
+    useProxy(themes);
+    var [isInstalling, setIsInstalling] = React.useState(false);
+    if (!postType || !url2)
+      return [
+        true
+      ];
+    var isInstalled = Boolean(postMap[postType].storage[url2]);
+    var installOrRemove = /* @__PURE__ */ function() {
+      var _ref = _async_to_generator(function* () {
+        setIsInstalling(true);
+        try {
+          yield postMap[postType].installOrRemove(url2);
+        } catch (e) {
+          showToast(e.message, findAssetId("Small"));
+        } finally {
+          setIsInstalling(false);
+        }
+      });
+      return function installOrRemove2() {
+        return _ref.apply(this, arguments);
+      };
+    }();
+    return [
+      false,
+      postType,
+      isInstalled,
+      isInstalling,
+      installOrRemove
+    ];
+  }
+  var useFirstForumPostMessage, forumReactions, postMap, installButtonPatch, forumPost_default;
+  var init_forumPost = __esm({
+    "src/core/plugins/quickinstall/forumPost.tsx"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_async_to_generator();
+      init_jsxRuntime();
+      init_i18n();
+      init_plugins();
+      init_storage();
+      init_themes();
+      init_assets();
+      init_loader();
+      init_patcher();
+      init_constants();
+      init_lazy();
+      init_components();
+      init_wrappers();
+      init_components2();
+      init_toasts();
+      ({ useFirstForumPostMessage } = lazyDestructure(() => findByProps("useFirstForumPostMessage")));
+      forumReactions = findByPropsLazy("MostCommonForumPostReaction");
+      postMap = {
+        Plugin: {
+          storage: VdPluginManager.plugins,
+          urlsFilter: (url2) => url2.startsWith(VD_PROXY_PREFIX),
+          installOrRemove: (url2) => {
+            var isInstalled = postMap.Plugin.storage[url2];
+            return isInstalled ? VdPluginManager.removePlugin(url2) : VdPluginManager.installPlugin(url2);
+          }
+        },
+        Theme: {
+          storage: themes,
+          urlsFilter: (url2) => url2.endsWith(".json"),
+          installOrRemove: (url2) => {
+            var isInstalled = postMap.Theme.storage[url2];
+            return isInstalled ? removeTheme(url2) : installTheme(url2);
+          }
+        }
+      };
+      installButtonPatch = () => after("MostCommonForumPostReaction", forumReactions, ([{ thread, firstMessage }], res) => {
+        var [shouldReturn, _2, installed, loading, installOrRemove] = useInstaller(thread, firstMessage, true);
+        if (shouldReturn)
+          return;
+        return /* @__PURE__ */ jsxs(Fragment, {
+          children: [
+            res,
+            /* @__PURE__ */ jsx(ErrorBoundary, {
+              children: /* @__PURE__ */ jsx(Button, {
+                size: "sm",
+                loading,
+                disabled: loading,
+                // variant={installed ? "destructive" : "primary"} crashes older version because "destructive" was renamed from "danger" and there's no sane way for compat check horror
+                variant: installed ? "secondary" : "primary",
+                text: installed ? Strings.UNINSTALL : Strings.INSTALL,
+                onPress: installOrRemove,
+                icon: findAssetId(installed ? "ic_message_delete" : "DownloadIcon"),
+                style: {
+                  marginLeft: 8
+                }
+              })
+            })
+          ]
+        });
+      });
+      forumPost_default = () => {
+        var patches2 = [
+          // actionSheetPatch(),
+          installButtonPatch()
+        ];
+        return () => patches2.map((p) => p());
+      };
+    }
+  });
+
+  // src/lib/ui/components/InputAlert.tsx
   function InputAlert2({ title, confirmText, confirmColor, onConfirm, cancelText, placeholder, initialValue = "", secureTextEntry }) {
     var [value, setValue] = React.useState(initialValue);
-    var [error2, setError] = React.useState("");
+    var [error, setError] = React.useState("");
     function onConfirmWrapper() {
       var asyncOnConfirm = Promise.resolve(onConfirm(value));
       asyncOnConfirm.then(() => {
@@ -8387,7 +7682,7 @@
       title,
       confirmText,
       confirmColor,
-      isConfirmButtonDisabled: error2.length !== 0,
+      isConfirmButtonDisabled: error.length !== 0,
       onConfirm: onConfirmWrapper,
       cancelText,
       onCancel: () => Alerts.close(),
@@ -8396,12 +7691,12 @@
         value,
         onChange: (v2) => {
           setValue(typeof v2 === "string" ? v2 : v2.text);
-          if (error2)
+          if (error)
             setError("");
         },
         returnKeyType: "done",
         onSubmitEditing: onConfirmWrapper,
-        error: error2 || void 0,
+        error: error || void 0,
         secureTextEntry,
         autoFocus: true,
         showBorder: true,
@@ -8413,7 +7708,7 @@
   }
   var Alerts;
   var init_InputAlert = __esm({
-    "src/core/vendetta/ui/components/InputAlert.tsx"() {
+    "src/lib/ui/components/InputAlert.tsx"() {
       "use strict";
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
@@ -8424,13 +7719,7 @@
     }
   });
 
-  // src/core/vendetta/ui/alerts.ts
-  var alerts_exports = {};
-  __export(alerts_exports, {
-    showConfirmationAlert: () => showConfirmationAlert,
-    showCustomAlert: () => showCustomAlert,
-    showInputAlert: () => showInputAlert
-  });
+  // src/core/vendetta/alerts.ts
   function showConfirmationAlert(options) {
     var internalOptions = options;
     internalOptions.body = options.content;
@@ -8440,7 +7729,7 @@
   }
   var Alerts2, showCustomAlert, showInputAlert;
   var init_alerts2 = __esm({
-    "src/core/vendetta/ui/alerts.ts"() {
+    "src/core/vendetta/alerts.ts"() {
       "use strict";
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
@@ -8457,172 +7746,1070 @@
     }
   });
 
-  // src/metro/common/stores.ts
-  var UserStore;
-  var init_stores = __esm({
-    "src/metro/common/stores.ts"() {
+  // src/core/plugins/quickinstall/url.tsx
+  function typeFromUrl(url2) {
+    if (url2.startsWith(VD_PROXY_PREFIX)) {
+      return "plugin";
+    } else if (url2.endsWith(".json") && isThemeSupported()) {
+      return "theme";
+    }
+  }
+  function installWithToast(type, url2) {
+    (type === "plugin" ? VdPluginManager.installPlugin.bind(VdPluginManager) : installTheme)(url2).then(() => {
+      showToast(Strings.SUCCESSFULLY_INSTALLED, findAssetId("Check"));
+    }).catch((e) => {
+      showToast(e.message, findAssetId("Small"));
+    });
+  }
+  var showSimpleActionSheet2, handleClick, openURL, getChannelId, getChannel, url_default;
+  var init_url = __esm({
+    "src/core/plugins/quickinstall/url.tsx"() {
       "use strict";
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
+      init_async_to_generator();
+      init_i18n();
+      init_alerts2();
+      init_plugins();
+      init_themes();
+      init_assets();
+      init_loader();
+      init_patcher();
+      init_constants();
+      init_lazy();
+      init_common();
+      init_filters();
+      init_finders();
       init_wrappers();
-      UserStore = findByStoreNameLazy("UserStore");
+      init_toasts();
+      showSimpleActionSheet2 = findExports(byMutableProp("showSimpleActionSheet"));
+      handleClick = findByPropsLazy("handleClick");
+      ({ openURL } = lazyDestructure(() => url));
+      ({ getChannelId } = lazyDestructure(() => channels));
+      ({ getChannel } = lazyDestructure(() => findByProps("getChannel")));
+      url_default = () => {
+        var patches2 = new Array();
+        patches2.push(after("showSimpleActionSheet", showSimpleActionSheet2, (args) => {
+          if (args[0].key !== "LongPressUrl")
+            return;
+          var { header: { title: url2 }, options } = args[0];
+          var urlType = typeFromUrl(url2);
+          if (!urlType)
+            return;
+          options.push({
+            label: Strings.INSTALL_ADDON,
+            onPress: () => installWithToast(urlType, url2)
+          });
+        }));
+        patches2.push(instead("handleClick", handleClick, /* @__PURE__ */ function() {
+          var _ref = _async_to_generator(function* (args, orig) {
+            var { href: url2 } = args[0];
+            var urlType = typeFromUrl(url2);
+            if (!urlType)
+              return orig.apply(this, args);
+            if (urlType === "theme" && getChannel(getChannelId())?.parent_id !== VD_THEMES_CHANNEL_ID)
+              return orig.apply(this, args);
+            showConfirmationAlert({
+              title: Strings.HOLD_UP,
+              content: formatString("CONFIRMATION_LINK_IS_A_TYPE", {
+                urlType
+              }),
+              onConfirm: () => installWithToast(urlType, url2),
+              confirmText: Strings.INSTALL,
+              cancelText: Strings.CANCEL,
+              secondaryConfirmText: Strings.OPEN_IN_BROWSER,
+              onConfirmSecondary: () => openURL(url2)
+            });
+          });
+          return function(args, orig) {
+            return _ref.apply(this, arguments);
+          };
+        }()));
+        return () => patches2.forEach((p) => p());
+      };
     }
   });
 
-  // src/core/ui/settings/pages/Plugins/sheets/useStyles.tsx
-  var useStyles3;
-  var init_useStyles = __esm({
-    "src/core/ui/settings/pages/Plugins/sheets/useStyles.tsx"() {
+  // src/core/plugins/quickinstall/index.ts
+  var quickinstall_exports = {};
+  __export(quickinstall_exports, {
+    default: () => quickinstall_default
+  });
+  var patches, quickinstall_default;
+  var init_quickinstall = __esm({
+    "src/core/plugins/quickinstall/index.ts"() {
       "use strict";
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
-      init_styles();
-      init_common();
-      useStyles3 = createStyles({
-        badge: {
-          backgroundColor: tokens.colors.CARD_PRIMARY_BG,
-          borderRadius: 8,
-          paddingVertical: 4,
-          paddingHorizontal: 8,
-          textAlignVertical: "center"
+      init_plugins2();
+      init_forumPost();
+      init_url();
+      patches = [];
+      quickinstall_default = defineCorePlugin({
+        manifest: {
+          id: "bunny.quickinstall",
+          name: "QuickInstall",
+          version: "1.0.0",
+          description: "Quickly install Vendetta plugins and themes",
+          authors: [
+            {
+              name: "Vendetta Team"
+            }
+          ]
+        },
+        start() {
+          patches = [
+            forumPost_default(),
+            url_default()
+          ];
+        },
+        stop() {
+          patches.forEach((p) => p());
         }
       });
     }
   });
 
-  // src/core/ui/settings/pages/Plugins/sheets/Badges.tsx
-  function Badges(props) {
-    PluginReporter_default.useReporter();
-    var styles = useStyles3();
-    var stageColor = usePluginStatusColor(props.id);
-    var stage = PluginReporter_default.stages[props.id];
-    var isProxied = PluginManager_default.isProxied(props.id);
-    return /* @__PURE__ */ jsx(import_react_native15.View, {
-      style: {
-        gap: 8,
-        flexDirection: "row"
-      },
-      children: [
-        {
-          text: stage,
-          bg: stageColor
-        },
-        isProxied && {
-          text: "proxied"
-        }
-      ].filter((x2) => x2 && typeof x2 === "object").map((badge) => /* @__PURE__ */ jsx(Text2, {
-        variant: "eyebrow",
-        color: badge.bg ? "white" : "text-normal",
-        style: [
-          styles.badge,
-          badge.bg ? {
-            backgroundColor: badge.bg
-          } : null
-        ],
-        children: badge.text
-      }))
-    });
+  // src/lib/api/react/jsx.ts
+  var jsx_exports = {};
+  __export(jsx_exports, {
+    deleteJsxCreate: () => deleteJsxCreate,
+    onJsxCreate: () => onJsxCreate,
+    patchJsx: () => patchJsx
+  });
+  function onJsxCreate(Component, callback) {
+    if (!callbacks.has(Component))
+      callbacks.set(Component, []);
+    callbacks.get(Component).push(callback);
   }
-  var import_react_native15;
-  var init_Badges = __esm({
-    "src/core/ui/settings/pages/Plugins/sheets/Badges.tsx"() {
+  function deleteJsxCreate(Component, callback) {
+    if (!callbacks.has(Component))
+      return;
+    var cbs = callbacks.get(Component);
+    cbs.splice(cbs.indexOf(callback), 1);
+    if (cbs.length === 0)
+      callbacks.delete(Component);
+  }
+  function patchJsx() {
+    var callback = ([Component], ret) => {
+      if (typeof Component === "function" && callbacks.has(Component.name)) {
+        var cbs = callbacks.get(Component.name);
+        for (var cb of cbs) {
+          var _ret = cb(Component, ret);
+          if (_ret !== void 0)
+            ret = _ret;
+        }
+        return ret;
+      }
+    };
+    var patches2 = [
+      after("jsx", jsxRuntime2, callback),
+      after("jsxs", jsxRuntime2, callback)
+    ];
+    return () => patches2.forEach((unpatch) => unpatch());
+  }
+  var callbacks, jsxRuntime2;
+  var init_jsx = __esm({
+    "src/lib/api/react/jsx.ts"() {
       "use strict";
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
-      init_jsxRuntime();
-      init_PluginReporter();
-      init_usePluginStatusColor();
-      init_plugins2();
-      init_components();
-      import_react_native15 = __toESM(require_react_native());
-      init_useStyles();
+      init_patcher();
+      init_metro();
+      callbacks = /* @__PURE__ */ new Map();
+      jsxRuntime2 = findByPropsLazy("jsx", "jsxs");
     }
   });
 
-  // src/core/ui/settings/pages/Plugins/sheets/TitleComponent.tsx
-  function TitleComponent({ plugin }) {
-    var users = FluxUtils.useStateFromStoresArray([
-      UserStore
-    ], () => {
-      plugin.authors?.forEach((a) => a.id && maybeFetchUser(a.id));
-      return plugin.authors?.map((a) => UserStore.getUser(a.id));
-    });
-    var { authors } = plugin;
-    var authorTextNode = [];
-    if (authors) {
-      var _loop2 = function(author2) {
-        authorTextNode.push(/* @__PURE__ */ jsx(Text2, {
-          onPress: () => showUserProfileActionSheet({
-            userId: author2.id
-          }),
-          variant: "text-md/medium",
-          children: author2.name
-        }));
-        authorTextNode.push(", ");
-      };
-      for (var author of authors)
-        _loop2(author);
-      authorTextNode.pop();
-    }
-    return /* @__PURE__ */ jsxs(import_react_native16.View, {
-      style: {
-        gap: 12
-      },
-      children: [
-        /* @__PURE__ */ jsxs(import_react_native16.View, {
-          children: [
-            /* @__PURE__ */ jsx(Text2, {
-              variant: "heading-xl/semibold",
-              children: plugin.name
-            }),
-            authors?.length && /* @__PURE__ */ jsxs(import_react_native16.View, {
-              style: {
-                flexDirection: "row",
-                gap: 8,
-                alignItems: "center"
-              },
-              children: [
-                users.length && /* @__PURE__ */ jsx(AvatarPile, {
-                  size: "xxsmall",
-                  names: plugin.authors?.map((a) => a.name),
-                  totalCount: plugin.authors?.length,
-                  children: users.map((a) => /* @__PURE__ */ jsx(Avatar, {
-                    size: "xxsmall",
-                    user: a
-                  }))
-                }),
-                /* @__PURE__ */ jsx(Text2, {
-                  variant: "text-md/medium",
-                  children: authorTextNode
-                })
-              ]
-            })
-          ]
-        }),
-        /* @__PURE__ */ jsx(import_react_native16.View, {
-          children: /* @__PURE__ */ jsx(Badges, {
-            id: plugin.id
-          })
-        })
-      ]
-    });
-  }
-  var import_react_native16, showUserProfileActionSheet, maybeFetchUser;
-  var init_TitleComponent = __esm({
-    "src/core/ui/settings/pages/Plugins/sheets/TitleComponent.tsx"() {
+  // src/core/plugins/badges/index.tsx
+  var badges_exports = {};
+  __export(badges_exports, {
+    default: () => badges_default
+  });
+  var import_react5, useBadgesModule, badges_default;
+  var init_badges = __esm({
+    "src/core/plugins/badges/index.tsx"() {
       "use strict";
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
-      init_jsxRuntime();
-      init_lazy();
+      init_patcher();
+      init_jsx();
       init_metro();
+      import_react5 = __toESM(require_react());
+      init_plugins2();
+      useBadgesModule = findByName("useBadges", false);
+      badges_default = defineCorePlugin({
+        manifest: {
+          id: "bunny.badges",
+          name: "Badges",
+          version: "1.0.0",
+          description: "Adds badges to user's profile",
+          authors: [
+            {
+              name: "pylixonly"
+            }
+          ]
+        },
+        start() {
+          var propHolder = {};
+          var badgeCache = {};
+          onJsxCreate("RenderedBadge", (_2, ret) => {
+            if (ret.props.id.match(/bunny-\d+-\d+/)) {
+              Object.assign(ret.props, propHolder[ret.props.id]);
+            }
+          });
+          after("default", useBadgesModule, ([user], r) => {
+            var [badges, setBadges] = (0, import_react5.useState)(user ? badgeCache[user.userId] ??= [] : []);
+            (0, import_react5.useEffect)(() => {
+              if (user) {
+                fetch(`https://raw.githubusercontent.com/pyoncord/badges/refs/heads/main/${user.userId}.json`).then((r2) => r2.json()).then((badges2) => setBadges(badgeCache[user.userId] = badges2));
+              }
+            }, [
+              user
+            ]);
+            if (user) {
+              badges.forEach((badges2, i) => {
+                propHolder[`bunny-${user.userId}-${i}`] = {
+                  source: {
+                    uri: badges2.url
+                  },
+                  id: `bunny-${i}`,
+                  label: badges2.label
+                };
+                r.push({
+                  id: `bunny-${user.userId}-${i}`,
+                  description: badges2.label,
+                  icon: "_"
+                });
+              });
+            }
+          });
+        }
+      });
+    }
+  });
+
+  // src/core/plugins/index.ts
+  function defineCorePlugin(instance) {
+    instance[Symbol.for("bunny.core.plugin")] = true;
+    return instance;
+  }
+  var getCorePlugins;
+  var init_plugins2 = __esm({
+    "src/core/plugins/index.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      getCorePlugins = () => ({
+        "bunny.quickinstall": (init_quickinstall(), __toCommonJS(quickinstall_exports)),
+        "bunny.badges": (init_badges(), __toCommonJS(badges_exports))
+      });
+    }
+  });
+
+  // src/lib/api/commands/types.ts
+  var ApplicationCommandInputType, ApplicationCommandOptionType, ApplicationCommandType;
+  var init_types = __esm({
+    "src/lib/api/commands/types.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      (function(ApplicationCommandInputType2) {
+        ApplicationCommandInputType2[ApplicationCommandInputType2["BUILT_IN"] = 0] = "BUILT_IN";
+        ApplicationCommandInputType2[ApplicationCommandInputType2["BUILT_IN_TEXT"] = 1] = "BUILT_IN_TEXT";
+        ApplicationCommandInputType2[ApplicationCommandInputType2["BUILT_IN_INTEGRATION"] = 2] = "BUILT_IN_INTEGRATION";
+        ApplicationCommandInputType2[ApplicationCommandInputType2["BOT"] = 3] = "BOT";
+        ApplicationCommandInputType2[ApplicationCommandInputType2["PLACEHOLDER"] = 4] = "PLACEHOLDER";
+      })(ApplicationCommandInputType || (ApplicationCommandInputType = {}));
+      (function(ApplicationCommandOptionType2) {
+        ApplicationCommandOptionType2[ApplicationCommandOptionType2["SUB_COMMAND"] = 1] = "SUB_COMMAND";
+        ApplicationCommandOptionType2[ApplicationCommandOptionType2["SUB_COMMAND_GROUP"] = 2] = "SUB_COMMAND_GROUP";
+        ApplicationCommandOptionType2[ApplicationCommandOptionType2["STRING"] = 3] = "STRING";
+        ApplicationCommandOptionType2[ApplicationCommandOptionType2["INTEGER"] = 4] = "INTEGER";
+        ApplicationCommandOptionType2[ApplicationCommandOptionType2["BOOLEAN"] = 5] = "BOOLEAN";
+        ApplicationCommandOptionType2[ApplicationCommandOptionType2["USER"] = 6] = "USER";
+        ApplicationCommandOptionType2[ApplicationCommandOptionType2["CHANNEL"] = 7] = "CHANNEL";
+        ApplicationCommandOptionType2[ApplicationCommandOptionType2["ROLE"] = 8] = "ROLE";
+        ApplicationCommandOptionType2[ApplicationCommandOptionType2["MENTIONABLE"] = 9] = "MENTIONABLE";
+        ApplicationCommandOptionType2[ApplicationCommandOptionType2["NUMBER"] = 10] = "NUMBER";
+        ApplicationCommandOptionType2[ApplicationCommandOptionType2["ATTACHMENT"] = 11] = "ATTACHMENT";
+      })(ApplicationCommandOptionType || (ApplicationCommandOptionType = {}));
+      (function(ApplicationCommandType2) {
+        ApplicationCommandType2[ApplicationCommandType2["CHAT"] = 1] = "CHAT";
+        ApplicationCommandType2[ApplicationCommandType2["USER"] = 2] = "USER";
+        ApplicationCommandType2[ApplicationCommandType2["MESSAGE"] = 3] = "MESSAGE";
+      })(ApplicationCommandType || (ApplicationCommandType = {}));
+    }
+  });
+
+  // src/core/commands/eval.ts
+  var eval_exports = {};
+  __export(eval_exports, {
+    default: () => eval_default
+  });
+  function wrapInJSCodeblock(resString) {
+    return "```js\n" + resString.replaceAll("`", "`" + ZERO_WIDTH_SPACE_CHARACTER) + "\n```";
+  }
+  var util, AsyncFunction, ZERO_WIDTH_SPACE_CHARACTER, eval_default;
+  var init_eval = __esm({
+    "src/core/commands/eval.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_async_to_generator();
+      init_i18n();
+      init_types();
+      init_settings();
       init_common();
-      init_components();
-      init_stores();
-      import_react_native16 = __toESM(require_react_native());
-      init_Badges();
-      showUserProfileActionSheet = findByNameLazy("showUserProfileActionSheet");
-      ({ getUser: maybeFetchUser } = lazyDestructure(() => findByProps("getUser", "fetchProfile")));
+      init_wrappers();
+      util = findByPropsLazy("inspect");
+      AsyncFunction = _async_to_generator(function* () {
+        return void 0;
+      }).constructor;
+      ZERO_WIDTH_SPACE_CHARACTER = "\u200B";
+      eval_default = () => ({
+        name: "eval",
+        description: Strings.COMMAND_EVAL_DESC,
+        shouldHide: () => settings.enableEvalCommand === true,
+        options: [
+          {
+            name: "code",
+            type: ApplicationCommandOptionType.STRING,
+            description: Strings.COMMAND_EVAL_OPT_CODE,
+            required: true
+          },
+          {
+            name: "async",
+            type: ApplicationCommandOptionType.BOOLEAN,
+            description: Strings.COMMAND_EVAL_OPT_ASYNC
+          }
+        ],
+        execute([code, async], ctx) {
+          return _async_to_generator(function* () {
+            try {
+              var res = util.inspect(async?.value ? yield AsyncFunction(code.value)() : eval?.(code.value));
+              var trimmedRes = res.length > 2e3 ? res.slice(0, 2e3) + "..." : res;
+              messageUtil.sendBotMessage(ctx.channel.id, wrapInJSCodeblock(trimmedRes));
+            } catch (err) {
+              messageUtil.sendBotMessage(ctx.channel.id, wrapInJSCodeblock(err?.stack ?? err));
+            }
+          })();
+        }
+      });
+    }
+  });
+
+  // src/core/commands/debug.ts
+  var debug_exports2 = {};
+  __export(debug_exports2, {
+    default: () => debug_default
+  });
+  var debug_default;
+  var init_debug2 = __esm({
+    "src/core/commands/debug.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_i18n();
+      init_types();
+      init_debug();
+      init_common();
+      debug_default = () => ({
+        name: "debug",
+        description: Strings.COMMAND_DEBUG_DESC,
+        options: [
+          {
+            name: "ephemeral",
+            type: ApplicationCommandOptionType.BOOLEAN,
+            description: Strings.COMMAND_DEBUG_OPT_EPHEMERALLY
+          }
+        ],
+        execute([ephemeral], ctx) {
+          var info = getDebugInfo();
+          var content = [
+            "**Bunny Debug Info**",
+            `> Bunny: ${info.bunny.version} (${info.bunny.loader.name} ${info.bunny.loader.version})`,
+            `> Discord: ${info.discord.version} (${info.discord.build})`,
+            `> React: ${info.react.version} (RN ${info.react.nativeVersion})`,
+            `> Hermes: ${info.hermes.version} (bcv${info.hermes.bytecodeVersion})`,
+            `> System: ${info.os.name} ${info.os.version} ${info.os.sdk ? `(SDK ${info.os.sdk})` : ""}`.trimEnd(),
+            `> Device: ${info.device.model} (${info.device.codename})`
+          ].join("\n");
+          if (ephemeral?.value) {
+            messageUtil.sendBotMessage(ctx.channel.id, content);
+          } else {
+            messageUtil.sendMessage(ctx.channel.id, {
+              content
+            });
+          }
+        }
+      });
+    }
+  });
+
+  // src/core/commands/plugins.ts
+  var plugins_exports = {};
+  __export(plugins_exports, {
+    default: () => plugins_default
+  });
+  var plugins_default;
+  var init_plugins3 = __esm({
+    "src/core/commands/plugins.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_i18n();
+      init_plugins();
+      init_types();
+      init_common();
+      plugins_default = () => ({
+        name: "plugins",
+        description: Strings.COMMAND_PLUGINS_DESC,
+        options: [
+          {
+            name: "ephemeral",
+            displayName: "ephemeral",
+            type: ApplicationCommandOptionType.BOOLEAN,
+            description: Strings.COMMAND_DEBUG_OPT_EPHEMERALLY
+          }
+        ],
+        execute([ephemeral], ctx) {
+          var plugins2 = Object.values(VdPluginManager.plugins).filter(Boolean);
+          plugins2.sort((a, b3) => a.manifest.name.localeCompare(b3.manifest.name));
+          var enabled = plugins2.filter((p) => p.enabled).map((p) => p.manifest.name);
+          var disabled = plugins2.filter((p) => !p.enabled).map((p) => p.manifest.name);
+          var content = [
+            `**Installed Plugins (${plugins2.length}):**`,
+            ...enabled.length > 0 ? [
+              `Enabled (${enabled.length}):`,
+              "> " + enabled.join(", ")
+            ] : [],
+            ...disabled.length > 0 ? [
+              `Disabled (${disabled.length}):`,
+              "> " + disabled.join(", ")
+            ] : []
+          ].join("\n");
+          if (ephemeral?.value) {
+            messageUtil.sendBotMessage(ctx.channel.id, content);
+          } else {
+            messageUtil.sendMessage(ctx.channel.id, {
+              content
+            });
+          }
+        }
+      });
+    }
+  });
+
+  // src/lib/api/commands/index.ts
+  var commands_exports = {};
+  __export(commands_exports, {
+    patchCommands: () => patchCommands,
+    registerCommand: () => registerCommand
+  });
+  function patchCommands() {
+    var unpatch = after("getBuiltInCommands", commands, ([type], res) => {
+      return [
+        ...res,
+        ...commands2.filter((c2) => (type instanceof Array ? type.includes(c2.type) : type === c2.type) && c2.__bunny?.shouldHide?.() !== false)
+      ];
+    });
+    [
+      (init_eval(), __toCommonJS(eval_exports)),
+      (init_debug2(), __toCommonJS(debug_exports2)),
+      (init_plugins3(), __toCommonJS(plugins_exports))
+    ].forEach((r) => registerCommand(r.default()));
+    return () => {
+      commands2 = [];
+      unpatch();
+    };
+  }
+  function registerCommand(command) {
+    var builtInCommands;
+    try {
+      builtInCommands = commands.getBuiltInCommands(ApplicationCommandType.CHAT, true, false);
+    } catch (e) {
+      builtInCommands = commands.getBuiltInCommands(Object.values(ApplicationCommandType), true, false);
+    }
+    builtInCommands.sort((a, b3) => parseInt(b3.id) - parseInt(a.id));
+    var lastCommand = builtInCommands[builtInCommands.length - 1];
+    command.id = (parseInt(lastCommand.id, 10) - 1).toString();
+    command.__bunny = {
+      shouldHide: command.shouldHide
+    };
+    command.applicationId ??= "-1";
+    command.type ??= ApplicationCommandType.CHAT;
+    command.inputType = ApplicationCommandInputType.BUILT_IN;
+    command.displayName ??= command.name;
+    command.untranslatedName ??= command.name;
+    command.displayDescription ??= command.description;
+    command.untranslatedDescription ??= command.description;
+    if (command.options)
+      for (var opt of command.options) {
+        opt.displayName ??= opt.name;
+        opt.displayDescription ??= opt.description;
+      }
+    instead("execute", command, (args, orig) => {
+      Promise.resolve(orig.apply(command, args)).then((ret) => {
+        if (ret && typeof ret === "object") {
+          messageUtil.sendMessage(args[1].channel.id, ret);
+        }
+      }).catch((err) => {
+        logger.error("Failed to execute command", err);
+      });
+    });
+    commands2.push(command);
+    return () => commands2 = commands2.filter(({ id }) => id !== command.id);
+  }
+  var commands2;
+  var init_commands = __esm({
+    "src/lib/api/commands/index.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_types();
+      init_patcher();
+      init_logger();
+      init_common();
+      commands2 = [];
+    }
+  });
+
+  // src/lib/api/flux/index.ts
+  var flux_exports = {};
+  __export(flux_exports, {
+    dispatcher: () => dispatcher,
+    injectFluxInterceptor: () => injectFluxInterceptor,
+    intercept: () => intercept
+  });
+  function injectFluxInterceptor() {
+    var cb = (payload) => {
+      for (var intercept2 of intercepts) {
+        var res = intercept2(payload);
+        if (res == null) {
+          continue;
+        } else if (!res) {
+          payload[blockedSym] = true;
+        } else if (typeof res === "object") {
+          Object.assign(payload, res);
+          payload[modifiedSym] = true;
+        }
+      }
+      return blockedSym in payload;
+    };
+    (dispatcher._interceptors ??= []).unshift(cb);
+    return () => dispatcher._interceptors &&= dispatcher._interceptors.filter((v2) => v2 !== cb);
+  }
+  function intercept(cb) {
+    intercepts.push(cb);
+    return () => {
+      intercepts = intercepts.filter((i) => i !== cb);
+    };
+  }
+  var blockedSym, modifiedSym, dispatcher, intercepts;
+  var init_flux = __esm({
+    "src/lib/api/flux/index.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_common();
+      blockedSym = Symbol.for("bunny.flux.blocked");
+      modifiedSym = Symbol.for("bunny.flux.modified");
+      dispatcher = FluxDispatcher;
+      intercepts = [];
+    }
+  });
+
+  // src/lib/api/native/index.ts
+  var native_exports = {};
+  __export(native_exports, {
+    fs: () => fs_exports
+  });
+  var init_native = __esm({
+    "src/lib/api/native/index.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_fs();
+    }
+  });
+
+  // src/lib/api/react/index.ts
+  var react_exports = {};
+  __export(react_exports, {
+    jsx: () => jsx_exports
+  });
+  var init_react = __esm({
+    "src/lib/api/react/index.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_jsx();
+    }
+  });
+
+  // src/lib/api/index.ts
+  var api_exports = {};
+  __export(api_exports, {
+    assets: () => assets_exports,
+    commands: () => commands_exports,
+    debug: () => debug_exports,
+    flux: () => flux_exports,
+    native: () => native_exports,
+    patcher: () => patcher_exports,
+    react: () => react_exports,
+    settings: () => settings_exports,
+    storage: () => storage_exports
+  });
+  var init_api = __esm({
+    "src/lib/api/index.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_assets();
+      init_commands();
+      init_debug();
+      init_flux();
+      init_native();
+      init_patcher();
+      init_react();
+      init_settings();
+      init_storage2();
+    }
+  });
+
+  // src/lib/addons/plugins/api.ts
+  function shimDisposableFn(unpatches, f) {
+    return (...props) => {
+      var up = f(...props);
+      unpatches.push(up);
+      return up;
+    };
+  }
+  function createBunnyPluginAPI(id) {
+    var disposers = new Array();
+    var object = {
+      ...window.bunny,
+      api: {
+        ...window.bunny.api,
+        patcher: {
+          before: shimDisposableFn(disposers, patcher_exports.before),
+          after: shimDisposableFn(disposers, patcher_exports.after),
+          instead: shimDisposableFn(disposers, patcher_exports.instead)
+        },
+        commands: {
+          ...window.bunny.api.commands,
+          registerCommand: shimDisposableFn(disposers, registerCommand)
+        },
+        flux: {
+          ...window.bunny.api.flux,
+          intercept: shimDisposableFn(disposers, window.bunny.api.flux.intercept)
+        }
+      },
+      // Added something in here? Make sure to also update BunnyPluginProperty in ./types
+      plugin: {
+        createStorage: () => createStorage2(`plugins/storage/${id}.json`),
+        manifest: registeredPlugins.get(id),
+        logger
+      }
+    };
+    return {
+      object,
+      disposers
+    };
+  }
+  var init_api2 = __esm({
+    "src/lib/addons/plugins/api.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_api();
+      init_commands();
+      init_storage2();
+      init_logger();
+      init_plugins4();
+    }
+  });
+
+  // src/lib/addons/plugins/index.ts
+  var plugins_exports2 = {};
+  __export(plugins_exports2, {
+    apiObjects: () => apiObjects,
+    corePluginInstances: () => corePluginInstances,
+    deleteRepository: () => deleteRepository,
+    disablePlugin: () => disablePlugin,
+    enablePlugin: () => enablePlugin,
+    getId: () => getId,
+    getPluginSettingsComponent: () => getPluginSettingsComponent,
+    initPlugins: () => initPlugins,
+    installPlugin: () => installPlugin,
+    isCorePlugin: () => isCorePlugin,
+    isPluginEnabled: () => isPluginEnabled,
+    isPluginInstalled: () => isPluginInstalled,
+    pluginInstances: () => pluginInstances,
+    pluginRepositories: () => pluginRepositories,
+    pluginSettings: () => pluginSettings,
+    refreshPlugin: () => refreshPlugin,
+    registeredPlugins: () => registeredPlugins,
+    startPlugin: () => startPlugin,
+    stopPlugin: () => stopPlugin,
+    uninstallPlugin: () => uninstallPlugin,
+    updateAndWritePlugin: () => updateAndWritePlugin,
+    updatePlugins: () => updatePlugins,
+    updateRepository: () => updateRepository
+  });
+  function assert(condition, id, attempt) {
+    if (!condition)
+      throw new Error(`[${id}] Attempted to ${attempt}`);
+  }
+  function newerThan(v1, v2) {
+    if (semver.gt(v1, v2))
+      return true;
+    var coerced = semver.coerce(v1);
+    if (coerced == null)
+      return false;
+    return semver.prerelease(v1)?.includes("dev") && semver.eq(coerced, v2);
+  }
+  function isExternalPlugin(manifest) {
+    return "parentRepository" in manifest;
+  }
+  function isCorePlugin(id) {
+    return corePluginInstances.has(id);
+  }
+  function getId(manifest) {
+    var id = manifestToId.get(manifest);
+    assert(id, manifest?.name ?? "unknown", "getting ID from an unregistered/invalid manifest");
+    return id;
+  }
+  function getPluginSettingsComponent(id) {
+    var instance = pluginInstances.get(id);
+    if (!instance)
+      return null;
+    if (instance.SettingsComponent)
+      return instance.SettingsComponent;
+    return null;
+  }
+  function isPluginInstalled(id) {
+    return pluginSettings[id] != null;
+  }
+  function isPluginEnabled(id) {
+    return Boolean(pluginSettings[id]?.enabled);
+  }
+  function updateAndWritePlugin(repoUrl, id, fetchScript) {
+    return _updateAndWritePlugin.apply(this, arguments);
+  }
+  function _updateAndWritePlugin() {
+    _updateAndWritePlugin = _async_to_generator(function* (repoUrl, id, fetchScript) {
+      var manifest = yield fetchJSON(repoUrl, `plugins/${id}/manifest.json`);
+      manifest.parentRepository = repoUrl;
+      if (fetchScript) {
+        manifest.jsPath = `plugins/scripts/${id}.js`;
+        var js = yield fetchJS(repoUrl, `plugins/${id}/index.js`);
+        yield writeFile(manifest.jsPath, js);
+      }
+      yield updateStorage(`plugins/manifests/${id}.json`, manifest);
+      if (registeredPlugins.has(id)) {
+        var existingManifest = registeredPlugins.get(id);
+        return Object.assign(existingManifest, manifest);
+      }
+      return manifest;
+    });
+    return _updateAndWritePlugin.apply(this, arguments);
+  }
+  function refreshPlugin(id, repoUrl) {
+    return _refreshPlugin.apply(this, arguments);
+  }
+  function _refreshPlugin() {
+    _refreshPlugin = _async_to_generator(function* (id, repoUrl) {
+      var manifest = registeredPlugins.get(id);
+      assert(manifest, id, "refresh a non-registered plugin");
+      assert(pluginInstances.get(id), id, "refresh a non-started plugin");
+      stopPlugin(id);
+      if (isExternalPlugin(manifest)) {
+        manifest = yield updateAndWritePlugin(repoUrl ?? manifest.parentRepository, id, true);
+      }
+      registeredPlugins.delete(id);
+      registeredPlugins.set(id, manifest);
+      manifestToId.set(manifest, id);
+      yield startPlugin(id);
+    });
+    return _refreshPlugin.apply(this, arguments);
+  }
+  function updateRepository(repoUrl) {
+    return _updateRepository.apply(this, arguments);
+  }
+  function _updateRepository() {
+    _updateRepository = _async_to_generator(function* (repoUrl) {
+      var repo = yield fetchJSON(repoUrl, "repo.json");
+      var storedRepo = pluginRepositories[repoUrl];
+      var updated = false;
+      if (!storedRepo) {
+        for (var id in repo) {
+          if (corePluginInstances.has(id)) {
+            throw new Error(`Plugins can't have the same ID as any of Bunny core plugin '${id}'`);
+          }
+        }
+        updated = true;
+        pluginRepositories[repoUrl] = repo;
+      } else {
+        for (var plugin in storedRepo)
+          if (!repo[plugin]) {
+            delete storedRepo[plugin];
+          }
+      }
+      yield Promise.all(Object.keys(repo).map(/* @__PURE__ */ function() {
+        var _ref = _async_to_generator(function* (pluginId) {
+          if (!storedRepo || !storedRepo[pluginId] || repo[pluginId].alwaysFetch || newerThan(repo[pluginId].version, storedRepo[pluginId].version)) {
+            updated = true;
+            pluginRepositories[repoUrl][pluginId] = repo[pluginId];
+            yield updateAndWritePlugin(repoUrl, pluginId, Boolean(storedRepo && pluginSettings[pluginId]));
+          } else {
+            var manifest2 = yield preloadStorageIfExists(`plugins/manifests/${pluginId}.json`);
+            if (manifest2 === void 0) {
+              yield updateAndWritePlugin(repoUrl, pluginId, Boolean(storedRepo && pluginSettings[pluginId]));
+            }
+          }
+        });
+        return function(pluginId) {
+          return _ref.apply(this, arguments);
+        };
+      }()));
+      for (var id1 in repo) {
+        var manifest = getPreloadedStorage(`plugins/manifests/${id1}.json`);
+        if (manifest === void 0)
+          continue;
+        var existing = registeredPlugins.get(id1);
+        if (existing && !newerThan(manifest.version, existing.version)) {
+          continue;
+        }
+        registeredPlugins.set(id1, manifest);
+        manifestToId.set(manifest, id1);
+      }
+      return updated;
+    });
+    return _updateRepository.apply(this, arguments);
+  }
+  function deleteRepository(repoUrl) {
+    return _deleteRepository.apply(this, arguments);
+  }
+  function _deleteRepository() {
+    _deleteRepository = _async_to_generator(function* (repoUrl) {
+      assert(repoUrl !== OFFICIAL_PLUGINS_REPO_URL, repoUrl, "delete the official repository");
+      assert(pluginRepositories[repoUrl], repoUrl, "delete a non-registered repository");
+      var promQueues = [];
+      for (var [id, manifest] of registeredPlugins) {
+        if (!isExternalPlugin(manifest) || manifest.parentRepository !== repoUrl)
+          continue;
+        if (isPluginInstalled(id)) {
+          promQueues.push(uninstallPlugin(id));
+        }
+        registeredPlugins.delete(id);
+      }
+      delete pluginRepositories[repoUrl];
+      yield Promise.all(promQueues);
+    });
+    return _deleteRepository.apply(this, arguments);
+  }
+  function enablePlugin(id, start) {
+    return _enablePlugin.apply(this, arguments);
+  }
+  function _enablePlugin() {
+    _enablePlugin = _async_to_generator(function* (id, start) {
+      assert(isPluginInstalled(id), id, "enable a non-installed plugin");
+      pluginSettings[id].enabled = true;
+      if (start)
+        yield startPlugin(id);
+    });
+    return _enablePlugin.apply(this, arguments);
+  }
+  function disablePlugin(id) {
+    assert(isPluginInstalled(id), id, "disable a non-installed plugin");
+    pluginInstances.has(id) && stopPlugin(id);
+    pluginSettings[id].enabled = false;
+  }
+  function installPlugin(id, start) {
+    return _installPlugin.apply(this, arguments);
+  }
+  function _installPlugin() {
+    _installPlugin = _async_to_generator(function* (id, start) {
+      var manifest = registeredPlugins.get(id);
+      assert(manifest, id, "install an non-registered plugin");
+      assert(!isPluginInstalled(id), id, "install an already installed plugin");
+      assert(isExternalPlugin(manifest), id, "install a core plugin");
+      yield updateAndWritePlugin(manifest.parentRepository, id, true);
+      pluginSettings[id] = {
+        enabled: true
+      };
+      if (start)
+        startPlugin(id);
+    });
+    return _installPlugin.apply(this, arguments);
+  }
+  function uninstallPlugin(id) {
+    return _uninstallPlugin.apply(this, arguments);
+  }
+  function _uninstallPlugin() {
+    _uninstallPlugin = _async_to_generator(function* (id) {
+      var manifest = registeredPlugins.get(id);
+      assert(manifest, id, "uninstall an unregistered plugin");
+      assert(isPluginInstalled(id), id, "uninstall a non-installed plugin");
+      assert(isExternalPlugin(manifest), id, "uninstall a core plugin");
+      pluginInstances.has(id) && stopPlugin(id);
+      delete pluginSettings[id];
+      yield removeFile(`plugins/scripts/${id}.js`);
+    });
+    return _uninstallPlugin.apply(this, arguments);
+  }
+  function startPlugin(id) {
+    return _startPlugin.apply(this, arguments);
+  }
+  function _startPlugin() {
+    _startPlugin = _async_to_generator(function* (id) {
+      var manifest = registeredPlugins.get(id);
+      assert(manifest, id, "start a non-registered plugin");
+      assert(isPluginInstalled(id), id, "start a non-installed plugin");
+      assert(pluginSettings[id]?.enabled, id, "start a disabled plugin");
+      assert(!pluginInstances.has(id), id, "start an already started plugin");
+      yield preloadStorageIfExists(`plugins/storage/${id}.json`);
+      var pluginInstance2;
+      if (isExternalPlugin(manifest)) {
+        try {
+          var iife = yield readFile(manifest.jsPath);
+          var instantiator = globalEvalWithSourceUrl(`(bunny,definePlugin)=>{${iife};return plugin?.default ?? plugin;}`, `bunny-plugin/${id}-${manifest.version}`);
+        } catch (error) {
+          throw new Error("An error occured while parsing plugin's code, possibly a syntax error?", {
+            cause: error
+          });
+        }
+        try {
+          var api = createBunnyPluginAPI(id);
+          pluginInstance2 = instantiator(api.object, (p) => {
+            return Object.assign(p, {
+              manifest
+            });
+          });
+          if (!pluginInstance2)
+            throw new Error(`Plugin '${id}' does not export a valid plugin instance`);
+          apiObjects.set(id, api);
+          pluginInstances.set(id, pluginInstance2);
+        } catch (error) {
+          throw new Error("An error occured while instantiating plugin's code", {
+            cause: error
+          });
+        }
+      } else {
+        pluginInstance2 = corePluginInstances.get(id);
+        assert(pluginInstance2, id, "start a non-existent core plugin");
+        pluginInstances.set(id, pluginInstance2);
+      }
+      try {
+        pluginInstance2.start?.();
+      } catch (error) {
+        throw new Error("An error occured while starting the plugin", {
+          cause: error
+        });
+      }
+    });
+    return _startPlugin.apply(this, arguments);
+  }
+  function stopPlugin(id) {
+    var instance = pluginInstances.get(id);
+    assert(instance, id, "stop a non-started plugin");
+    instance.stop?.();
+    var obj = apiObjects.get(id);
+    obj?.disposers.forEach((d) => d());
+    pluginInstances.delete(id);
+  }
+  function updateAllRepository() {
+    return _updateAllRepository.apply(this, arguments);
+  }
+  function _updateAllRepository() {
+    _updateAllRepository = _async_to_generator(function* () {
+      try {
+        yield updateRepository(OFFICIAL_PLUGINS_REPO_URL);
+      } catch (error) {
+        console.error("Failed to update official plugins repository", error);
+      }
+      yield allSettled(Object.keys(pluginRepositories).map(/* @__PURE__ */ function() {
+        var _ref = _async_to_generator(function* (repo) {
+          if (repo !== OFFICIAL_PLUGINS_REPO_URL) {
+            yield updateRepository(repo);
+          }
+        });
+        return function(repo) {
+          return _ref.apply(this, arguments);
+        };
+      }()));
+    });
+    return _updateAllRepository.apply(this, arguments);
+  }
+  function updatePlugins() {
+    return _updatePlugins.apply(this, arguments);
+  }
+  function _updatePlugins() {
+    _updatePlugins = _async_to_generator(function* () {
+      yield awaitStorage2(pluginRepositories, pluginSettings);
+      var corePlugins = getCorePlugins();
+      for (var id in corePlugins) {
+        var { default: instance, preenabled } = corePlugins[id];
+        pluginSettings[id] ??= {
+          enabled: preenabled ?? true
+        };
+        registeredPlugins.set(id, instance.manifest);
+        manifestToId.set(instance.manifest, id);
+        corePluginInstances.set(id, instance);
+      }
+      yield updateAllRepository();
+    });
+    return _updatePlugins.apply(this, arguments);
+  }
+  function initPlugins() {
+    return _initPlugins.apply(this, arguments);
+  }
+  function _initPlugins() {
+    _initPlugins = _async_to_generator(function* () {
+      yield awaitStorage2(pluginRepositories, pluginSettings);
+      yield allSettled([
+        ...registeredPlugins.keys()
+      ].map(/* @__PURE__ */ function() {
+        var _ref = _async_to_generator(function* (id) {
+          if (isPluginEnabled(id)) {
+            yield startPlugin(id);
+          }
+        });
+        return function(id) {
+          return _ref.apply(this, arguments);
+        };
+      }()));
+    });
+    return _initPlugins.apply(this, arguments);
+  }
+  var corePluginInstances, registeredPlugins, pluginInstances, apiObjects, pluginRepositories, pluginSettings, manifestToId, _fetch, fetchJS, fetchJSON;
+  var init_plugins4 = __esm({
+    "src/lib/addons/plugins/index.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_async_to_generator();
+      init_plugins2();
+      init_fs();
+      init_storage2();
+      init_utils();
+      init_constants();
+      init_common();
+      init_api2();
+      corePluginInstances = /* @__PURE__ */ new Map();
+      registeredPlugins = /* @__PURE__ */ new Map();
+      pluginInstances = /* @__PURE__ */ new Map();
+      apiObjects = /* @__PURE__ */ new Map();
+      pluginRepositories = createStorage2("plugins/repositories.json");
+      pluginSettings = createStorage2("plugins/settings.json");
+      manifestToId = /* @__PURE__ */ new WeakMap();
+      _fetch = (repoUrl, path) => safeFetch(new URL(path, repoUrl), {
+        cache: "no-store"
+      });
+      fetchJS = (repoUrl, path) => _fetch(repoUrl, path).then((r) => r.text());
+      fetchJSON = (repoUrl, path) => _fetch(repoUrl, path).then((r) => r.json());
     }
   });
 
@@ -8631,383 +8818,324 @@
   __export(PluginInfoActionSheet_exports, {
     default: () => PluginInfoActionSheet
   });
-  function OptionDefRow({ opt }) {
-    var [current, setCurrent] = (0, import_react5.useState)();
-    switch (opt.type) {
-      case "string":
-        var Input = opt.textArea === true ? TextArea : TextInput2;
-        var isValid = () => opt.regexValidation ? current?.match(opt.regexValidation) : true;
-        return /* @__PURE__ */ jsx(TableRow, {
-          label: /* @__PURE__ */ jsx(Input, {
-            size: "sm",
-            label: opt.label,
-            placeholder: opt.placeholder,
-            value: current,
-            onChange: (v2) => setCurrent(v2),
-            state: isValid() ? "error" : void 0,
-            errorMessage: isValid() ? void 0 : "Invalid input"
-          }),
-          subLabel: opt.description,
-          icon: getIcon(opt.icon)
-        });
-      case "boolean":
-        return /* @__PURE__ */ jsx(TableSwitchRow, {
-          label: opt.label,
-          subLabel: opt.description,
-          icon: getIcon(opt.icon),
-          value: current === "true",
-          onValueChange: () => {
-            setCurrent((v2) => String(String(v2) !== "true"));
-          }
-        });
-      case "select":
-        return /* @__PURE__ */ jsxs(Card, {
-          start: false,
-          end: false,
-          variant: "secondary",
-          children: [
-            /* @__PURE__ */ jsx(TableRowGroup, {
-              title: opt.label,
-              children: opt.options.map((def) => {
-                return /* @__PURE__ */ jsx(TableCheckboxRow, {
-                  label: def.label,
-                  subLabel: def.description,
-                  icon: getIcon(def.icon),
-                  checked: def.value === current,
-                  onPress: () => {
-                  }
-                });
-              })
-            }),
-            /* @__PURE__ */ jsx(Text2, {
-              style: {
-                marginTop: 8
-              },
-              color: "text-secondary",
-              variant: "text-sm/normal",
-              children: opt.description
-            })
-          ]
-        });
-      case "radio":
-        return /* @__PURE__ */ jsxs(Card, {
-          start: false,
-          end: false,
-          variant: "secondary",
-          children: [
-            /* @__PURE__ */ jsx(TableRadioGroup, {
-              title: opt.label,
-              value: String(opt.options[0].value),
-              onChange: () => {
-              },
-              children: opt.options.map((def) => {
-                return /* @__PURE__ */ jsx(TableRadioRow, {
-                  label: def.label,
-                  subLabel: def.description,
-                  icon: getIcon(def.icon),
-                  value: String(def.value)
-                });
-              })
-            }),
-            /* @__PURE__ */ jsx(Text2, {
-              style: {
-                marginTop: 8
-              },
-              color: "text-secondary",
-              variant: "text-sm/normal",
-              children: opt.description
-            })
-          ]
-        });
-      case "slider":
-    }
-  }
-  function getIcon(icon) {
-    if (!icon)
-      return;
-    return /* @__PURE__ */ jsx(TableRow.Icon, {
-      source: typeof icon === "string" ? findAssetId(icon) : icon
-    });
-  }
-  function OptionSection({ plugin, navigation: navigation2 }) {
-    var manifest = PluginManager_default.getManifest(plugin.id);
-    var SettingsComponent = plugin.getPluginSettingsComponent();
-    return /* @__PURE__ */ jsxs(TableRowGroup, {
-      title: "Configurations",
-      children: [
-        Object.entries(
-          manifest.options ?? {}
-          /* ?? TEMP_OPT */
-        ).map(([name, def]) => {
-          return /* @__PURE__ */ jsx(OptionDefRow, {
-            opt: def
-          });
-        }),
-        /* @__PURE__ */ jsx(TableRow, {
-          arrow: true,
-          label: "More...",
-          icon: /* @__PURE__ */ jsx(TableRow.Icon, {
-            source: findAssetId("WrenchIcon")
-          }),
-          disabled: !SettingsComponent,
-          onPress: () => {
-            hideSheet("PluginInfoActionSheet");
-            navigation2.push("BUNNY_CUSTOM_PAGE", {
-              title: plugin.name,
-              render: SettingsComponent
-            });
-          }
-        })
-      ]
-    });
-  }
   function PluginInfoActionSheet({ plugin, navigation: navigation2 }) {
     plugin.usePluginState();
-    var pluginSettings = PluginManager_default.settings[plugin.id];
     return /* @__PURE__ */ jsx(ActionSheet, {
-      children: /* @__PURE__ */ jsxs(ScrollView6, {
-        style: {
-          paddingVertical: 8
-        },
+      children: /* @__PURE__ */ jsxs(import_react_native19.ScrollView, {
         contentContainerStyle: {
-          gap: 18
+          gap: 8,
+          marginBottom: 12
         },
         children: [
-          /* @__PURE__ */ jsxs(import_react_native17.View, {
+          /* @__PURE__ */ jsxs(import_react_native19.View, {
             style: {
               flexDirection: "row",
               alignItems: "center",
-              paddingTop: 24
+              paddingVertical: 24
             },
             children: [
-              /* @__PURE__ */ jsx(TitleComponent, {
-                plugin
-              }),
-              /* @__PURE__ */ jsx(Toggle, {
-                plugin
-              })
-            ]
-          }),
-          PluginReporter_default.errors[plugin.id] && /* @__PURE__ */ jsxs(Card, {
-            style: {
-              gap: 8
-            },
-            children: [
-              /* @__PURE__ */ jsx(Text2, {
-                color: "text-danger",
-                variant: "eyebrow",
-                children: "Error"
-              }),
-              /* @__PURE__ */ jsx(Text2, {
-                variant: "heading-md/normal",
-                children: "An error occured while starting the plugin."
-              }),
-              /* @__PURE__ */ jsx(Codeblock, {
-                selectable: true,
-                children: String(PluginReporter_default.getError(plugin.id))
-              })
-            ]
-          }),
-          /* @__PURE__ */ jsx(OptionSection, {
-            plugin,
-            navigation: navigation2
-          }),
-          /* @__PURE__ */ jsx(TableRowGroup, {
-            title: "Actions",
-            children: /* @__PURE__ */ jsx(Stack, {
-              children: /* @__PURE__ */ jsxs(ScrollView6, {
-                horizontal: true,
-                contentContainerStyle: {
+              /* @__PURE__ */ jsxs(import_react_native19.View, {
+                style: {
                   gap: 4
                 },
                 children: [
-                  /* @__PURE__ */ jsx(Button, {
-                    size: "md",
-                    variant: "secondary",
-                    text: Strings.REFETCH,
-                    icon: findAssetId("RetryIcon"),
-                    onPress: /* @__PURE__ */ _async_to_generator(function* () {
-                      var isEnabled = pluginSettings.enabled;
-                      if (isEnabled)
-                        PluginManager_default.stop(plugin.id);
-                      try {
-                        yield PluginManager_default.refetch(plugin.id);
-                        showToast(Strings.PLUGIN_REFETCH_SUCCESSFUL, findAssetId("toast_image_saved"));
-                      } catch (e) {
-                        showToast(Strings.PLUGIN_REFETCH_FAILED, findAssetId("Small"));
-                      }
-                      if (isEnabled)
-                        yield PluginManager_default.start(plugin.id);
-                    })
+                  /* @__PURE__ */ jsx(Text, {
+                    variant: "heading-xl/semibold",
+                    children: plugin.name
                   }),
-                  /* @__PURE__ */ jsx(Button, {
-                    size: "md",
-                    variant: "secondary",
-                    text: Strings.COPY_URL,
-                    icon: findAssetId("LinkIcon"),
-                    onPress: () => {
-                      clipboard.setString(PluginManager_default.traces[plugin.id].sourceUrl);
-                      showToast.showCopyToClipboard();
-                    }
-                  }),
-                  /* @__PURE__ */ jsx(Button, {
-                    size: "md",
-                    variant: "secondary",
-                    text: pluginSettings.autoUpdate ? Strings.DISABLE_UPDATES : Strings.ENABLE_UPDATES,
-                    icon: findAssetId("DownloadIcon"),
-                    onPress: () => {
-                      pluginSettings.autoUpdate = !pluginSettings.autoUpdate;
-                      showToast(formatString("TOASTS_PLUGIN_UPDATE", {
-                        update: pluginSettings.autoUpdate,
-                        name: plugin.name
-                      }), findAssetId("toast_image_saved"));
-                    }
-                  }),
-                  /* @__PURE__ */ jsx(Button, {
-                    size: "md",
-                    variant: "destructive",
-                    text: Strings.CLEAR_DATA,
-                    icon: findAssetId("CopyIcon"),
-                    onPress: () => showConfirmationAlert({
-                      title: Strings.HOLD_UP,
-                      content: formatString("ARE_YOU_SURE_TO_CLEAR_DATA", {
-                        name: plugin.name
-                      }),
-                      confirmText: Strings.CLEAR,
-                      cancelText: Strings.CANCEL,
-                      confirmColor: "red",
-                      onConfirm: /* @__PURE__ */ _async_to_generator(function* () {
-                        if (pluginSettings.enabled)
-                          PluginManager_default.stop(plugin.id);
-                        try {
-                          yield PluginManager_default.fetch(plugin.id);
-                          showToast(Strings.PLUGIN_REFETCH_SUCCESSFUL, findAssetId("toast_image_saved"));
-                        } catch (e) {
-                          showToast(Strings.PLUGIN_REFETCH_FAILED, findAssetId("Small"));
-                        }
-                        var message;
-                        try {
-                          purgeStorage(`plugins/storage/${PluginManager_default.sanitizeId(plugin.id)}.json`);
-                          message = [
-                            "CLEAR_DATA_SUCCESSFUL",
-                            "trash"
-                          ];
-                        } catch (e) {
-                          message = [
-                            "CLEAR_DATA_FAILED",
-                            "Small"
-                          ];
-                        }
-                        showToast(formatString(message[0], {
-                          name: plugin.name
-                        }), findAssetId(message[1]));
-                        if (pluginSettings.enabled)
-                          yield PluginManager_default.start(plugin.id);
-                        hideSheet("PluginInfoActionSheet");
-                      })
-                    })
-                  }),
-                  /* @__PURE__ */ jsx(Button, {
-                    size: "md",
-                    variant: "destructive",
-                    text: Strings.DELETE,
-                    icon: findAssetId("TrashIcon"),
-                    onPress: () => showConfirmationAlert({
-                      title: Strings.HOLD_UP,
-                      content: formatString("ARE_YOU_SURE_TO_DELETE_PLUGIN", {
-                        name: plugin.name
-                      }),
-                      confirmText: Strings.DELETE,
-                      cancelText: Strings.CANCEL,
-                      confirmColor: "red",
-                      onConfirm: /* @__PURE__ */ _async_to_generator(function* () {
-                        try {
-                          yield PluginManager_default.uninstall(plugin.id);
-                        } catch (e) {
-                          showToast(String(e), findAssetId("Small"));
-                        }
-                        hideSheet("PluginInfoActionSheet");
-                      })
-                    })
+                  /* @__PURE__ */ jsx(Text, {
+                    variant: "text-md/medium",
+                    color: "text-muted",
+                    children: plugin.description
                   })
                 ]
+              }),
+              /* @__PURE__ */ jsx(import_react_native19.View, {
+                style: {
+                  marginLeft: "auto"
+                },
+                children: plugin.getPluginSettingsComponent() && /* @__PURE__ */ jsx(Button, {
+                  size: "md",
+                  text: "Configure",
+                  variant: "secondary",
+                  icon: findAssetId("WrenchIcon"),
+                  onPress: () => {
+                    hideSheet("PluginInfoActionSheet");
+                    navigation2.push("BUNNY_CUSTOM_PAGE", {
+                      title: plugin.name,
+                      render: plugin.getPluginSettingsComponent()
+                    });
+                  }
+                })
               })
+            ]
+          }),
+          /* @__PURE__ */ jsx(import_react_native19.View, {
+            style: {
+              flexDirection: "row",
+              justifyContent: "center",
+              alignContent: "center"
+            },
+            children: /* @__PURE__ */ jsx(Text, {
+              variant: "text-lg/medium",
+              children: "Oops, you shouldn't see this!"
             })
           })
         ]
       })
     });
   }
-  function Toggle({ plugin }) {
-    var forceUpdate = (0, import_react5.useReducer)((n) => ~n, 0)[1];
-    plugin.usePluginState();
-    return /* @__PURE__ */ jsx(import_react_native17.View, {
-      style: {
-        marginLeft: "auto"
+  var import_react_native19;
+  var init_PluginInfoActionSheet = __esm({
+    "src/core/ui/settings/pages/Plugins/sheets/PluginInfoActionSheet.tsx"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_jsxRuntime();
+      init_assets();
+      init_sheets();
+      init_components();
+      import_react_native19 = __toESM(require_react_native());
+    }
+  });
+
+  // src/core/ui/settings/pages/Plugins/models/bunny.ts
+  function unifyBunnyPlugin(manifest) {
+    return {
+      id: manifest.id,
+      name: manifest.name,
+      description: manifest.description,
+      authors: manifest.authors,
+      isEnabled: () => isPluginEnabled(getId(manifest)),
+      isInstalled: () => manifest.id in pluginSettings,
+      usePluginState() {
+        useObservable([
+          pluginSettings
+        ]);
       },
-      children: /* @__PURE__ */ jsx(TableSwitch, {
-        value: plugin.isEnabled(),
-        onValueChange: function() {
-          var _ref = _async_to_generator(function* (v2) {
-            yield plugin.toggle(v2);
-            forceUpdate();
-          });
-          return function(v2) {
-            return _ref.apply(this, arguments);
-          };
-        }()
+      toggle(start) {
+        start ? enablePlugin(getId(manifest), true) : disablePlugin(getId(manifest));
+      },
+      resolveSheetComponent() {
+        return Promise.resolve().then(() => (init_PluginInfoActionSheet(), PluginInfoActionSheet_exports));
+      },
+      getPluginSettingsComponent() {
+        return getPluginSettingsComponent(getId(manifest));
+      }
+    };
+  }
+  var init_bunny = __esm({
+    "src/core/ui/settings/pages/Plugins/models/bunny.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_plugins4();
+      init_storage2();
+    }
+  });
+
+  // src/core/ui/settings/pages/Plugins/sheets/VdPluginInfoActionSheet.tsx
+  var VdPluginInfoActionSheet_exports = {};
+  __export(VdPluginInfoActionSheet_exports, {
+    default: () => PluginInfoActionSheet2
+  });
+  function PluginInfoActionSheet2({ plugin, navigation: navigation2 }) {
+    plugin.usePluginState();
+    var vdPlugin = VdPluginManager.plugins[plugin.id];
+    var SettingsComponent = plugin.getPluginSettingsComponent();
+    return /* @__PURE__ */ jsx(ActionSheet, {
+      children: /* @__PURE__ */ jsxs(import_react_native20.ScrollView, {
+        children: [
+          /* @__PURE__ */ jsxs(import_react_native20.View, {
+            style: {
+              flexDirection: "row",
+              alignItems: "center",
+              paddingVertical: 24
+            },
+            children: [
+              /* @__PURE__ */ jsx(Text, {
+                variant: "heading-xl/semibold",
+                children: plugin.name
+              }),
+              /* @__PURE__ */ jsx(import_react_native20.View, {
+                style: {
+                  marginLeft: "auto"
+                },
+                children: SettingsComponent && /* @__PURE__ */ jsx(Button, {
+                  size: "md",
+                  text: "Configure",
+                  variant: "secondary",
+                  icon: findAssetId("WrenchIcon"),
+                  onPress: () => {
+                    hideSheet("PluginInfoActionSheet");
+                    navigation2.push("BUNNY_CUSTOM_PAGE", {
+                      title: plugin.name,
+                      render: SettingsComponent
+                    });
+                  }
+                })
+              })
+            ]
+          }),
+          /* @__PURE__ */ jsxs(ActionSheetRow.Group, {
+            children: [
+              /* @__PURE__ */ jsx(ActionSheetRow, {
+                label: Strings.REFETCH,
+                icon: /* @__PURE__ */ jsx(TableRow.Icon, {
+                  source: findAssetId("RetryIcon")
+                }),
+                onPress: /* @__PURE__ */ _async_to_generator(function* () {
+                  if (vdPlugin.enabled)
+                    VdPluginManager.stopPlugin(plugin.id, false);
+                  try {
+                    yield VdPluginManager.fetchPlugin(plugin.id);
+                    showToast(Strings.PLUGIN_REFETCH_SUCCESSFUL, findAssetId("toast_image_saved"));
+                  } catch (e) {
+                    showToast(Strings.PLUGIN_REFETCH_FAILED, findAssetId("Small"));
+                  }
+                  if (vdPlugin.enabled)
+                    yield VdPluginManager.startPlugin(plugin.id);
+                  hideSheet("PluginInfoActionSheet");
+                })
+              }),
+              /* @__PURE__ */ jsx(ActionSheetRow, {
+                label: Strings.COPY_URL,
+                icon: /* @__PURE__ */ jsx(TableRow.Icon, {
+                  source: findAssetId("copy")
+                }),
+                onPress: () => {
+                  clipboard.setString(plugin.id);
+                  showToast.showCopyToClipboard();
+                }
+              }),
+              /* @__PURE__ */ jsx(ActionSheetRow, {
+                label: vdPlugin.update ? Strings.DISABLE_UPDATES : Strings.ENABLE_UPDATES,
+                icon: /* @__PURE__ */ jsx(TableRow.Icon, {
+                  source: findAssetId("ic_download_24px")
+                }),
+                onPress: () => {
+                  vdPlugin.update = !vdPlugin.update;
+                  showToast(formatString("TOASTS_PLUGIN_UPDATE", {
+                    update: vdPlugin.update,
+                    name: plugin.name
+                  }), findAssetId("toast_image_saved"));
+                }
+              }),
+              /* @__PURE__ */ jsx(ActionSheetRow, {
+                label: Strings.CLEAR_DATA,
+                icon: /* @__PURE__ */ jsx(TableRow.Icon, {
+                  source: findAssetId("ic_duplicate")
+                }),
+                onPress: () => showConfirmationAlert({
+                  title: Strings.HOLD_UP,
+                  content: formatString("ARE_YOU_SURE_TO_CLEAR_DATA", {
+                    name: plugin.name
+                  }),
+                  confirmText: Strings.CLEAR,
+                  cancelText: Strings.CANCEL,
+                  confirmColor: "red",
+                  onConfirm: /* @__PURE__ */ _async_to_generator(function* () {
+                    if (vdPlugin.enabled)
+                      VdPluginManager.stopPlugin(plugin.id, false);
+                    try {
+                      yield VdPluginManager.fetchPlugin(plugin.id);
+                      showToast(Strings.PLUGIN_REFETCH_SUCCESSFUL, findAssetId("toast_image_saved"));
+                    } catch (e) {
+                      showToast(Strings.PLUGIN_REFETCH_FAILED, findAssetId("Small"));
+                    }
+                    var message;
+                    try {
+                      purgeStorage(plugin.id);
+                      message = [
+                        "CLEAR_DATA_SUCCESSFUL",
+                        "trash"
+                      ];
+                    } catch (e) {
+                      message = [
+                        "CLEAR_DATA_FAILED",
+                        "Small"
+                      ];
+                    }
+                    showToast(formatString(message[0], {
+                      name: plugin.name
+                    }), findAssetId(message[1]));
+                    if (vdPlugin.enabled)
+                      yield VdPluginManager.startPlugin(plugin.id);
+                    hideSheet("PluginInfoActionSheet");
+                  })
+                })
+              }),
+              /* @__PURE__ */ jsx(ActionSheetRow, {
+                label: Strings.DELETE,
+                icon: /* @__PURE__ */ jsx(TableRow.Icon, {
+                  source: findAssetId("ic_message_delete")
+                }),
+                onPress: () => showConfirmationAlert({
+                  title: Strings.HOLD_UP,
+                  content: formatString("ARE_YOU_SURE_TO_DELETE_PLUGIN", {
+                    name: plugin.name
+                  }),
+                  confirmText: Strings.DELETE,
+                  cancelText: Strings.CANCEL,
+                  confirmColor: "red",
+                  onConfirm: () => {
+                    try {
+                      VdPluginManager.removePlugin(plugin.id);
+                    } catch (e) {
+                      showToast(String(e), findAssetId("Small"));
+                    }
+                    hideSheet("PluginInfoActionSheet");
+                  }
+                })
+              })
+            ]
+          })
+        ]
       })
     });
   }
-  var import_react5, import_react_native17, ScrollView6;
-  var init_PluginInfoActionSheet = __esm({
-    "src/core/ui/settings/pages/Plugins/sheets/PluginInfoActionSheet.tsx"() {
+  var import_react_native20;
+  var init_VdPluginInfoActionSheet = __esm({
+    "src/core/ui/settings/pages/Plugins/sheets/VdPluginInfoActionSheet.tsx"() {
       "use strict";
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
       init_async_to_generator();
       init_jsxRuntime();
       init_i18n();
-      init_PluginReporter();
       init_alerts2();
-      init_PluginManager();
-      init_assets();
+      init_plugins();
       init_storage();
-      init_components2();
-      init_lazy();
-      init_metro();
+      init_assets();
       init_common();
       init_components();
       init_sheets();
       init_toasts();
-      import_react5 = __toESM(require_react());
-      import_react_native17 = __toESM(require_react_native());
-      init_TitleComponent();
-      ({ ScrollView: ScrollView6 } = lazyDestructure(() => findByProps("NativeViewGestureHandler")));
+      import_react_native20 = __toESM(require_react_native());
     }
   });
 
   // src/core/ui/settings/pages/Plugins/models/vendetta.ts
-  function unifyVdPlugin(manifest) {
+  function unifyVdPlugin(vdPlugin) {
     return {
-      id: manifest.id,
-      name: manifest.display.name,
-      description: manifest.display.description,
-      authors: manifest.display.authors,
-      icon: manifest.extras?.vendetta?.icon,
-      isEnabled: () => PluginManager_default.settings[manifest.id].enabled,
-      isInstalled: () => Boolean(PluginManager_default.settings[manifest.id]),
+      id: vdPlugin.id,
+      name: vdPlugin.manifest.name,
+      description: vdPlugin.manifest.description,
+      authors: vdPlugin.manifest.authors,
+      icon: vdPlugin.manifest.vendetta?.icon,
+      isEnabled: () => vdPlugin.enabled,
+      isInstalled: () => Boolean(vdPlugin && VdPluginManager.plugins[vdPlugin.id]),
       usePluginState() {
-        PluginManager_default.usePlugin(manifest.id);
+        useProxy(VdPluginManager.plugins[vdPlugin.id]);
       },
       toggle(start) {
-        return start ? PluginManager_default.enable(manifest.id) : PluginManager_default.disable(manifest.id);
+        start ? VdPluginManager.startPlugin(vdPlugin.id) : VdPluginManager.stopPlugin(vdPlugin.id);
       },
       resolveSheetComponent() {
-        return Promise.resolve().then(() => (init_PluginInfoActionSheet(), PluginInfoActionSheet_exports));
+        return Promise.resolve().then(() => (init_VdPluginInfoActionSheet(), VdPluginInfoActionSheet_exports));
       },
       getPluginSettingsComponent() {
-        return PluginManager_default.getSettingsComponent(manifest.id);
+        return VdPluginManager.getSettings(vdPlugin.id);
       }
     };
   }
@@ -9016,85 +9144,8 @@
       "use strict";
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
-      init_PluginManager();
-    }
-  });
-
-  // src/core/ui/settings/pages/Plugins/pages/PluginErrors/PluginErrorCard/index.tsx
-  function PluginErrorCard(props) {
-    var error2 = PluginReporter_default.getError(props.id);
-    if (error2 instanceof Error) {
-      return /* @__PURE__ */ jsx(ErrorCard, {
-        header: /* @__PURE__ */ jsx(Text2, {
-          variant: "eyebrow",
-          children: props.id
-        }),
-        error: error2
-      });
-    } else {
-      return /* @__PURE__ */ jsxs(Card, {
-        style: {
-          gap: 8
-        },
-        children: [
-          /* @__PURE__ */ jsx(Text2, {
-            variant: "heading-md/bold",
-            children: props.id
-          }),
-          /* @__PURE__ */ jsx(Codeblock, {
-            selectable: true,
-            children: String(error2)
-          })
-        ]
-      });
-    }
-  }
-  var init_PluginErrorCard = __esm({
-    "src/core/ui/settings/pages/Plugins/pages/PluginErrors/PluginErrorCard/index.tsx"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_jsxRuntime();
-      init_PluginReporter();
-      init_ErrorCard();
-      init_components2();
-      init_components();
-    }
-  });
-
-  // src/core/ui/settings/pages/Plugins/pages/PluginErrors/index.tsx
-  var PluginErrors_exports = {};
-  __export(PluginErrors_exports, {
-    default: () => PluginErrors
-  });
-  function PluginErrors() {
-    return /* @__PURE__ */ jsx(import_react_native18.FlatList, {
-      data: Object.keys(PluginReporter_default.errors),
-      contentContainerStyle: {
-        padding: 8
-      },
-      ItemSeparatorComponent: () => /* @__PURE__ */ jsx(import_react_native18.View, {
-        style: {
-          height: 8
-        }
-      }),
-      renderItem: (props) => {
-        return /* @__PURE__ */ jsx(PluginErrorCard, {
-          id: props.item
-        });
-      }
-    });
-  }
-  var import_react_native18;
-  var init_PluginErrors = __esm({
-    "src/core/ui/settings/pages/Plugins/pages/PluginErrors/index.tsx"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_jsxRuntime();
-      init_PluginReporter();
-      import_react_native18 = __toESM(require_react_native());
-      init_PluginErrorCard();
+      init_plugins();
+      init_storage();
     }
   });
 
@@ -9111,7 +9162,7 @@
       searchKeywords: [
         "name",
         "description",
-        (p) => p.authors?.map((a) => typeof a === "string" ? a : a.name).join() ?? "unknown"
+        (p) => p.authors?.map((a) => typeof a === "string" ? a : a.name).join()
       ],
       sortOptions: {
         "Name (A-Z)": (a, b3) => a.name.localeCompare(b3.name),
@@ -9125,54 +9176,138 @@
     });
   }
   function Plugins() {
-    BunnySettings_default.useSettings();
+    useProxy(settings);
+    var navigation2 = NavigationNative.useNavigation();
     return /* @__PURE__ */ jsx(PluginPage, {
       useItems: () => {
+        useProxy(VdPluginManager.plugins);
         useObservable([
-          PluginManager_default.settings
+          pluginSettings
         ]);
-        return PluginManager_default.getAllIds().map((id) => PluginManager_default.getManifest(id));
+        var vdPlugins = Object.values(VdPluginManager.plugins).map(unifyVdPlugin);
+        var bnPlugins = [
+          ...registeredPlugins.values()
+        ].filter((p) => isPluginInstalled(p.id) && !isCorePlugin(p.id)).map(unifyBunnyPlugin);
+        return [
+          ...vdPlugins,
+          ...bnPlugins
+        ];
       },
-      resolveItem: unifyVdPlugin,
-      ListHeaderComponent: HeaderComponent,
-      ListFooterComponent: FooterComponent,
+      ListHeaderComponent: () => {
+        var unproxiedPlugins = Object.values(VdPluginManager.plugins).filter((p) => !p.id.startsWith(VD_PROXY_PREFIX) && !p.id.startsWith(BUNNY_PROXY_PREFIX));
+        if (!unproxiedPlugins.length)
+          return null;
+        return /* @__PURE__ */ jsx(import_react_native21.View, {
+          style: {
+            marginVertical: 12,
+            marginHorizontal: 10
+          },
+          children: /* @__PURE__ */ jsx(Card, {
+            border: "strong",
+            children: /* @__PURE__ */ jsxs(import_react_native21.View, {
+              style: {
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+                flexDirection: "row"
+              },
+              children: [
+                /* @__PURE__ */ jsxs(import_react_native21.View, {
+                  style: {
+                    gap: 6,
+                    flexShrink: 1
+                  },
+                  children: [
+                    /* @__PURE__ */ jsx(Text, {
+                      variant: "heading-md/bold",
+                      children: "Unproxied Plugins Found"
+                    }),
+                    /* @__PURE__ */ jsx(Text, {
+                      variant: "text-sm/medium",
+                      color: "text-muted",
+                      children: "Plugins installed from unproxied sources may run unverified code in this app without your awareness."
+                    })
+                  ]
+                }),
+                /* @__PURE__ */ jsx(import_react_native21.View, {
+                  style: {
+                    marginLeft: "auto"
+                  },
+                  children: /* @__PURE__ */ jsx(IconButton, {
+                    size: "sm",
+                    variant: "secondary",
+                    icon: findAssetId("CircleInformationIcon-primary"),
+                    style: {
+                      marginLeft: 8
+                    },
+                    onPress: () => {
+                      navigation2.push("BUNNY_CUSTOM_PAGE", {
+                        title: "Unproxied Plugins",
+                        render: () => {
+                          return /* @__PURE__ */ jsx(FlashList, {
+                            data: unproxiedPlugins,
+                            contentContainerStyle: {
+                              padding: 8
+                            },
+                            ItemSeparatorComponent: () => /* @__PURE__ */ jsx(import_react_native21.View, {
+                              style: {
+                                height: 8
+                              }
+                            }),
+                            renderItem: ({ item: p }) => /* @__PURE__ */ jsx(Card, {
+                              children: /* @__PURE__ */ jsx(Text, {
+                                variant: "heading-md/semibold",
+                                children: p.id
+                              })
+                            })
+                          });
+                        }
+                      });
+                    }
+                  })
+                })
+              ]
+            })
+          })
+        });
+      },
       installAction: {
         label: "Install a plugin",
-        fetchFn: function() {
+        fetchFn: /* @__PURE__ */ function() {
           var _ref = _async_to_generator(function* (url2) {
-            if (!url2.startsWith(VD_PROXY_PREFIX) && !url2.startsWith(BUNNY_PROXY_PREFIX) && !BunnySettings_default.developer.enabled) {
-              openAlert("bunny-plugin-unproxied-confirmation", /* @__PURE__ */ jsx(AlertModal, {
+            if (!url2.startsWith(VD_PROXY_PREFIX) && !url2.startsWith(BUNNY_PROXY_PREFIX) && !settings.developerSettings) {
+              openAlert2("bunny-plugin-unproxied-confirmation", /* @__PURE__ */ jsx(AlertModal3, {
                 title: "Hold On!",
                 content: "You're trying to install a plugin from an unproxied external source. This means you're trusting the creator to run their code in this app without your knowledge. Are you sure you want to continue?",
                 extraContent: /* @__PURE__ */ jsx(Card, {
-                  children: /* @__PURE__ */ jsx(Text2, {
+                  children: /* @__PURE__ */ jsx(Text, {
                     variant: "text-md/bold",
                     children: url2
                   })
                 }),
-                actions: /* @__PURE__ */ jsxs(AlertActions, {
+                actions: /* @__PURE__ */ jsxs(AlertActions2, {
                   children: [
-                    /* @__PURE__ */ jsx(AlertActionButton, {
+                    /* @__PURE__ */ jsx(AlertActionButton3, {
                       text: "Continue",
                       variant: "primary",
                       onPress: () => {
-                        PluginManager_default.install(url2).then(() => showToast(Strings.TOASTS_INSTALLED_PLUGIN, findAssetId("Check"))).catch((e) => openAlert("bunny-plugin-install-failed", /* @__PURE__ */ jsx(AlertModal, {
+                        VdPluginManager.installPlugin(url2).then(() => showToast(Strings.TOASTS_INSTALLED_PLUGIN, findAssetId("Check"))).catch((e) => openAlert2("bunny-plugin-install-failed", /* @__PURE__ */ jsx(AlertModal3, {
                           title: "Install Failed",
                           content: `Unable to install plugin from '${url2}':`,
                           extraContent: /* @__PURE__ */ jsx(Card, {
-                            children: /* @__PURE__ */ jsx(Text2, {
+                            children: /* @__PURE__ */ jsx(Text, {
                               variant: "text-md/normal",
                               children: e instanceof Error ? e.message : String(e)
                             })
                           }),
-                          actions: /* @__PURE__ */ jsx(AlertActionButton, {
+                          actions: /* @__PURE__ */ jsx(AlertActionButton3, {
                             text: "Okay",
                             variant: "primary"
                           })
                         })));
                       }
                     }),
-                    /* @__PURE__ */ jsx(AlertActionButton, {
+                    /* @__PURE__ */ jsx(AlertActionButton3, {
                       text: "Cancel",
                       variant: "secondary"
                     })
@@ -9180,7 +9315,7 @@
                 })
               }));
             } else {
-              return yield PluginManager_default.install(url2);
+              return yield VdPluginManager.installPlugin(url2);
             }
           });
           return function(url2) {
@@ -9190,134 +9325,7 @@
       }
     });
   }
-  function FooterComponent() {
-    return /* @__PURE__ */ jsx(import_react_native19.View, {
-      style: {
-        flexDirection: "row",
-        justifyContent: "center",
-        paddingVertical: 8
-      },
-      children: /* @__PURE__ */ jsxs(Text2, {
-        variant: "text-sm/semibold",
-        children: [
-          PluginManager_default.getAllIds().length,
-          " installed"
-        ]
-      })
-    });
-  }
-  function HeaderComponent() {
-    var [dismissUnproxied, setDismissUnproxied] = (0, import_react6.useState)(false);
-    var navigation2 = NavigationNative.useNavigation();
-    var unproxiedPlugins = PluginManager_default.getUnproxiedPlugins();
-    return /* @__PURE__ */ jsxs(import_react_native19.View, {
-      style: {
-        marginVertical: 8,
-        gap: 8
-      },
-      children: [
-        PluginReporter_default.hasErrors() && /* @__PURE__ */ jsxs(Card, {
-          border: "strong",
-          style: {
-            gap: 4
-          },
-          children: [
-            /* @__PURE__ */ jsx(Text2, {
-              color: "text-danger",
-              variant: "eyebrow",
-              children: "Error"
-            }),
-            /* @__PURE__ */ jsx(Text2, {
-              variant: "heading-lg/bold",
-              children: "Some plugins have been disabled"
-            }),
-            /* @__PURE__ */ jsx(Text2, {
-              variant: "text-md/medium",
-              children: "These plugins were disabled due to an error during startup."
-            }),
-            /* @__PURE__ */ jsx(Button, {
-              size: "md",
-              text: "Review",
-              style: {
-                marginTop: 8
-              },
-              onPress: () => {
-                navigation2.push("BUNNY_CUSTOM_PAGE", {
-                  title: "Plugin Errors",
-                  render: React.lazy(() => Promise.resolve().then(() => (init_PluginErrors(), PluginErrors_exports)))
-                });
-              }
-            })
-          ]
-        }),
-        !!unproxiedPlugins.length && !dismissUnproxied && /* @__PURE__ */ jsxs(Card, {
-          border: "strong",
-          style: {
-            gap: 4
-          },
-          children: [
-            /* @__PURE__ */ jsx(Text2, {
-              color: "text-warning",
-              variant: "eyebrow",
-              children: "Warning"
-            }),
-            /* @__PURE__ */ jsx(Text2, {
-              variant: "heading-lg/bold",
-              children: "Unproxied plugins detected"
-            }),
-            /* @__PURE__ */ jsx(Text2, {
-              variant: "text-md/medium",
-              children: "Plugins installed from unproxied sources may run unreviewed code in this app without your awareness."
-            }),
-            /* @__PURE__ */ jsx(import_react_native19.View, {
-              style: {
-                height: 8
-              }
-            }),
-            /* @__PURE__ */ jsxs(TwinButtons, {
-              children: [
-                /* @__PURE__ */ jsx(Button, {
-                  size: "md",
-                  text: "Dismiss",
-                  variant: "secondary",
-                  onPress: () => setDismissUnproxied(true)
-                }),
-                /* @__PURE__ */ jsx(Button, {
-                  size: "md",
-                  text: "Review",
-                  onPress: () => {
-                    navigation2.push("BUNNY_CUSTOM_PAGE", {
-                      title: "Unproxied Plugins",
-                      render: () => {
-                        return /* @__PURE__ */ jsx(FlashList, {
-                          data: unproxiedPlugins,
-                          contentContainerStyle: {
-                            padding: 8
-                          },
-                          ItemSeparatorComponent: () => /* @__PURE__ */ jsx(import_react_native19.View, {
-                            style: {
-                              height: 8
-                            }
-                          }),
-                          renderItem: ({ item: id }) => /* @__PURE__ */ jsx(Card, {
-                            children: /* @__PURE__ */ jsx(Text2, {
-                              variant: "heading-md/semibold",
-                              children: id
-                            })
-                          })
-                        });
-                      }
-                    });
-                  }
-                })
-              ]
-            })
-          ]
-        })
-      ]
-    });
-  }
-  var import_react6, import_react_native19;
+  var import_react_native21, openAlert2, AlertModal3, AlertActions2, AlertActionButton3;
   var init_Plugins = __esm({
     "src/core/ui/settings/pages/Plugins/index.tsx"() {
       "use strict";
@@ -9326,52 +9334,55 @@
       init_async_to_generator();
       init_jsxRuntime();
       init_i18n();
-      init_PluginReporter();
-      init_BunnySettings();
       init_AddonPage();
       init_PluginCard();
-      init_PluginManager();
-      init_assets();
+      init_plugins();
       init_storage();
-      init_constants();
-      init_alerts();
+      init_plugins4();
+      init_assets();
+      init_settings();
+      init_storage2();
       init_toasts();
+      init_constants();
+      init_lazy();
+      init_metro();
       init_common();
       init_components();
-      import_react6 = __toESM(require_react());
-      import_react_native19 = __toESM(require_react_native());
+      import_react_native21 = __toESM(require_react_native());
+      init_bunny();
       init_vendetta();
+      ({ openAlert: openAlert2 } = lazyDestructure(() => findByProps("openAlert", "dismissAlert")));
+      ({ AlertModal: AlertModal3, AlertActions: AlertActions2, AlertActionButton: AlertActionButton3 } = lazyDestructure(() => findByProps("AlertModal", "AlertActions")));
     }
   });
 
   // src/core/ui/components/AddonCard.tsx
   function AddonCard(props) {
-    var styles = useStyles4();
+    var styles = useStyles3();
     return /* @__PURE__ */ jsx(Card, {
       children: /* @__PURE__ */ jsxs(Stack, {
         spacing: 16,
         children: [
-          /* @__PURE__ */ jsxs(import_react_native20.View, {
+          /* @__PURE__ */ jsxs(import_react_native22.View, {
             style: {
               flexDirection: "row",
               alignItems: "center"
             },
             children: [
-              /* @__PURE__ */ jsxs(import_react_native20.View, {
+              /* @__PURE__ */ jsxs(import_react_native22.View, {
                 style: styles.headerLeading,
                 children: [
-                  /* @__PURE__ */ jsx(Text2, {
-                    variant: "text-md/semibold",
+                  /* @__PURE__ */ jsx(Text, {
+                    style: styles.headerLabel,
                     children: props.headerLabel
                   }),
-                  props.headerSublabel && /* @__PURE__ */ jsx(Text2, {
-                    variant: "text-md/semibold",
-                    color: "text-muted",
+                  props.headerSublabel && /* @__PURE__ */ jsx(Text, {
+                    style: styles.headerSubtitle,
                     children: props.headerSublabel
                   })
                 ]
               }),
-              /* @__PURE__ */ jsxs(import_react_native20.View, {
+              /* @__PURE__ */ jsxs(import_react_native22.View, {
                 style: [
                   styles.headerTrailing,
                   {
@@ -9379,11 +9390,11 @@
                   }
                 ],
                 children: [
-                  /* @__PURE__ */ jsxs(import_react_native20.View, {
+                  /* @__PURE__ */ jsxs(import_react_native22.View, {
                     style: styles.actions,
                     children: [
                       props.overflowActions && /* @__PURE__ */ jsx(IconButton, {
-                        onPress: () => showSimpleActionSheet2({
+                        onPress: () => showSimpleActionSheet3({
                           key: "CardOverflow",
                           header: {
                             title: props.overflowTitle,
@@ -9416,7 +9427,7 @@
                   props.toggleType && (props.toggleType === "switch" ? /* @__PURE__ */ jsx(FormSwitch, {
                     value: props.toggleValue(),
                     onValueChange: props.onToggleChange
-                  }) : /* @__PURE__ */ jsx(import_react_native20.TouchableOpacity, {
+                  }) : /* @__PURE__ */ jsx(import_react_native22.TouchableOpacity, {
                     onPress: () => {
                       props.onToggleChange?.(!props.toggleValue());
                     },
@@ -9428,7 +9439,7 @@
               })
             ]
           }),
-          props.descriptionLabel && /* @__PURE__ */ jsx(Text2, {
+          props.descriptionLabel && /* @__PURE__ */ jsx(Text, {
             variant: "text-md/medium",
             children: props.descriptionLabel
           })
@@ -9436,7 +9447,7 @@
       })
     });
   }
-  var import_react_native20, hideActionSheet2, showSimpleActionSheet2, useStyles4;
+  var import_react_native22, hideActionSheet2, showSimpleActionSheet3, useStyles3;
   var init_AddonCard = __esm({
     "src/core/ui/components/AddonCard.tsx"() {
       "use strict";
@@ -9445,16 +9456,16 @@
       init_jsxRuntime();
       init_assets();
       init_lazy();
-      init_common();
       init_components();
       init_wrappers();
+      init_color();
       init_styles();
-      import_react_native20 = __toESM(require_react_native());
+      import_react_native22 = __toESM(require_react_native());
       ({ hideActionSheet: hideActionSheet2 } = lazyDestructure(() => findByProps("openLazy", "hideActionSheet")));
-      ({ showSimpleActionSheet: showSimpleActionSheet2 } = lazyDestructure(() => findByProps("showSimpleActionSheet")));
-      useStyles4 = createStyles({
+      ({ showSimpleActionSheet: showSimpleActionSheet3 } = lazyDestructure(() => findByProps("showSimpleActionSheet")));
+      useStyles3 = createStyles({
         card: {
-          backgroundColor: tokens.colors.CARD_SECONDARY_BG,
+          backgroundColor: semanticColors?.CARD_SECONDARY_BG,
           borderRadius: 12,
           overflow: "hidden"
         },
@@ -9463,7 +9474,8 @@
         },
         headerLeading: {
           flexDirection: "column",
-          justifyContent: "center"
+          justifyContent: "center",
+          scale: 1.2
         },
         headerTrailing: {
           display: "flex",
@@ -9471,13 +9483,25 @@
           gap: 15,
           alignItems: "center"
         },
+        headerLabel: {
+          ...TextStyleSheet["heading-md/semibold"],
+          color: semanticColors.TEXT_NORMAL
+        },
+        headerSubtitle: {
+          ...TextStyleSheet["text-md/semibold"],
+          color: semanticColors.TEXT_MUTED
+        },
+        descriptionLabel: {
+          ...TextStyleSheet["text-md/semibold"],
+          color: semanticColors.TEXT_NORMAL
+        },
         actions: {
           flexDirection: "row-reverse",
           alignItems: "center",
           gap: 5
         },
         iconStyle: {
-          tintColor: tokens.colors.LOGO_PRIMARY,
+          tintColor: semanticColors.LOGO_PRIMARY,
           opacity: 0.2,
           height: 64,
           width: 64,
@@ -9490,27 +9514,35 @@
   });
 
   // src/core/ui/settings/pages/Themes/ThemeCard.tsx
+  function selectAndApply(value, theme) {
+    try {
+      selectTheme(value ? theme : null);
+    } catch (e) {
+      console.error("Error while selectAndApply,", e);
+    }
+  }
   function ThemeCard({ item: theme }) {
-    useObservable([
-      ColorManager_default.preferences
-    ]);
-    var { authors } = theme;
+    useProxy(theme);
+    var [removed, setRemoved] = React.useState(false);
+    if (removed)
+      return null;
+    var { authors } = theme.data;
     return /* @__PURE__ */ jsx(AddonCard, {
-      headerLabel: theme.name,
+      headerLabel: theme.data.name,
       headerSublabel: authors ? `by ${authors.map((i) => i.name).join(", ")}` : "",
-      descriptionLabel: theme.description ?? "No description.",
-      toggleType: !BunnySettings_default.isSafeMode() ? "radio" : void 0,
-      toggleValue: () => ColorManager_default.preferences.selected === theme.id,
+      descriptionLabel: theme.data.description ?? "No description.",
+      toggleType: !settings.safeMode?.enabled ? "radio" : void 0,
+      toggleValue: () => themes[theme.id].selected,
       onToggleChange: (v2) => {
-        ColorManager_default.select(v2 ? theme.id : null);
+        selectAndApply(v2, theme);
       },
-      overflowTitle: theme.name,
+      overflowTitle: theme.data.name,
       overflowActions: [
         {
           icon: "ic_sync_24px",
           label: Strings.REFETCH,
           onPress: () => {
-            ColorManager_default.refresh(theme.id).then(() => {
+            fetchTheme(theme.id, theme.selected).then(() => {
               showToast(Strings.THEME_REFETCH_SUCCESSFUL, findAssetId("toast_image_saved"));
             }).catch(() => {
               showToast(Strings.THEME_REFETCH_FAILED, findAssetId("Small"));
@@ -9521,7 +9553,7 @@
           icon: "copy",
           label: Strings.COPY_URL,
           onPress: () => {
-            clipboard.setString(ColorManager_default.infos[theme.id].sourceUrl);
+            clipboard.setString(theme.id);
             showToast.showCopyToClipboard();
           }
         },
@@ -9532,13 +9564,17 @@
           onPress: () => showConfirmationAlert({
             title: Strings.HOLD_UP,
             content: formatString("ARE_YOU_SURE_TO_DELETE_THEME", {
-              name: theme.name
+              name: theme.data.name
             }),
             confirmText: Strings.DELETE,
             cancelText: Strings.CANCEL,
             confirmColor: "red",
             onConfirm: () => {
-              ColorManager_default.uninstall(theme.id).catch((e) => {
+              removeTheme(theme.id).then((wasSelected) => {
+                setRemoved(true);
+                if (wasSelected)
+                  selectAndApply(false, theme);
+              }).catch((e) => {
                 showToast(e.message, findAssetId("Small"));
               });
             }
@@ -9554,12 +9590,12 @@
       init_promiseAllSettled();
       init_jsxRuntime();
       init_i18n();
-      init_BunnySettings();
       init_AddonCard();
       init_alerts2();
-      init_ColorManager();
-      init_assets();
       init_storage();
+      init_themes();
+      init_assets();
+      init_settings();
       init_common();
       init_toasts();
     }
@@ -9571,36 +9607,32 @@
     default: () => Themes
   });
   function Themes() {
-    BunnySettings_default.useSettings();
-    useObservable([
-      ColorManager_default.infos,
-      ColorManager_default.preferences
-    ]);
+    useProxy(settings);
+    useProxy(themes);
     return /* @__PURE__ */ jsx(AddonPage, {
       title: Strings.THEMES,
       searchKeywords: [
-        "name",
-        "description",
-        (p) => p.authors?.map((a) => a.name).join(", ") ?? "unknown"
+        "data.name",
+        "data.description",
+        (p) => p.data.authors?.map((a) => a.name).join(", ") ?? ""
       ],
       sortOptions: {
-        "Name (A-Z)": (a, b3) => a.name.localeCompare(b3.name),
-        "Name (Z-A)": (a, b3) => b3.name.localeCompare(a.name)
+        "Name (A-Z)": (a, b3) => a.data.name.localeCompare(b3.data.name),
+        "Name (Z-A)": (a, b3) => b3.data.name.localeCompare(a.data.name)
       },
       installAction: {
         label: "Install a theme",
-        fetchFn: (url2) => ColorManager_default.install(url2)
+        fetchFn: installTheme
       },
-      items: ColorManager_default.getAllIds(),
-      resolveItem: (id) => ColorManager_default.getDisplayInfo(id),
+      items: Object.values(themes),
       safeModeHint: {
         message: formatString("SAFE_MODE_NOTICE_THEMES", {
-          enabled: Boolean(ColorManager_default.preferences.selected)
+          enabled: Boolean(settings.safeMode?.currentThemeId)
         }),
-        footer: ColorManager_default.preferences.selected && /* @__PURE__ */ jsx(Button, {
+        footer: settings.safeMode?.currentThemeId && /* @__PURE__ */ jsx(Button, {
           size: "small",
           text: Strings.DISABLE_THEME,
-          onPress: () => ColorManager_default.select(null),
+          onPress: () => delete settings.safeMode?.currentThemeId,
           style: {
             marginTop: 8
           }
@@ -9609,14 +9641,14 @@
       CardComponent: ThemeCard,
       OptionsActionSheetComponent: () => {
         useObservable([
-          ColorManager_default.preferences
+          colorsPref
         ]);
         return /* @__PURE__ */ jsxs(ActionSheet, {
           children: [
             /* @__PURE__ */ jsx(BottomSheetTitleHeader, {
               title: "Options"
             }),
-            /* @__PURE__ */ jsxs(import_react_native21.View, {
+            /* @__PURE__ */ jsxs(import_react_native23.View, {
               style: {
                 paddingVertical: 20,
                 gap: 12
@@ -9624,11 +9656,11 @@
               children: [
                 /* @__PURE__ */ jsxs(TableRadioGroup, {
                   title: "Override Theme Type",
-                  value: ColorManager_default.preferences.type ?? "auto",
+                  value: colorsPref.type ?? "auto",
                   hasIcons: true,
                   onChange: (type) => {
-                    ColorManager_default.preferences.type = type !== "auto" ? type : void 0;
-                    updateBunnyColor(ColorManager_default.getCurrentManifest(), {
+                    colorsPref.type = type !== "auto" ? type : void 0;
+                    getCurrentTheme()?.data && updateBunnyColor(getCurrentTheme().data, {
                       update: true
                     });
                   },
@@ -9658,10 +9690,10 @@
                 }),
                 /* @__PURE__ */ jsxs(TableRadioGroup, {
                   title: "Chat Background",
-                  value: ColorManager_default.preferences.customBackground ?? "shown",
+                  value: colorsPref.customBackground ?? "shown",
                   hasIcons: true,
                   onChange: (type) => {
-                    ColorManager_default.preferences.customBackground = type !== "shown" ? type : null;
+                    colorsPref.customBackground = type !== "shown" ? type : null;
                   },
                   children: [
                     /* @__PURE__ */ jsx(TableRadioRow, {
@@ -9687,7 +9719,7 @@
       }
     });
   }
-  var import_react_native21;
+  var import_react_native23;
   var init_Themes = __esm({
     "src/core/ui/settings/pages/Themes/index.tsx"() {
       "use strict";
@@ -9695,15 +9727,178 @@
       init_promiseAllSettled();
       init_jsxRuntime();
       init_i18n();
-      init_BunnySettings();
       init_AddonPage();
       init_ThemeCard();
-      init_ColorManager();
+      init_storage();
+      init_themes();
+      init_preferences();
       init_updater();
       init_assets();
-      init_storage();
+      init_settings();
+      init_storage2();
       init_components();
-      import_react_native21 = __toESM(require_react_native());
+      import_react_native23 = __toESM(require_react_native());
+    }
+  });
+
+  // src/lib/addons/fonts/index.ts
+  var fonts_exports = {};
+  __export(fonts_exports, {
+    fonts: () => fonts,
+    installFont: () => installFont,
+    removeFont: () => removeFont,
+    saveFont: () => saveFont,
+    selectFont: () => selectFont,
+    updateFonts: () => updateFonts,
+    validateFont: () => validateFont
+  });
+  function writeFont(font) {
+    return _writeFont.apply(this, arguments);
+  }
+  function _writeFont() {
+    _writeFont = _async_to_generator(function* (font) {
+      if (!font && font !== null)
+        throw new Error("Arg font must be a valid object or null");
+      if (font) {
+        yield writeFile("fonts.json", JSON.stringify(font));
+      } else {
+        yield removeFile("fonts.json");
+      }
+    });
+    return _writeFont.apply(this, arguments);
+  }
+  function validateFont(font) {
+    if (!font || typeof font !== "object")
+      throw new Error("URL returned a null/non-object JSON");
+    if (typeof font.spec !== "number")
+      throw new Error("Invalid font 'spec' number");
+    if (font.spec !== 1)
+      throw new Error("Only fonts which follows spec:1 are supported");
+    var requiredFields = [
+      "name",
+      "main"
+    ];
+    if (requiredFields.some((f) => !font[f]))
+      throw new Error(`Font is missing one of the fields: ${requiredFields}`);
+    if (font.name.startsWith("__"))
+      throw new Error("Font names cannot start with __");
+    if (font.name in fonts)
+      throw new Error(`There is already a font named '${font.name}' installed`);
+  }
+  function saveFont(data) {
+    return _saveFont.apply(this, arguments);
+  }
+  function _saveFont() {
+    _saveFont = _async_to_generator(function* (data, selected = false) {
+      var fontDefJson;
+      if (typeof data === "object" && data.__source)
+        data = data.__source;
+      if (typeof data === "string") {
+        try {
+          fontDefJson = yield (yield safeFetch(data)).json();
+          fontDefJson.__source = data;
+        } catch (e) {
+          throw new Error(`Failed to fetch fonts at ${data}`, {
+            cause: e
+          });
+        }
+      } else {
+        fontDefJson = data;
+      }
+      validateFont(fontDefJson);
+      try {
+        yield Promise.all(Object.entries(fontDefJson.main).map(/* @__PURE__ */ function() {
+          var _ref = _async_to_generator(function* ([font, url2]) {
+            var ext = url2.split(".").pop();
+            if (ext !== "ttf" && ext !== "otf")
+              ext = "ttf";
+            var path = `downloads/fonts/${fontDefJson.name}/${font}.${ext}`;
+            if (!(yield fileExists(path)))
+              yield downloadFile(url2, path);
+          });
+          return function(_2) {
+            return _ref.apply(this, arguments);
+          };
+        }()));
+      } catch (e) {
+        throw new Error("Failed to download font assets", {
+          cause: e
+        });
+      }
+      fonts[fontDefJson.name] = fontDefJson;
+      if (selected)
+        writeFont(fonts[fontDefJson.name]);
+      return fontDefJson;
+    });
+    return _saveFont.apply(this, arguments);
+  }
+  function installFont(url2) {
+    return _installFont.apply(this, arguments);
+  }
+  function _installFont() {
+    _installFont = _async_to_generator(function* (url2, selected = false) {
+      if (typeof url2 !== "string" || Object.values(fonts).some((f) => typeof f === "object" && f.__source === url2)) {
+        throw new Error("Invalid source or font was already installed");
+      }
+      var font = yield saveFont(url2);
+      if (selected)
+        yield selectFont(font.name);
+    });
+    return _installFont.apply(this, arguments);
+  }
+  function selectFont(name) {
+    return _selectFont.apply(this, arguments);
+  }
+  function _selectFont() {
+    _selectFont = _async_to_generator(function* (name) {
+      if (name && !(name in fonts))
+        throw new Error("Selected font does not exist!");
+      if (name) {
+        fonts.__selected = name;
+      } else {
+        delete fonts.__selected;
+      }
+      yield writeFont(name == null ? null : fonts[name]);
+    });
+    return _selectFont.apply(this, arguments);
+  }
+  function removeFont(name) {
+    return _removeFont.apply(this, arguments);
+  }
+  function _removeFont() {
+    _removeFont = _async_to_generator(function* (name) {
+      var selected = fonts.__selected === name;
+      if (selected)
+        yield selectFont(null);
+      delete fonts[name];
+      try {
+        yield clearFolder(`downloads/fonts/${name}`);
+      } catch (e) {
+      }
+    });
+    return _removeFont.apply(this, arguments);
+  }
+  function updateFonts() {
+    return _updateFonts.apply(this, arguments);
+  }
+  function _updateFonts() {
+    _updateFonts = _async_to_generator(function* () {
+      yield awaitStorage(fonts);
+      yield allSettled(Object.keys(fonts).map((name) => saveFont(fonts[name], fonts.__selected === name)));
+    });
+    return _updateFonts.apply(this, arguments);
+  }
+  var fonts;
+  var init_fonts = __esm({
+    "src/lib/addons/fonts/index.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_async_to_generator();
+      init_storage();
+      init_fs();
+      init_utils();
+      fonts = wrapSync(createStorage(createMMKVBackend("BUNNY_FONTS")));
     }
   });
 
@@ -9719,29 +9914,29 @@
     }, fileNames[0] || "");
     return shortest?.replace(/-[A-Za-z]*$/, "") || null;
   }
-  function RevengeFontsExtractor({ fonts, setName }) {
-    var currentTheme = ColorManager_default.getCurrentManifest();
+  function RevengeFontsExtractor({ fonts: fonts2, setName }) {
+    var currentTheme = getCurrentTheme().data;
     var themeFonts = currentTheme.fonts;
-    var [fontName, setFontName] = (0, import_react7.useState)(guessFontName(Object.values(themeFonts)));
-    var [error2, setError] = (0, import_react7.useState)(void 0);
-    return /* @__PURE__ */ jsxs(import_react_native22.View, {
+    var [fontName, setFontName] = (0, import_react6.useState)(guessFontName(Object.values(themeFonts)));
+    var [error, setError] = (0, import_react6.useState)(void 0);
+    return /* @__PURE__ */ jsxs(import_react_native24.View, {
       style: {
         padding: 8,
         paddingBottom: 16,
         gap: 12
       },
       children: [
-        /* @__PURE__ */ jsx(TextInput2, {
+        /* @__PURE__ */ jsx(TextInput, {
           autoFocus: true,
           size: "md",
           label: Strings.FONT_NAME,
           value: fontName,
           placeholder: fontName || "Whitney",
           onChange: setFontName,
-          errorMessage: error2,
-          state: error2 ? "error" : void 0
+          errorMessage: error,
+          state: error ? "error" : void 0
         }),
-        /* @__PURE__ */ jsx(Text2, {
+        /* @__PURE__ */ jsx(Text, {
           variant: "text-xs/normal",
           color: "text-muted",
           children: formatString("THEME_EXTRACTOR_DESC", {
@@ -9757,17 +9952,14 @@
             if (!fontName)
               return;
             try {
-              FontManager_default.validate({
-                spec: 3,
-                id: fontName.toLowerCase(),
-                display: {
-                  name: fontName
-                },
+              validateFont({
+                spec: 1,
+                name: fontName,
                 main: themeFonts
-              }, null);
+              });
               setName(fontName);
-              Object.assign(fonts, themeFonts);
-              hideSheet("FontEditorActionSheet");
+              Object.assign(fonts2, themeFonts);
+              actionSheet2.hideActionSheet();
             } catch (e) {
               setError(String(e));
             }
@@ -9776,26 +9968,26 @@
       ]
     });
   }
-  function JsonFontImporter({ fonts, setName, setId, setSource }) {
-    var [fontLink, setFontLink] = (0, import_react7.useState)("");
-    var [saving, setSaving] = (0, import_react7.useState)(false);
-    var [error2, setError] = (0, import_react7.useState)(void 0);
-    return /* @__PURE__ */ jsxs(import_react_native22.View, {
+  function JsonFontImporter({ fonts: fonts2, setName, setSource }) {
+    var [fontLink, setFontLink] = (0, import_react6.useState)("");
+    var [saving, setSaving] = (0, import_react6.useState)(false);
+    var [error, setError] = (0, import_react6.useState)(void 0);
+    return /* @__PURE__ */ jsxs(import_react_native24.View, {
       style: {
         padding: 8,
         paddingBottom: 16,
         gap: 12
       },
       children: [
-        /* @__PURE__ */ jsx(TextInput2, {
+        /* @__PURE__ */ jsx(TextInput, {
           autoFocus: true,
           size: "md",
           label: "Font Link",
           value: fontLink,
           placeholder: "https://link.to/font/pack.json",
           onChange: setFontLink,
-          errorMessage: error2,
-          state: error2 ? "error" : void 0
+          errorMessage: error,
+          state: error ? "error" : void 0
         }),
         /* @__PURE__ */ jsx(Button, {
           size: "md",
@@ -9810,28 +10002,27 @@
                 cache: "no-store"
               });
               var json = yield res.json();
-              FontManager_default.validate(json, fontLink);
-              setId(json.spec === 3 ? json.id : json.name.toLowerCase());
-              setName(json.spec === 3 ? json.display.name : json.name);
+              validateFont(json);
+              setName(json.name);
               setSource(fontLink);
-              Object.assign(fonts, json.main);
-            })().then(() => hideSheet("FontEditorActionSheet")).catch((e) => setError(String(e))).finally(() => setSaving(false));
+              Object.assign(fonts2, json.main);
+            })().then(() => actionSheet2.hideActionSheet()).catch((e) => setError(String(e))).finally(() => setSaving(false));
           }
         })
       ]
     });
   }
   function EntryEditorActionSheet(props) {
-    var [familyName, setFamilyName] = (0, import_react7.useState)(props.name);
-    var [fontUrl, setFontUrl] = (0, import_react7.useState)(props.fontEntries[props.name]);
-    return /* @__PURE__ */ jsxs(import_react_native22.View, {
+    var [familyName, setFamilyName] = (0, import_react6.useState)(props.name);
+    var [fontUrl, setFontUrl] = (0, import_react6.useState)(props.fontEntries[props.name]);
+    return /* @__PURE__ */ jsxs(import_react_native24.View, {
       style: {
         padding: 8,
         paddingBottom: 16,
         gap: 12
       },
       children: [
-        /* @__PURE__ */ jsx(TextInput2, {
+        /* @__PURE__ */ jsx(TextInput, {
           autoFocus: true,
           size: "md",
           label: "Family Name (to override)",
@@ -9839,7 +10030,7 @@
           placeholder: "ggsans-Bold",
           onChange: setFamilyName
         }),
-        /* @__PURE__ */ jsx(TextInput2, {
+        /* @__PURE__ */ jsx(TextInput, {
           size: "md",
           label: "Font URL",
           value: fontUrl,
@@ -9859,37 +10050,39 @@
     });
   }
   function promptActionSheet(Component, fontEntries, props) {
-    showSheet("FontEditorActionSheet", () => /* @__PURE__ */ jsx(ErrorBoundary, {
-      children: /* @__PURE__ */ jsxs(ActionSheet, {
-        children: [
-          /* @__PURE__ */ jsx(BottomSheetTitleHeader, {
-            title: "Import Font"
-          }),
-          /* @__PURE__ */ jsx(Component, {
-            fonts: fontEntries,
-            ...props
-          })
-        ]
+    actionSheet2.openLazy(Promise.resolve({
+      default: () => /* @__PURE__ */ jsx(ErrorBoundary, {
+        children: /* @__PURE__ */ jsxs(ActionSheet, {
+          children: [
+            /* @__PURE__ */ jsx(BottomSheetTitleHeader, {
+              title: "Import Font"
+            }),
+            /* @__PURE__ */ jsx(Component, {
+              fonts: fontEntries,
+              ...props
+            })
+          ]
+        })
       })
-    }));
+    }), "FontEditorActionSheet");
   }
   function NewEntryRow({ fontEntry }) {
-    var nameRef = (0, import_react7.useRef)();
-    var urlRef = (0, import_react7.useRef)();
-    var [nameSet, setNameSet] = (0, import_react7.useState)(false);
-    var [error2, setError] = (0, import_react7.useState)();
-    return /* @__PURE__ */ jsxs(import_react_native22.View, {
+    var nameRef = (0, import_react6.useRef)();
+    var urlRef = (0, import_react6.useRef)();
+    var [nameSet, setNameSet] = (0, import_react6.useState)(false);
+    var [error, setError] = (0, import_react6.useState)();
+    return /* @__PURE__ */ jsxs(import_react_native24.View, {
       style: {
         flexDirection: "row",
         gap: 8,
         justifyContent: "flex-start"
       },
       children: [
-        /* @__PURE__ */ jsx(import_react_native22.View, {
+        /* @__PURE__ */ jsx(import_react_native24.View, {
           style: {
             flex: 1
           },
-          children: /* @__PURE__ */ jsx(TextInput2, {
+          children: /* @__PURE__ */ jsx(TextInput, {
             isRound: true,
             size: "md",
             label: nameSet ? nameRef.current : void 0,
@@ -9899,8 +10092,8 @@
             }),
             leadingText: nameSet ? nameRef.current : "",
             onChange: (text) => (nameSet ? urlRef : nameRef).current = text,
-            errorMessage: error2,
-            state: error2 ? "error" : void 0
+            errorMessage: error,
+            state: error ? "error" : void 0
           })
         }),
         nameSet && /* @__PURE__ */ jsx(IconButton, {
@@ -9939,22 +10132,19 @@
     });
   }
   function FontEditor(props) {
-    var [id, setId] = (0, import_react7.useState)(props.id);
-    var [name, setName] = (0, import_react7.useState)("");
-    var [source, setSource] = (0, import_react7.useState)();
-    var [importing, setIsImporting] = (0, import_react7.useState)(false);
-    var fontEntries = (0, import_react7.useMemo)(() => {
-      return v.from(props.id ? {
-        ...FontManager_default.getManifest(props.id).main
-      } : {});
+    var [name, setName] = (0, import_react6.useState)(props.name);
+    var [source, setSource] = (0, import_react6.useState)();
+    var [importing, setIsImporting] = (0, import_react6.useState)(false);
+    var memoEntry = (0, import_react6.useMemo)(() => {
+      return createProxy(props.name ? {
+        ...fonts[props.name].main
+      } : {}).proxy;
     }, [
-      props.id
+      props.name
     ]);
-    useObservable([
-      fontEntries
-    ]);
+    var fontEntries = useProxy(memoEntry);
     var navigation2 = NavigationNative.useNavigation();
-    return /* @__PURE__ */ jsx(import_react_native22.ScrollView, {
+    return /* @__PURE__ */ jsx(import_react_native24.ScrollView, {
       style: {
         flex: 1
       },
@@ -9968,10 +10158,10 @@
         },
         spacing: 12,
         children: [
-          !props.id ? /* @__PURE__ */ jsxs(TableRowGroup, {
+          !props.name ? /* @__PURE__ */ jsxs(TableRowGroup, {
             title: "Import",
             children: [
-              ColorManager_default.getCurrentManifest()?.fonts && /* @__PURE__ */ jsx(TableRow, {
+              getCurrentTheme()?.data?.fonts && /* @__PURE__ */ jsx(TableRow, {
                 label: Strings.LABEL_EXTRACT_FONTS_FROM_THEME,
                 subLabel: Strings.DESC_EXTRACT_FONTS_FROM_THEME,
                 icon: /* @__PURE__ */ jsx(TableRow.Icon, {
@@ -9989,8 +10179,7 @@
                 }),
                 onPress: () => promptActionSheet(JsonFontImporter, fontEntries, {
                   setName,
-                  setSource,
-                  setId
+                  setSource
                 })
               })
             ]
@@ -10003,11 +10192,11 @@
                   source: findAssetId("RetryIcon")
                 }),
                 onPress: /* @__PURE__ */ _async_to_generator(function* () {
-                  var { sourceUrl } = FontManager_default.traces[props.id];
-                  if (!sourceUrl)
-                    return;
-                  yield FontManager_default.uninstall(props.id);
-                  yield FontManager_default.install(sourceUrl);
+                  var ftCopy = {
+                    ...fonts[props.name]
+                  };
+                  yield removeFont(props.name);
+                  yield saveFont(ftCopy);
                   navigation2.goBack();
                 })
               }),
@@ -10016,18 +10205,11 @@
                 icon: /* @__PURE__ */ jsx(TableRow.Icon, {
                   source: findAssetId("TrashIcon")
                 }),
-                onPress: () => FontManager_default.uninstall(props.id).then(() => navigation2.goBack())
+                onPress: () => removeFont(props.name).then(() => navigation2.goBack())
               })
             ]
           }),
-          /* @__PURE__ */ jsx(TextInput2, {
-            size: "lg",
-            value: id,
-            label: "Font ID",
-            placeholder: "whitney",
-            onChange: setId
-          }),
-          /* @__PURE__ */ jsx(TextInput2, {
+          /* @__PURE__ */ jsx(TextInput, {
             size: "lg",
             value: name,
             label: Strings.FONT_NAME,
@@ -10071,7 +10253,7 @@
               })
             ]
           }),
-          /* @__PURE__ */ jsx(import_react_native22.View, {
+          /* @__PURE__ */ jsx(import_react_native24.View, {
             style: {
               flexDirection: "row",
               justifyContent: "flex-end",
@@ -10081,41 +10263,31 @@
             children: /* @__PURE__ */ jsx(Button, {
               size: "lg",
               loading: importing,
-              disabled: importing || !name || !id || Object.keys(fontEntries).length === 0,
+              disabled: importing || !name || Object.keys(fontEntries).length === 0,
               variant: "primary",
-              text: props.id ? "Save" : "Import",
+              text: props.name ? "Save" : "Import",
               onPress: /* @__PURE__ */ _async_to_generator(function* () {
                 if (!name)
                   return;
                 setIsImporting(true);
-                if (!props.id) {
-                  FontManager_default.saveLocally({
-                    spec: 3,
-                    id: name,
+                if (!props.name) {
+                  saveFont({
+                    spec: 1,
+                    name,
                     main: fontEntries,
-                    display: {
-                      name
-                    }
-                  }, {
-                    markAsEdited: false
+                    __source: source
                   }).then(() => navigation2.goBack()).finally(() => setIsImporting(false));
                 } else {
-                  FontManager_default.saveLocally({
-                    ...FontManager_default.getManifest(props.id),
-                    id,
+                  Object.assign(fonts[props.name], {
+                    name,
                     main: fontEntries,
-                    display: {
-                      ...FontManager_default.getManifest(props.id).display,
-                      name
-                    }
-                  }, {
-                    markAsEdited: true
-                  }).then(() => navigation2.goBack()).finally(() => setIsImporting(false));
+                    __edited: true
+                  });
                   setIsImporting(false);
                   navigation2.goBack();
                 }
               }),
-              icon: findAssetId(props.id ? "toast_image_saved" : "DownloadIcon"),
+              icon: findAssetId(props.name ? "toast_image_saved" : "DownloadIcon"),
               style: {
                 marginLeft: 8
               }
@@ -10125,7 +10297,7 @@
       })
     });
   }
-  var import_react7, import_react_native22;
+  var import_react6, import_react_native24, actionSheet2;
   var init_FontEditor = __esm({
     "src/core/ui/settings/pages/Fonts/FontEditor.tsx"() {
       "use strict";
@@ -10134,18 +10306,18 @@
       init_async_to_generator();
       init_jsxRuntime();
       init_i18n();
-      init_object_observer_min();
-      init_FontManager();
-      init_ColorManager();
-      init_assets();
       init_storage();
-      init_sheets();
+      init_fonts();
+      init_themes();
+      init_assets();
       init_utils();
       init_common();
       init_components();
+      init_wrappers();
       init_components2();
-      import_react7 = __toESM(require_react());
-      import_react_native22 = __toESM(require_react_native());
+      import_react6 = __toESM(require_react());
+      import_react_native24 = __toESM(require_react_native());
+      actionSheet2 = findByPropsLazy("hideActionSheet");
     }
   });
 
@@ -10164,7 +10336,7 @@
     var { fontFamily: fontFamilyList, fontSize } = TextStyleSheet["text-md/medium"];
     var fontFamily = fontFamilyList.split(/,/g)[0];
     var typeface = Skia.useFont(font.main[fontFamily])?.getTypeface();
-    var paragraph = (0, import_react8.useMemo)(() => {
+    var paragraph = (0, import_react7.useMemo)(() => {
       if (!typeface)
         return null;
       var fMgr = SkiaApi.TypefaceFontProvider.Make();
@@ -10181,7 +10353,7 @@
     ]);
     return (
       // This does not work, actually :woeis:
-      /* @__PURE__ */ jsx(import_react_native23.View, {
+      /* @__PURE__ */ jsx(import_react_native25.View, {
         style: {
           height: 64
         },
@@ -10195,12 +10367,12 @@
             y: 0,
             width: 300
           })
-        }) : /* @__PURE__ */ jsx(import_react_native23.View, {
+        }) : /* @__PURE__ */ jsx(import_react_native25.View, {
           style: {
             justifyContent: "center",
             alignItems: "center"
           },
-          children: /* @__PURE__ */ jsx(Text2, {
+          children: /* @__PURE__ */ jsx(Text, {
             color: "text-muted",
             variant: "heading-lg/semibold",
             children: "Loading..."
@@ -10210,29 +10382,26 @@
     );
   }
   function FontCard({ item: font }) {
-    useObservable([
-      FontManager_default.preferences,
-      FontManager_default.traces
-    ]);
+    useProxy(fonts);
     var navigation2 = NavigationNative.useNavigation();
-    var selected = FontManager_default.preferences.selected === font.id;
+    var selected = fonts.__selected === font.name;
     return /* @__PURE__ */ jsx(Card, {
       children: /* @__PURE__ */ jsxs(Stack, {
         spacing: 16,
         children: [
-          /* @__PURE__ */ jsxs(import_react_native23.View, {
+          /* @__PURE__ */ jsxs(import_react_native25.View, {
             style: {
               flexDirection: "row",
               alignItems: "center"
             },
             children: [
-              /* @__PURE__ */ jsx(import_react_native23.View, {
-                children: /* @__PURE__ */ jsx(Text2, {
+              /* @__PURE__ */ jsx(import_react_native25.View, {
+                children: /* @__PURE__ */ jsx(Text, {
                   variant: "heading-lg/semibold",
-                  children: font.display.name
+                  children: font.name
                 })
               }),
-              /* @__PURE__ */ jsx(import_react_native23.View, {
+              /* @__PURE__ */ jsx(import_react_native25.View, {
                 style: {
                   marginLeft: "auto"
                 },
@@ -10245,7 +10414,7 @@
                         navigation2.push("BUNNY_CUSTOM_PAGE", {
                           title: "Edit Font",
                           render: () => /* @__PURE__ */ jsx(FontEditor, {
-                            id: font.id
+                            name: font.name
                           })
                         });
                       },
@@ -10259,14 +10428,14 @@
                       variant: selected ? "secondary" : "primary",
                       text: selected ? "Unapply" : "Apply",
                       onPress: /* @__PURE__ */ _async_to_generator(function* () {
-                        yield FontManager_default.select(selected ? null : font.id);
+                        yield selectFont(selected ? null : font.name);
                         showConfirmationAlert({
                           title: Strings.HOLD_UP,
                           content: "Reload Discord to apply changes?",
                           confirmText: Strings.RELOAD,
                           cancelText: Strings.CANCEL,
                           confirmColor: "red",
-                          onConfirm: RTNBundleUpdaterManager.reload
+                          onConfirm: BundleUpdaterManager.reload
                         });
                       })
                     })
@@ -10282,7 +10451,7 @@
       })
     });
   }
-  var Skia, import_react8, import_react_native23;
+  var Skia, import_react7, import_react_native25, useToken;
   var init_FontCard = __esm({
     "src/core/ui/settings/pages/Fonts/FontCard.tsx"() {
       "use strict";
@@ -10292,17 +10461,20 @@
       init_jsxRuntime();
       init_i18n();
       init_alerts2();
-      init_FontManager();
-      init_assets();
-      init_rn_modules();
       init_storage();
+      init_fonts();
+      init_assets();
+      init_modules();
+      init_lazy();
+      init_metro();
       init_common();
       init_components();
       Skia = __toESM(require_react_native_skia());
       init_styles();
-      import_react8 = __toESM(require_react());
-      import_react_native23 = __toESM(require_react_native());
+      import_react7 = __toESM(require_react());
+      import_react_native25 = __toESM(require_react_native());
       init_FontEditor();
+      ({ useToken } = lazyDestructure(() => findByProps("useToken")));
     }
   });
 
@@ -10312,23 +10484,20 @@
     default: () => Fonts
   });
   function Fonts() {
-    BunnySettings_default.useSettings();
-    useObservable([
-      FontManager_default.preferences,
-      FontManager_default.traces
-    ]);
+    useProxy(settings);
+    useProxy(fonts);
     var navigation2 = NavigationNative.useNavigation();
     return /* @__PURE__ */ jsx(AddonPage, {
       title: Strings.FONTS,
       searchKeywords: [
-        "display.name"
+        "name",
+        "description"
       ],
       sortOptions: {
-        "Name (A-Z)": (a, b3) => a.display.name.localeCompare(b3.display.name),
-        "Name (Z-A)": (a, b3) => b3.display.name.localeCompare(a.display.name)
+        "Name (A-Z)": (a, b3) => a.name.localeCompare(b3.name),
+        "Name (Z-A)": (a, b3) => b3.name.localeCompare(a.name)
       },
-      items: FontManager_default.getAllIds(),
-      resolveItem: (id) => FontManager_default.getManifest(id),
+      items: Object.values(fonts),
       safeModeHint: {
         message: Strings.SAFE_MODE_NOTICE_FONTS
       },
@@ -10351,11 +10520,11 @@
       init_promiseAllSettled();
       init_jsxRuntime();
       init_i18n();
-      init_BunnySettings();
       init_AddonPage();
       init_FontEditor();
-      init_FontManager();
       init_storage();
+      init_fonts();
+      init_settings();
       init_common();
       init_FontCard();
     }
@@ -10363,9 +10532,9 @@
 
   // src/core/ui/hooks/useFS.ts
   function useFileExists(path, prefix) {
-    var [state, setState] = (0, import_react9.useState)(2);
+    var [state, setState] = (0, import_react8.useState)(2);
     var check = () => fileExists(path, prefix).then((exists) => setState(exists ? 1 : 0)).catch(() => setState(3));
-    var customFS = (0, import_react9.useMemo)(() => new Proxy(fs_exports, {
+    var customFS = (0, import_react8.useMemo)(() => new Proxy(fs_exports, {
       get(target, p, receiver) {
         var val = Reflect.get(target, p, receiver);
         if (typeof val !== "function")
@@ -10380,20 +10549,20 @@
         };
       }
     }), []);
-    (0, import_react9.useEffect)(() => void check(), []);
+    (0, import_react8.useEffect)(() => void check(), []);
     return [
       state,
       customFS
     ];
   }
-  var import_react9, CheckState;
+  var import_react8, CheckState;
   var init_useFS = __esm({
     "src/core/ui/hooks/useFS.ts"() {
       "use strict";
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
       init_fs();
-      import_react9 = __toESM(require_react());
+      import_react8 = __toESM(require_react());
       (function(CheckState2) {
         CheckState2[CheckState2["FALSE"] = 0] = "FALSE";
         CheckState2[CheckState2["TRUE"] = 1] = "TRUE";
@@ -10407,7 +10576,7 @@
   function AssetDisplay({ asset }) {
     return /* @__PURE__ */ jsx(LegacyFormRow, {
       label: `${asset.name} - ${asset.id}`,
-      trailing: /* @__PURE__ */ jsx(import_react_native24.Image, {
+      trailing: /* @__PURE__ */ jsx(import_react_native26.Image, {
         source: asset.id,
         style: {
           width: 32,
@@ -10420,7 +10589,7 @@
       }
     });
   }
-  var import_react_native24;
+  var import_react_native26;
   var init_AssetDisplay = __esm({
     "src/core/ui/settings/pages/Developer/AssetDisplay.tsx"() {
       "use strict";
@@ -10430,16 +10599,15 @@
       init_common();
       init_components();
       init_toasts();
-      import_react_native24 = __toESM(require_react_native());
+      import_react_native26 = __toESM(require_react_native());
     }
   });
 
   // src/core/ui/settings/pages/Developer/AssetBrowser.tsx
   function AssetBrowser() {
     var [search, setSearch] = React.useState("");
-    var all = (0, import_react10.useMemo)(() => Array.from(iterateAssets()), []);
     return /* @__PURE__ */ jsx(ErrorBoundary, {
-      children: /* @__PURE__ */ jsxs(import_react_native25.View, {
+      children: /* @__PURE__ */ jsxs(import_react_native27.View, {
         style: {
           flex: 1
         },
@@ -10450,8 +10618,8 @@
             },
             onChangeText: (v2) => setSearch(v2)
           }),
-          /* @__PURE__ */ jsx(import_react_native25.FlatList, {
-            data: all.filter((a) => a.name.includes(search) || a.id.toString() === search),
+          /* @__PURE__ */ jsx(import_react_native27.FlatList, {
+            data: Object.values(assetsMap).filter((a) => a.name.includes(search) || a.id.toString() === search),
             renderItem: ({ item }) => /* @__PURE__ */ jsx(AssetDisplay, {
               asset: item
             }),
@@ -10462,7 +10630,7 @@
       })
     });
   }
-  var import_react10, import_react_native25;
+  var import_react_native27;
   var init_AssetBrowser = __esm({
     "src/core/ui/settings/pages/Developer/AssetBrowser.tsx"() {
       "use strict";
@@ -10473,8 +10641,7 @@
       init_assets();
       init_components();
       init_components2();
-      import_react10 = __toESM(require_react());
-      import_react_native25 = __toESM(require_react_native());
+      import_react_native27 = __toESM(require_react_native());
     }
   });
 
@@ -10485,11 +10652,12 @@
   });
   function Developer() {
     var [rdtFileExists, fs] = useFileExists("preloads/reactDevtools.js");
-    var styles = useStyles5();
+    var styles = useStyles4();
     var navigation2 = NavigationNative.useNavigation();
-    BunnySettings_default.useSettings();
+    useProxy(settings);
+    useProxy(loaderConfig);
     return /* @__PURE__ */ jsx(ErrorBoundary, {
-      children: /* @__PURE__ */ jsx(import_react_native26.ScrollView, {
+      children: /* @__PURE__ */ jsx(import_react_native28.ScrollView, {
         style: {
           flex: 1
         },
@@ -10503,7 +10671,7 @@
           },
           spacing: 24,
           children: [
-            /* @__PURE__ */ jsx(TextInput2, {
+            /* @__PURE__ */ jsx(TextInput, {
               label: Strings.DEBUGGER_URL,
               placeholder: "127.0.0.1:9090",
               size: "md",
@@ -10511,8 +10679,8 @@
                 style: styles.leadingText,
                 children: "ws://"
               }),
-              defaultValue: BunnySettings_default.developer.debuggerUrl,
-              onChange: (v2) => BunnySettings_default.developer.debuggerUrl = v2
+              defaultValue: settings.debuggerUrl,
+              onChange: (v2) => settings.debuggerUrl = v2
             }),
             /* @__PURE__ */ jsxs(TableRowGroup, {
               title: Strings.DEBUG,
@@ -10522,23 +10690,23 @@
                   icon: /* @__PURE__ */ jsx(TableRow.Icon, {
                     source: findAssetId("copy")
                   }),
-                  onPress: () => connectToDebugger(BunnySettings_default.developer.debuggerUrl)
+                  onPress: () => connectToDebugger(settings.debuggerUrl)
                 }),
-                LOADER_IDENTITY.features.rdt && /* @__PURE__ */ jsx(Fragment, {
+                isReactDevToolsPreloaded() && /* @__PURE__ */ jsx(Fragment, {
                   children: /* @__PURE__ */ jsx(TableRow, {
                     label: Strings.CONNECT_TO_REACT_DEVTOOLS,
                     icon: /* @__PURE__ */ jsx(TableRow.Icon, {
                       source: findAssetId("ic_badge_staff")
                     }),
-                    onPress: () => LOADER_IDENTITY.features.rdt?.exports?.connectToDevTools({
-                      host: BunnySettings_default.developer.debuggerUrl.split(":")?.[0],
-                      resolveRNStyle: import_react_native26.StyleSheet.flatten
+                    onPress: () => window[getReactDevToolsProp() || "__vendetta_rdc"]?.connectToDevTools({
+                      host: settings.debuggerUrl.split(":")?.[0],
+                      resolveRNStyle: import_react_native28.StyleSheet.flatten
                     })
                   })
                 })
               ]
             }),
-            LOADER_IDENTITY.features.loaderConfig && /* @__PURE__ */ jsx(Fragment, {
+            isLoaderConfigSupported() && /* @__PURE__ */ jsx(Fragment, {
               children: /* @__PURE__ */ jsxs(TableRowGroup, {
                 title: "Loader config",
                 children: [
@@ -10548,19 +10716,30 @@
                     icon: /* @__PURE__ */ jsx(TableRow.Icon, {
                       source: findAssetId("copy")
                     }),
-                    value: BunnySettings_default.loader.customLoadUrl.enabled,
+                    value: loaderConfig.customLoadUrl.enabled,
                     onValueChange: (v2) => {
-                      BunnySettings_default.loader.customLoadUrl.enabled = v2;
+                      loaderConfig.customLoadUrl.enabled = v2;
                     }
                   }),
-                  BunnySettings_default.loader.customLoadUrl.enabled && /* @__PURE__ */ jsx(TableRow, {
-                    label: /* @__PURE__ */ jsx(TextInput2, {
-                      defaultValue: BunnySettings_default.loader.customLoadUrl.url,
+                  loaderConfig.customLoadUrl.enabled && /* @__PURE__ */ jsx(TableRow, {
+                    label: /* @__PURE__ */ jsx(TextInput, {
+                      defaultValue: loaderConfig.customLoadUrl.url,
                       size: "md",
-                      onChange: (v2) => BunnySettings_default.loader.customLoadUrl.url = v2,
+                      onChange: (v2) => loaderConfig.customLoadUrl.url = v2,
                       placeholder: "http://localhost:4040/vendetta.js",
                       label: Strings.BUNNY_URL
                     })
+                  }),
+                  isReactDevToolsPreloaded() && isVendettaLoader() && /* @__PURE__ */ jsx(TableSwitchRow, {
+                    label: Strings.LOAD_REACT_DEVTOOLS,
+                    subLabel: `${Strings.VERSION}: ${getReactDevToolsVersion()}`,
+                    icon: /* @__PURE__ */ jsx(TableRow.Icon, {
+                      source: findAssetId("ic_badge_staff")
+                    }),
+                    value: loaderConfig.loadReactDevTools,
+                    onValueChange: (v2) => {
+                      loaderConfig.loadReactDevTools = v2;
+                    }
                   })
                 ]
               })
@@ -10586,7 +10765,7 @@
                   icon: /* @__PURE__ */ jsx(TableRow.Icon, {
                     source: findAssetId("ic_warning_24px")
                   }),
-                  onPress: () => showSimpleActionSheet3({
+                  onPress: () => showSimpleActionSheet4({
                     key: "ErrorBoundaryTools",
                     header: {
                       title: "Which ErrorBoundary do you want to trip?",
@@ -10648,9 +10827,9 @@
                   icon: /* @__PURE__ */ jsx(TableRow.Icon, {
                     source: findAssetId("PencilIcon")
                   }),
-                  value: BunnySettings_default.developer.evalCommandEnabled,
+                  value: settings.enableEvalCommand,
                   onValueChange: (v2) => {
-                    BunnySettings_default.developer.evalCommandEnabled = v2;
+                    settings.enableEvalCommand = v2;
                   }
                 })
               ]
@@ -10660,7 +10839,7 @@
       })
     });
   }
-  var import_react_native26, hideActionSheet3, showSimpleActionSheet3, RDT_EMBED_LINK, useStyles5;
+  var import_react_native28, hideActionSheet3, showSimpleActionSheet4, RDT_EMBED_LINK, useStyles4;
   var init_Developer = __esm({
     "src/core/ui/settings/pages/Developer/index.tsx"() {
       "use strict";
@@ -10669,26 +10848,28 @@
       init_async_to_generator();
       init_jsxRuntime();
       init_i18n();
-      init_debugger();
-      init_BunnySettings();
       init_useFS();
       init_AssetBrowser();
+      init_storage();
       init_assets();
+      init_debug();
       init_loader();
+      init_settings();
       init_lazy();
       init_common();
       init_components();
       init_wrappers();
+      init_color();
       init_components2();
       init_styles();
-      import_react_native26 = __toESM(require_react_native());
+      import_react_native28 = __toESM(require_react_native());
       ({ hideActionSheet: hideActionSheet3 } = lazyDestructure(() => findByProps("openLazy", "hideActionSheet")));
-      ({ showSimpleActionSheet: showSimpleActionSheet3 } = lazyDestructure(() => findByProps("showSimpleActionSheet")));
+      ({ showSimpleActionSheet: showSimpleActionSheet4 } = lazyDestructure(() => findByProps("showSimpleActionSheet")));
       RDT_EMBED_LINK = "https://raw.githubusercontent.com/amsyarasyiq/rdt-embedder/main/dist.js";
-      useStyles5 = createStyles({
+      useStyles4 = createStyles({
         leadingText: {
           ...TextStyleSheet["heading-md/semibold"],
-          color: tokens.colors.TEXT_MUTED,
+          color: semanticColors.TEXT_MUTED,
           marginRight: -4
         }
       });
@@ -10707,57 +10888,34 @@
             uri: pyoncord_default
           },
           render: () => Promise.resolve().then(() => (init_General(), General_exports)),
-          rawTabsConfig: {
-            useTrailing: () => `(${"2b93038-dev"})`
-          }
+          useTrailing: () => `(${"ada2480-dev"})`
         },
         {
           key: "BUNNY_PLUGINS",
           title: () => Strings.PLUGINS,
           icon: findAssetId("ActivitiesIcon"),
-          render: () => Promise.resolve().then(() => (init_Plugins(), Plugins_exports)),
-          rawTabsConfig: {
-            useTrailing: () => {
-              PluginManager_default.usePlugins();
-              return `${PluginManager_default.getAllIds().length} installed`;
-            }
-          }
+          render: () => Promise.resolve().then(() => (init_Plugins(), Plugins_exports))
         },
         {
           key: "BUNNY_THEMES",
           title: () => Strings.THEMES,
           icon: findAssetId("PaintPaletteIcon"),
           render: () => Promise.resolve().then(() => (init_Themes(), Themes_exports)),
-          usePredicate: () => LOADER_IDENTITY.features.themes != null,
-          rawTabsConfig: {
-            useTrailing: () => {
-              ColorManager_default.useColors();
-              return `${ColorManager_default.getAllIds().length} installed`;
-            }
-          }
+          usePredicate: () => isThemeSupported()
         },
         {
           key: "BUNNY_FONTS",
           title: () => Strings.FONTS,
           icon: findAssetId("ic_add_text"),
           render: () => Promise.resolve().then(() => (init_Fonts(), Fonts_exports)),
-          usePredicate: () => LOADER_IDENTITY.features.fonts != null,
-          rawTabsConfig: {
-            useTrailing: () => {
-              FontManager_default.useFonts();
-              return `${FontManager_default.getAllIds().length} installed`;
-            }
-          }
+          usePredicate: () => isFontSupported()
         },
         {
           key: "BUNNY_DEVELOPER",
           title: () => Strings.DEVELOPER,
           icon: findAssetId("WrenchIcon"),
           render: () => Promise.resolve().then(() => (init_Developer(), Developer_exports)),
-          usePredicate: () => {
-            BunnySettings_default.useSettings();
-            return BunnySettings_default.developer.enabled ?? false;
-          }
+          usePredicate: () => useProxy(settings).developerSettings ?? false
         }
       ]
     });
@@ -10766,264 +10924,27 @@
       items: []
     });
   }
-  var init_settings2 = __esm({
+  var init_settings3 = __esm({
     "src/core/ui/settings/index.ts"() {
       "use strict";
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
       init_pyoncord();
       init_i18n();
-      init_BunnySettings();
-      init_fonts();
-      init_plugins2();
-      init_colors();
+      init_storage();
       init_assets();
       init_loader();
       init_settings();
+      init_settings2();
     }
   });
 
-  // src/core/vendetta/storage.ts
-  function createProxy(target = {}) {
-    var emitter = new Emitter();
-    var parentTarget = target;
-    var childrens = /* @__PURE__ */ new WeakMap();
-    var proxiedChildrenSet = /* @__PURE__ */ new WeakSet();
-    function createProxy1(target2, path) {
-      return new Proxy(target2, {
-        get(target3, prop) {
-          if (prop === emitterSymbol)
-            return emitter;
-          var newPath = [
-            ...path,
-            prop
-          ];
-          var value = target3[prop];
-          if (value !== void 0 && value !== null) {
-            emitter.emit("GET", {
-              parent: parentTarget,
-              path: newPath,
-              value
-            });
-            if (typeof value === "object") {
-              if (proxiedChildrenSet.has(value))
-                return value;
-              if (childrens.has(value))
-                return childrens.get(value);
-              var childrenProxy = createProxy1(value, newPath);
-              childrens.set(value, childrenProxy);
-              return childrenProxy;
-            }
-            return value;
-          }
-          return value;
-        },
-        set(target3, prop, value) {
-          if (typeof value === "object") {
-            if (childrens.has(value)) {
-              target3[prop] = childrens.get(value);
-            } else {
-              var childrenProxy = createProxy1(value, [
-                ...path,
-                prop
-              ]);
-              childrens.set(value, childrenProxy);
-              proxiedChildrenSet.add(value);
-              target3[prop] = childrenProxy;
-            }
-          } else {
-            target3[prop] = value;
-          }
-          emitter.emit("SET", {
-            parent: parentTarget,
-            path: [
-              ...path,
-              prop
-            ],
-            value: target3[prop]
-          });
-          return true;
-        },
-        deleteProperty(target3, prop) {
-          var value = typeof target3[prop] === "object" ? childrens.get(target3[prop]) : target3[prop];
-          var success = delete target3[prop];
-          if (success)
-            emitter.emit("DEL", {
-              value,
-              parent: parentTarget,
-              path: [
-                ...path,
-                prop
-              ]
-            });
-          return success;
-        }
-      });
-    }
-    return {
-      proxy: createProxy1(target, []),
-      emitter
-    };
-  }
-  function useProxy(storage) {
-    var emitter = storage?.[emitterSymbol];
-    if (!emitter)
-      throw new Error("storage?.[emitterSymbol] is undefined");
-    var [, forceUpdate] = React.useReducer((n) => ~n, 0);
-    React.useEffect(() => {
-      var listener = (event, data) => {
-        if (event === "DEL" && data.value === storage)
-          return;
-        forceUpdate();
-      };
-      emitter.on("SET", listener);
-      emitter.on("DEL", listener);
-      return () => {
-        emitter.off("SET", listener);
-        emitter.off("DEL", listener);
-      };
-    }, []);
-    return storage;
-  }
-  function createStorage2(backend) {
-    return _createStorage.apply(this, arguments);
-  }
-  function _createStorage() {
-    _createStorage = _async_to_generator(function* (backend) {
-      var data = yield backend.get();
-      var { proxy, emitter } = createProxy(data);
-      var handler = () => backend.set(proxy);
-      emitter.on("SET", handler);
-      emitter.on("DEL", handler);
-      return proxy;
-    });
-    return _createStorage.apply(this, arguments);
-  }
-  function wrapSync(store) {
-    var awaited = void 0;
-    var awaitQueue = [];
-    var awaitInit = (cb) => awaited ? cb() : awaitQueue.push(cb);
-    store.then((v2) => {
-      awaited = v2;
-      awaitQueue.forEach((cb) => cb());
-    });
-    return new Proxy({}, {
-      ...Object.fromEntries(Object.getOwnPropertyNames(Reflect).map((k) => [
-        k,
-        (t, ...a) => Reflect[k](awaited ?? t, ...a)
-      ])),
-      get(target, prop, recv) {
-        if (prop === syncAwaitSymbol)
-          return awaitInit;
-        return Reflect.get(awaited ?? target, prop, recv);
-      }
-    });
-  }
-  function awaitStorage2(...stores) {
-    return Promise.all(stores.map((store) => new Promise((res) => store[syncAwaitSymbol](res))));
-  }
-  var import_react_native27, emitterSymbol, syncAwaitSymbol, ILLEGAL_CHARS_REGEX, filePathFixer, getMMKVPath, purgeStorage2, createMMKVBackend, createFileBackend2;
-  var init_storage3 = __esm({
-    "src/core/vendetta/storage.ts"() {
-      "use strict";
+  // globals:lodash
+  var require_lodash = __commonJS({
+    "globals:lodash"(exports, module) {
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
-      init_async_to_generator();
-      init_rn_modules();
-      import_react_native27 = __toESM(require_react_native());
-      init_Emitter();
-      emitterSymbol = Symbol.for("vendetta.storage.emitter");
-      syncAwaitSymbol = Symbol.for("vendetta.storage.accessor");
-      ILLEGAL_CHARS_REGEX = /[<>:"/\\|?*]/g;
-      filePathFixer = (file) => import_react_native27.Platform.select({
-        default: file,
-        ios: RTNFileManager.saveFileToGallery ? file : `Documents/${file}`
-      });
-      getMMKVPath = (name) => {
-        if (ILLEGAL_CHARS_REGEX.test(name)) {
-          name = name.replace(ILLEGAL_CHARS_REGEX, "-").replace(/-+/g, "-");
-        }
-        return `vd_mmkv/${name}`;
-      };
-      purgeStorage2 = function() {
-        var _ref = _async_to_generator(function* (store) {
-          if (yield RTNMMKVManager.getItem(store)) {
-            RTNMMKVManager.removeItem(store);
-          }
-          var mmkvPath = getMMKVPath(store);
-          if (yield RTNFileManager.fileExists(`${RTNFileManager.getConstants().DocumentsDirPath}/${mmkvPath}`)) {
-            yield RTNFileManager.removeFile?.("documents", mmkvPath);
-          }
-        });
-        return function purgeStorage3(store) {
-          return _ref.apply(this, arguments);
-        };
-      }();
-      createMMKVBackend = (store, defaultData = {}) => {
-        var mmkvPath = getMMKVPath(store);
-        var defaultStr = JSON.stringify(defaultData);
-        return createFileBackend2(mmkvPath, defaultData, _async_to_generator(function* () {
-          var path = `${RTNFileManager.getConstants().DocumentsDirPath}/${mmkvPath}`;
-          if (yield RTNFileManager.fileExists(path))
-            return;
-          var oldData = (yield RTNMMKVManager.getItem(store)) ?? defaultStr;
-          if (oldData === "!!LARGE_VALUE!!") {
-            var cachePath = `${RTNFileManager.getConstants().CacheDirPath}/mmkv/${store}`;
-            if (yield RTNFileManager.fileExists(cachePath)) {
-              oldData = yield RTNFileManager.readFile(cachePath, "utf8");
-            } else {
-              console.log(`${store}: Experienced data loss :(`);
-              oldData = defaultStr;
-            }
-          }
-          try {
-            JSON.parse(oldData);
-          } catch (e) {
-            console.error(`${store} had an unparseable data while migrating`);
-            oldData = defaultStr;
-          }
-          yield RTNFileManager.writeFile("documents", filePathFixer(mmkvPath), oldData, "utf8");
-          if ((yield RTNMMKVManager.getItem(store)) !== null) {
-            RTNMMKVManager.removeItem(store);
-            console.log(`Successfully migrated ${store} store from MMKV storage to fs`);
-          }
-        })());
-      };
-      createFileBackend2 = (file, defaultData = {}, migratePromise) => {
-        return {
-          get: /* @__PURE__ */ _async_to_generator(function* () {
-            yield migratePromise;
-            var path = `${RTNFileManager.getConstants().DocumentsDirPath}/${file}`;
-            if (yield RTNFileManager.fileExists(path)) {
-              var content = yield RTNFileManager.readFile(path, "utf8");
-              try {
-                return JSON.parse(content);
-              } catch (e) {
-              }
-            }
-            yield RTNFileManager.writeFile("documents", filePathFixer(file), JSON.stringify(defaultData), "utf8");
-            return JSON.parse(yield RTNFileManager.readFile(path, "utf8"));
-          }),
-          set: function() {
-            var _ref = _async_to_generator(function* (data) {
-              yield migratePromise;
-              yield RTNFileManager.writeFile("documents", filePathFixer(file), JSON.stringify(data), "utf8");
-            });
-            return function(data) {
-              return _ref.apply(this, arguments);
-            };
-          }()
-        };
-      };
-    }
-  });
-
-  // globals:moment
-  var require_moment = __commonJS({
-    "globals:moment"(exports, module) {
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      module.exports = require_depsModule()["moment"];
+      module.exports = require_depsModule()["lodash"];
     }
   });
 
@@ -11037,110 +10958,38 @@
   });
 
   // src/core/vendetta/api.tsx
-  function createPluginsObject() {
-    var makeObject = (0, import_lodash3.memoize)(() => PluginManager_default.getAllIds().reduce((obj, id) => Object.assign(obj, {
-      [PluginManager_default.traces[id].sourceUrl]: {
-        id: PluginManager_default.traces[id].sourceUrl,
-        manifest: PluginManager_default.convertToVd(PluginManager_default.getManifest(id)),
-        get enabled() {
-          return PluginManager_default.settings[id].enabled;
-        },
-        get update() {
-          return PluginManager_default.settings[id].autoUpdate;
-        },
-        get js() {
-          return "()=>{}";
-        }
-      }
-    }), {}), () => PluginManager_default.getAllIds().length);
-    return {
-      plugins: createProxy(new Proxy({}, {
-        ...Object.fromEntries(Object.getOwnPropertyNames(Reflect).map((k) => [
-          k,
-          (t, ...a) => Reflect[k](makeObject(), ...a)
-        ]))
-      })).proxy,
-      fetchPlugin: (source) => PluginManager_default.fetch(source),
-      installPlugin: (source, enabled = true) => PluginManager_default.install(source, {
-        enable: enabled
-      }),
-      startPlugin: (id) => PluginManager_default.start(id),
-      stopPlugin: (id, disable = true) => {
-        disable ? PluginManager_default.stop(id) : PluginManager_default.disable(id);
-      },
-      removePlugin: (id) => PluginManager_default.uninstall(id, {
-        keepData: false
-      }),
-      getSettings: (id) => PluginManager_default.getSettingsComponent(id)
-    };
-  }
-  function createThemesObject() {
-    var makeObject = (0, import_lodash3.memoize)(() => ColorManager_default.getAllIds().reduce((obj, id) => Object.assign(obj, {
-      [ColorManager_default.infos[id].sourceUrl]: {
-        id: ColorManager_default.infos[id].sourceUrl,
-        get selected() {
-          return ColorManager_default.preferences.selected === id;
-        },
-        data: ColorManager_default.convertToVd(ColorManager_default.getManifest(id))
-      }
-    }), {}), () => ColorManager_default.getAllIds().length);
-    return {
-      themes: createProxy(new Proxy({}, {
-        ...Object.fromEntries(Object.getOwnPropertyNames(Reflect).map((k) => [
-          k,
-          (t, ...a) => Reflect[k](makeObject(), ...a)
-        ]))
-      })).proxy,
-      fetchTheme: (id, selected) => selected ? ColorManager_default.refresh(id) : ColorManager_default.fetch(id),
-      installTheme: (id) => ColorManager_default.install(id),
-      selectTheme: (id) => ColorManager_default.select(id === "default" ? null : id),
-      removeTheme: (id) => ColorManager_default.uninstall(id),
-      getCurrentTheme: () => {
-        var { selected } = ColorManager_default.preferences;
-        var manifest = ColorManager_default.getCurrentManifest();
-        if (selected == null || manifest == null)
-          return null;
-        return {
-          id: ColorManager_default.getId(manifest, ColorManager_default.infos[selected].sourceUrl),
-          data: ColorManager_default.convertToVd(manifest),
-          selected: true
-        };
-      },
-      updateThemes: () => ColorManager_default.updateAll()
-    };
-  }
-  var import_lodash3, import_react11, import_react_native28, initVendettaObject;
+  var import_react9, import_react_native29, initVendettaObject;
   var init_api3 = __esm({
     "src/core/vendetta/api.tsx"() {
       "use strict";
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
       init_jsxRuntime();
-      init_logger();
-      init_debugger();
-      init_BunnySettings();
       init_alerts2();
-      init_PluginManager();
-      init_ColorManager();
+      init_storage();
+      init_storage();
+      init_themes();
       init_assets();
       init_commands();
       init_debug();
       init_loader();
       init_patcher();
-      init_styles();
+      init_settings();
       init_utils();
       init_cyrb64();
+      init_logger();
       init_metro();
       init_common();
       init_components();
       init_components();
+      init_color();
       init_components2();
+      init_styles();
       init_toasts();
       init_dist();
-      import_lodash3 = __toESM(require_lodash());
-      import_react11 = __toESM(require_react());
-      import_react_native28 = __toESM(require_react_native());
-      init_storage3();
+      import_react9 = __toESM(require_react());
+      import_react_native29 = __toESM(require_react_native());
+      init_plugins();
       initVendettaObject = () => {
         var createStackBasedFilter = (fn) => {
           return (filter) => {
@@ -11169,8 +11018,8 @@
                     ...module,
                     ActionSheetTitleHeader: module.BottomSheetTitleHeader,
                     ActionSheetContentContainer: ({ children }) => {
-                      (0, import_react11.useEffect)(() => logger.warn("Discord has removed 'ActionSheetContentContainer', please move into something else. This has been temporarily replaced with View"), []);
-                      return /* @__PURE__ */ (0, import_react11.createElement)(import_react_native28.View, null, children);
+                      (0, import_react9.useEffect)(() => console.warn("Discord has removed 'ActionSheetContentContainer', please move into something else. This has been temporarily replaced with View"), []);
+                      return /* @__PURE__ */ (0, import_react9.createElement)(import_react_native29.View, null, children);
                     }
                   };
                 }
@@ -11197,17 +11046,7 @@
               url,
               toasts,
               stylesheet: {
-                createThemedStyleSheet: function createThemedStyleSheet(sheet) {
-                  for (var key in sheet) {
-                    sheet[key] = new Proxy(import_react_native28.StyleSheet.flatten(sheet[key]), {
-                      get(target, prop, receiver) {
-                        var res = Reflect.get(target, prop, receiver);
-                        return isSemanticColor(res) ? resolveSemanticColor(res) : res;
-                      }
-                    });
-                  }
-                  return sheet;
-                }
+                createThemedStyleSheet
               },
               clipboard,
               assets,
@@ -11275,77 +11114,54 @@
               showInputAlert: (options) => showInputAlert(options)
             },
             assets: {
-              all: new Proxy({}, {
-                get(cache, p) {
-                  if (typeof p !== "string")
-                    return void 0;
-                  if (cache[p])
-                    return cache[p];
-                  for (var asset of iterateAssets()) {
-                    if (asset.name)
-                      return cache[p] = asset;
-                  }
-                },
-                ownKeys(cache) {
-                  var keys = /* @__PURE__ */ new Set();
-                  for (var asset of iterateAssets()) {
-                    cache[asset.name] = asset;
-                    keys.add(asset.name);
-                  }
-                  return [
-                    ...keys
-                  ];
-                }
-              }),
+              all: assetsMap,
               find: (filter) => findAsset(filter),
               getAssetByName: (name) => findAsset(name),
               getAssetByID: (id) => findAsset(id),
               getAssetIDByName: (name) => findAssetId(name)
             },
-            semanticColors: tokens.colors,
-            rawColors: tokens.unsafe_rawColors
+            semanticColors,
+            rawColors
           },
-          plugins: createPluginsObject(),
-          themes: createThemesObject(),
+          plugins: {
+            plugins: VdPluginManager.plugins,
+            fetchPlugin: (source) => VdPluginManager.fetchPlugin(source),
+            installPlugin: (source, enabled = true) => VdPluginManager.installPlugin(source, enabled),
+            startPlugin: (id) => VdPluginManager.startPlugin(id),
+            stopPlugin: (id, disable = true) => VdPluginManager.stopPlugin(id, disable),
+            removePlugin: (id) => VdPluginManager.removePlugin(id),
+            getSettings: (id) => VdPluginManager.getSettings(id)
+          },
+          themes: {
+            themes,
+            fetchTheme: (id, selected) => fetchTheme(id, selected),
+            installTheme: (id) => installTheme(id),
+            selectTheme: (id) => selectTheme(id === "default" ? null : themes[id]),
+            removeTheme: (id) => removeTheme(id),
+            getCurrentTheme: () => getThemeFromLoader(),
+            updateThemes: () => updateThemes()
+          },
           commands: {
             registerCommand
           },
           storage: {
             createProxy: (target) => createProxy(target),
             useProxy: (_storage) => useProxy(_storage),
-            createStorage: (backend) => createStorage2(backend),
+            createStorage: (backend) => createStorage(backend),
             wrapSync: (store) => wrapSync(store),
-            awaitSyncWrapper: (store) => awaitStorage2(store),
+            awaitSyncWrapper: (store) => awaitStorage(store),
             createMMKVBackend: (store) => createMMKVBackend(store),
             createFileBackend: (file) => {
-              if (LOADER_IDENTITY.type === "bunny" && file === "vendetta_theme.json") {
+              if (isPyonLoader() && file === "vendetta_theme.json") {
                 file = "pyoncord/current-theme.json";
               }
-              return createFileBackend2(file);
+              return createFileBackend(file);
             }
           },
-          settings: {
-            get debuggerUrl() {
-              return BunnySettings_default.developer.debuggerUrl;
-            },
-            get developerSettings() {
-              return BunnySettings_default.developer.enabled;
-            },
-            get enableDiscordDeveloperSettings() {
-              return BunnySettings_default.general.patchIsStaff;
-            },
-            get safeMode() {
-              return {
-                enabled: BunnySettings_default.isSafeMode()
-              };
-            },
-            get enableEvalCommand() {
-              return BunnySettings_default.developer.evalCommandEnabled;
-            }
-          },
+          settings,
           loader: {
             identity: getVendettaLoaderIdentity() ?? void 0,
-            config: BunnySettings_default.loader
+            config: loaderConfig
           },
           logger: {
             log: (...message) => console.log(...message),
@@ -11356,7 +11172,7 @@
             trace: (...message) => console.trace(...message),
             verbose: (...message) => console.log(...message)
           },
-          version: getDebugInfo().vendetta.version,
+          version: versionHash,
           unload: () => {
             delete window.vendetta;
           }
@@ -11384,26 +11200,13 @@
     }
   });
 
-  // src/lib/addons/themes/index.ts
-  var themes_exports = {};
-  __export(themes_exports, {
-    colors: () => colors_exports
-  });
-  var init_themes = __esm({
-    "src/lib/addons/themes/index.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_colors();
-    }
-  });
-
   // src/lib/ui/index.ts
   var ui_exports = {};
   __export(ui_exports, {
     alerts: () => alerts_exports,
-    components: () => components_exports,
-    settings: () => settings_exports,
+    components: () => components_exports2,
+    settings: () => settings_exports2,
+    sheets: () => sheets_exports,
     styles: () => styles_exports,
     toasts: () => toasts_exports
   });
@@ -11412,9 +11215,10 @@
       "use strict";
       init_asyncIteratorSymbol();
       init_promiseAllSettled();
-      init_alerts2();
+      init_alerts();
       init_components2();
-      init_settings();
+      init_settings2();
+      init_sheets();
       init_styles();
       init_toasts();
     }
@@ -11423,8 +11227,10 @@
   // src/lib/index.ts
   var lib_exports = {};
   __export(lib_exports, {
+    _jsx: () => jsxRuntime_exports,
     api: () => api_exports,
     fonts: () => fonts_exports,
+    managers: () => managers,
     metro: () => metro_exports,
     plugins: () => plugins_exports2,
     themes: () => themes_exports,
@@ -11438,7 +11244,7 @@
         d();
     delete window.bunny;
   }
-  var _disposer;
+  var managers, _disposer;
   var init_lib = __esm({
     "src/lib/index.ts"() {
       "use strict";
@@ -11447,12 +11253,33 @@
       init_global_d();
       init_modules_d();
       init_fonts();
-      init_plugins2();
+      init_plugins4();
       init_themes();
       init_api();
       init_ui();
       init_utils();
       init_metro();
+      init_fonts();
+      init_plugins4();
+      init_themes();
+      init_jsxRuntime();
+      init_lazy();
+      managers = proxyLazy(() => {
+        console.warn("bunny.managers.* is deprecated, and moved the top level (bunny.*). bunny.managers will be eventually removed soon");
+        return {
+          get fonts() {
+            return fonts_exports;
+          },
+          get plugins() {
+            return plugins_exports2;
+          },
+          get themes() {
+            return themes_exports;
+          }
+        };
+      }, {
+        hint: "object"
+      });
       _disposer = [];
       unload.push = (fn) => {
         _disposer.push(fn);
@@ -11473,45 +11300,43 @@
       init_promiseAllSettled();
       init_async_to_generator();
       init_patchErrorBoundary();
+      init_fixes();
       init_i18n();
-      init_logger();
-      init_debugger();
-      init_PluginReporter();
-      init_BunnySettings();
-      init_settings2();
+      init_settings3();
       init_api3();
-      init_FontManager();
-      init_PluginManager();
-      init_ColorManager();
+      init_plugins();
+      init_fonts();
+      init_plugins4();
+      init_themes();
       init_commands();
+      init_debug();
       init_flux();
-      init_settings();
+      init_jsx();
+      init_logger();
+      init_settings2();
       init_lib();
       src_default = /* @__PURE__ */ _async_to_generator(function* () {
-        yield BunnySettings_default.prepare();
-        yield ColorManager_default.prepare();
-        yield PluginManager_default.prepare();
-        yield FontManager_default.prepare();
-        yield PluginReporter_default.prepare();
         yield Promise.all([
+          initThemes(),
           injectFluxInterceptor(),
-          patchSettingsSection(),
+          patchSettings(),
           patchLogHook(),
           patchCommands(),
+          patchJsx(),
           initVendettaObject(),
           initFetchI18nStrings(),
           initSettings(),
-          patchErrorBoundary()
+          fixes_default(),
+          patchErrorBoundary(),
+          updatePlugins()
         ]).then(
           // Push them all to unloader
           (u) => u.forEach((f) => f && unload.push(f))
         );
         window.bunny = lib_exports;
-        if (!BunnySettings_default.isSafeMode()) {
-          ColorManager_default.initialize();
-          PluginManager_default.initialize();
-          FontManager_default.initialize();
-        }
+        VdPluginManager.initPlugins().then((u) => unload.push(u)).catch(() => alert("Failed to initialize Vendetta plugins"));
+        initPlugins();
+        updateFonts();
         logger.log("Bunny is ready!");
       });
     }
@@ -11533,13 +11358,13 @@
         yield (init_caches(), __toCommonJS(caches_exports)).initMetroCache();
         yield (init_src(), __toCommonJS(src_exports)).default();
       } catch (e) {
-        var { ClientInfoManager } = (init_rn_modules(), __toCommonJS(rn_modules_exports));
+        var { ClientInfoManager: ClientInfoManager2 } = (init_modules(), __toCommonJS(modules_exports));
         var stack = e instanceof Error ? e.stack : void 0;
         console.log(stack ?? e?.toString?.() ?? e);
         alert([
           "Failed to load Bunny!\n",
-          `Build Number: ${ClientInfoManager.Build}`,
-          `Bunny: ${"2b93038-dev"}`,
+          `Build Number: ${ClientInfoManager2.Build}`,
+          `Bunny: ${"ada2480-dev"}`,
           stack || e?.toString?.()
         ].join("\n"));
       }
@@ -11551,7 +11376,7 @@
   } else {
     var onceIndexRequired = function(originalRequire) {
       var batchedBridge = window.__fbBatchedBridge;
-      var callQueue = [];
+      var callQueue = new Array();
       var unpatchHook = instead3("callFunctionReturnFlushedQueue", batchedBridge, (args, orig) => {
         if (args[0] === "AppRegistry" || !batchedBridge.getCallableModule(args[0])) {
           callQueue.push(args);
@@ -11559,7 +11384,7 @@
         }
         return orig.apply(batchedBridge, args);
       });
-      var startDiscord = function() {
+      var startDiscord = /* @__PURE__ */ function() {
         var _ref = _async_to_generator(function* () {
           yield initializeBunny();
           unpatchHook();
